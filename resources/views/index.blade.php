@@ -4,7 +4,7 @@
                         <div class="container-xl px-4">
                             <div class="text-center">
                                 <h1 class="text-white">Welcome to SPMR System</h1>
-                                <p class="lead mb-0 text-white-50">A professionally designed admin panel For Mail Relay Server</p>
+                                <p class="lead mb-0 text-white-50">A professionally designed admin panel For Mail Relay</p>
                             </div>
                         </div>
                     </header>
