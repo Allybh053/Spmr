@@ -68,7 +68,7 @@
                     <div class="container-xl">
                         <div class="text-center">
                             <p style="margin: 0;">Ini adalah akses yang tertutup untuk digunakan oleh MAMPU, Jabatan Perdana Menteri</p>
-                            <p style="margin: 0;">Copyright &copy; 2023 Unit Pemodenan Tadbiran dan Perancangan Pengurusan Malaysia (MAMPU)</p>
+                            <p style="margin: 0;">Copyright &copy; {{ date('Y') }} Unit Pemodenan Tadbiran dan Perancangan Pengurusan Malaysia (MAMPU)</p>
                         </div>
                     </div>
                 </footer>

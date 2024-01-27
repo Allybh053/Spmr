@@ -17,6 +17,16 @@ Route::get('/', function () {
     return view('auth/login');
 });
 
+
+//testing route
 Route::get('/index', function () {
     return view('index');
+}); 
+//testing route
+Route::get('/user', function () {
+    return view('users/usermanagements/create');
+});
+//testing route
+Route::get('/profile', function () {
+    return view('users/profile/index');
 });
