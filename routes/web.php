@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\DashboardController;
 
 /*
 |--------------------------------------------------------------------------
@@ -13,20 +14,40 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
+
+
 Route::get('/', function () {
     return view('auth/login');
 });
 
+Auth::routes();
+//Login
+Route::get('/login','Auth\LoginController@index')->name('login' );
 
-//testing route
-Route::get('/index', function () {
-    return view('index');
-}); 
-//testing route
-Route::get('/user', function () {
-    return view('users/usermanagements/create');
+Route::get('/logout', 'Auth\LoginController@logout')->name('logout' );
+
+Route::group(['middleware' => ['auth']], function () {
+
+    //testing route
+    Route::get('/main', [DashboardController::class, 'index'])->name('dashboard.index');
+
+	//Dashboard
+	Route::group(['prefix' => 'users'], function () {
+        //testing route
+        Route::get('/user', function () {
+            return view('users/usermanagements/create');
+        });
+        //testing route
+        Route::get('/profile', function () {
+            return view('users/profile/index');
+        });
+
+        // Route::get('/', [UserController::class, 'index'])->name('user.index');
+        // Route::get('/profile', [UserController::class, 'profile'])->name('user.profile');
+
+    });
+
+
+
 });
-//testing route
-Route::get('/profile', function () {
-    return view('users/profile/index');
-});
+
