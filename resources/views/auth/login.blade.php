@@ -29,33 +29,37 @@
                                     <div class="card-header justify-content-center"><h3 class="fw-light my-4">Login</h3></div>
                                     <div class="card-body">
                                         <!-- Login form-->
-                                        <form>
+                                        <form method="POST" action="{{ route('login') }}">
+                                        {{ csrf_field() }}
                                             <!-- Form Group (email address)-->
-                                            <div class="mb-3">
-                                                <label class="small mb-1" for="inputUsername">Username</label>
-                                                <input class="form-control" id="inputUsername" type="email" placeholder="Enter Username" />
+                                            <div class="mb-3 form-group{{ $errors->has('email') ? ' has-error' : '' }}">
+                                                <label class="small mb-1" for="inputUsername">Email Address</label>
+                                                <input class="form-control" id="email" name="email" type="email" value="{{ old('email') }}" placeholder="Enter Email"   required autofocus/>
+                                                @if ($errors->has('email'))
+                                                    <span class="help-block">
+                                                        <strong>{{ $errors->first('email') }}</strong>
+                                                    </span>
+                                                @endif
                                             </div>
                                             <!-- Form Group (password)-->
-                                            <div class="mb-3">
+                                            <div class="mb-3 form-group{{ $errors->has('password') ? ' has-error' : '' }}">
                                                 <label class="small mb-1" for="inputPassword">Password</label>
-                                                <input class="form-control" id="inputPassword" type="password" placeholder="Enter password" />
+                                                <input class="form-control" id="password" name="password" type="password" placeholder="Enter password" required/>
                                             </div>
-                                            <!-- Form Group (remember password checkbox)-->
+                                           <!-- Form Group (remember password checkbox) -->
                                             <div class="mb-3">
                                                 <div class="form-check">
-                                                    <input class="form-check-input" id="rememberPasswordCheck" type="checkbox" value="" />
+                                                    <input class="form-check-input" id="rememberPasswordCheck" name="remember" type="checkbox" value="{{ old('remember') ? 'checked' : '' }}" />
                                                     <label class="form-check-label" for="rememberPasswordCheck">Remember password</label>
                                                 </div>
                                             </div>
+
                                             <!-- Form Group (login box)-->
                                             <div class="d-flex align-items-center justify-content-between mt-4 mb-0">
-                                                <a class="small" href="auth-password-basic.html">Forgot Password?</a>
-                                                <a class="btn btn-primary" href="dashboard-1.html">Login</a>
+                                                <!-- <a class="small" href="auth-password-basic.html">Forgot Password?</a> -->
+                                                <button type="submit" class="btn btn-rounded btn-primary btn-block mt-2" style="width:40%;">Login</button>
                                             </div>
                                         </form>
-                                    </div>
-                                    <div class="card-footer text-center">
-                                        <div class="small"><a href="auth-register-basic.html">Need an account? Sign up!</a></div>
                                     </div>
                                 </div>
                             </div>
