@@ -2,6 +2,7 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\Auth\LoginController;
 
 /*
 |--------------------------------------------------------------------------
@@ -22,9 +23,9 @@ Route::get('/', function () {
 
 Auth::routes();
 //Login
-Route::get('/login','Auth\LoginController@index')->name('login' );
+Route::get('/login',[LoginController::class, 'index'])->name('login' );
 
-Route::get('/logout', 'Auth\LoginController@logout')->name('logout' );
+Route::get('/logout', [LoginController::class, 'logout'])->name('logout' );
 
 Route::group(['middleware' => ['auth']], function () {
 
