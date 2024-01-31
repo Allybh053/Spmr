@@ -138,14 +138,25 @@ class UsersController extends Controller
 
         User::where('id', $id)->update($validatedData);
 
-        return redirect()->route('users.usermanagements.index')->with('success', 'User updated successfully');
+        return redirect()->route('usermanagements.index')->with('success', 'User updated successfully');
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(string $id)
+    public function destroy($id)
     {
-        //
+        // Find the user by ID
+        $user = User::withTrashed()->find($id);
+
+        // Check if the user exists
+        if (!$user) {
+            return redirect()->route('usermanagements.index')->with('error', 'User not found');
+        }
+
+        // Delete the user
+        $user->delete();
+
+        return redirect()->route('usermanagements.index')->with('success', 'User deleted successfully');
     }
 }

@@ -55,7 +55,12 @@
                             <td>
                                 <a class="btn btn-datatable btn-icon me-2 text-blue" title="View Detail" href="{{ route('usersmanagements.show', ['id' => $user->id]) }}"><i data-feather="eye"></i></a>
                                 <a class="btn btn-datatable btn-icon btn-transparent-dark me-2" title="Edit Detail" href="{{ route('usersmanagements.edit', ['id' => $user->id]) }}"><i data-feather="edit"></i></a>
-                                <a class="btn btn-datatable btn-icon text-danger btn-transparent" title="Delete User" href="#!"><i data-feather="trash-2"></i></a>
+                                <a  href="#!"></a>
+                                <form action="{{ route('usersmanagements.destroy', $user->id) }}" method="POST" onsubmit="return confirm('Are you sure you want to delete this user?')">
+                                    @csrf
+                                    @method('DELETE')
+                                    <button type="submit" class="btn btn-datatable btn-icon text-danger btn-transparent" title="Delete User"><i data-feather="trash-2"></i></button>
+                                </form>
                             </td>
                         </tr>
                         @endforeach

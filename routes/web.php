@@ -42,6 +42,7 @@ Route::group(['middleware' => ['auth']], function () {
         Route::get('/usermanagements/{id}/edit', [UsersController::class, 'edit'])->name('usersmanagements.edit');
         Route::get('/usermanagements/{id}', [UsersController::class, 'show'])->name('usersmanagements.show');
         Route::put('/usermanagements/{id}', [UsersController::class, 'update'])->name('usersmanagements.update');
+        Route::delete('/usermanagements/{id}', [UsersController::class, 'destroy'])->name('usersmanagements.destroy');
 
         Route::get('/profile', [ProfileController::class, 'index'])->name('profile.index');
     });
