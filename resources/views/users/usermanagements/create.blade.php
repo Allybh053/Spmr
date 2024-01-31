@@ -26,7 +26,7 @@
         </nav>
         <hr class="mt-0 mb-4" />
         <div class="row">
-            <div class="col-xl-4">
+            <div class="col-xl-4" @disabled(true) hidden>
                 <!-- Profile picture card-->
                 <div class="card mb-4 mb-xl-0">
                     <div class="card-header">User Picture</div>
@@ -45,89 +45,73 @@
                 <div class="card mb-4">
                     <div class="card-header">Account Details</div>
                     <div class="card-body">
-                        <form>
+                        <form method="POST" action="{{ route('usersmanagements.store') }}">
+                            @csrf
                             <!-- Form Group (username)-->
                             <div class="mb-3">
-                                <label class="small mb-1" for="inputUsername">Username (how your name will appear to other users on the site)</label>
-                                <input class="form-control" id="inputUsername" type="text" placeholder="Enter your username" value="username" />
-                            </div>
-                            <!-- Form Row-->
-                            <div class="row gx-3 mb-3">
-                                <!-- Form Group (first name)-->
-                                <div class="col-md-6">
-                                    <label class="small mb-1" for="inputFirstName">First name</label>
-                                    <input class="form-control" id="inputFirstName" type="text" placeholder="Enter your first name" value="Valerie" />
-                                </div>
-                                <!-- Form Group (last name)-->
-                                <div class="col-md-6">
-                                    <label class="small mb-1" for="inputLastName">Last name</label>
-                                    <input class="form-control" id="inputLastName" type="text" placeholder="Enter your last name" value="Luna" />
-                                </div>
+                                <label class="small mb-1" for="username">Username (how the name will appear to other users on the site)</label>
+                                <input class="form-control" id="username" name="username" type="text" placeholder="Enter your username" value="" oninput="this.value = this.value.toLowerCase()" required/>
                             </div>
                             <!-- Form Row        -->
                             <div class="row gx-3 mb-3">
                                 <!-- Form Group (organization name)-->
                                 <div class="col-md-6">
                                     <label class="small mb-1" for="acct_types">Account Type</label>
-                                    <select class="form-select" aria-label="Default select example">
+                                    <select class="form-select" name="acct_types" aria-label="Default select example">
                                         <option selected disabled>Select Account Type:</option>
-                                        <option value="administrator">Administrator</option>
-                                        <option value="registered">Registered</option>
-                                        <option value="edtior">Editor</option>
-                                        <option value="guest">Guest</option>
+                                        <option value="1">xxxx</option>
+                                        <option value="2">xxxx</option>
+                                        <option value="3">xxxx</option>
+                                        <option value="4">xxxx</option>
                                     </select>
                                 </div>
                                 <!-- Form Group (location)-->
                                 <div class="col-md-6">
-                                    <label class="small mb-1" for="role">Role Type</label>
-                                    <select class="form-select" aria-label="Default select example">
+                                    <label class="small mb-1" for="role_id">Role Type</label>
+                                    <select class="form-select" name="role_id" aria-label="Default select example">
                                         <option selected disabled>Select Role Type:</option>
-                                        <option value="administrator">Administrator</option>
-                                        <option value="registered">Registered</option>
-                                        <option value="edtior">Editor</option>
-                                        <option value="guest">Guest</option>
+                                        <option value="1">SuperAdministrator</option>
+                                        <option value="2">Admin</option>
+                                        <option value="3">Report</option>
+                                        <option value="4">Guest</option>
                                     </select>
                                 </div>
                             </div>
                             <!-- Form Group (email address)-->
                             <div class="mb-3">
-                                <label class="small mb-1" for="inputEmailAddress">Email address</label>
-                                <input class="form-control" id="inputEmailAddress" type="email" placeholder="Enter your email address" value="name@example.com" />
+                                <label class="small mb-1" for="email">Email address</label>
+                                <input class="form-control" id="email" name="email" type="email" placeholder="Enter email address" value="" oninput="this.value = this.value.toLowerCase()" required/>
                             </div>
                             <!-- Form Row-->
                             <div class="row gx-3 mb-3">
                                 <!-- Form Group (phone number)-->
-                                <div class="col-md-6">
-                                    <label class="small mb-1" for="inputPhone">Phone number</label>
-                                    <input class="form-control" id="inputPhone" type="tel" placeholder="Enter your phone number" value="555-123-4567" />
+                                <div class="col-md-6" @disabled(true)>
+                                    <label class="small mb-1" for="ldap_authentication">LDAP Authentication</label>
+                                    <select class="form-select" name="ldap_authentication" aria-label="Default select example">
+                                        <option selected disabled>Select Status:</option>
+                                        <option value="1">Yes</option>
+                                        <option value="0">No</option>
+                                    </select>
                                 </div>
                             </div>
                             <!-- Form Group (inputPassword)-->
                             <div class="mb-3">
-                                <label class="small mb-1" for="inputPassword">Password</label>
-                                <input class="form-control" id="inputPassword" type="password" placeholder="Enter Your New Password" value="" />
-                            </div>
-                            <!-- Form Group (first name)-->
-                            <div class="mb-3">
-                                <label class="small mb-1" for="inputPassword2">Confirm Password</label>
-                                <input class="form-control" id="inputPassword2" type="password" placeholder="Confirm Password" value="" />
+                                <label class="small mb-1" for="password">Password</label>
+                                <input class="form-control" id="password" name="password" type="password" placeholder="Enter New Password" value="" />
                             </div>
                             <div class="row gx-3 mb-3">
                                 <!-- Form Group (organization name)-->
                                 <div class="col-md-6">
-                                    <label class="small mb-1" for="acct_types">Account Status</label>
-                                    <select class="form-select" aria-label="Default select example">
+                                    <label class="small mb-1" for="enable">Account Status</label>
+                                    <select class="form-select" name="enable" aria-label="Default select example">
                                         <option selected disabled>Select Account Status:</option>
                                         <option value="1">Active</option>
                                         <option value="0">In-Active</option>
                                     </select>
                                 </div>
-                                <!-- Form Group (location)-->
-                                <div class="col-md-6">
-                                </div>
                             </div>
                             <!-- Save changes button-->
-                            <button class="btn btn-primary" type="button">Add User</button>
+                            <button class="btn btn-primary" type="submit">Add User</button>
                         </form>
                     </div>
                 </div>

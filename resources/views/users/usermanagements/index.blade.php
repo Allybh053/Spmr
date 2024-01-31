@@ -12,7 +12,7 @@
                         </h1>
                     </div>
                     <div class="col-12 col-xl-auto mb-3">
-                        <a class="btn btn-sm btn-light text-primary" href="user-management-add-user.html">
+                        <a class="btn btn-sm btn-light text-primary" href="{{route('usermanagements.create')}}">
                             <i class="me-1" data-feather="user-plus"></i>
                             Add New User
                         </a>
@@ -28,6 +28,7 @@
                 <table id="datatablesSimple">
                     <thead>
                         <tr>
+                            <th>No</th>
                             <th>Username</th>
                             <th>Email</th>
                             <th>Role</th>
@@ -37,28 +38,27 @@
                         </tr>
                     </thead>
                     <tbody>
+                        @foreach ($users as $user)
                         <tr>
-                            <td>
-                                <div class="d-flex align-items-center">
-                                    <div class="avatar me-2"><img class="avatar-img img-fluid" src="assets/img/illustrations/profiles/profile-1.png" /></div>
-                                    Tiger Nixon
-                                </div>
-                            </td>
-                            <td>tiger@email.com</td>
-                            <td>Administrator</td>
-                            <td>
-                                <span class="badge bg-green-soft text-green">Sales</span>
+                            <td>{{ $loop->iteration }}.</td>
+                            <td>{{ $user->username }}</td>
+                            <td>{{ $user->email }}</td>
+                            <td>{{ $user->role_id }}</td>
+                            <td>{{ $user->acct_types }}
+                                <!-- span class="badge bg-green-soft text-green">Sales</span>
                                 <span class="badge bg-blue-soft text-blue">Developers</span>
                                 <span class="badge bg-red-soft text-red">Marketing</span>
                                 <span class="badge bg-purple-soft text-purple">Managers</span>
-                                <span class="badge bg-yellow-soft text-yellow">Customer</span>
+                                <span class="badge bg-yellow-soft text-yellow">Customer</span -->
                             </td>
-                            <td>20 Jun 2021</td>
+                            <td>{{ $user->created_at->format('d/m/Y') }}</td>
                             <td>
-                                <a class="btn btn-datatable btn-icon btn-transparent-dark me-2" href="user-management-edit-user.html"><i data-feather="edit"></i></a>
-                                <a class="btn btn-datatable btn-icon btn-transparent-dark" href="#!"><i data-feather="trash-2"></i></a>
+                                <a class="btn btn-datatable btn-icon me-2 text-blue" title="View Detail" href="{{ route('usersmanagements.show', ['id' => $user->id]) }}"><i data-feather="eye"></i></a>
+                                <a class="btn btn-datatable btn-icon btn-transparent-dark me-2" title="Edit Detail" href="{{ route('usersmanagements.edit', ['id' => $user->id]) }}"><i data-feather="edit"></i></a>
+                                <a class="btn btn-datatable btn-icon text-danger btn-transparent" title="Delete User" href="#!"><i data-feather="trash-2"></i></a>
                             </td>
                         </tr>
+                        @endforeach
                     </tbody>
                 </table>
             </div>
