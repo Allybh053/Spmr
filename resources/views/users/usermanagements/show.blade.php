@@ -60,6 +60,19 @@
                             <div class="row gx-3 mb-3">
                                 <!-- Form Group (organization name)-->
                                 <div class="col-md-6">
+                                    <label class="small mb-1" for="fname">First Name</label>
+                                    <input class="form-control" id="fname" name="fname" type="text" value="{{ $user->fname }}" readonly/>
+                                </div>
+                                <!-- Form Group (location)-->
+                                <div class="col-md-6">
+                                    <label class="small mb-1" for="lname">Last Name</label>
+                                    <input class="form-control" id="lname" name="lname" type="text" value="{{ $user->lname }}" readonly/>
+                                </div>
+                            </div>
+                            <!-- Form Row        -->
+                            <div class="row gx-3 mb-3">
+                                <!-- Form Group (organization name)-->
+                                <div class="col-md-6">
                                     <label class="small mb-1" for="acct_types">Account Type</label>
                                     <input class="form-control" id="acct_types" name="acct_types" type="text" value="{{ $user->acct_types }}" readonly/>
                                 </div>
@@ -73,6 +86,14 @@
                             <div class="mb-3">
                                 <label class="small mb-1" for="email">Email address</label>
                                 <input class="form-control" id="email" name="email" type="email" value="{{ $user->email }}" readonly/>
+                            </div>
+                            <!-- Form Row-->
+                            <div class="row gx-3 mb-3">
+                                <!-- Form Group (phone number)-->
+                                <div class="col-md-6" @disabled(true)>
+                                    <label class="small mb-1" for="phone">Phone No</label>
+                                    <input class="form-control" id="phone" name="phone" type="text" value="{{ $user->phone }}" readonly/>
+                                </div>
                             </div>
                             <!-- Form Row-->
                             <div class="row gx-3 mb-3">

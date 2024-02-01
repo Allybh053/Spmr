@@ -50,6 +50,9 @@ class UsersController extends Controller
                 'ldap_authentication' => 'required',
                 'password' => 'required',
                 'enable' => 'required',
+                'fname' => 'required',
+                'lname' => 'required',
+                'phone' => 'nullable',
             ]);
             $username = $validatedData['username'];
             $email = $validatedData['email'];
@@ -58,6 +61,9 @@ class UsersController extends Controller
             $ldapAuthentication = $validatedData['ldap_authentication'];
             $password = $validatedData['password'];
             $enable = $validatedData['enable'];
+            $fname = $validatedData['fname'];
+            $lname = $validatedData['lname'];
+            $phone = $validatedData['phone'];
 
             $hashedPassword = Hash::make($password);
 
@@ -71,6 +77,9 @@ class UsersController extends Controller
                 'ldap_authentication' => $ldapAuthentication,
                 'password' => $hashedPassword,
                 'enable' => $enable,
+                'fname' => $fname,
+                'lname' => $lname,
+                'phone' => $phone,
             ]);
 
             // Redirect back or to another page
@@ -113,6 +122,9 @@ class UsersController extends Controller
             'role_id' => 'required',
             'ldap_authentication' => 'required',
             'enabled' => 'required',
+            'fname' => 'required',
+            'lname' => 'required',
+            'phone' => 'nullable',
             // Add more fields as needed
         ]);
 
@@ -122,6 +134,9 @@ class UsersController extends Controller
         $role = $validatedData['role_id'];
         $ldapAuthentication = $validatedData['ldap_authentication'];
         $enable = $validatedData['enabled'];
+        $fname = $validatedData['fname'];
+        $lname = $validatedData['lname'];
+        $phone = $validatedData['phone'];
 
         // Check if the password fields are provided
         if ($request->filled('password')) {

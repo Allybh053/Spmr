@@ -52,6 +52,19 @@
                                 <label class="small mb-1" for="username">Username (how the name will appear to other users on the site)</label>
                                 <input class="form-control" id="username" name="username" type="text" placeholder="Enter your username" value="" oninput="this.value = this.value.toLowerCase()" required/>
                             </div>
+                            <!-- Form Row-->
+                            <div class="row gx-3 mb-3">
+                                <!-- Form Group (first name)-->
+                                <div class="col-md-6">
+                                    <label class="small mb-1" for="fname">First name</label>
+                                    <input class="form-control" id="fname" name="fname" type="text" placeholder="Enter your first name" value="" />
+                                </div>
+                                <!-- Form Group (last name)-->
+                                <div class="col-md-6">
+                                    <label class="small mb-1" for="lname">Last name</label>
+                                    <input class="form-control" id="lname" name="lname" type="text" placeholder="Enter your last name" value="" />
+                                </div>
+                            </div>
                             <!-- Form Row        -->
                             <div class="row gx-3 mb-3">
                                 <!-- Form Group (organization name)-->
@@ -92,6 +105,11 @@
                                         <option value="1">Yes</option>
                                         <option value="0">No</option>
                                     </select>
+                                </div>
+                                <!-- Form Group (phone number)-->
+                                <div class="col-md-6" @disabled(true)>
+                                    <label class="small mb-1" for="phone">Phone No</label>
+                                    <input class="form-control" id="phone" name="phone" type="text" value=""/>
                                 </div>
                             </div>
                             <!-- Form Group (inputPassword)-->

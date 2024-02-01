@@ -23,6 +23,13 @@
     </header>
     <!-- Main page content-->
     <div class="container-fluid px-4">
+        @if(session('success'))
+            <div class="alert alert-primary alert-dismissible fade show" role="alert">
+                <h5 class="alert-heading">Message</h5>
+                {{ session('success') }}
+                <button class="btn-close" type="button" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        @endif
         <div class="card">
             <div class="card-body">
                 <table id="datatablesSimple">
@@ -32,7 +39,7 @@
                             <th>Username</th>
                             <th>Email</th>
                             <th>Role</th>
-                            <th>Acct Type</th>
+                            <th>Status</th>
                             <th>Joined Date</th>
                             <th>Actions</th>
                         </tr>
@@ -44,7 +51,13 @@
                             <td>{{ $user->username }}</td>
                             <td>{{ $user->email }}</td>
                             <td>{{ $user->role_id }}</td>
-                            <td>{{ $user->acct_types }}
+                            <td>
+                            @if($user->enabled == 1)
+                                <span class="badge bg-green-soft text-green">Active</span>
+                            @else
+                                <span class="badge bg-red-soft text-red">Inactive</span>
+                            @endif
+
                                 <!-- span class="badge bg-green-soft text-green">Sales</span>
                                 <span class="badge bg-blue-soft text-blue">Developers</span>
                                 <span class="badge bg-red-soft text-red">Marketing</span>
@@ -55,7 +68,7 @@
                             <td>
                                 <a class="btn btn-datatable btn-icon me-2 text-blue" title="View Detail" href="{{ route('usersmanagements.show', ['id' => $user->id]) }}"><i data-feather="eye"></i></a>
                                 <a class="btn btn-datatable btn-icon btn-transparent-dark me-2" title="Edit Detail" href="{{ route('usersmanagements.edit', ['id' => $user->id]) }}"><i data-feather="edit"></i></a>
-                                <form action="{{ route('usersmanagements.destroy', $user->id) }}" method="POST" onsubmit="return confirm('Are you sure you want to delete this user?')">
+                                <form class="btn btn-datatable btn-icon me-2 text-blue" action="{{ route('usersmanagements.destroy', $user->id) }}" method="POST" onsubmit="return confirm('Are you sure you want to delete this user?')">
                                     @csrf
                                     @method('DELETE')
                                     <button type="submit" class="btn btn-datatable btn-icon text-danger btn-transparent" title="Delete User"><i data-feather="trash-2"></i></button>
