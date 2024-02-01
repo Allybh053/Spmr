@@ -45,6 +45,9 @@ Route::group(['middleware' => ['auth']], function () {
         Route::delete('/usermanagements/{id}', [UsersController::class, 'destroy'])->name('usersmanagements.destroy');
 
         Route::get('/profile', [ProfileController::class, 'index'])->name('profile.index');
+        Route::post('/profile/{id}/updatepassword', [ProfileController::class, 'updatepassword'])->name('profile.updatepassword');
+        Route::post('/profile/{id}/updatedetail', [ProfileController::class, 'updatedetail'])->name('profile.updatedetail');
+
     });
 
 

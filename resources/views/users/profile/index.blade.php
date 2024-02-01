@@ -17,6 +17,13 @@
         </header>
         <!-- Main page content-->
         <div class="container-xl px-4 mt-4">
+            @if(session('success'))
+                <div class="alert alert-primary alert-dismissible fade show" role="alert">
+                    <h5 class="alert-heading">Message</h5>
+                    {{ session('success') }}
+                    <button class="btn-close" type="button" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            @endif
             <!-- Account page navigation-->
             <nav class="nav nav-borders">
                 <a class="nav-link active ms-0" href="account-profile.html">Profile</a>
@@ -45,24 +52,24 @@
                     <div class="card mb-4">
                         <div class="card-header">Account Details</div>
                         <div class="card-body">
-                            <form >
+                            <form id="passwordForm1" method="POST" action="{{ route('profile.updatedetail', ['id' => $user->id]) }}">
                                 @csrf
                                 <!-- Form Group (Name)-->
                                 <div class="mb-3">
-                                    <label class="small mb-1" for="inputName">Name (how your name will appear to other users on the site)</label>
-                                    <input class="form-control" id="inputName" type="text" placeholder="Enter your Name" value="{{ $user->username }}" />
+                                    <label class="small mb-1" for="username">Username (how your username will appear to other users on the site)</label>
+                                    <input class="form-control" id="username" name="username" type="text" placeholder="Enter your Name" value="{{ old('username', $user->username) }}" />
                                 </div>
                                 <!-- Form Row-->
-                                <div class="row gx-3 mb-3" hidden @disabled(true)>
+                                <div class="row gx-3 mb-3">
                                     <!-- Form Group (first name)-->
                                     <div class="col-md-6">
-                                        <label class="small mb-1" for="inputFirstName">First name</label>
-                                        <input class="form-control" id="inputFirstName" type="text" placeholder="Enter your first name" value="Valerie" />
+                                        <label class="small mb-1" for="fname">First name</label>
+                                        <input class="form-control" id="fname" name="fname" type="text" placeholder="Enter your first name" value="{{ old('fname', $user->fname) }}" />
                                     </div>
                                     <!-- Form Group (last name)-->
                                     <div class="col-md-6">
-                                        <label class="small mb-1" for="inputLastName">Last name</label>
-                                        <input class="form-control" id="inputLastName" type="text" placeholder="Enter your last name" value="Luna" />
+                                        <label class="small mb-1" for="lname">Last name</label>
+                                        <input class="form-control" id="lname" name="lname" type="text" placeholder="Enter your last name" value="{{ old('lname', $user->lname) }}" />
                                     </div>
                                 </div>
                                 <!-- Form Row        -->
@@ -70,32 +77,37 @@
                                     <!-- Form Group (organization name)-->
                                     <div class="col-md-6">
                                         <label class="small mb-1" for="acct_types">Account Type</label>
-                                        <input class="form-control" id="acct_types" type="text" placeholder="" value="{{ $user->acct_types}}" readonly/>
+                                        <input class="form-control" id="acct_types" name="acct_types" type="text" placeholder="" value="{{ old('acct_types', $user->acct_types) }}" disabled/>
                                     </div>
                                     <!-- Form Group (location)-->
                                     <div class="col-md-6">
                                         <label class="small mb-1" for="role">Role Type</label>
-                                        <input class="form-control" id="role" type="text" placeholder="" value="{{ $user->role_id}}" readonly/>
+                                        <input class="form-control" id="role" name="role" type="text" placeholder="" value="{{ $user->role_id}}" disabled/>
                                     </div>
                                 </div>
                                 <!-- Form Group (email address)-->
                                 <div class="mb-3">
-                                    <label class="small mb-1" for="inputEmailAddress">Email address</label>
-                                    <input class="form-control" id="inputEmailAddress" type="email" placeholder="Enter your email address" value="{{ $user->email }}" />
+                                    <label class="small mb-1" for="email">Email address</label>
+                                    <input class="form-control" id="email" name="email" type="email" placeholder="Enter your email address" value="{{ old('email', $user->email) }}" />
+                                </div>
+                                <!-- Form Group (phone number)-->
+                                <div class="col-md-6" @disabled(true)>
+                                    <label class="small mb-1" for="phone">Phone No</label>
+                                    <input class="form-control" id="phone" name="phone" type="text" value="{{ old('phone', $user->phone) }}"/>
                                 </div>
                                 <!-- Form Row-->
                                 <div class="row gx-3 mb-3">
                                     <!-- Form Group (status)-->
                                     <div class="col-md-6">
-                                        <label class="small mb-1" for="inputStatus">status</label>
-                                        <select class="form-control" id="inputStatus" name="enabled">
+                                        <label class="small mb-1" for="enabled">status</label>
+                                        <select class="form-control" id="enabled" name="enabled" disabled>
                                             <option value="1" {{ $user->enabled == 1 ? 'selected' : '' }}>Active</option>
                                             <option value="0" {{ $user->enabled == 0 ? 'selected' : '' }}>No Active</option>
                                         </select>
                                     </div>
                                 </div>
                                 <!-- Save changes button-->
-                                <button class="btn btn-primary" type="button">Save changes</button>
+                                <button class="btn btn-primary" type="submit">Save changes</button>
                             </form>
                         </div>
                     </div>
@@ -112,24 +124,38 @@
                     <div class="card mb-4">
                         <div class="card-header">Update Password</div>
                         <div class="card-body">
-                            <form>
+                            <form id="passwordForm2" method="POST" action="{{ route('profile.updatepassword', ['id' => $user->id]) }}">
                                 @csrf
                                 <!-- Form Group (inputPassword)-->
                                 <div class="mb-3">
-                                    <label class="small mb-1" for="inputPassword">Password</label>
-                                    <input class="form-control" id="inputPassword" type="password" placeholder="Enter Your New Password" value="" />
+                                    <label class="small mb-1" for="password">Password</label>
+                                    <input class="form-control" id="password" name="password" type="password" placeholder="Enter Your New Password" value="" minlength="8"/>
                                 </div>
                                 <!-- Form Group (first name)-->
                                 <div class="mb-3">
-                                    <label class="small mb-1" for="inputPassword2">Confirm Password</label>
-                                    <input class="form-control" id="inputPassword2" type="password" placeholder="Confirm Password" value="" />
+                                    <label class="small mb-1" for="password2">Confirm Password</label>
+                                    <input class="form-control" id="password2" name="password2" type="password" placeholder="Confirm Password" value=""  minlength="8"/>
                                 </div>
-                                <button class="btn btn-primary" type="button">Update Password</button>
+                                <button class="btn btn-primary" type="button" onclick="validatePassword()">Update Password</button>
                             </form>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
+        <script>
+            function validatePassword() {
+                var password = document.getElementById("password").value;
+                var confirmPassword = document.getElementById("password2").value;
+
+                if (password === confirmPassword) {
+                    // Passwords match, submit the form
+                    document.getElementById("passwordForm2").submit();
+                } else {
+                    // Passwords do not match, show an error message or handle it accordingly
+                    alert("Passwords do not match. Please enter matching passwords.");
+                }
+            }
+        </script>
     </main>
 @endsection

@@ -115,13 +115,13 @@
                             <!-- Form Group (inputPassword)-->
                             <div class="mb-3">
                                 <label class="small mb-1" for="password">Password</label>
-                                <input class="form-control" id="password" name="password" type="password" placeholder="Enter New Password" value="" />
+                                <input class="form-control" id="password" name="password" type="password" placeholder="Enter New Password" value="" minlength="8"/>
                             </div>
                             <div class="row gx-3 mb-3">
                                 <!-- Form Group (organization name)-->
                                 <div class="col-md-6">
-                                    <label class="small mb-1" for="enable">Account Status</label>
-                                    <select class="form-select" name="enable" aria-label="Default select example">
+                                    <label class="small mb-1" for="enabled">Account Status</label>
+                                    <select class="form-select" name="enabled" aria-label="Default select example">
                                         <option selected disabled>Select Account Status:</option>
                                         <option value="1">Active</option>
                                         <option value="0">In-Active</option>
