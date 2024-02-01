@@ -26,7 +26,7 @@
             </nav>
             <hr class="mt-0 mb-4" />
             <div class="row">
-                <div class="col-xl-4">
+                <div class="col-xl-4" hidden @disabled(true)>
                     <!-- Profile picture card-->
                     <div class="card mb-4 mb-xl-0">
                         <div class="card-header">Profile Picture</div>
@@ -45,14 +45,15 @@
                     <div class="card mb-4">
                         <div class="card-header">Account Details</div>
                         <div class="card-body">
-                            <form>
-                                <!-- Form Group (username)-->
+                            <form >
+                                @csrf
+                                <!-- Form Group (Name)-->
                                 <div class="mb-3">
-                                    <label class="small mb-1" for="inputUsername">Username (how your name will appear to other users on the site)</label>
-                                    <input class="form-control" id="inputUsername" type="text" placeholder="Enter your username" value="username" />
+                                    <label class="small mb-1" for="inputName">Name (how your name will appear to other users on the site)</label>
+                                    <input class="form-control" id="inputName" type="text" placeholder="Enter your Name" value="{{ $user->username }}" />
                                 </div>
                                 <!-- Form Row-->
-                                <div class="row gx-3 mb-3">
+                                <div class="row gx-3 mb-3" hidden @disabled(true)>
                                     <!-- Form Group (first name)-->
                                     <div class="col-md-6">
                                         <label class="small mb-1" for="inputFirstName">First name</label>
@@ -69,25 +70,28 @@
                                     <!-- Form Group (organization name)-->
                                     <div class="col-md-6">
                                         <label class="small mb-1" for="acct_types">Account Type</label>
-                                        <input class="form-control" id="acct_types" type="text" placeholder="" value="" readonly/>
+                                        <input class="form-control" id="acct_types" type="text" placeholder="" value="{{ $user->acct_types}}" readonly/>
                                     </div>
                                     <!-- Form Group (location)-->
                                     <div class="col-md-6">
                                         <label class="small mb-1" for="role">Role Type</label>
-                                        <input class="form-control" id="role" type="text" placeholder="" value="Jenis Role" readonly/>
+                                        <input class="form-control" id="role" type="text" placeholder="" value="{{ $user->role_id}}" readonly/>
                                     </div>
                                 </div>
                                 <!-- Form Group (email address)-->
                                 <div class="mb-3">
                                     <label class="small mb-1" for="inputEmailAddress">Email address</label>
-                                    <input class="form-control" id="inputEmailAddress" type="email" placeholder="Enter your email address" value="name@example.com" />
+                                    <input class="form-control" id="inputEmailAddress" type="email" placeholder="Enter your email address" value="{{ $user->email }}" />
                                 </div>
                                 <!-- Form Row-->
                                 <div class="row gx-3 mb-3">
-                                    <!-- Form Group (phone number)-->
+                                    <!-- Form Group (status)-->
                                     <div class="col-md-6">
-                                        <label class="small mb-1" for="inputPhone">Phone number</label>
-                                        <input class="form-control" id="inputPhone" type="tel" placeholder="Enter your phone number" value="555-123-4567" />
+                                        <label class="small mb-1" for="inputStatus">status</label>
+                                        <select class="form-control" id="inputStatus" name="enabled">
+                                            <option value="1" {{ $user->enabled == 1 ? 'selected' : '' }}>Active</option>
+                                            <option value="0" {{ $user->enabled == 0 ? 'selected' : '' }}>No Active</option>
+                                        </select>
                                     </div>
                                 </div>
                                 <!-- Save changes button-->
@@ -98,7 +102,7 @@
                 </div>
             </div>
             <div class="row">
-                <div class="col-xl-4">
+                <div class="col-xl-4" hidden @disabled(true)>
                     <!-- Profile picture card-->
                     <div class="card mb-4 mb-xl-0">
                     </div>
@@ -109,6 +113,7 @@
                         <div class="card-header">Update Password</div>
                         <div class="card-body">
                             <form>
+                                @csrf
                                 <!-- Form Group (inputPassword)-->
                                 <div class="mb-3">
                                     <label class="small mb-1" for="inputPassword">Password</label>
