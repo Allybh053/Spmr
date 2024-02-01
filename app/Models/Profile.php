@@ -15,6 +15,7 @@ class Profile extends Model
      * @var array
      */
     protected $fillable = [
-        'name', 'email', 'password','enabled','role_id','acct_types',
+        'username', 'password', 'email', 'role_id', 'acct_types', 'enabled',
+        'last_login_at', 'last_login_ip', 'ldap_authentication','fname','lname','phone'
     ];
 }

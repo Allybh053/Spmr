@@ -49,7 +49,7 @@ class UsersController extends Controller
                 'role_id' => 'required',
                 'ldap_authentication' => 'required',
                 'password' => 'required',
-                'enable' => 'required',
+                'enabled' => 'required',
                 'fname' => 'required',
                 'lname' => 'required',
                 'phone' => 'nullable',
@@ -60,7 +60,7 @@ class UsersController extends Controller
             $role = $validatedData['role_id'];
             $ldapAuthentication = $validatedData['ldap_authentication'];
             $password = $validatedData['password'];
-            $enable = $validatedData['enable'];
+            $enable = $validatedData['enabled'];
             $fname = $validatedData['fname'];
             $lname = $validatedData['lname'];
             $phone = $validatedData['phone'];
@@ -76,7 +76,7 @@ class UsersController extends Controller
                 'role_id' => $role,
                 'ldap_authentication' => $ldapAuthentication,
                 'password' => $hashedPassword,
-                'enable' => $enable,
+                'enabled' => $enable,
                 'fname' => $fname,
                 'lname' => $lname,
                 'phone' => $phone,
