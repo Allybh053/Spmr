@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\Auth\LoginController;
+use App\Http\Controllers\SmtpRelayController;
 
 /*
 |--------------------------------------------------------------------------
@@ -48,6 +49,10 @@ Route::group(['middleware' => ['auth']], function () {
 
     });
 
+
+    //SMTP Relay Request 
+    Route::get('/smtp_relay/smtp_relay_req', [SmtpRelayController::class, 'smtp_relay_req'])->name('smtp_relay.smtp_relay_req');
+    Route::get('/smtp_relay/form_application_smtp_relay', [SmtpRelayController::class, 'add'])->name('smtp_relay.form_application_smtp_relay');
 
 
 });
