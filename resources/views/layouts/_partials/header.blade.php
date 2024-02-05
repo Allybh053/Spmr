@@ -15,7 +15,7 @@
                 </div>
             </form>
             <!-- Navbar Items-->
-            <ul class="navbar-nav align-items-center ms-auto"> 
+            <ul class="navbar-nav align-items-center ms-auto">
                 <!-- Navbar Search Dropdown-->
                 <!-- * * Note: * * Visible only below the lg breakpoint-->
                 <li class="nav-item dropdown no-caret me-3 d-lg-none">
@@ -119,19 +119,21 @@
                 </li>
                 <!-- User Dropdown-->
                 <li class="nav-item dropdown no-caret dropdown-user me-3 me-lg-4">
-                    <a class="btn btn-icon btn-transparent-dark dropdown-toggle" id="navbarDropdownUserImage" href="javascript:void(0);" role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><img class="img-fluid" src="assets/img/illustrations/profiles/profile-1.png" /></a>
+                    <a class="btn btn-icon btn-transparent-dark dropdown-toggle" id="navbarDropdownUserImage" href="javascript:void(0);" role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><img class="img-fluid" src="{{ asset('assets/img/illustrations/profiles/profile-6.jpg') }}" /></a>
                     <div class="dropdown-menu dropdown-menu-end border-0 shadow animated--fade-in-up" aria-labelledby="navbarDropdownUserImage">
                         <h6 class="dropdown-header d-flex align-items-center">
-                            <img class="dropdown-user-img" src="assets/img/illustrations/profiles/profile-1.png" />
+                            <img class="dropdown-user-img" src="{{ asset('assets/img/illustrations/profiles/profile-6.jpg') }}" />
+                            @auth
                             <div class="dropdown-user-details">
-                                <div class="dropdown-user-details-name">Valerie Luna</div>
-                                <div class="dropdown-user-details-email">vluna@aol.com</div>
+                                <div class="dropdown-user-details-name">{{ auth()->user()->username }}</div>
+                                <div class="dropdown-user-details-email">{{ auth()->user()->email }}</div>
                             </div>
+                            @endauth
                         </h6>
                         <div class="dropdown-divider"></div>
-                        <a class="dropdown-item" href="#!">
+                        <a class="dropdown-item" href="{{ route("profile.index")}}">
                             <div class="dropdown-item-icon"><i data-feather="settings"></i></div>
-                            Account
+                            User Account
                         </a>
                         <a class="dropdown-item" href="{{ route('logout') }}">
                             <div class="dropdown-item-icon"><i data-feather="log-out"></i></div>

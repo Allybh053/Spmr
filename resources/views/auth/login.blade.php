@@ -12,21 +12,16 @@
         <script data-search-pseudo-elements defer src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/js/all.min.js" crossorigin="anonymous"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/feather-icons/4.28.0/feather.min.js" crossorigin="anonymous"></script>
     </head>
-    <body style="background-image: url('{{ asset('assets/img/backgrounds/login-background.jpg') }}'); background-repeat: no-repeat;  background-size: cover;">
+    <body style="background-image: url('{{ asset('assets/img/backgrounds/wallpaper_bg.jpeg') }}'); background-repeat: no-repeat;  background-size: cover;">
         <div id="layoutAuthentication">
             <div id="layoutAuthentication_content">
-                <nav class="navbar bg-black" id="sidenavAccordion">
-                    <div class="container-xl" style="text-align: center;">
-                            <h4 style="margin: 0; text-color:white;">Selamat Datang ke Pautan Pintas</h4>
-                    </div>
-                </nav>
                 <main>
                     <div class="container-xl px-4">
                         <div class="row justify-content-center">
                             <div class="col-lg-5">
                                 <!-- Basic login form-->
                                 <div class="card shadow-lg border-0 rounded-lg mt-5">
-                                    <div class="card-header justify-content-center"><h3 class="fw-light my-4">Login</h3></div>
+                                    <div class="card-header justify-content-center text-center"><h3 class="fw-light my-4">SPMR</h3></div>
                                     <div class="card-body">
                                         <!-- Login form-->
                                         <form method="POST" action="{{ route('login') }}">
@@ -56,9 +51,9 @@
                                             </div>
 
                                             <!-- Form Group (login box)-->
-                                            <div class="d-flex align-items-center justify-content-between mt-4 mb-0">
+                                            <div class="d-flex flex-column align-items-center justify-content-between mt-4 mb-0">
                                                 <!-- <a class="small" href="auth-password-basic.html">Forgot Password?</a> -->
-                                                <button type="submit" class="btn btn-rounded btn-primary btn-block mt-2" style="width:40%;">Login</button>
+                                                <button type="submit" class="btn btn-rounded btn-primary btn-block mt-2 mx-auto" style="width:40%;">Login</button>
                                             </div>
                                         </form>
                                     </div>
@@ -68,7 +63,7 @@
                     </div>
                 </main>
             </div>
-            <div id="layoutAuthentication_footer">
+            <div id="layoutAuthentication_footer" hidden>
                 <footer class="footer-admin mt-auto footer-dark" style="background-color:rgb(20, 20, 20);">
                     <div class="container-xl">
                         <div class="text-center">
