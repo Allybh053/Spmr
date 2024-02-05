@@ -22,6 +22,7 @@ return new class extends Migration
             $table->dateTime('last_login_at')->nullable();
             $table->string('last_login_ip')->nullable();    
             $table->integer('ldap_authentication')->length(11)->default(0);
+            $table->boolean('totp_enabled')->default(false); 
             $table->rememberToken();
             $table->timestamps();
         });

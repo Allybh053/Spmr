@@ -31,6 +31,7 @@
                                         <!-- Login form-->
                                         <form method="POST" action="{{ route('login') }}">
                                         {{ csrf_field() }}
+                                        <input type="hidden" name="login_method" value="local">
                                             <!-- Form Group (email address)-->
                                             <div class="mb-3 form-group{{ $errors->has('email') ? ' has-error' : '' }}">
                                                 <label class="small mb-1" for="inputUsername">Email Address</label>
