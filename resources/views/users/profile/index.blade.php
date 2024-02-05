@@ -26,7 +26,7 @@
             @endif
             <!-- Account page navigation-->
             <nav class="nav nav-borders">
-                <a class="nav-link active ms-0" href="account-profile.html">Profile</a>
+                <a class="nav-link active ms-0" href="{{ route("profile.index")}}">Profile</a>
                 <!--a class="nav-link" href="account-billing.html">Billing</a>
                 <a class="nav-link" href="account-security.html">Security</a>
                 <a class="nav-link" href="account-notifications.html">Notifications</a-->
@@ -54,6 +54,7 @@
                         <div class="card-body">
                             <form id="passwordForm1" method="POST" action="{{ route('profile.updatedetail', ['id' => $user->id]) }}">
                                 @csrf
+                                @method('POST')
                                 <!-- Form Group (Name)-->
                                 <div class="mb-3">
                                     <label class="small mb-1" for="username">Username (how your username will appear to other users on the site)</label>

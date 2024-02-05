@@ -48,7 +48,7 @@ class ProfileController extends Controller
             'lname' => 'required|string',
             'email' => 'required|email',
             'phone' => 'nullable|string',
-            'enabled' => 'required|in:0,1',
+            // 'enabled' => 'required|in:0,1',
             // Add more fields as needed
         ]);
 
