@@ -45,8 +45,11 @@
                 </a>
                 <div class="collapse" id="collapseSMTPPages" data-bs-parent="#accordionSidenav">
                     <nav class="sidenav-menu-nested nav accordion" id="accordionSidenavPages">
-                        <a class="nav-link" href="dashboard-1.html">
+                        <!--<a class="nav-link" href="dashboard-1.html">
                             Register New
+                        </a>-->
+                        <a class="nav-link" href="{{ route('smtp_relay.smtp_relay_req') }}">
+                            SMTP Relay Request
                         </a>
                         <a class="nav-link" href="dashboard-2.html">SMTP Listing</a>
                     </nav>
