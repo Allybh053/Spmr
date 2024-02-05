@@ -52,8 +52,8 @@
                 </a>
                 <div class="collapse" id="collapseMailPages" data-bs-parent="#accordionSidenav">
                     <nav class="sidenav-menu-nested nav accordion" id="accordionSidenavPages">
-                        <a class="nav-link" href="dashboard-1.html">View Mail Relay Server</a>
-                        <a class="nav-link" href="dashboard-1.html">Add Mail Relay Server</a>
+                        <a class="nav-link" href="{{ route('mailrelay.index')}}">View Mail Relay Server</a>
+                        <a class="nav-link" href="{{ route('mailrelay.register')}}">Register Mail Relay</a>
                     </nav>
                 </div>
                 <!-- Sidenav Heading (Config)-->

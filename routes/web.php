@@ -6,6 +6,7 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\UsersController;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\SmtpRelayController;
+use App\Http\Controllers\MainRelayController;
 use App\Http\Controllers\Auth\Saml2Controller;
 use App\Http\Controllers\Auth\LdapController;
 
@@ -68,8 +69,12 @@ Route::group(['middleware' => ['auth']], function () {
 
     });
 
+    Route::get('mailrelay/', [MainRelayController::class, 'index'])->name('mailrelay.index');
+    Route::get('mailrelay/register', [MainRelayController::class, 'show'])->name('mailrelay.register');
+    Route::get('mailrelay/detail', [MainRelayController::class, 'view'])->name('mailrelay.edit');
 
-    //SMTP Relay Request 
+
+    //SMTP Relay Request
     Route::get('/smtp_relay/smtp_relay_req', [SmtpRelayController::class, 'smtp_relay_req'])->name('smtp_relay.smtp_relay_req');
     Route::get('/smtp_relay/form_application_smtp_relay', [SmtpRelayController::class, 'add'])->name('smtp_relay.form_application_smtp_relay');
 
