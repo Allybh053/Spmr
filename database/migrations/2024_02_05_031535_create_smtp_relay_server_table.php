@@ -11,7 +11,6 @@ return new class extends Migration
      */
     public function up(): void
     {
-        // Create smtp_relay_server table
         Schema::create('smtp_relay_server', function (Blueprint $table) {
             $table->id();
             $table->string('ticket_id');
@@ -25,7 +24,6 @@ return new class extends Migration
             // Add any additional columns or modifications as needed
             $table->timestamps();
         });
-
     }
 
     /**
@@ -33,7 +31,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        // Drop smtp_relay_server table
         Schema::dropIfExists('smtp_relay_server');
     }
 };

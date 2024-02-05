@@ -4,17 +4,14 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateSmtpRelayTables extends Migration
+return new class extends Migration
 {
     /**
      * Run the migrations.
-     *
-     * @return void
      */
-    public function up()
+    public function up(): void
     {
-        // Create smtp_relay_req_forms table
-        Schema::create('smtp_relay_req_forms', function (Blueprint $table) {
+        Schema::create('smtp_relay_req_form', function (Blueprint $table) {
             $table->id();
             $table->string('form_id');
             $table->string('ticket_id');
@@ -64,15 +61,9 @@ class CreateSmtpRelayTables extends Migration
 
     /**
      * Reverse the migrations.
-     *
-     * @return void
      */
-    public function down()
+    public function down(): void
     {
-        // Drop smtp_relay_req_forms tables
-        Schema::dropIfExists('smtp_relay_req_forms');
+        Schema::dropIfExists('smtp_relay_req_form');
     }
-}
-
-
-// one form of smtp_relay_req_forms can have multiple of smtp_relay_server. Attachement form as reference in gDrive 
+};
