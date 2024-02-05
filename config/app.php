@@ -177,6 +177,8 @@ return [
         Barryvdh\DomPDF\ServiceProvider::class,
         Imtigger\LaravelJobStatus\LaravelJobStatusServiceProvider::class,
         Milon\Barcode\BarcodeServiceProvider::class,
+        Aacotroneo\Saml2\Saml2ServiceProvider::class,
+        PragmaRX\Google2FALaravel\ServiceProvider::class,
     ])->toArray(),
 
     /*
@@ -235,6 +237,8 @@ return [
         'Excel' => Maatwebsite\Excel\Facades\Excel::class,
         'DNS1D'  => Milon\Barcode\Facades\DNS1DFacade::class,
         'DNS2D'  => Milon\Barcode\Facades\DNS2DFacade::class,
+        'Saml2' => Aacotroneo\Saml2\Facades\Saml2Auth::class,
+        'Google2FA' => PragmaRX\Google2FALaravel\Facade::class,
     ])->toArray(),
 
 ];
