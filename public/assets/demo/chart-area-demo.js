@@ -34,18 +34,7 @@ var myLineChart = new Chart(ctx, {
     type: "line",
     data: {
         labels: [
-            "Jan",
-            "Feb",
-            "Mar",
-            "Apr",
-            "May",
-            "Jun",
-            "Jul",
-            "Aug",
-            "Sep",
-            "Oct",
-            "Nov",
-            "Dec"
+            "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"
         ],
         datasets: [{
             label: "Earnings",
@@ -60,20 +49,22 @@ var myLineChart = new Chart(ctx, {
             pointHoverBorderColor: "rgba(0, 97, 242, 1)",
             pointHitRadius: 10,
             pointBorderWidth: 2,
-            data: [
-                0,
-                10000,
-                5000,
-                15000,
-                10000,
-                20000,
-                15000,
-                25000,
-                20000,
-                30000,
-                25000,
-                40000
-            ]
+            data: [0, 10000, 5000, 15000, 10000, 20000, 15000, 25000, 20000, 30000, 25000, 40000]
+        },
+        {
+            label: "Expenses",
+            lineTension: 0.3,
+            backgroundColor: "rgba(255, 0, 0, 0.05)",
+            borderColor: "rgba(255, 0, 0, 1)",
+            pointRadius: 3,
+            pointBackgroundColor: "rgba(255, 0, 0, 1)",
+            pointBorderColor: "rgba(255, 0, 0, 1)",
+            pointHoverRadius: 3,
+            pointHoverBackgroundColor: "rgba(255, 0, 0, 1)",
+            pointHoverBorderColor: "rgba(255, 0, 0, 1)",
+            pointHitRadius: 10,
+            pointBorderWidth: 2,
+            data: [0, 5000, 2000, 8000, 5000, 10000, 8000, 12000, 10000, 15000, 12000, 20000]
         }]
     },
     options: {
