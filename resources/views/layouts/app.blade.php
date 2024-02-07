@@ -31,26 +31,31 @@
         </div>
     </div>
 
-
+    <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js" crossorigin="anonymous"></script>
     <script src="{{asset('js/scripts.js')}}" type="text/javascript"></script>
     <script src="https://cdn.jsdelivr.net/npm/simple-datatables@latest" crossorigin="anonymous"></script>
     <script src="{{asset('js/datatables/datatables-simple-demo.js')}}"></script>
     <script type="text/javascript">
+    $(document).ready(function() {
+        var token = '{{ csrf_token() }}';
+        var windowLocation;
         $.ajaxSetup({
             headers: {
                 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
             }
         });
         $(function() {
-            $( ".datepicker" ).datepicker({
+            $(".datepicker").datepicker({
                 format: "dd-mm-yyyy",
                 todayHighlight: true,
                 orientation: "bottom",
             });
         });
+    });
+</script>
 
-    </script>
     @stack('script')
 </body>
 </html>

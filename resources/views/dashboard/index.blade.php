@@ -11,7 +11,7 @@
                     <!-- Main page content-->
                     <div class="container-xl px-4 mt-n10">
                         <div class="row">
-                            <div class="col-xxl-8">
+                            <div class="col-xxl-8" style="margin-left: 201px;">
                                 <div class="card col">
                                     <div class="card-body text-center"><h3><u>Postmaster.mygovuc.gov.my</u></h3></div>
                                 </div>
@@ -71,11 +71,14 @@
                             </div>
                         </div>
                         <div class="row">
-                            <div class="col-xxl-8">
+                            <div class="col-xxl-12">
                                 <div class="card">
-                                    <div class="card-body text-center p-5">
+                                    <div class="card-header text-center p-5">
                                         <h5>View MailQueue Statistic (last 5 minutes)</h5>
                                         <p class="mb-4">Create view monitoring for Email Queue Health</p>
+                                    </div>
+                                    <div class="card-body">
+                                        <div class="chart-area"><canvas id="myAreaChart" width="100%" height="30"></canvas></div>
                                     </div>
                                 </div>
                             </div>
@@ -83,3 +86,8 @@
                     </div>
 
  @endsection
+ 
+ @push('script')
+ <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.4/Chart.min.js" crossorigin="anonymous"></script>
+ <script src="{{asset('assets/demo/chart-area-demo.js')}}"></script>
+ @endpush
