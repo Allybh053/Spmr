@@ -16,48 +16,12 @@
         <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
         <link rel="stylesheet" href="{{asset('css/sweetalert2.min.css')}}">
         <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.24/css/jquery.dataTables.min.css">
-
+        <link href="{{asset('css/custom.css')}}" rel="stylesheet" />
+        
         <script data-search-pseudo-elements defer src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/js/all.min.js" crossorigin="anonymous"></script>
        
 
     @stack('meta')
-    <style>
-        .select2-container {
-    width: 100% !important; /* Set the width as needed */
-}
-
-.select2-container .select2-selection--single {
-    height: calc(2.25rem + 9px) !important; /* Set the height as needed */
-    border: 1px solid #c5ccd6 !important; /* Match the border color of form-control */
-    border-radius: 0.35rem !important; /* Match the border-radius of form-control */
-}
-
-.select2-container--default .select2-selection--single .select2-selection__arrow {
-    height: calc(2.25rem + 1px) !important;
-    border: 0px solid #c5ccd6 !important;
-}
-
-.select2-container--default .select2-selection--single .select2-selection__rendered {
-
-    line-height: 45px !important;
-}
-
-.select2-container .select2-selection--single .select2-selection__rendered {
-    font-family: Arial, "Helvetica Neue", Helvetica, sans-serif;
-
-    padding-left:51px  !important;
-}
-
-th {
-    white-space: normal !important;
-    word-wrap: break-word !important;
-  }
-
-  td {
-    white-space: normal !important;
-    word-wrap: break-word !important;
-  }
-    </style>
     @stack('css')
 </head>
 <body class="nav-fixed">
