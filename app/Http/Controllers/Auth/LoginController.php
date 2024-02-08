@@ -2,39 +2,40 @@
 
 namespace App\Http\Controllers\Auth;
 
-use Auth;
-use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use Auth;
+use Closure;
 use Illuminate\Foundation\Auth\AuthenticatesUsers;
+use Illuminate\Http\Request;
 use Illuminate\Validation\ValidationException;
+use PragmaRX\Google2FALaravel\Support\Authenticator;
 
 class LoginController extends Controller
 {
-    /*
-    |--------------------------------------------------------------------------
-    | Login Controller
-    |--------------------------------------------------------------------------
-    |
-    | This controller handles authenticating users for the application and
-    | redirecting them to your home screen. The controller uses a trait
-    | to conveniently provide its functionality to your applications.
-    |
-    */
-
     use AuthenticatesUsers;
 
-    /**
-     * The user has been authenticated.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  mixed  $user
-     * @return mixed
-     */
+    public function handle($request, Closure $next)
+    {
+        $authenticator = app(Authenticator::class)->boot($request);
+
+        if (!$authenticator->isAuthenticated()) {
+            return redirect('2fa');
+        }
+
+        return $next($request);
+    }
+
     protected function authenticated(Request $request, $user)
     {
-        $user->last_login_at = now();
-        $user->last_login_ip = $request->ip();
-        $user->save();
+        $user->update([
+            'last_login_at' => now(),
+            'last_login_ip' => $request->ip(),
+        ]);
+       // Check if TOTP is enabled for the user
+       if ($user->totp_enabled) {// Debugging statement
+  
+        return redirect()->route('2fa.show');
+        }
 
         if ($user->enabled == 0) {
             Auth::logout();
@@ -44,19 +45,10 @@ class LoginController extends Controller
             ]);
         }
     }
+    
 
-    /**
-     * Where to redirect users after login.
-     *
-     * @var string
-     */
     protected $redirectTo = '/main';
 
-    /**
-     * Create a new controller instance.
-     *
-     * @return void
-     */
     public function __construct()
     {
         $this->middleware('guest')->except('logout');
@@ -65,17 +57,39 @@ class LoginController extends Controller
 
     public function index()
     {
-        return view('Auth.login');
+        return view('auth.login');
+    }
+
+    public function show2faForm()
+    {
+        dd('Reached /2fa route'); // Add this line for debugging
+ 
+        return view('auth.totpLogin');
+    }
+
+    public function verify2fa(Request $request)
+    {
+        $request->validate([
+            'totp_code' => 'required',
+        ]);
+
+        $user = Auth::user();
+
+        $authenticator = app(Authenticator::class)->boot($request);
+
+        if (!$authenticator->verifyKey($user, $request->totp_code)) {
+            return redirect()->back()->withErrors(['totp_code' => 'Invalid TOTP code']);
+        }
+
+        return redirect('/main'); // Adjust this to your desired post-2FA verification page
     }
 
     public function logout(Request $request)
-
     {
         $this->guard()->logout();
         $request->session()->flush();
         $request->session()->regenerate();
 
         return redirect('/login');
-
     }
 }

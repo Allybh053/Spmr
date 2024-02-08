@@ -2,8 +2,14 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\UsersController;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\SmtpRelayController;
+use App\Http\Controllers\MainRelayController;
+use App\Http\Controllers\Auth\Saml2Controller;
+use App\Http\Controllers\Auth\LdapController;
+
 
 /*
 |--------------------------------------------------------------------------
@@ -25,35 +31,53 @@ Route::get('/', function () {
 Auth::routes();
 //Login
 Route::get('/login',[LoginController::class, 'index'])->name('login' );
+// SAML2 login routes
+Route::get('/saml/login', [Saml2Controller::class, 'samlLogin'])->name('saml.login');
+Route::post('/saml/acs', [Saml2Controller::class, 'samlAcs'])->name('saml.acs');
+
+// LDAP login routes
+Route::get('/ldap/login', [LdapController::class, 'showLoginForm'])->name('ldap.login');
+Route::post('/ldap/login', [LdapController::class, 'ldapLogin'])->name('ldap.login.submit');
+
+// TOTP login routes
+Route::get('/totp/login', [LoginController::class, 'show2faForm'])->name('2fa.show');
+Route::post('/totp/login', [LoginController::class, 'verify2fa'])->name('2fa.verify');
 
 Route::get('/logout', [LoginController::class, 'logout'])->name('logout' );
+
+
+
 
 Route::group(['middleware' => ['auth']], function () {
 
     //testing route
-    Route::get('/main', [DashboardController::class, 'index'])->name('dashboard.index');
+    Route::get('/home', [DashboardController::class, 'index'])->name('dashboard.index');
 
 	//Dashboard
-	Route::group(['prefix' => 'users'], function () {
-        //testing route
-        Route::get('/user', function () {
-            return view('users/usermanagements/create');
-        });
-        //testing route
-        Route::get('/profile', function () {
-            return view('users/profile/index');
-        });
+    Route::group(['prefix' => 'users'], function () {
+        Route::get('/usermanagements/create', [UsersController::class, 'create'])->name('usermanagements.create');
+        Route::get('/usermanagements/index', [UsersController::class, 'index'])->name('usermanagements.index');
+        Route::post('/usermanagements', [UsersController::class, 'store'])->name('usersmanagements.store');
+        Route::get('/usermanagements/{id}/edit', [UsersController::class, 'edit'])->name('usersmanagements.edit');
+        Route::get('/usermanagements/{id}', [UsersController::class, 'show'])->name('usersmanagements.show');
+        Route::put('/usermanagements/{id}', [UsersController::class, 'update'])->name('usersmanagements.update');
+        Route::delete('/usermanagements/{id}', [UsersController::class, 'destroy'])->name('usersmanagements.destroy');
 
-        // Route::get('/', [UserController::class, 'index'])->name('user.index');
-        // Route::get('/profile', [UserController::class, 'profile'])->name('user.profile');
+        Route::get('/profile', [ProfileController::class, 'index'])->name('profile.index');
+        Route::post('/profile/{id}/updatepassword', [ProfileController::class, 'updatepassword'])->name('profile.updatepassword');
+        Route::post('/profile/{id}/updatedetail', [ProfileController::class, 'updatedetail'])->name('profile.updatedetail');
 
     });
 
+    Route::get('mailrelay/', [MainRelayController::class, 'index'])->name('mailrelay.index');
+    Route::get('mailrelay/register', [MainRelayController::class, 'show'])->name('mailrelay.register');
+    Route::get('mailrelay/detail', [MainRelayController::class, 'view'])->name('mailrelay.edit');
 
     //SMTP Relay Request
     Route::get('/smtp_relay/smtp_relay_req', [SmtpRelayController::class, 'index'])->name('smtp_relay.index');
     Route::get('/smtp_relay/new_smtp_relay_req', [SmtpRelayController::class, 'new'])->name('smtp_relay.new');
     Route::post('/smtp_relay/new_smtp_relay_req', [SmtpRelayController::class, 'add'])->name('smtp_relay.add');
+
 
 
 });

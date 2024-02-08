@@ -20,7 +20,7 @@ class DashboardController extends Controller
     {
         $user = Auth::user();
         $role = $user->roles->isNotEmpty() ? $user->roles->pluck('name')->first() : null;
-    
+
         return view('dashboard.index', compact('user', 'role'));
     }
 }
