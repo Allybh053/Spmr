@@ -12,9 +12,52 @@
         <link href="https://cdn.jsdelivr.net/npm/simple-datatables@latest/dist/style.css" rel="stylesheet" />
         <link href="{{asset('css/styles.css')}}" rel="stylesheet" />
         <link rel="icon" type="image/x-icon" href="{{asset('assets/img/favicon.png')}}" />
+        <link href="{{asset('css/select2.css')}}" rel="stylesheet" />
+        <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+        <link rel="stylesheet" href="{{asset('css/sweetalert2.min.css')}}">
+        <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.24/css/jquery.dataTables.min.css">
+
         <script data-search-pseudo-elements defer src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/js/all.min.js" crossorigin="anonymous"></script>
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/feather-icons/4.28.0/feather.min.js" crossorigin="anonymous"></script>
+       
+
     @stack('meta')
+    <style>
+        .select2-container {
+    width: 100% !important; /* Set the width as needed */
+}
+
+.select2-container .select2-selection--single {
+    height: calc(2.25rem + 9px) !important; /* Set the height as needed */
+    border: 1px solid #c5ccd6 !important; /* Match the border color of form-control */
+    border-radius: 0.35rem !important; /* Match the border-radius of form-control */
+}
+
+.select2-container--default .select2-selection--single .select2-selection__arrow {
+    height: calc(2.25rem + 1px) !important;
+    border: 0px solid #c5ccd6 !important;
+}
+
+.select2-container--default .select2-selection--single .select2-selection__rendered {
+
+    line-height: 45px !important;
+}
+
+.select2-container .select2-selection--single .select2-selection__rendered {
+    font-family: Arial, "Helvetica Neue", Helvetica, sans-serif;
+
+    padding-left:51px  !important;
+}
+
+th {
+    white-space: normal !important;
+    word-wrap: break-word !important;
+  }
+
+  td {
+    white-space: normal !important;
+    word-wrap: break-word !important;
+  }
+    </style>
     @stack('css')
 </head>
 <body class="nav-fixed">
@@ -33,12 +76,21 @@
 
     <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
     <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+    <script src="{{asset('js/select2.min.js')}}"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js" crossorigin="anonymous"></script>
     <script src="{{asset('js/scripts.js')}}" type="text/javascript"></script>
+    <script src="{{asset('js/sweetalert2.min.js')}}"></script>
+    <script src="{{asset('js/feather.min.js')}}" type="text/javascript"></script>
+    <script src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.min.js"></script>
+
     <script src="https://cdn.jsdelivr.net/npm/simple-datatables@latest" crossorigin="anonymous"></script>
     <script src="{{asset('js/datatables/datatables-simple-demo.js')}}"></script>
+    <script src="{{asset('js/custom.js')}}" type="text/javascript"></script>
+    <script src="{{asset('js/ajaxSubmit.js')}}" type="text/javascript"></script>
     <script type="text/javascript">
     $(document).ready(function() {
+        $('.select2').select2();
+
         var token = '{{ csrf_token() }}';
         var windowLocation;
         $.ajaxSetup({
@@ -46,6 +98,7 @@
                 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
             }
         });
+
         $(function() {
             $(".datepicker").datepicker({
                 format: "dd-mm-yyyy",
@@ -55,6 +108,7 @@
         });
     });
 </script>
+
 
     @stack('script')
 </body>
