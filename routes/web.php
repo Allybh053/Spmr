@@ -69,14 +69,22 @@ Route::group(['middleware' => ['auth']], function () {
 
     });
 
-    Route::get('mailrelay/', [MainRelayController::class, 'index'])->name('mailrelay.index');
-    Route::get('mailrelay/register', [MainRelayController::class, 'show'])->name('mailrelay.register');
-    Route::get('mailrelay/detail', [MainRelayController::class, 'view'])->name('mailrelay.edit');
+    Route::group(['prefix' => 'mailrelay'], function () {
+        Route::get('/', [MainRelayController::class, 'index'])->name('mailrelay.index');
+        Route::get('/register', [MainRelayController::class, 'show'])->name('mailrelay.register');
+        Route::get('/detail', [MainRelayController::class, 'view'])->name('mailrelay.edit');
+    });
 
     //SMTP Relay Request
-    Route::get('/smtp_relay/smtp_relay_req', [SmtpRelayController::class, 'index'])->name('smtp_relay.index');
-    Route::get('/smtp_relay/new_smtp_relay_req', [SmtpRelayController::class, 'new'])->name('smtp_relay.new');
-    Route::post('/smtp_relay/new_smtp_relay_req', [SmtpRelayController::class, 'add'])->name('smtp_relay.add');
+    Route::group(['prefix' => 'smtp_relay'], function () {
+        Route::get('/smtp_relay_req', [SmtpRelayController::class, 'index'])->name('smtp_relay.smtp_relay_req');
+        Route::get('/form_application_smtp_relay', [SmtpRelayController::class, 'create'])->name('smtp_relay.create');
+        Route::post('/form_application_smtp_relay/add', [SmtpRelayController::class, 'store'])->name('smtp_relay.store');
+        Route::get('/form_application_smtp_relay/edit/{id}', [SmtpRelayController::class, 'edit'])->name('smtp_relay.edit');
+        Route::post('/form_application_smtp_relay/update/{id}', [SmtpRelayController::class, 'update'])->name('smtp_relay.update');
+        Route::post('/form_application_smtp_relay/delete/{id}', [SmtpRelayController::class, 'delete'])->name('smtp_relay.delete');
+        Route::post('/form_application_smtp_relay/datatable', [SmtpRelayController::class, 'datatable'])->name('smtp_relay.datatable');
+    });
 
 
 
