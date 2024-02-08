@@ -38,7 +38,7 @@
                         <!--<a class="nav-link" href="dashboard-1.html">
                             Register New
                         </a>-->
-                        <a class="nav-link" href="{{ route('smtp_relay.smtp_relay_req') }}">
+                        <a class="nav-link" href="{{ route('smtp_relay.index') }}">
                             SMTP Relay Request
                         </a>
                         <a class="nav-link" href="dashboard-2.html">SMTP Listing</a>

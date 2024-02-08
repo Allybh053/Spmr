@@ -2,8 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\SmtpRelayReqForm;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Str;
 use Illuminate\Support\Facades\DB;
 
 class SmtpRelayController extends Controller
@@ -294,4 +296,5 @@ class SmtpRelayController extends Controller
 
         return response()->json(['success' => '1', 'redirect' => route('smtp_relay.smtp_relay_req'), 'message' => 'Application successfully deleted']);
     }
+
 }
