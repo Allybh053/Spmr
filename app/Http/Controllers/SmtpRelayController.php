@@ -76,24 +76,17 @@ class SmtpRelayController extends Controller
     }
 
     public function store(){
+
         // $messages = [
-        //     'companyName.required' => 'Company name field is required.',
-        //     'address1.required' => 'Address 1 field is required.',
-        //     'postcode.required' => 'Postcode field is required.',
-        //     'city.required' => 'City field is required.',
-        //     'state.required' => 'Please Select State.',
-        //     'phone.max' => 'Phone Number field max is 15 number.',
-        //     'email.required' => 'Email field is required.',
+            // 'mailfrom_email_addr.required' => 'The MAILFROM Email Address field is required.',
+            // 'mailfrom_email_addr.email' => 'The MAILFROM Email Address must be a valid email address.',
+            // 'owner_email_addr.required' => 'The Email Address Owner System field is required.',
+            // 'owner_email_addr.email' => 'The Email Address Owner System must be a valid email address.',
         // ];
 
         // $validation = [
-        //     'companyName' => 'required',
-        //     'address1' => 'required',
-        //     'postcode' => 'required',
-        //     'city' => 'required',
-        //     'state' => 'required',
-        //     'phone' => 'max:15',
-        //     'email' => 'required',
+            // 'mailfrom_email_addr' => 'required|email',
+            // 'owner_email_addr' => 'required|email',
         // ];
 
         // $request->validate($validation, $messages);
@@ -101,7 +94,47 @@ class SmtpRelayController extends Controller
         try {
             DB::beginTransaction();
 
-            // $application->save();
+            $smtpRelayReq = new SmtpRelayReqForm();
+            $smtpRelayReq->form_id = Str::random(9);
+            $smtpRelayReq->ticket_id = $request->ticket_no;
+            $smtpRelayReq->types_req = $request->input('inputTypesApp');
+            $smtpRelayReq->project_name = $request->input('inputProjName');
+            $smtpRelayReq->server_name = $request->input('inputServerName');
+            $smtpRelayReq->ip_addr_server = $request->input('inputIpAddrServer');
+            $smtpRelayReq->fqdn_system = $request->input('inputFqdnServer');
+            $smtpRelayReq->mailfrom_email_addr = $request->input('inputMailfromEmailAddr');
+            $smtpRelayReq->mailbox_created = $request->input('inputMailboxExistence');
+            $smtpRelayReq->system_owner_name = $request->input('inputSystOwnerName');
+            $smtpRelayReq->owner_email_addr = $request->input('inputEmailAddrOwnerSyst');
+            $smtpRelayReq->owner_phone_number = $request->input('inputPhoneOwnerSyst');
+            $smtpRelayReq->agencies = $request->input('inputAgencies');
+            $smtpRelayReq->dept_div_unit = $request->input('inputDeptDivUnit');
+            $smtpRelayReq->agencies_addr = $request->input('inputAgencyAddr');
+            $smtpRelayReq->req_justifications = $request->input('inputJustApp');
+            $smtpRelayReq->smtp_relay_auth_method = $request->input('inputSmtpRelayAuthMethod');
+            $smtpRelayReq->smtp_relay_server = $request->input('inputSmtpRelayServer');
+            $smtpRelayReq->smtp_port = $request->input('inputSmtpPort');
+            $smtpRelayReq->smtp_username = $request->input('inputSmtpUsername');
+            $smtpRelayReq->smtp_password = $request->input('inputSmtpPwd');
+            $smtpRelayReq->est_no_system_users_per_day = $request->input('inputEstSystUsers');
+            $smtpRelayReq->est_no_email_sent_from_system_users_per_day = $request->input('inputEstNumbEmailSent');
+            $smtpRelayReq->applicant_name = $request->input('inputApplicantName');
+            $smtpRelayReq->applicant_position = $request->input('inputApplicantPosition');
+            $smtpRelayReq->applicant_dept_div = $request->input('inputApplicantDeptDiv');
+            $smtpRelayReq->date_application = $request->input('inputAppDate');
+            $smtpRelayReq->verifier_1_name = $request->input('inputVerifiedName1');
+            $smtpRelayReq->verifier_1_position = $request->input('inputVerifiedPosition1');
+            $smtpRelayReq->verifier_1_dept_div = $request->input('inputVerifiedDeptDiv1');
+            $smtpRelayReq->date_verification_1 = $request->input('inputVerificationDate1');
+            $smtpRelayReq->verifier_2_name = $request->input('inputVerifiedName2');
+            $smtpRelayReq->verifier_2_position = $request->input('inputVerifiedPosition2');
+            $smtpRelayReq->verifier_2_dept_div = $request->input('inputVerifiedDeptDiv2');
+            $smtpRelayReq->date_verification_2 = $request->input('inputVerificationDate2');
+            $smtpRelayReq->verifier_3_name = $request->input('inputVerifiedName3');
+            $smtpRelayReq->verifier_3_position = $request->input('inputVerifiedPosition3');
+            $smtpRelayReq->verifier_3_dept_div = $request->input('inputVerifiedDeptDiv3');
+            $smtpRelayReq->date_verification_3 = $request->input('inputVerificationDate3');
+            $smtpRelayReq->save();
 
             DB::commit();
             return response()->json([
