@@ -50,9 +50,10 @@ Route::group(['middleware' => ['auth']], function () {
     });
 
 
-    //SMTP Relay Request 
-    Route::get('/smtp_relay/smtp_relay_req', [SmtpRelayController::class, 'smtp_relay_req'])->name('smtp_relay.smtp_relay_req');
-    Route::get('/smtp_relay/form_application_smtp_relay', [SmtpRelayController::class, 'add'])->name('smtp_relay.form_application_smtp_relay');
+    //SMTP Relay Request
+    Route::get('/smtp_relay/smtp_relay_req', [SmtpRelayController::class, 'index'])->name('smtp_relay.index');
+    Route::get('/smtp_relay/new_smtp_relay_req', [SmtpRelayController::class, 'new'])->name('smtp_relay.new');
+    Route::post('/smtp_relay/new_smtp_relay_req', [SmtpRelayController::class, 'add'])->name('smtp_relay.add');
 
 
 });

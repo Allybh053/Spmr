@@ -8,19 +8,36 @@
                         <div class="col-auto mb-3">
                             <h1 class="page-header-title">
                                 <div class="page-header-icon"></div>
-                                SMTP Relay Request MyGov UC3.0
+                                List SMTP Relay Request MyGov UC3.0
                             </h1>
                         </div>
-                            <div class="col-12 col-xl-auto mb-3">
-                                <a class="btn btn-sm btn-light text-primary" href="{{ route('smtp_relay.form_application_smtp_relay') }}">
-                                    <i class="me-1" data-feather="plus"></i>
-                                    Add New Request Form
-                                </a>
-                            </div>
+                        <div class="col-12 col-xl-auto mb-3">
+                            <a class="btn btn-sm btn-light text-primary" href="{{ route('smtp_relay.new') }}">
+                                <i class="me-1" data-feather="plus"></i>
+                                Add New Request Form
+                            </a>
+                        </div>
                     </div>
                 </div>
             </div>
         </header>
+
+         {{--alert successfull and failed created/update/delete form request --}}
+         @if(session()->has('success'))
+             <div class="alert alert-primary alert-dismissible fade show" role="alert">
+                 {{ session()->get('success') }}
+                 <button class="btn-close" type="button" data-bs-dismiss="alert" aria-label="Close"></button>
+             </div>
+         @endif
+         @if ($errors->any())
+             @foreach ($errors->all() as $error)
+                 <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                     {{ $error }}
+                     <button class="btn-close" type="button" data-bs-dismiss="alert" aria-label="Close"></button>
+                 </div>
+             @endforeach
+         @endif
+
         <!-- Main page content-->
         <div class="container-fluid px-4">
             <div class="card">
