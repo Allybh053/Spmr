@@ -73,7 +73,7 @@
 
 
                 <a class="nav-link collapsed" href="javascript:void(0);" data-bs-toggle="collapse" data-bs-target="#collapseServices" aria-expanded="false" aria-controls="collapseServices">
-                    <div class="nav-link-icon"><i data-feather="mail"></i></div>
+                    <div class="nav-link-icon"><i data-feather="radio"></i></div>
                    Services
                     <div class="sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
                 </a>
@@ -119,9 +119,15 @@
                         <a class="nav-link" href="#">Detail Report Sender</a>
                     </nav>
                 </div>
-                
+
                 <!-- Sidenav Heading (Config)-->
                 <div class="sidenav-menu-heading">Config</div>
+                <!-- Sidenav Accordion (UC log file)-->
+                <a class="nav-link" href="{{ route('dashboard.index')}}">
+                    <div class="nav-link-icon"><i data-feather="server"></i></div>
+                    Server Config
+                    <div class="sidenav-collapse-arrow"></div>
+                </a>
                 <!-- Sidenav Accordion (Setting)-->
                 <a class="nav-link collapsed" href="javascript:void(0);" data-bs-toggle="collapse" data-bs-target="#collapseAppsetting" aria-expanded="false" aria-controls="collapseAppsetting">
                     <div class="nav-link-icon"><i data-feather="globe"></i></div>
