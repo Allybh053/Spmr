@@ -27,12 +27,6 @@
                     Dashboards
                     <div class="sidenav-collapse-arrow"></div>
                 </a>
-                <!-- Sidenav Accordion (Services)-->
-                <a class="nav-link" href="{{ route('dashboard.index')}}">
-                    <div class="nav-link-icon"><i data-feather="radio"></i></div>
-                    Server Services
-                    <div class="sidenav-collapse-arrow"></div>
-                </a>
                 <!-- Sidenav Link (Charts)-->
                 <a class="nav-link collapsed" href="javascript:void(0);" data-bs-toggle="collapse" data-bs-target="#collapseSMTPPages" aria-expanded="false" aria-controls="collapseSMTPPages">
                     <div class="nav-link-icon"><i data-feather="grid"></i></div>
@@ -79,7 +73,7 @@
 
 
                 <a class="nav-link collapsed" href="javascript:void(0);" data-bs-toggle="collapse" data-bs-target="#collapseServices" aria-expanded="false" aria-controls="collapseServices">
-                    <div class="nav-link-icon"><i data-feather="mail"></i></div>
+                    <div class="nav-link-icon"><i data-feather="radio"></i></div>
                    Services
                     <div class="sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
                 </a>
