@@ -72,7 +72,7 @@ Route::group(['middleware' => ['auth']], function () {
     Route::group(['prefix' => 'mailrelay'], function () {
         Route::get('/', [MainRelayController::class, 'index'])->name('mailrelay.index');
         Route::get('/register', [MainRelayController::class, 'show'])->name('mailrelay.register');
-        Route::get('/detail', [MainRelayController::class, 'view'])->name('mailrelay.edit');
+        Route::get('/detail/{id}', [MainRelayController::class, 'view'])->name('mailrelay.edit');
     });
 
     //SMTP Relay Request

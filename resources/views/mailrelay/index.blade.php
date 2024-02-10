@@ -32,7 +32,7 @@
         @endif
         <div class="card">
             <div class="card-body">
-                <table id="datatablesSimple">
+                <table id="datatablesSimple" class="table table-striped">
                     <thead>
                         <tr>
                             <th>No</th>
@@ -52,11 +52,11 @@
                             <td>{{ $smtpMailServer -> ticket_id }}</td>
                             <td>{{ $smtpMailServer -> smtp_relay_server }}</td>
                             <td>@if($smtpMailServer -> types_req == 0)
-                                <span class="badge bg-green-soft text-green">New Application</span>
+                                <span class="badge bg-success text-white rounded-pill">New Application</span>
                             @elseif($smtpMailServer -> types_req == 1)
-                                <span class="badge bg-red-soft text-red">Terminate of Service</span>
+                                <span class="badge bg-danger text-white rounded-pill">Terminate of Service</span>
                             @else
-                                <span class="badge bg-red-soft text-primary">Onboarding Agency</span>
+                                <span class="badge bg-primary text-white rounded-pill">Onboarding Agency</span>
                             @endif</td>
                             <td>{{ $smtpMailServer -> applicant_name }}</td>
                             <td>
