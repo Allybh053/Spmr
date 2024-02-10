@@ -27,6 +27,12 @@
                     Dashboards
                     <div class="sidenav-collapse-arrow"></div>
                 </a>
+                <!-- Sidenav Accordion (Services)-->
+                <a class="nav-link" href="{{ route('dashboard.index')}}">
+                    <div class="nav-link-icon"><i data-feather="radio"></i></div>
+                    Server Services
+                    <div class="sidenav-collapse-arrow"></div>
+                </a>
                 <!-- Sidenav Link (Charts)-->
                 <a class="nav-link collapsed" href="javascript:void(0);" data-bs-toggle="collapse" data-bs-target="#collapseSMTPPages" aria-expanded="false" aria-controls="collapseSMTPPages">
                     <div class="nav-link-icon"><i data-feather="grid"></i></div>
@@ -56,8 +62,40 @@
                         <a class="nav-link" href="{{ route('mailrelay.register')}}">Register Mail Relay</a>
                     </nav>
                 </div>
+                <!-- Sidenav Link (his connection Mail Relay Module)-->
+                <a class="nav-link collapsed" href="javascript:void(0);" data-bs-toggle="collapse" data-bs-target="#collapseHistoryPages" aria-expanded="false" aria-controls="collapseHistoryPages">
+                    <div class="nav-link-icon"><i data-feather="external-link"></i></div>
+                    History Connection
+                    <div class="sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
+                </a>
+                <div class="collapse" id="collapseHistoryPages" data-bs-parent="#accordionSidenav">
+                    <nav class="sidenav-menu-nested nav accordion" id="accordionSidenavPages">
+                        <a class="nav-link" href="#">dump</a>
+                        <a class="nav-link" href="#">dump</a>
+                    </nav>
+                </div>
+                <!-- Sidenav Accordion (UC Overview)-->
+                <a class="nav-link" href="{{ route('dashboard.index')}}">
+                    <div class="nav-link-icon"><i data-feather="aperture"></i></div>
+                    UC Overview
+                    <div class="sidenav-collapse-arrow"></div>
+                </a>
+                <!-- Sidenav Heading (Config)-->
+                <div class="sidenav-menu-heading">Report</div>
+                <!-- Sidenav Accordion (Report)-->
+                <a class="nav-link" href="{{ route('dashboard.index')}}">
+                    <div class="nav-link-icon"><i data-feather="file"></i></div>
+                    Report
+                    <div class="sidenav-collapse-arrow"></div>
+                </a>
                 <!-- Sidenav Heading (Config)-->
                 <div class="sidenav-menu-heading">Config</div>
+                <!-- Sidenav Accordion (UC log file)-->
+                <a class="nav-link" href="{{ route('dashboard.index')}}">
+                    <div class="nav-link-icon"><i data-feather="file-minus"></i></div>
+                    Log File Overview
+                    <div class="sidenav-collapse-arrow"></div>
+                </a>
                 <!-- Sidenav Accordion (Setting)-->
                 <a class="nav-link collapsed" href="javascript:void(0);" data-bs-toggle="collapse" data-bs-target="#collapseAppsetting" aria-expanded="false" aria-controls="collapseAppsetting">
                     <div class="nav-link-icon"><i data-feather="globe"></i></div>

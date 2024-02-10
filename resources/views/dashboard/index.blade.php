@@ -10,13 +10,18 @@
                     </header>
                     <!-- Main page content-->
                     <div class="container-xl px-4 mt-n10">
-                        <div class="row">
-                            <div class="col-xxl-8" style="margin-left: 201px;">
-                                <div class="card col">
-                                    <div class="card-body text-center"><h3><u>Postmaster.mygovuc.gov.my</u></h3></div>
+                        <a class="card card-icon lift lift-sm mb-4" href="#">
+                            <div class="row">
+                                <div class="col-auto card-icon-aside bg-primary"><i class="text-white-50" data-feather="server"></i></div>
+                                <div class="col">
+                                    <div class="card-body py-4">
+                                        <h5 class="card-title text-primary mb-2">Postmaster.mygovuc.gov.my</h5>
+                                        <p class="card-text mb-1">Ip Address</p>
+                                        <div class="small text-muted"></div>
+                                    </div>
                                 </div>
                             </div>
-                        </div><hr>
+                        </a>
                         <div class="row">
                             <div class="col-xl-4 mb-4">
                                 <a class="card lift h-100" href="#!">
@@ -86,7 +91,7 @@
                     </div>
 
  @endsection
- 
+
  @push('script')
  <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.4/Chart.min.js" crossorigin="anonymous"></script>
  <script src="{{asset('assets/demo/chart-area-demo.js')}}"></script>

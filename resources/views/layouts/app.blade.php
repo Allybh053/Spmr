@@ -17,9 +17,10 @@
         <link rel="stylesheet" href="{{asset('css/sweetalert2.min.css')}}">
         <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.24/css/jquery.dataTables.min.css">
         <link href="{{asset('css/custom.css')}}" rel="stylesheet" />
-        
+        <script src="{{ asset('js/xterm.js') }}"></script>
+        <link rel="stylesheet" href="{{ asset('css/xterm.css') }}">
         <script data-search-pseudo-elements defer src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/js/all.min.js" crossorigin="anonymous"></script>
-       
+
 
     @stack('meta')
     @stack('css')
