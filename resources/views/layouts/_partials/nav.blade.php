@@ -56,6 +56,70 @@
                         <a class="nav-link" href="{{ route('mailrelay.register')}}">Register Mail Relay</a>
                     </nav>
                 </div>
+
+
+                <a class="nav-link collapsed" href="javascript:void(0);" data-bs-toggle="collapse" data-bs-target="#collapseHistory" aria-expanded="false" aria-controls="collapseHistory">
+                    <div class="nav-link-icon"><i data-feather="mail"></i></div>
+                   History Connection
+                    <div class="sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
+                </a>
+                <div class="collapse" id="collapseHistory" data-bs-parent="#accordionSidenav">
+                    <nav class="sidenav-menu-nested nav accordion" id="accordionSidenavPages">
+                        <a class="nav-link" href="#">Blacklist Firewall</a>
+                        <a class="nav-link" href="#">Whitelist Firewall</a>
+                        <a class="nav-link" href="#">Fail-to-Ban Blacklist Firewall</a>
+                    </nav>
+                </div>
+
+
+                <a class="nav-link collapsed" href="javascript:void(0);" data-bs-toggle="collapse" data-bs-target="#collapseServices" aria-expanded="false" aria-controls="collapseServices">
+                    <div class="nav-link-icon"><i data-feather="mail"></i></div>
+                   Services
+                    <div class="sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
+                </a>
+                <div class="collapse" id="collapseServices" data-bs-parent="#accordionSidenav">
+                    <nav class="sidenav-menu-nested nav accordion" id="accordionSidenavPages">
+                        <a class="nav-link" href="#">Check Status</a>
+                    </nav>
+                </div>
+
+                <a class="nav-link collapsed" href="javascript:void(0);" data-bs-toggle="collapse" data-bs-target="#collapseUcOverview" aria-expanded="false" aria-controls="collapseUcOverview">
+                    <div class="nav-link-icon"><i data-feather="mail"></i></div>
+                   UC Overview
+                    <div class="sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
+                </a>
+                <div class="collapse" id="collapseUcOverview" data-bs-parent="#accordionSidenav">
+                    <nav class="sidenav-menu-nested nav accordion" id="accordionSidenavPages">
+                        <a class="nav-link" href="#">View Register Application IP</a>
+                        <a class="nav-link" href="#">View Register Domain Map</a>
+                        <a class="nav-link" href="#">View Register Username</a>
+                        <a class="nav-link" href="#">View List Wildcard</a>
+                    </nav>
+                </div>
+
+                <a class="nav-link collapsed" href="javascript:void(0);" data-bs-toggle="collapse" data-bs-target="#collapseLog" aria-expanded="false" aria-controls="collapseLog">
+                    <div class="nav-link-icon"><i data-feather="mail"></i></div>
+                   Log
+                    <div class="sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
+                </a>
+                <div class="collapse" id="collapseLog" data-bs-parent="#accordionSidenav">
+                    <nav class="sidenav-menu-nested nav accordion" id="accordionSidenavPages">
+                        <a class="nav-link" href="#">Chart</a>
+                    </nav>
+                </div>
+
+                <a class="nav-link collapsed" href="javascript:void(0);" data-bs-toggle="collapse" data-bs-target="#collapseReport" aria-expanded="false" aria-controls="collapseReport">
+                    <div class="nav-link-icon"><i data-feather="mail"></i></div>
+                   Report
+                    <div class="sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
+                </a>
+                <div class="collapse" id="collapseReport" data-bs-parent="#accordionSidenav">
+                    <nav class="sidenav-menu-nested nav accordion" id="accordionSidenavPages">
+                        <a class="nav-link" href="#">Statistic Traffic Summary</a>
+                        <a class="nav-link" href="#">Detail Report Sender</a>
+                    </nav>
+                </div>
+                
                 <!-- Sidenav Heading (Config)-->
                 <div class="sidenav-menu-heading">Config</div>
                 <!-- Sidenav Accordion (Setting)-->

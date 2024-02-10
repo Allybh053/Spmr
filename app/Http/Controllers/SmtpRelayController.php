@@ -91,6 +91,22 @@ class SmtpRelayController extends Controller
 
         // $request->validate($validation, $messages);
 
+        // Validate the request data
+        // $validatedData = $request->validate([
+        //     'server_name.*' => 'required',
+        //     'ip_server.*' => 'required',
+        //     'fqdn_system.*' => 'required',
+        // ]);
+
+        // // Process the form submission
+        // foreach ($validatedData['server_name'] as $key => $value) {
+        //     $applicantInfo = new ApplicantInfo();
+        //     $applicantInfo->server_name = $validatedData['server_name'][$key];
+        //     $applicantInfo->ip_server = $validatedData['ip_server'][$key];
+        //     $applicantInfo->fqdn_system = $validatedData['fqdn_system'][$key];
+        //     $applicantInfo->save();
+        // }
+
         try {
             DB::beginTransaction();
 

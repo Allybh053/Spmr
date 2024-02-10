@@ -27,7 +27,12 @@
                 <div class="col-xl-12">
                     <!-- Account details card-->
                     <div class="card mb-4">
-                        <div class="card-header">SMTP Relay MyGovUC3.0 Request Form</div>
+                    @isset($applicantInfo)
+                        <div class="card-header">Update SMTP Relay MyGovUC3.0</div>
+                    @else
+                        <div class="card-header">Register SMTP Relay MyGovUC3.0</div>
+                    @endisset
+                        
                         <div class="card-body  mt-1 mb-4">
                             <h4>Application Information</h4>
                             </br>
@@ -55,27 +60,36 @@
                                     {!! Form::text('project_name', $applicantInfo->project_name ?? '', ['id'=>'project_name', 'name'=>'project_name', 'class'=>'form-control']) !!}
                                 </div>
                                 <!-- Form Row-->
-                                <div class="row gx-3 mb-3">
-                                    <!-- Form Group (server name)-->
-                                    <div class="col-md-3">
-                                        <label class="small mb-1" for="inputServerName">Server Name:</label>
-                                        {!! Form::text('server_name',  $applicantInfo->server_name ?? '', ['id'=>'server_name', 'name'=>'server_name', 'class'=>'form-control']) !!}
+                                 <!-- Your dynamic inputs container -->
+                                    <div id="dynamic-inputs-container">
+                                        <!-- Your initial input row -->
+                                        <div class="row gx-3 mb-3 dynamic-input-row">
+                                            <!-- Form Group (server name)-->
+                                            <div class="col-md-3">
+                                                <label class="small mb-1" for="inputServerName">Server Name:</label>
+                                                {!! Form::text('server_name[]', $applicantInfo->server_name ?? '', ['class'=>'form-control']) !!}
+                                            </div>
+                                            <!-- Form Group (ip address server)-->
+                                            <div class="col-md-3">
+                                                <label class="small mb-1" for="inputIpAddrServer">IP Address Server:</label>
+                                                {!! Form::text('ip_server[]', $applicantInfo->ip_server ?? '', ['class'=>'form-control']) !!}
+                                            </div>
+                                            <!-- Form Group (fqdn system)-->
+                                            <div class="col-md-3">
+                                                <label class="small mb-1" for="inputFqdnServer">FQDN System:</label>
+                                                {!! Form::text('fqdn_system[]', $applicantInfo->fqdn_system ?? '', ['class'=>'form-control']) !!}
+                                            </div>
+                                            <!-- Remove button-->
+                                            <div class="col-md-3" style="padding: 25px">
+                                                <button class="btn btn-danger small mb-1 remove-row"><i class="me-1" data-feather="minus"></i>Remove</button>
+                                            </div>
+                                        </div>
                                     </div>
-                                    <!-- Form Group (ip address server)-->
-                                    <div class="col-md-3">
-                                        <label class="small mb-1" for="inputIpAddrServer">IP Address Server:</label>
-                                        {!! Form::text('ip_server', $applicantInfo->ip_server ?? '', ['id'=>'ip_server', 'name'=>'ip_server', 'class'=>'form-control']) !!}
+
+                                    <!-- Add button -->
+                                    <div class="col-md-11" style="margin: -56px;text-align:right;padding-top: 38px;padding-bottom: 58px;">
+                                        <button id="add-row" type="button" class="btn btn-primary small mb-1"><i class="me-1" data-feather="plus"></i>Add</button>
                                     </div>
-                                    <!-- Form Group (fqdn system)-->
-                                    <div class="col-md-3">
-                                        <label class="small mb-1" for="inputFqdnServer">FQDN System:</label>
-                                        {!! Form::text('fqdn_system', $applicantInfo->fqdn_system ?? '', ['id'=>'fqdn_system', 'name'=>'fqdn_system', 'class'=>'form-control']) !!}
-                                    </div>
-                                    <!-- Add button-->
-                                    <div class="col-md-3" style="padding: 25px">
-                                        <button class="btn btn-primary small mb-1"><i class="me-1" data-feather="plus"></i>Add</button>
-                                    </div>
-                                </div>
                                 <!-- Form Row-->
                                 <div class="row gx-3 mb-3">
                                     <!-- Form Group (mailfrom email address)-->
@@ -322,3 +336,20 @@
         </div>
     </main>
 @endsection
+@push('script')
+<script>
+    $(document).ready(function() {
+        // Add row
+        $('#add-row').click(function() {
+            var newRow = $('.dynamic-input-row').first().clone();
+            newRow.find('input').val('');
+            $('#dynamic-inputs-container').append(newRow);
+        });
+
+        // Remove row
+        $(document).on('click', '.remove-row', function() {
+            $(this).closest('.dynamic-input-row').remove();
+        });
+    });
+</script>
+@endpush
