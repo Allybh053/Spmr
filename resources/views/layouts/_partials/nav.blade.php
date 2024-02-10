@@ -124,8 +124,8 @@
                 <div class="sidenav-menu-heading">Config</div>
                 <!-- Sidenav Accordion (UC log file)-->
                 <a class="nav-link" href="{{ route('dashboard.index')}}">
-                    <div class="nav-link-icon"><i data-feather="file-minus"></i></div>
-                    Log File Overview
+                    <div class="nav-link-icon"><i data-feather="server"></i></div>
+                    Server Config
                     <div class="sidenav-collapse-arrow"></div>
                 </a>
                 <!-- Sidenav Accordion (Setting)-->
