@@ -21,15 +21,15 @@
     <!-- Main page content-->
     <div class="container-fluid px-4">
         <div class="card mb-4">
-            <div class="card-header">Ticket Number</div>
-            <div class="card-body"><p>Abc123</p><button class="btn btn-outline-primary" type="button">View Detail</button></div>
+            <div class="card-header">Ticket Number : {{ $smtpMailServers->first()->ticket_id }}</div>
+            <div class="card-body"><button class="btn btn-outline-primary" type="button">View Detail</button></div>
         </div>
     </div>
     <div class="container-fluid px-4">
         <div class="card mb-4">
             <div class="card-header">List of New Mail Relay Detail</div>
             <div class="card-body">
-                <table id="datatablesSimple" style="text-align: center;">
+                <table id="datatablesSimple" class="table table-striped">
                     <thead>
                         <tr>
                             <th>No</th>
@@ -43,16 +43,34 @@
                         </tr>
                     </thead>
                     <tbody>
+                        @foreach ($smtpMailServers as $smtpMailServer)
                         <tr>
-                            <td>1.</td>
-                            <td>123.123.123.123</td>
-                            <td><div class="badge bg-danger text-white rounded-pill">None</div></td>
-                            <td>IP Based Mail Relay</td>
-                            <td>Postmaster.gov.my</td>
-                            <td>25</td>
-                            <td><div class="badge bg-danger text-white rounded-pill">None</div></td>
-                            <td><div class="badge bg-danger text-white rounded-pill">None</div></td>
+                            <td>{{ $loop->iteration }}.</td>
+                            <td>{{ $smtpMailServer -> ip_addr_server }}</td>
+                            <td>@if($smtpMailServer -> mailbox_created == 0)
+                                <span class="badge bg-danger text-white rounded-pill">No MailBox</span>
+                            @else
+                                <span class="badge bg-success text-white rounded-pill">Create MailBox</span>
+                            @endif</td>
+                            <td>@if($smtpMailServer -> smtp_relay_auth_method == 0)
+                                <span class="badge bg-success text-white rounded-pill">SMTP IP Based Auth</span>
+                            @else
+                                <span class="badge bg-primary text-white rounded-pill">SMTP Username/Password Auth</span>
+                            @endif</td>
+                            <td>{{ $smtpMailServer ->smtp_relay_server}}</td>
+                            <td>{{ $smtpMailServer ->smtp_port}}/tcp</td>
+                            <td>@if($smtpMailServer -> smtp_username == "")
+                                <span class="badge bg-danger text-white rounded-pill">None</span>
+                            @else
+                                {{ $smtpMailServer -> smtp_username }}
+                            @endif</td>
+                            <td>@if($smtpMailServer -> smtp_password == "")
+                                <span class="badge bg-danger text-white rounded-pill">None</span>
+                            @else
+                                {{ $smtpMailServer -> smtp_password }}
+                            @endif</td>
                         </tr>
+                        @endforeach
                     </tbody>
                 </table>
             </div>
@@ -60,17 +78,17 @@
     </div> <div class="mb-0">
     <div class="container-fluid px-4">
         <div class="card mb-4">
-            <div class="card-header">CLI Section</div>
+            <div class="card-header">CLI Section<br><span class="badge btn-danger">*** Any command execute will RUN at the Server directly</span></div>
             <div class="card-body">
-
+                <div id="terminal"></div>
             </div>
         </div>
     </div>
     <div class="container-fluid px-4">
         <div class="card mb-4">
-            <div class="card-header">Comment</div>
+            <div class="card-header">Remark</div>
             <div class="card-body">
-                <label for="exampleFormControlTextarea1">Example textarea</label><textarea class="form-control" id="exampleFormControlTextarea1" rows="3"></textarea></div>
+                <label for="exampleFormControlTextarea1">Notes for Approval</label><textarea class="form-control" id="exampleFormControlTextarea1" rows="3"></textarea></div>
             </div>
         </div>
     </div>

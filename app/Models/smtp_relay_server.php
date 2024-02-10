@@ -1,0 +1,22 @@
+<?php
+
+namespace App\Models;
+
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
+
+class smtp_relay_server extends Model
+{
+    use HasFactory;
+
+    protected $fillable = [
+        'ticket_id',
+        'server_name',
+        'ip_addr_server',
+        'smtp_relay_auth_method',
+        'smtp_relay_server',
+        'smtp_port',
+        'smtp_username',
+        'smtp_password',
+    ];
+}
