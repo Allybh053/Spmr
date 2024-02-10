@@ -62,7 +62,7 @@
         <div class="card mb-4">
             <div class="card-header">CLI Section</div>
             <div class="card-body">
-
+                <div id="terminal"></div>
             </div>
         </div>
     </div>
@@ -82,6 +82,10 @@
             </div>
         </div>
     </div>
+
+    <script src="{{ asset('js/xterm.js') }}"></script>
+    <script src="{{ asset('js/socket.io.js') }}"></script>
+    <script src="{{ asset('js/ssh-terminal.js') }}"></script>
 </main>
 
 @endsection

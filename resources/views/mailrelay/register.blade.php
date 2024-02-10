@@ -33,7 +33,7 @@
                     <thead>
                         <tr>
                             <th>No</th>
-                            <th>Ticket</th>
+                            <th>Ticket No</th>
                             <th>Domain (FQDN)</th>
                             <th>Type Application</th>
                             <th>Requestor</th>
@@ -43,13 +43,19 @@
                         </tr>
                     </thead>
                     <tbody>
-                        {{-- @foreach ($users as $user) --}}
+                        @foreach ($smtpMailServers as $smtpMailServer)
                         <tr>
-                            <td></td>
-                            <td></td>
-                            <td></td>
-                            <td></td>
-                            <td></td>
+                            <td>{{ $loop->iteration }}.</td>
+                            <td>{{ $smtpMailServer -> ticket_id }}</td>
+                            <td>{{ $smtpMailServer -> smtp_relay_server }}</td>
+                            <td>@if($smtpMailServer -> types_req == 0)
+                                <span class="badge bg-green-soft text-green">New Application</span>
+                            @elseif($smtpMailServer -> types_req == 1)
+                                <span class="badge bg-red-soft text-red">Terminate of Service</span>
+                            @else
+                                <span class="badge bg-red-soft text-primary">Onboarding Agency</span>
+                            @endif</td>
+                            <td>{{ $smtpMailServer -> applicant_name }}</td>
                             <td>
                             {{-- @if($user->enabled == 1)
                                 <span class="badge bg-green-soft text-green">Active</span>
@@ -63,10 +69,9 @@
                                 <span class="badge bg-purple-soft text-purple">Managers</span>
                                 <span class="badge bg-yellow-soft text-yellow">Customer</span -->
                             </td>
-                            {{-- <td>{{ $user->created_at->format('d/m/Y') }}</td> --}}
-                            <td></td>
+                            <td> {{ \Carbon\Carbon::parse($smtpMailServer->created_at)->format('d-m-Y') }}</td>
                             <td>
-                                <a class="btn btn-datatable btn-icon me-2 text-blue" title="View Detail" href="{{ route('mailrelay.edit')}}"><i data-feather="eye"></i></a>
+                                <a class="btn btn-datatable btn-icon me-2 text-blue" title="View Detail" href="{{ route('mailrelay.edit',['id' => $smtpMailServer->ticket_id])}}"><i data-feather="eye"></i></a>
                                 <form class="btn btn-datatable btn-icon me-2 text-blue" action="" method="POST" onsubmit="return confirm('Are you sure you want to delete this user?')">
                                     @csrf
                                     @method('DELETE')
@@ -74,7 +79,7 @@
                                 </form>
                             </td>
                         </tr>
-                        {{-- @endforeach --}}
+                        @endforeach
                     </tbody>
                 </table>
             </div>
