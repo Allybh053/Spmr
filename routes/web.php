@@ -7,6 +7,7 @@ use App\Http\Controllers\UsersController;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\SmtpRelayController;
 use App\Http\Controllers\MainRelayController;
+use App\Http\Controllers\ServerController;
 use App\Http\Controllers\Auth\Saml2Controller;
 use App\Http\Controllers\Auth\LdapController;
 
@@ -87,7 +88,17 @@ Route::group(['middleware' => ['auth']], function () {
         Route::post('/form_application_smtp_relay/datatable', [SmtpRelayController::class, 'datatable'])->name('smtp_relay.datatable');
     });
 
+    Route::group(['prefix' => 'server'], function () {
+        Route::get('/server', [ServerController::class, 'index'])->name('server.index');
+        Route::get('/create', [ServerController::class, 'create'])->name('server.create');
+        Route::get('/edit/{id}', [ServerController::class, 'show'])->name('server.edit');
+        Route::post('/update-status', [ServerController::class, 'updateStatus']);
+        Route::post('/upload-server', [ServerController::class, 'uploadServer'])->name('upload-server');
+        Route::post('/update/{id}', [ServerController::class, 'update'])->name('server.update');
 
+        Route::get('/{id}/file/download', [ServerController::class, 'downloadFile'])->name('server.file.download');
+
+    });
 
 });
 

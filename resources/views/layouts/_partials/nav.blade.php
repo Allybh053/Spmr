@@ -59,7 +59,7 @@
 
 
                 <a class="nav-link collapsed" href="javascript:void(0);" data-bs-toggle="collapse" data-bs-target="#collapseHistory" aria-expanded="false" aria-controls="collapseHistory">
-                    <div class="nav-link-icon"><i data-feather="mail"></i></div>
+                    <div class="nav-link-icon"><i data-feather="link"></i></div>
                    History Connection
                     <div class="sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
                 </a>
@@ -84,7 +84,7 @@
                 </div>
 
                 <a class="nav-link collapsed" href="javascript:void(0);" data-bs-toggle="collapse" data-bs-target="#collapseUcOverview" aria-expanded="false" aria-controls="collapseUcOverview">
-                    <div class="nav-link-icon"><i data-feather="mail"></i></div>
+                    <div class="nav-link-icon"><i data-feather="layers"></i></div>
                    UC Overview
                     <div class="sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
                 </a>
@@ -98,7 +98,7 @@
                 </div>
 
                 <a class="nav-link collapsed" href="javascript:void(0);" data-bs-toggle="collapse" data-bs-target="#collapseLog" aria-expanded="false" aria-controls="collapseLog">
-                    <div class="nav-link-icon"><i data-feather="mail"></i></div>
+                    <div class="nav-link-icon"><i data-feather="list"></i></div>
                    Log
                     <div class="sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
                 </a>
@@ -109,7 +109,7 @@
                 </div>
 
                 <a class="nav-link collapsed" href="javascript:void(0);" data-bs-toggle="collapse" data-bs-target="#collapseReport" aria-expanded="false" aria-controls="collapseReport">
-                    <div class="nav-link-icon"><i data-feather="mail"></i></div>
+                    <div class="nav-link-icon"><i data-feather="trello"></i></div>
                    Report
                     <div class="sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
                 </a>
@@ -123,9 +123,9 @@
                 <!-- Sidenav Heading (Config)-->
                 <div class="sidenav-menu-heading">Config</div>
                 <!-- Sidenav Accordion (UC log file)-->
-                <a class="nav-link" href="{{ route('dashboard.index')}}">
+                <a class="nav-link" href="{{ route('server.index')}}">
                     <div class="nav-link-icon"><i data-feather="server"></i></div>
-                    Server Config
+                    Server
                     <div class="sidenav-collapse-arrow"></div>
                 </a>
                 <!-- Sidenav Accordion (Setting)-->

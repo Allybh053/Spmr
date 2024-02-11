@@ -15,8 +15,8 @@
                                 <div class="col-auto card-icon-aside bg-primary"><i class="text-white-50" data-feather="server"></i></div>
                                 <div class="col">
                                     <div class="card-body py-4">
-                                        <h5 class="card-title text-primary mb-2">Postmaster.mygovuc.gov.my</h5>
-                                        <p class="card-text mb-1">Ip Address</p>
+                                        <h5 class="card-title text-primary mb-2">{{ $servers->hostname }}</h5>
+                                        <p class="card-text mb-1">{{ $servers->ipaddress }}</p>
                                         <div class="small text-muted"></div>
                                     </div>
                                 </div>
