@@ -39,3 +39,27 @@ th {
 thead, tbody, tfoot, tr, td, th {
     font-size: 11px;
 }
+
+.dataTables_wrapper .dataTables_paginate .paginate_button.current, .dataTables_wrapper .dataTables_paginate .paginate_button.current:hover {
+    background: #446eda78 !important;
+}
+
+.dataTables_wrapper .dataTables_paginate .paginate_button {
+    border-radius: 13px !important;
+}
+
+table.dataTable.stripe tbody tr.odd, table.dataTable.display tbody tr.odd {
+    background-color: #b4e6ff !important;
+}
+
+table.dataTable.display tbody tr.odd>.sorting_1, table.dataTable.order-column.stripe tbody tr.odd>.sorting_1 {
+    background-color: #b4e6ff !important;
+}
+table.dataTable.no-footer {
+    border-bottom: transparent !important;
+}
+
+.table-striped > tbody > tr:nth-of-type(odd) > * {
+    --bs-table-accent-bg: rgb(255 255 255 / 0%) !important;
+    color: #000000 !important;
+}

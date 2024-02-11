@@ -8,7 +8,12 @@
                         <div class="col-auto mb-3">
                             <h1 class="page-header-title">
                                 <div class="page-header-icon"></div>
-                                SMTP Relay Request MyGov UC3.0
+                                <nav aria-label="breadcrumb">
+                                    <ol class="breadcrumb">
+                                        <li class="breadcrumb-item"><a href="{{ route('dashboard.index') }}">Dashboard</a></li>
+                                        <li class="breadcrumb-item">SMTP Relay MyGovUC3.0</li>
+                                    </ol>
+                                </nav>
                             </h1>
                         </div>
                             <div class="col-12 col-xl-auto mb-3">
@@ -24,8 +29,10 @@
         <!-- Main page content-->
         <div class="container-fluid px-4">
             <div class="card">
+                 <div class="card-header">List SMTP Relay MyGovUC3.0</div>
                 <div class="card-body">
-                    <table id="spmrDatatable">
+                <div class="table-responsive"> 
+                    <table id="spmrDatatable"  class="display table table-striped table-bordered" cellspacing="0" width="100%">
                         <thead>
                             <tr>
                                 <th>No.</th>
@@ -42,6 +49,7 @@
                             </tr>
                         </thead>
                     </table>
+</div>
                 </div>
             </div>
         </div>
@@ -50,7 +58,6 @@
  @endsection
 
 @push('script')
-<!-- <script type="text/javascript" src="{{ URL::asset ('js/datatables/datatables-simple-demo.js') }}"></script> -->
     <script>
         (function ($) {
             var table = $('#spmrDatatable').DataTable({
