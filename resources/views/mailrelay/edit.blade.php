@@ -27,7 +27,7 @@
     </div>
     <div class="container-fluid px-4">
         <div class="card mb-4">
-            <div class="card-header">List of New Mail Relay Detail</div>
+            <div class="card-header">List of New Mail Relay Detail </div>
             <div class="card-body">
                 <table id="datatablesSimple" class="table table-striped">
                     <thead>
@@ -93,13 +93,41 @@
         </div>
     </div>
 
-    <div class="container-fluid px-4">
-        <div class="card mb-4">
-            <div class="card-body"  style="text-align: center;">
-                <button class="btn btn-primary me-2 my-1" type="button">Save Changes</button>
+    <form method="POST" action="{{ route('usersmanagements.update', $smtpMailServers->first()->ticket_id) }}">
+    @csrf
+    @method('PUT')
+        <div class="container-fluid px-4">
+            <div class="card mb-4">
+                <div class="card-body"  style="text-align: center;">
+                    <button class="btn btn-danger me-2 my-1" type="button">Reject Request</button>
+                    <button class="btn btn-primary me-2 my-1" type="button">Submit Approval</button>
+                </div>
             </div>
         </div>
-    </div>
+    </form>
+    <script>
+        const terminal = new Terminal();
+        const ticketId = @json($smtpMailServers->first()->ticket_id);
+        const socket = new WebSocket(`ws://${window.location.host}/mailrelay/detail/${ticketId}`);
+
+        terminal.open(document.getElementById('terminal'));
+
+        socket.addEventListener('open', (event) => {
+            terminal.writeln('SSH connection established.');
+        });
+
+        socket.addEventListener('message', (event) => {
+            terminal.write(event.data);
+        });
+
+        socket.addEventListener('close', (event) => {
+            terminal.writeln('SSH connection closed.');
+        });
+
+        terminal.onData((data) => {
+            socket.send(data);
+        });
+    </script>
 </main>
 
 @endsection
