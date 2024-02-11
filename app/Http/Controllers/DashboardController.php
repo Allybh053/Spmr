@@ -21,6 +21,43 @@ class DashboardController extends Controller
         $user = Auth::user();
         $role = $user->roles->isNotEmpty() ? $user->roles->pluck('name')->first() : null;
 
-        return view('dashboard.index', compact('user', 'role'));
+
+        $server = [
+            "Server Local" => [
+                "Postfix" => "Online",
+                "Fail2Ban" => "Offline",
+                "Apache" => "Offline",
+                "Webmin" => "Online",
+                "ReplicateMailRelay" => "Online",
+                "PolicyServer" => "Offline",
+                "KeepAline" => "Online"
+            ],
+            "Server First" => [
+                "Postfix" => "Online",
+                "Fail2Ban" => "Offline",
+                "Apache" => "Offline",
+                "Webmin" => "Online",
+                "ReplicateMailRelay" => "Online",
+                "PolicyServer" => "Offline",
+                "KeepAline" => "Online"
+            ],
+            "Server Second" => [
+                "Postfix" => "Online",
+                "Fail2Ban" => "Offline",
+                "Apache" => "Offline",
+                "Webmin" => "Online",
+                "ReplicateMailRelay" => "Online",
+                "PolicyServer" => "Offline",
+                "KeepAline" => "Online"
+            ]
+        ];
+
+
+
+
+
+
+
+        return view('dashboard.index', compact('user', 'role','server'));
     }
 }
