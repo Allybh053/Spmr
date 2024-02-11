@@ -83,6 +83,62 @@
                                 </div>
                             </div>
                         </div>
+
+
+                        <div class="row  mt-5">
+                            <div class="col-xxl-12">
+                                <div class="card">
+                                    <div class="card-header text-center p-5">
+                                        <h5>RealTime Service Status</h5>
+                                    </div>
+                                    <div class="card-body mainRealtime" style="min-height: auto; max-height: 800px;overflow-y: auto;">
+                                        @foreach ($server as $serverName => $services)
+                                            <div class="card card-collapsable">
+                                                <a class="card-header" href="#{{ Str::slug($serverName) }}" data-bs-toggle="collapse" role="button" aria-expanded="true" aria-controls="{{ Str::slug($serverName) }}">{{ $serverName }}
+                                                    <div class="card-collapsable-arrow">
+                                                        <i class="fas fa-chevron-down"></i>
+                                                    </div>
+                                                </a>
+                                                <div class="collapse" id="{{ Str::slug($serverName) }}">
+                                                    <div class="card-body">
+                                                        
+                                                    <div class="row">
+                                                        @foreach ($services as $serviceName => $status)
+                                                            <div class="col-xl-4 mb-4">
+                                                                <a class="card lift h-100" href="#!">
+                                                                    <div class="card-body d-flex justify-content-center flex-column">
+                                                                        <div class="d-flex align-items-center justify-content-between">
+                                                                            <div class="me-3">
+                                                                                <h5>{{ $serviceName }}</h5>
+                                                                            </div>
+                                                                            @if ($status === 'Online')
+                                                                                <img src="{{ asset('assets/img/demo/online.png') }}" alt="Online" style="width: 5rem">
+                                                                            @else
+                                                                                <img src="{{ asset('assets/img/demo/offline.png') }}" alt="Offline" style="width: 5rem">
+                                                                            @endif
+                                                                        </div>
+                                                                    </div>
+                                                                </a>
+                                                            </div>
+                                                        @endforeach
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+</br>
+                                        @endforeach
+
+
+
+
+                           
+
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+
                     </div>
 
  @endsection
@@ -90,4 +146,20 @@
  @push('script')
  <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.4/Chart.min.js" crossorigin="anonymous"></script>
  <script src="{{asset('assets/demo/chart-area-demo.js')}}"></script>
+ <script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const collapser = document.querySelectorAll('.card-collapsable .card-header');
+        collapser.forEach(function (el) {
+            el.addEventListener('click', function () {
+                let currentCollapse = this.getAttribute('href');
+                collapser.forEach(function (el) {
+                    if (el.getAttribute('href') !== currentCollapse) {
+                        let otherCollapse = el.getAttribute('href');
+                        $(otherCollapse).collapse('hide');
+                    }
+                });
+            });
+        });
+    });
+</script>
  @endpush
