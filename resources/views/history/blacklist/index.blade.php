@@ -59,7 +59,7 @@
                 serverSide: false,
                 ordering: true,
                 ajax:  {
-                    "url" :"{{ route('smtp_relay.datatable') }}",
+                    "url" :"{{ route('history.blacklist.datatable') }}",
                     "method": 'POST',
                     "headers": {
                         'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
