@@ -13,6 +13,7 @@ use Mail;
 use Validator;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\View;
+use App\Models\Server;
 
 class DashboardController extends Controller
 {
@@ -20,6 +21,7 @@ class DashboardController extends Controller
     {
         $user = Auth::user();
         $role = $user->roles->isNotEmpty() ? $user->roles->pluck('name')->first() : null;
+        $serverconfig = Server::where('status', 1)->first();
 
 
         $server = [
@@ -58,6 +60,6 @@ class DashboardController extends Controller
 
 
 
-        return view('dashboard.index', compact('user', 'role','server'));
+        return view('dashboard.index', compact('user', 'role','server','serverconfig'));
     }
 }
