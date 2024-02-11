@@ -9,6 +9,7 @@ use App\Http\Controllers\SmtpRelayController;
 use App\Http\Controllers\MainRelayController;
 use App\Http\Controllers\Auth\Saml2Controller;
 use App\Http\Controllers\Auth\LdapController;
+use App\Http\Controllers\HistoryController;
 
 
 /*
@@ -87,6 +88,16 @@ Route::group(['middleware' => ['auth']], function () {
     });
 
 
+    Route::group(['prefix' => 'history_connection_mail_relay'], function () {
+        Route::get('/blacklist_firewall', [HistoryController::class, 'indexBlacklist'])->name('history.blacklist.index');
+        Route::post('/blacklist_firewall/datatable', [HistoryController::class, 'datatableBlacklist'])->name('history.blacklist.datatable');
+
+        Route::get('/whitelist_firewall', [HistoryController::class, 'indexWhitelist'])->name('history.whitelist.index');
+        Route::post('/whitelist_firewall/datatable', [HistoryController::class, 'datatableWhitelist'])->name('history.whitelist.datatable');
+
+        Route::get('/fail_to_ban_firewall', [HistoryController::class, 'indexFail'])->name('history.fail.index');
+        Route::post('/fail_to_ban_firewall/datatable', [HistoryController::class, 'datatableFail'])->name('history.fail.datatable');
+    });
 
 });
 

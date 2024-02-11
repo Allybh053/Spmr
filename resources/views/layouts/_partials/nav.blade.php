@@ -41,7 +41,6 @@
                         <a class="nav-link" href="{{ route('smtp_relay.smtp_relay_req') }}">
                             SMTP Relay Request
                         </a>
-                        <a class="nav-link" href="dashboard-2.html">SMTP Listing</a>
                     </nav>
                 </div>
                 <!-- Sidenav Link (Mail Relay Module)-->
@@ -64,11 +63,12 @@
                     <div class="sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
                 </a>
                 <div class="collapse" id="collapseHistory" data-bs-parent="#accordionSidenav">
-                    <nav class="sidenav-menu-nested nav accordion" id="accordionSidenavPages">
-                        <a class="nav-link" href="#">Blacklist Firewall</a>
-                        <a class="nav-link" href="#">Whitelist Firewall</a>
-                        <a class="nav-link" href="#">Fail-to-Ban Blacklist Firewall</a>
-                    </nav>
+                <nav class="sidenav-menu-nested nav accordion" id="accordionSidenavPages">
+                    <a class="nav-link" href="{{ route('history.blacklist.index') }}">Blacklist Firewall</a>
+                    <a class="nav-link" href="{{ route('history.whitelist.index')}}">Whitelist Firewall</a>
+                    <a class="nav-link" href="{{ route('history.fail.index') }}">Fail-to-Ban Blacklist Firewall</a>
+                </nav>
+
                 </div>
 
 
