@@ -25,30 +25,30 @@ class DashboardController extends Controller
         $server = [
             "Server Local" => [
                 "Postfix" => "Online",
-                "Fail2Ban" => "Offline",
+                "Fail-To-Ban" => "Offline",
                 "Apache" => "Offline",
                 "Webmin" => "Online",
-                "ReplicateMailRelay" => "Online",
-                "PolicyServer" => "Offline",
-                "KeepAline" => "Online"
+                "Replicate Mail Relay" => "Online",
+                "Policy Server" => "Offline",
+                "Keep Alive" => "Online"
             ],
             "Server First" => [
                 "Postfix" => "Online",
-                "Fail2Ban" => "Offline",
+                "Fail-To-Ban" => "Offline",
                 "Apache" => "Offline",
                 "Webmin" => "Online",
-                "ReplicateMailRelay" => "Online",
-                "PolicyServer" => "Offline",
-                "KeepAline" => "Online"
+                "Replicate Mail Relay" => "Online",
+                "Policy Server" => "Offline",
+                "Keep Alive" => "Online"
             ],
             "Server Second" => [
                 "Postfix" => "Online",
-                "Fail2Ban" => "Offline",
+                "Fail-To-Ban" => "Offline",
                 "Apache" => "Offline",
                 "Webmin" => "Online",
-                "ReplicateMailRelay" => "Online",
-                "PolicyServer" => "Offline",
-                "KeepAline" => "Online"
+                "Replicate Mail Relay" => "Online",
+                "Policy Server" => "Offline",
+                "Keep Alive" => "Online"
             ]
         ];
 

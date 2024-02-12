@@ -11,7 +11,7 @@ use App\Http\Controllers\Auth\Saml2Controller;
 use App\Http\Controllers\Auth\LdapController;
 use App\Http\Controllers\HistoryController;
 use App\Http\Controllers\UcOverviewController;
-
+use App\Http\Controllers\LogOverviewController;
 
 /*
 |--------------------------------------------------------------------------
@@ -114,6 +114,15 @@ Route::group(['middleware' => ['auth']], function () {
 
         Route::get('/wildcard', [UcOverviewController::class, 'indexWildcard'])->name('uc.wildcard.index');
         Route::post('/wildcard/datatable', [UcOverviewController::class, 'datatableWildcard'])->name('uc.wildcard.datatable');
+    });
+
+
+    Route::group(['prefix' => 'log_overview'], function () {
+        Route::get('/', [LogOverviewController::class, 'index'])->name('log.index');
+        Route::get('/server_name', [LogOverviewController::class, 'server'])->name('log.server');
+
+        Route::get('/view/server/{server_name}', [LogOverviewController::class, 'getServerName'])->name('log.getServerName');
+        Route::post('/api/getServerName', [LogOverviewController::class, 'getNewServerData'])->name('log.api.getServerName');
     });
 
 });

@@ -88,12 +88,12 @@
 
                 <a class="nav-link collapsed" href="javascript:void(0);" data-bs-toggle="collapse" data-bs-target="#collapseLog" aria-expanded="false" aria-controls="collapseLog">
                     <div class="nav-link-icon"><i data-feather="mail"></i></div>
-                   Log
+                   Log Overview
                     <div class="sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
                 </a>
                 <div class="collapse" id="collapseLog" data-bs-parent="#accordionSidenav">
                     <nav class="sidenav-menu-nested nav accordion" id="accordionSidenavPages">
-                        <a class="nav-link" href="#">Chart</a>
+                        <a class="nav-link" href="{{ route('log.index') }}">Log</a>
                     </nav>
                 </div>
 
