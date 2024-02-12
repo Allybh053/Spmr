@@ -119,9 +119,6 @@ Route::group(['middleware' => ['auth']], function () {
 
     Route::group(['prefix' => 'log_overview'], function () {
         Route::get('/', [LogOverviewController::class, 'index'])->name('log.index');
-        Route::get('/server_name', [LogOverviewController::class, 'server'])->name('log.server');
-
-        Route::get('/view/server/{server_name}', [LogOverviewController::class, 'getServerName'])->name('log.getServerName');
         Route::post('/api/getServerName', [LogOverviewController::class, 'getNewServerData'])->name('log.api.getServerName');
     });
 

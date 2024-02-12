@@ -111,11 +111,6 @@ class LogOverviewController extends Controller
     }
 
 
-    public function server()
-    {
-        return view('log.view');
-    }
-
     public function getNewServerData(Request $request)
     {
         $serverName = $request->serverName;
