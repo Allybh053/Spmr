@@ -75,7 +75,7 @@ class SmtpRelayController extends Controller
             'agency'));
     }
 
-    public function store(){
+    public function store(Request $request){
 
         // $messages = [
             // 'mailfrom_email_addr.required' => 'The MAILFROM Email Address field is required.',
