@@ -70,6 +70,8 @@
                 todayHighlight: true,
                 orientation: "bottom",
             });
+
+
         });
     });
 </script>

@@ -14,11 +14,18 @@
                             <div class="row">
                                 <div class="col-auto card-icon-aside bg-primary"><i class="text-white-50" data-feather="server"></i></div>
                                 <div class="col">
+                                   
                                     <div class="card-body py-4">
+                                    @isset($serverconfig)
                                         <h5 class="card-title text-primary mb-2">{{ $serverconfig->hostname }}</h5>
                                         <p class="card-text mb-1">{{ $serverconfig->ipaddress }}</p>
                                         <div class="small text-muted"></div>
+                                        @else
+                                        <h5>Server Not Available</h5>
+                                        <div class="small text-muted"><p>Please Select Your Server</p></div>
+                                    @endisset
                                     </div>
+                                  
                                 </div>
                             </div>
                         </a>

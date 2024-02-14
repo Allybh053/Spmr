@@ -13,6 +13,8 @@ use App\Http\Controllers\Auth\LdapController;
 use App\Http\Controllers\HistoryController;
 use App\Http\Controllers\UcOverviewController;
 use App\Http\Controllers\LogOverviewController;
+use App\Http\Controllers\ReportStatisticController;
+use App\Http\Controllers\ReportDetailSenderController;
 
 /*
 |--------------------------------------------------------------------------
@@ -131,6 +133,18 @@ Route::group(['middleware' => ['auth']], function () {
     Route::group(['prefix' => 'log_overview'], function () {
         Route::get('/', [LogOverviewController::class, 'index'])->name('log.index');
         Route::post('/api/getServerName', [LogOverviewController::class, 'getNewServerData'])->name('log.api.getServerName');
+    });
+
+    Route::group(['prefix' => 'report'], function () {
+        Route::group(['prefix' => 'statistic-summary'], function () {
+            Route::get('/', [ReportStatisticController::class, 'index'])->name('report.statistic.index');
+            Route::post('/validation', [ReportStatisticController::class, 'validation'])->name('report.statistic.validation');
+        });
+
+        Route::group(['prefix' => 'detail-sender'], function () {
+            Route::get('/', [ReportDetailSenderController::class, 'index'])->name('report.detail.index');
+            Route::post('/validation', [ReportDetailSenderController::class, 'validation'])->name('report.detail.validation');
+        });
     });
 
 });
