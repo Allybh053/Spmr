@@ -104,8 +104,8 @@
                 </a>
                 <div class="collapse" id="collapseReport" data-bs-parent="#accordionSidenav">
                     <nav class="sidenav-menu-nested nav accordion" id="accordionSidenavPages">
-                        <a class="nav-link" href="#">Statistic Traffic Summary</a>
-                        <a class="nav-link" href="#">Detail Report Sender</a>
+                        <a class="nav-link" href="{{ route('report.statistic.index') }}">Statistic Traffic Summary</a>
+                        <a class="nav-link" href="{{ route('report.detail.index') }}">Detail Report Sender</a>
                     </nav>
                 </div>
 
