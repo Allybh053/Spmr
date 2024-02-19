@@ -16,7 +16,7 @@ use App\Http\Controllers\LogOverviewController;
 use App\Http\Controllers\ReportStatisticController;
 use App\Http\Controllers\ReportDetailSenderController;
 use App\Http\Controllers\SystemInformationController;
-
+use App\Http\Controllers\DomainMinistryAgenciesListController;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -150,6 +150,12 @@ Route::group(['middleware' => ['auth']], function () {
 
     Route::group(['prefix' => 'systeminformation'], function () {
         Route::get('/', [SystemInformationController::class, 'index'])->name('systeminformation.index');
+    });
+
+    Route::group(['prefix' => 'domain'], function () {
+        Route::get('/', [DomainMinistryAgenciesListController::class, 'index'])->name('domain.index');
+        Route::get('/register', [DomainMinistryAgenciesListController::class, 'create'])->name('domain.register');
+        Route::post('/register', [DomainMinistryAgenciesListController::class, 'store'])->name('domain.store');
     });
 
 

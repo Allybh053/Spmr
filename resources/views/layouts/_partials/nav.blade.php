@@ -140,13 +140,13 @@
                         </div>
                         <!-- Nested Sidenav Accordion (Apps -> domain Management)-->
                         <a class="nav-link collapsed" href="javascript:void(0);" data-bs-toggle="collapse" data-bs-target="#appsCollapseDomainManagement" aria-expanded="false" aria-controls="appsCollapseDomainManagement">
-                            Domain Setup
+                            FQDN Setup
                             <div class="sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
                         </a>
                         <div class="collapse" id="appsCollapseDomainManagement" data-bs-parent="#accordionSidenavAppsMenu">
                             <nav class="sidenav-menu-nested nav">
-                                <a class="nav-link" href="#">Domain List</a>
-                                <a class="nav-link" href="#">Add Domain</a>
+                                <a class="nav-link" href="{{ route('domain.index') }}">FQDN List</a>
+                                <a class="nav-link" href="{{ route('domain.register') }}">Add New FQDN</a>
                             </nav>
                         </div>
                         <!-- Nested Sidenav Accordion (Apps -> User Management)-->

@@ -8,7 +8,7 @@
                         <div class="col-auto mb-3">
                             <h1 class="page-header-title">
                                 <div class="page-header-icon"><i data-feather="cloud"></i></div>
-                               Add Domain
+                               Add New FQDN
                             </h1>
                         </div>
                     </div>
@@ -17,16 +17,16 @@
         </header>
         <div class="container-xl px-4">
             <div class="card mb-4">
-                <div class="card-header">Domain</div>
+                <div class="card-header">FQDN</div>
                 <div class="card-body">
-                    <form method="POST" action="#">
+                    <form method="POST" action="{{ route('domain.store')}}">
                     @csrf
                     @method('POST')
                         <!-- Form Row-->
                         <div class="row gx-3 mb-3">
                             <!-- Form Group (first name)-->
                             <div class="col-md-6">
-                                <label class="small mb-1" for="fqdn">FQDN</label>
+                                <label class="small mb-1" for="fqdn">Full Qualified Domain Name (FQDN)</label>
                                 <input class="form-control" id="fqdn" name="fqdn" type="text" placeholder="Enter FQDN" value="" required/>
                             </div>
                             <!-- Form Group (last name)-->
@@ -48,9 +48,17 @@
                             <label for="enabled">Status</label>
                             <select id="enabled" name="enabled" class="form-control" required>
                                 <option selected>Choose...</option>
-                                <option>Active</option>
-                                <option>In-Active</option>
+                                <option value="1">Active</option>
+                                <option value="0">In-Active</option>
                             </select>
+                            </div>
+                            <div class="row">
+                                <!-- Save and Back button-->
+                                <div class="col-md-12" style="padding: 25px;text-align:right;">
+                                    <a class="btn btn-secondary" type="button" href="{{ route('domain.index') }}">Back</a>
+
+                                    <button class="btn btn-success" id="save">Save</button>
+                                </div>
                             </div>
                         </div>
                     </form>
