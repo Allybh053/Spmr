@@ -15,6 +15,7 @@ use App\Http\Controllers\UcOverviewController;
 use App\Http\Controllers\LogOverviewController;
 use App\Http\Controllers\ReportStatisticController;
 use App\Http\Controllers\ReportDetailSenderController;
+use App\Http\Controllers\SystemInformationController;
 
 /*
 |--------------------------------------------------------------------------
@@ -146,6 +147,11 @@ Route::group(['middleware' => ['auth']], function () {
             Route::post('/validation', [ReportDetailSenderController::class, 'validation'])->name('report.detail.validation');
         });
     });
+
+    Route::group(['prefix' => 'systeminformation'], function () {
+        Route::get('/', [SystemInformationController::class, 'index'])->name('systeminformation.index');
+    });
+
 
 });
 

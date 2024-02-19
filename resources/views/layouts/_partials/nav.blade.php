@@ -151,6 +151,11 @@
                         </div>
                     </nav>
                 </div>
+                <a class="nav-link" href="{{ route('systeminformation.index')}}">
+                    <div class="nav-link-icon"><i data-feather="feather"></i></div>
+                    Version
+                    <div class="sidenav-collapse-arrow"></div>
+                </a>
             </div>
         </div>
         <!-- Sidenav Footer-->
