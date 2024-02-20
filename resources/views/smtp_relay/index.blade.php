@@ -31,11 +31,12 @@
             <div class="card">
                  <div class="card-header">List SMTP Relay MyGovUC3.0</div>
                 <div class="card-body">
-                <div class="table-responsive"> 
+                <div class="table-responsive">
                     <table id="spmrDatatable"  class="display table table-striped table-bordered" cellspacing="0" width="100%">
                         <thead>
                             <tr>
                                 <th>No.</th>
+                                <th>Form ID</th>
                                 <th>Ticket No.</th>
                                 <th>Types Application</th>
                                 <th>Project Name</th>
@@ -78,14 +79,15 @@
                 },
                 columns: [
                         { data: 'DT_RowIndex', name: 'DT_RowIndex', orderable: false, searchable: false, class: 'text-center' },
-                        { data: 'ticket_number', name: 'ticket_number', class: 'text-center' },
-                        { data: 'types_application', name: 'types_application', class: 'text-center' },
+                        { data: 'form_id', name: 'form_id', class: 'text-center' },
+                        { data: 'ticket_id', name: 'ticket_number', class: 'text-center' },
+                        { data: 'types_req', name: 'types_req', class: 'text-center' },
                         { data: 'project_name', name: 'project_name', class: 'text-center' },
                         { data: 'server_name', name: 'server_name', class: 'text-center' },
-                        { data: 'ip_address_server', name: 'ip_address_server', class: 'text-center' },
+                        { data: 'ip_addr_server', name: 'ip_addr_server', class: 'text-center' },
                         { data: 'fqdn_system', name: 'fqdn_system', class: 'text-center' },
-                        { data: 'date_created', name: 'date_created', class: 'text-center' },
-                        { data: 'date_updated', name: 'date_updated', class: 'text-center' },
+                        { data: 'created_at', name: 'created_at', class: 'text-center' },
+                        { data: 'updated_at', name: 'updated_at', class: 'text-center' },
                         { data: 'status', name: 'status', class: 'text-center' },
                         { data: 'action', name: 'type', class: 'text-center', orderable: false, searchable: false },
                     ],
