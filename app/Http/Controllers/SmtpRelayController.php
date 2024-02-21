@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Models\SmtpRelayReqForm;
 use Carbon\Carbon;
+use App\Models\Server;
+use App\Models\DomainMinistryAgenciesList;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
@@ -426,6 +428,37 @@ class SmtpRelayController extends Controller
         $application    ->  delete();
 
         return response()->json(['success' => '1', 'redirect' => route('smtp_relay.smtp_relay_req'), 'message' => 'Application successfully deleted']);
+    }
+
+
+    //penambahbaikkan sidi
+
+    public function daftar()
+    {
+        $serversArray = Server::all()->toArray();
+        $domainsArray = DomainMinistryAgenciesList::all()->toArray();
+        return view('smtp_relay.register', compact('serversArray,domainsArray'));
+    }
+
+    public function saving(Request $request){
+        dd($request);
+        $request->validate([
+            'ticketno' => 'required|string|max:255',
+            'type_req' => 'required|string|max:255',
+            'projectname' => 'required|string|max:255',
+            'fqdn' => 'required|string|max:255',
+            'ownername' => 'required|string|max:255',
+            'emailadd' =>  'required|string|max:255',
+            'phone' =>  'required|string|max:255',
+            'agencyadd' =>  'required|string|max:255',
+            'justification' =>  'required|string|max:255',
+            'authmethod' =>  'required|string|max:255',
+            'server_name' =>  'required|string|max:255',
+            'ipaddress' =>  'required|string|max:255',
+            'mailbox' =>  'required|string|max:255',
+            'emailaddfrom' =>  'required|string|max:255',
+            'attachement' => 'required|mimes:pdf|max:1024',
+        ]);
     }
 
 }

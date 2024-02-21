@@ -21,7 +21,7 @@
 .select2-container .select2-selection--single .select2-selection__rendered {
     font-family: Arial, "Helvetica Neue", Helvetica, sans-serif;
 
-    padding-left:51px  !important;
+    padding-left:10px  !important;
 }
 
 th {
