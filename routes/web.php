@@ -16,6 +16,8 @@ use App\Http\Controllers\LogOverviewController;
 use App\Http\Controllers\ReportStatisticController;
 use App\Http\Controllers\ReportDetailSenderController;
 use App\Http\Controllers\Setup\RoleController;
+use App\Http\Controllers\SystemInformationController;
+use App\Http\Controllers\DomainMinistryAgenciesListController;
 
 /*
 |--------------------------------------------------------------------------
@@ -148,14 +150,6 @@ Route::group(['middleware' => ['auth']], function () {
             Route::get('/', [ReportDetailSenderController::class, 'index'])->name('report.detail.index');
             Route::post('/validation', [ReportDetailSenderController::class, 'validation'])->name('report.detail.validation');
         });
-    });
-
-
-    Route::group(['prefix' => 'role_permission'], function () {
-        Route::get('/',[RoleController::class, 'index'])->name('setup.role.index');
-        Route::post('/add',[RoleController::class,'create'])->name('setup.role.create');
-        Route::post('/delete',[RoleController::class,'delete'])->name('setup.role.delete');
-        Route::post('/storePermission',[RoleController::class,'storePermission'])->name('setup.role.storePermission');
     });
 
 });
