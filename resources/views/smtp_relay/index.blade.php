@@ -28,6 +28,13 @@
         </header>
         <!-- Main page content-->
         <div class="container-fluid px-4">
+            @if(session('success'))
+                <div class="alert alert-primary alert-dismissible fade show" role="alert">
+                    <h5 class="alert-heading">Message</h5>
+                    {{ session('success') }}
+                    <button class="btn-close" type="button" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            @endif
             <div class="card">
                  <div class="card-header">List SMTP Relay MyGovUC3.0</div>
                 <div class="card-body">
@@ -40,17 +47,14 @@
                                 <th>Ticket No.</th>
                                 <th>Types Application</th>
                                 <th>Project Name</th>
-                                <th>Server Name</th>
-                                <th>IP Address Server</th>
                                 <th>FQDN System</th>
                                 <th>Date Created</th>
-                                <th>Date Updated</th>
                                 <th>Status</th>
                                 <th>Action</th>
                             </tr>
                         </thead>
                     </table>
-</div>
+                </div>
                 </div>
             </div>
         </div>
@@ -83,11 +87,8 @@
                         { data: 'ticket_id', name: 'ticket_number', class: 'text-center' },
                         { data: 'types_req', name: 'types_req', class: 'text-center' },
                         { data: 'project_name', name: 'project_name', class: 'text-center' },
-                        { data: 'server_name', name: 'server_name', class: 'text-center' },
-                        { data: 'ip_addr_server', name: 'ip_addr_server', class: 'text-center' },
                         { data: 'fqdn_system', name: 'fqdn_system', class: 'text-center' },
                         { data: 'created_at', name: 'created_at', class: 'text-center' },
-                        { data: 'updated_at', name: 'updated_at', class: 'text-center' },
                         { data: 'status', name: 'status', class: 'text-center' },
                         { data: 'action', name: 'type', class: 'text-center', orderable: false, searchable: false },
                     ],

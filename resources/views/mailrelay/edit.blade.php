@@ -21,23 +21,23 @@
     <!-- Main page content-->
     <div class="container-fluid px-4">
         <div class="card mb-4">
-            <div class="card-header">Ticket Number : {{ $smtpMailServers->first()->ticket_id }}</div>
-            <div class="card-body"><button class="btn btn-outline-primary" type="button">View Detail</button></div>
+            <div class="card-header">Ticket Number : {{ $smtpMailServers->first()->ticket_id }} &nbsp;&nbsp; [Form ID: {{ $smtpMailServers->first()->form_id }}]</div>
+            <div class="card-body"><a href="{{ route('smtp_relay.edit',['id' => $smtpMailServers->first()->smtpid]) }}" target="_blank" class="btn btn-outline-primary">View Detail</a></div>
         </div>
     </div>
     <div class="container-fluid px-4">
         <div class="card mb-4">
             <div class="card-header">List of New Mail Relay Detail </div>
             <div class="card-body">
-                <table id="datatablesSimple" class="table table-striped">
+                <table id="datatablesSimple" class="table">
                     <thead>
                         <tr>
                             <th>No</th>
                             <th>IP Address</th>
                             <th>MailBox</th>
                             <th>Auth Method</th>
-                            <th>SMTP Mail</th>
-                            <th>SMTP Port</th>
+                            <th>System Name</th>
+                            <th>System Port</th>
                             <th>Username</th>
                             <th>Password</th>
                         </tr>
@@ -52,12 +52,12 @@
                             @else
                                 <span class="badge bg-success text-white rounded-pill">Create MailBox</span>
                             @endif</td>
-                            <td>@if($smtpMailServer -> smtp_relay_auth_method == 0)
+                            <td>@if($smtpMailServer -> smtp_relay_auth_method == 1)
                                 <span class="badge bg-success text-white rounded-pill">SMTP IP Based Auth</span>
                             @else
                                 <span class="badge bg-primary text-white rounded-pill">SMTP Username/Password Auth</span>
                             @endif</td>
-                            <td>{{ $smtpMailServer ->smtp_relay_server}}</td>
+                            <td>{{ $smtpMailServer ->server_name}}</td>
                             <td>{{ $smtpMailServer ->smtp_port}}/tcp</td>
                             <td>@if($smtpMailServer -> smtp_username == "")
                                 <span class="badge bg-danger text-white rounded-pill">None</span>
@@ -78,7 +78,7 @@
     </div> <div class="mb-0">
     <div class="container-fluid px-4">
         <div class="card mb-4">
-            <div class="card-header">CLI Section<br><span class="badge btn-danger">*** Any command execute will RUN at the Server directly</span></div>
+            <div class="card-header">CLI Section<br>Form ID: {{ $smtpMailServers->first()->form_id }}<br><span class="badge btn-danger">*** Any command execute will RUN at the Server directly</span></div>
             <div class="card-body">
                 <div id="terminal"></div>
             </div>
@@ -128,6 +128,11 @@
             socket.send(data);
         });
     </script>
+    <style>
+        th,td {
+            font-size: var(--bs-body-font-size);
+        }
+    </style>
 </main>
 
 @endsection

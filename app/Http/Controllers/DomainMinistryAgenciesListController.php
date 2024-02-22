@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Models\DomainMinistryAgenciesList;
+use App\Models\DomainMinistryAgencies;
 
 class DomainMinistryAgenciesListController extends Controller
 {
