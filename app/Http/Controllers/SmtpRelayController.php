@@ -3,7 +3,10 @@
 namespace App\Http\Controllers;
 
 use App\Models\SmtpRelayReqForm;
+use App\Models\smtp_relay_server;
 use Carbon\Carbon;
+use App\Models\Server;
+use App\Models\DomainMinistryAgencies;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
@@ -426,6 +429,112 @@ class SmtpRelayController extends Controller
         $application    ->  delete();
 
         return response()->json(['success' => '1', 'redirect' => route('smtp_relay.smtp_relay_req'), 'message' => 'Application successfully deleted']);
+    }
+
+
+    //penambahbaikkan sidi
+
+    public function daftar()
+    {
+        $serversArray = Server::all()->toArray();
+        $domainsArray = DomainMinistryAgencies::take(10)->get()->toArray();
+        return view('smtp_relay.register', compact('serversArray','domainsArray'));
+    }
+
+    public function saving(Request $request){
+
+        $file = $request->file('attachement');
+        $fileName = $file->getClientOriginalName();
+
+        // Move the uploaded file to the 'attachements' directory at the same level as the 'app' folder
+        $file->move(storage_path('../Storage/attachements'), $fileName);
+
+        // Create the user with the validated data
+        $formdata = SmtpRelayReqForm::create([
+            'form_id'=> $request->input('form_id'),
+            'ticket_id' => $request->input('ticketno'),
+            'types_req' => $request->input('type_req'),
+            'project_name' => $request->input('projectname'),
+            'fqdn_system' => $request->input('fqdn'),
+            'system_owner_name' => $request->input('ownername'),
+            'owner_email_addr' => $request->input('emailadd'),
+            'owner_phone_number' => $request->input('phone'),
+            'agencies' => $request->input('agency'),
+            'dept_div_unit' => $request->input('departowner'),
+            'agencies_addr' => $request->input('agencyadd'),
+            'req_justifications' => $request->input('justification'),
+            'smtp_relay_auth_method' => $request->input('authmethod'),
+            'mailfrom_email_addr' => $request->input('emailaddfrom'),
+            'mailbox_created' => $request->input('mailbox'),
+            'applicant_name' => $request->input('applicantname'),
+            'applicant_position' => $request->input('applicantposition'),
+            'applicant_dept_div' => $request->input('applicantdepart'),
+            'date_application' => $request->input('applicantdate'),
+            'verifier_1_name' => $request->input('verifiername'),
+            'verifier_1_position' => $request->input('verifierposition'),
+            'verifier_1_dept_div' => $request->input('verifierdepart'),
+            'date_verification_1' => $request->input('verifierdate'),
+            'verifier_2_name' => $request->input('officername'),
+            'date_verification_2' => $request->input('officerdate'),
+            'verifier_3_name' => $request->input('approvalname'),
+            'verifier_3_position' => $request->input('approvalposition'),
+            'verifier_3_dept_div' => $request->input('approvaldepart'),
+            'date_verification_3' => $request->input('approvaldate'),
+            'est_no_system_users_per_day' => $request->input('enday'),
+            'est_no_email_sent_from_system_users_per_day' => $request->input('ensystem'),
+            'upload_copy_attachment' => $fileName,
+            'status' => 0,
+        ]);
+
+        $serverNames = $request->input('server_name');
+        $ipAddresses = $request->input('ipaddress');
+        $ports = $request->input('ports');
+        $domains = $request->input('domain');
+        $mailRelays = $request->input('mailrelay');
+        $authusernames = $request->input('authusername');
+        $authpasswords = $request->input('authpassword');
+        $smtp_relay_auth_method = $request->input('authmethod');
+        $nombor = $request->input('form_id');
+
+        $combinedData=[];
+
+        if (!empty($authusernames) && !empty($authpasswords)) {
+            // Combine arrays into a single array
+            $combinedData = array_map(function ($serverName, $ipAddress, $port, $mailRelay, $authusername, $authpassword) use ($nombor, $smtp_relay_auth_method) {
+                return [
+                    'form_id' => $nombor,
+                    'server_name' => $serverName,
+                    'ip_addr_server' => $ipAddress,
+                    'smtp_port' => $port,
+                    'smtp_username' => $authusername,
+                    'smtp_password' => $authpassword,
+                    'smtp_relay_server' => $mailRelay,
+                    'smtp_relay_auth_method' => $smtp_relay_auth_method,
+                ];
+            }, $serverNames, $ipAddresses, $ports, $mailRelays, $authusernames, $authpasswords);
+
+        } else {
+            // Combine arrays into a single array
+            $combinedData = array_map(function ($serverName, $ipAddress, $port, $mailRelay) use ($nombor, $smtp_relay_auth_method) {
+                return [
+                    'form_id' => $nombor,
+                    'server_name' => $serverName,
+                    'ip_addr_server' => $ipAddress,
+                    'smtp_port' => $port,
+                    'smtp_relay_server' => $mailRelay,
+                    'smtp_relay_auth_method' => $smtp_relay_auth_method,
+                ];
+            }, $serverNames, $ipAddresses, $ports, $mailRelays);
+
+        }
+
+        // Loop through the combined array and store data
+        foreach ($combinedData as $data) {
+            smtp_relay_server::create($data);
+        }
+
+        return redirect()->route('smtp_relay.smtp_relay_req')->with('success', 'Form added successfully');
+
     }
 
 }

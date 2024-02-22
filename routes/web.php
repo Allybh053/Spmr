@@ -91,6 +91,11 @@ Route::group(['middleware' => ['auth']], function () {
         Route::post('/form_application_smtp_relay/update/{id}', [SmtpRelayController::class, 'update'])->name('smtp_relay.update');
         Route::post('/form_application_smtp_relay/delete/{id}', [SmtpRelayController::class, 'delete'])->name('smtp_relay.delete');
         Route::post('/form_application_smtp_relay/datatable', [SmtpRelayController::class, 'datatable'])->name('smtp_relay.datatable');
+
+        //code sidi
+        Route::get('/register', [SmtpRelayController::class, 'daftar'])->name('smtp_relay.daftar');
+        Route::post('/saving', [SmtpRelayController::class, 'saving'])->name('smtp_relay.saving');
+
     });
 
     Route::group(['prefix' => 'server'], function () {

@@ -19,6 +19,7 @@ return new class extends Migration
             $table->string('remarks')->nullable();
             $table->integer('enabled')->length(11)->default(0);
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 
