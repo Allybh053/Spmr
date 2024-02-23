@@ -161,6 +161,9 @@ Route::group(['middleware' => ['auth']], function () {
         Route::get('/', [DomainMinistryAgenciesListController::class, 'index'])->name('domain.index');
         Route::get('/register', [DomainMinistryAgenciesListController::class, 'create'])->name('domain.register');
         Route::post('/register', [DomainMinistryAgenciesListController::class, 'store'])->name('domain.store');
+        Route::get('/{id}', [DomainMinistryAgenciesListController::class, 'edit'])->name('domain.edit');
+        Route::post('/{id}', [DomainMinistryAgenciesListController::class, 'update'])->name('domain.update');
+        Route::post('/{id}', [DomainMinistryAgenciesListController::class, 'delete'])->name('domain.delete');
     });
 
 

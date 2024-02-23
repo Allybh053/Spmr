@@ -4,12 +4,15 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\DomainMinistryAgencies;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 
 class DomainMinistryAgenciesListController extends Controller
 {
     public function index()
     {
-        return view('domain.index');
+        $fqdndata = DomainMinistryAgencies::all();
+        return view('domain.index', compact('fqdndata'));
     }
 
     public function create()
@@ -19,36 +22,29 @@ class DomainMinistryAgenciesListController extends Controller
 
     public function store(Request $request)
     {
-        // Check if the form is submitted (POST request)
-        if ($request->isMethod('post')) {
-            // The form has been submitted
+        try {
+            DB::beginTransaction();
+            $domain = new DomainMinistryAgencies();
+            $domain -> domain_name = $request->fqdn;
+            $domain -> ministry_name = $request->ministry;
+            $domain -> agencies_name = $request->agency;
+            $domain -> remarks = $request->remarks;
+            $domain -> enabled = $request->enabled;
+            $domain->save();
 
-            // Validate the form data
-            $validatedData = $request->validate([
-                'fqdn' => 'required|string',
-                'ministry' => 'required|string',
-                'agency' => 'required|string',
-                // 'address' => 'sometimes|string',
-                'enabled' => 'required',
+            DB::commit();
+            return response()->json([
+                'success' => '1',
+                'redirect' => route('domain.index'),
+                'message' => 'FQDN added Successfully Saved'
             ]);
-            $fqdn = $validatedData['fqdn'];
-            $ministry = $validatedData['ministry'];
-            $agency = $validatedData['agency'];
-            // $address = $validatedData['address'];
-            $enabled = $validatedData['enabled'];
+        }catch (\Throwable $e) {
+            DB::rollback();
 
-            // Create the fqdn with the validated data
-            $fqdndata = DomainMinistryAgenciesList::create([
-                'domain_name' => $fqdn,
-                'ministry_name' => $ministry,
-                'agencies_name' => $agency,
-                // 'address' => $address,
-                'enabled' => $enabled,
-                'created_at' => now(),
-            ]);
-
-            // Redirect back or to another page
-            return redirect()->route('domain.index')->with('success', 'FQDN added successfully');
+            return response()->json([
+                'error' => '1',
+                'message' => 'FQDN Unsuccessfully Saved'.$e->getMessage()
+            ], 400);
         }
     }
 
@@ -57,18 +53,52 @@ class DomainMinistryAgenciesListController extends Controller
         // Your show logic here
     }
 
-    public function edit($id)
+    public function edit(string $id)
     {
-        // Your edit logic here
+        $fqdndata = DomainMinistryAgencies::findOrFail($id);
+
+        return view('domain.edit', compact('fqdndata'));
     }
 
     public function update(Request $request, $id)
     {
-        // Your update logic here
+        try {
+            DB::beginTransaction();
+
+            $domain = DomainMinistryAgencies::find($id);
+            $domain -> domain_name = $request->fqdn;
+            $domain -> ministry_name = $request->ministry;
+            $domain -> agencies_name = $request->agency;
+            $domain -> remarks = $request->remarks;
+            $domain -> enabled = $request->enabled;
+            $domain -> updated_at = now();
+            $domain->save();
+
+            DB::commit();
+            return response()->json([
+                'success' => '1',
+                'redirect' => route('domain.index'),
+                'message' => 'FQDN Successfully Updated'
+            ]);
+        }catch (\Throwable $e) {
+            DB::rollback();
+
+            return response()->json([
+                'error' => '1',
+                'message' => 'FQDN Unsuccessfully Updated'.$e->getMessage()
+            ], 400);
+        }
+
     }
 
-    public function destroy($id)
+    public function delete($id)
     {
-        // Your destroy logic here
+        $domain = DomainMinistryAgencies::find($id);
+        $domain->updated_by = Auth::user()->id;
+        $domain->delete();
+
+        //return response()->json(['success' => '1', 'redirect' => route('domain.index'), 'message' => 'FQDN successfully deleted']);
+        return redirect()->route('domain.index')->with('success', 'FQDN successfully deleted');
+
     }
 }
