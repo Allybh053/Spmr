@@ -39,7 +39,11 @@
                             Register New
                         </a>-->
                         <a class="nav-link" href="{{ route('smtp_relay.smtp_relay_req') }}">
-                            SMTP Relay Request
+                            SMTP Form Request
+                        </a>
+                        {{-- penambahbaikan sidi --}}
+                        <a class="nav-link" href="{{ route('smtp_relay.daftar') }}">
+                            Create New Request
                         </a>
                     </nav>
                 </div>

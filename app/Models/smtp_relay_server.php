@@ -8,9 +8,10 @@ use Illuminate\Database\Eloquent\Model;
 class smtp_relay_server extends Model
 {
     use HasFactory;
+    protected $table = 'smtp_relay_server';
 
     protected $fillable = [
-        'ticket_id',
+        'form_id',
         'server_name',
         'ip_addr_server',
         'smtp_relay_auth_method',

@@ -39,7 +39,7 @@
         </div>
     </div>
 
-    <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+    <script src="{{ asset('js/jquery-3.6.4.min.js') }}"></script>
     <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
     <script src="{{asset('js/select2.min.js')}}"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js" crossorigin="anonymous"></script>
@@ -54,7 +54,10 @@
     <script src="{{asset('js/ajaxSubmit.js')}}" type="text/javascript"></script>
     <script type="text/javascript">
     $(document).ready(function() {
-        $('.select2').select2();
+        $('.select2').select2({
+            placeholder: 'Select an option',
+            allowClear: true,
+        });
 
         var token = '{{ csrf_token() }}';
         var windowLocation;
@@ -73,6 +76,120 @@
 
 
         });
+
+            // Handle change event on the dropdown
+            $('#authmethod').change(function () {
+                var selectedOption = $(this).val();
+
+                // Toggle visibility of tables based on selected option
+                $('#tableA, #tableB').hide();
+                if (selectedOption == 1) {
+                    $('#tableA').show();
+                    var server_name_tableB = document.getElementById('server_name_tableB');
+                    server_name_tableB.disabled = true;
+                    var server_name_tableA = document.getElementById('server_name_tableA');
+                    server_name_tableA.disabled = false;
+
+                    var ipaddress_tableB = document.getElementById('ipaddress_tableB');
+                    ipaddress_tableB.disabled = true;
+                    var ipaddress_tableA = document.getElementById('ipaddress_tableA');
+                    ipaddress_tableA.disabled = false;
+
+                    var ports_tableB = document.getElementById('ports_tableB');
+                    ports_tableB.disabled = true;
+                    var ports_tableA = document.getElementById('ports_tableA');
+                    ports_tableA.disabled = false;
+
+                    var domain_tableB = document.getElementById('domain_tableB');
+                    domain_tableB.disabled = true;
+                    var domain_tableA = document.getElementById('domain_tableA');
+                    domain_tableA.disabled = false;
+
+                    var mailrelay_tableB = document.getElementById('mailrelay_tableB');
+                    mailrelay_tableB.disabled = true;
+                    var mailrelay_tableA = document.getElementById('mailrelay_tableA');
+                    mailrelay_tableA.disabled = false;
+
+                    var authusername = document.getElementById('authusername');
+                    authusername.disabled = true;
+
+                    var authpassword = document.getElementById('authpassword');
+                    authpassword.disabled = true;
+
+                } else if (selectedOption == 2) {
+                    $('#tableB').show();
+                    var server_name_tableA = document.getElementById('server_name_tableA');
+                    server_name_tableA.disabled = true;
+                    var server_name_tableB = document.getElementById('server_name_tableB');
+                    server_name_tableB.disabled = false;
+
+                    var ipaddress_tableA = document.getElementById('ipaddress_tableA');
+                    ipaddress_tableA.disabled = true;
+                    var ipaddress_tableB = document.getElementById('ipaddress_tableB');
+                    ipaddress_tableB.disabled = false;
+
+                    var ports_tableA = document.getElementById('ports_tableA');
+                    ports_tableA.disabled = true;
+                    var ports_tableB = document.getElementById('ports_tableB');
+                    ports_tableB.disabled = false;
+
+                    var domain_tableA = document.getElementById('domain_tableA');
+                    domain_tableA.disabled = true;
+                    var domain_tableB = document.getElementById('domain_tableB');
+                    domain_tableB.disabled = false;
+
+                    var mailrelay_tableA = document.getElementById('mailrelay_tableA');
+                    mailrelay_tableA.disabled = true;
+                    var mailrelay_tableB = document.getElementById('mailrelay_tableB');
+                    mailrelay_tableB.disabled = false;
+
+                    var authusername = document.getElementById('authusername');
+                    authusername.disabled = false;
+
+                    var authpassword = document.getElementById('authpassword');
+                    authpassword.disabled = false;
+                }
+            }).change();
+
+            // Add row button click handler
+            $('#add-row').click(function () {
+                addRow('#tableA');
+            });
+
+            $('#add-row2').click(function () {
+                addRow('#tableB');
+            });
+
+            // Reusable function to add a row to the specified table
+            function addRow(tableId) {
+                var selectedTable = tableId + ' tbody';
+                var newRow = $(selectedTable + ' .dynamic-input-row').first().clone();
+                newRow.find('input').val('');
+
+                // Reset the Select2 dropdown
+                var clonedSelect = newRow.find('select');
+                clonedSelect.val(null).trigger('change');
+
+                $(selectedTable).append(newRow);
+
+                // Initialize Select2 for the cloned dropdown
+                clonedSelect.select2({
+                    allowClear: true
+                });
+
+                newRow.find('input[required]').attr('required', 'required');
+                newRow.find('select[required]').attr('required', 'required');
+            }
+
+            // Remove row
+            $(document).on('click', '.remove-row', function() {
+                var numRows = $(this).closest('tbody').find('.dynamic-input-row').length;
+                if (numRows <= 1){
+                    alert('Not Applicable.');
+                }else{
+                    $(this).closest('.dynamic-input-row').remove();
+                }
+            });
     });
 </script>
 
