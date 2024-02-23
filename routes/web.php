@@ -152,5 +152,23 @@ Route::group(['middleware' => ['auth']], function () {
         });
     });
 
+    		//role
+		Route::group(['prefix' => 'role'], function () {
+			Route::get('/',[RoleController::class,'index'])->name('setup.role.index');
+			Route::post('/add',[RoleController::class,'create'])->name('setup.role.create');
+			Route::post('/delete',[RoleController::class,'delete'])->name('setup.role.delete');
+			Route::post('/storePermission',[RoleController::class,'storePermission'])->name('setup.role.storePermission');
+		});
+
+        Route::group(['prefix' => 'domain'], function () {
+            Route::get('/', [DomainMinistryAgenciesListController::class, 'index'])->name('domain.index');
+            Route::get('/register', [DomainMinistryAgenciesListController::class, 'create'])->name('domain.register');
+            Route::post('/register', [DomainMinistryAgenciesListController::class, 'store'])->name('domain.store');
+        });
+
+        Route::group(['prefix' => 'systeminformation'], function () {
+            Route::get('/', [SystemInformationController::class, 'index'])->name('systeminformation.index');
+        });
+
 });
 
