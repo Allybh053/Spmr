@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use App\Models\Server;
 
 class RoleServer extends Model
 {
@@ -12,4 +13,8 @@ class RoleServer extends Model
     
     public $incrementing = false; 
     public $timestamps = false;
+
+    public function server() {
+        return $this->belongsTo(Server::class);
+    }
 }

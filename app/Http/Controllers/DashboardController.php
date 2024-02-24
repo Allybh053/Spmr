@@ -14,6 +14,7 @@ use Validator;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\View;
 use App\Models\Server;
+use App\Models\RoleServer;
 use Illuminate\Http\JsonResponse;
 use Faker\Factory as Faker;
 
@@ -23,7 +24,14 @@ class DashboardController extends Controller
     {
         $user = Auth::user();
         $role = $user->roles->isNotEmpty() ? $user->roles->pluck('name')->first() : null;
-        $serverconfig = Server::where('status', 1)->pluck('hostname','id');
+       // Fetch server IDs associated with the user's roles
+        $serverIds = RoleServer::whereIn('role_id', $user->roles->pluck('id')->all())
+        ->pluck('server_id');
+
+        // Filter servers based on the fetched IDs
+        $serverconfig = Server::whereIn('id', $serverIds)
+        ->where('status', 1)
+        ->pluck('hostname', 'id');
 
         return view('dashboard.index', compact('user', 'role','serverconfig'));
     }

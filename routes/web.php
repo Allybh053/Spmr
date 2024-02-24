@@ -127,17 +127,8 @@ Route::group(['middleware' => ['auth']], function () {
 
 
     Route::group(['prefix' => 'uc_overview'], function () {
-        Route::get('/register_application', [UcOverviewController::class, 'indexApplication'])->name('uc.application.index');
-        Route::post('/register_application/datatable', [UcOverviewController::class, 'datatableApplication'])->name('uc.application.datatable');
-
-        Route::get('/register_domain', [UcOverviewController::class, 'indexDomain'])->name('uc.domain.index');
-        Route::post('/register_domain/datatable', [UcOverviewController::class, 'datatableDomain'])->name('uc.domain.datatable');
-
-        Route::get('/register_username', [UcOverviewController::class, 'indexUsername'])->name('uc.username.index');
-        Route::post('/register_username/datatable', [UcOverviewController::class, 'datatableUsername'])->name('uc.username.datatable');
-
-        Route::get('/wildcard', [UcOverviewController::class, 'indexWildcard'])->name('uc.wildcard.index');
-        Route::post('/wildcard/datatable', [UcOverviewController::class, 'datatableWildcard'])->name('uc.wildcard.datatable');
+        Route::get('/', [UcOverviewController::class, 'indexApplication'])->name('uc.index');
+        Route::post('/datatable', [UcOverviewController::class, 'datatableApplication'])->name('uc.datatable');
     });
 
 
