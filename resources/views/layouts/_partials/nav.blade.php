@@ -136,10 +136,7 @@
                         </a>
                         <div class="collapse" id="appsCollapseRoleManagement" data-bs-parent="#accordionSidenavAppsMenu">
                             <nav class="sidenav-menu-nested nav">
-                                <a class="nav-link" href="user-management-list.html">Roles List</a>
-                                <a class="nav-link" href="user-management-add-user.html">Add Role</a>
-                                <a class="nav-link" href="user-management-groups-list.html">Permission List</a>
-                                <a class="nav-link" href="user-management-org-details.html">Add Permission</a>
+                                <a class="nav-link" href="{{ route('setup.role.index')}}">Roles & Permission</a>
                             </nav>
                         </div>
                         <!-- Nested Sidenav Accordion (Apps -> domain Management)-->

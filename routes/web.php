@@ -15,8 +15,10 @@ use App\Http\Controllers\UcOverviewController;
 use App\Http\Controllers\LogOverviewController;
 use App\Http\Controllers\ReportStatisticController;
 use App\Http\Controllers\ReportDetailSenderController;
+use App\Http\Controllers\Setup\RoleController;
 use App\Http\Controllers\SystemInformationController;
 use App\Http\Controllers\DomainMinistryAgenciesListController;
+
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -112,6 +114,8 @@ Route::group(['middleware' => ['auth']], function () {
     Route::group(['prefix' => 'history_connection_mail_relay'], function () {
         Route::get('/blacklist_firewall', [HistoryController::class, 'indexBlacklist'])->name('history.blacklist.index');
         Route::post('/blacklist_firewall/datatable', [HistoryController::class, 'datatableBlacklist'])->name('history.blacklist.datatable');
+        Route::post('/blacklist_firewall/search', [HistoryController::class, 'searching'])->name('history.blacklist.search');
+        Route::post('/blacklist_firewall/search/datatable', [HistoryController::class, 'datatableSearching'])->name('history.blacklist.datatable.search');
 
         Route::get('/whitelist_firewall', [HistoryController::class, 'indexWhitelist'])->name('history.whitelist.index');
         Route::post('/whitelist_firewall/datatable', [HistoryController::class, 'datatableWhitelist'])->name('history.whitelist.datatable');
@@ -153,16 +157,23 @@ Route::group(['middleware' => ['auth']], function () {
         });
     });
 
-    Route::group(['prefix' => 'systeminformation'], function () {
-        Route::get('/', [SystemInformationController::class, 'index'])->name('systeminformation.index');
-    });
+    		//role
+		Route::group(['prefix' => 'role'], function () {
+			Route::get('/',[RoleController::class,'index'])->name('setup.role.index');
+			Route::post('/add',[RoleController::class,'create'])->name('setup.role.create');
+			Route::post('/delete',[RoleController::class,'delete'])->name('setup.role.delete');
+			Route::post('/storePermission',[RoleController::class,'storePermission'])->name('setup.role.storePermission');
+		});
 
-    Route::group(['prefix' => 'domain'], function () {
-        Route::get('/', [DomainMinistryAgenciesListController::class, 'index'])->name('domain.index');
-        Route::get('/register', [DomainMinistryAgenciesListController::class, 'create'])->name('domain.register');
-        Route::post('/register', [DomainMinistryAgenciesListController::class, 'store'])->name('domain.store');
-    });
+        Route::group(['prefix' => 'domain'], function () {
+            Route::get('/', [DomainMinistryAgenciesListController::class, 'index'])->name('domain.index');
+            Route::get('/register', [DomainMinistryAgenciesListController::class, 'create'])->name('domain.register');
+            Route::post('/register', [DomainMinistryAgenciesListController::class, 'store'])->name('domain.store');
+        });
 
+        Route::group(['prefix' => 'systeminformation'], function () {
+            Route::get('/', [SystemInformationController::class, 'index'])->name('systeminformation.index');
+        });
 
 });
 
