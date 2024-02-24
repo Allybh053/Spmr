@@ -56,6 +56,7 @@ class SmtpRelayReqForm extends Model
         'verifier_3_position',
         'verifier_3_dept_div',
         'date_verification_3',
+        'upload_copy_attachment',
 
     ];
 
