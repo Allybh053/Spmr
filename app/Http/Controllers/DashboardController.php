@@ -14,6 +14,8 @@ use Validator;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\View;
 use App\Models\Server;
+use Illuminate\Http\JsonResponse;
+use Faker\Factory as Faker;
 
 class DashboardController extends Controller
 {
@@ -21,45 +23,52 @@ class DashboardController extends Controller
     {
         $user = Auth::user();
         $role = $user->roles->isNotEmpty() ? $user->roles->pluck('name')->first() : null;
-        $serverconfig = Server::where('status', 1)->first();
+        $serverconfig = Server::where('status', 1)->pluck('hostname','id');
 
+        return view('dashboard.index', compact('user', 'role','serverconfig'));
+    }
 
-        $server = [
-            "Server Local" => [
-                "Postfix" => "Online",
-                "Fail-To-Ban" => "Offline",
-                "Apache" => "Offline",
-                "Webmin" => "Online",
-                "Replicate Mail Relay" => "Online",
-                "Policy Server" => "Offline",
-                "Keep Alive" => "Online"
-            ],
-            "Server First" => [
-                "Postfix" => "Online",
-                "Fail-To-Ban" => "Offline",
-                "Apache" => "Offline",
-                "Webmin" => "Online",
-                "Replicate Mail Relay" => "Online",
-                "Policy Server" => "Offline",
-                "Keep Alive" => "Online"
-            ],
-            "Server Second" => [
-                "Postfix" => "Online",
-                "Fail-To-Ban" => "Offline",
-                "Apache" => "Offline",
-                "Webmin" => "Online",
-                "Replicate Mail Relay" => "Online",
-                "Policy Server" => "Offline",
-                "Keep Alive" => "Online"
-            ]
+    public function api(Request $request)
+    {
+        $faker = Faker::create();
+
+        $serverId = $request->serverId;
+        $ipAddress = $faker->ipv4;
+        // Generate fake data for total applications, domains, and SASL
+        $totalApplications = $faker->numberBetween(100, 1000);
+        $totalDomains = $faker->numberBetween(50, 500);
+        $totalSASL = $faker->numberBetween(20, 200);
+
+        // Generate fake data for the table
+        $tableData = [];
+        for ($i = 0; $i < 5; $i++) {
+            $tableData[] = [
+                'columnA' => $faker->word,
+                'columnB' => $faker->word,
+                'columnC' => $faker->word,
+                'columnD' => $faker->word,
+            ];
+        }
+
+        // Generate fake status for each service
+        $services = [
+            'Postfix' => $faker->randomElement(['Online', 'Offline']),
+            'Fail-To-Ban' => $faker->randomElement(['Online', 'Offline']),
+            'Apache' => $faker->randomElement(['Online', 'Offline']),
+            'Webmin' => $faker->randomElement(['Online', 'Offline']),
+            'Replicate Mail Relay' => $faker->randomElement(['Online', 'Offline']),
+            'Policy Server' => $faker->randomElement(['Online', 'Offline']),
+            'Keep Alive' => $faker->randomElement(['Online', 'Offline']),
         ];
 
-
-
-
-
-
-
-        return view('dashboard.index', compact('user', 'role','server','serverconfig'));
+        return new JsonResponse([
+            'totalApplications' => $totalApplications,
+            'totalDomains' => $totalDomains,
+            'totalSASL' => $totalSASL,
+            'data' => $tableData,
+            'status' => $faker->randomElement(['Online', 'Offline']),
+            'services' => $services,
+            'ipAddress' => $ipAddress,
+        ]);
     }
 }
