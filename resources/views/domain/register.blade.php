@@ -19,7 +19,7 @@
             <div class="card mb-4">
                 <div class="card-header">FQDN</div>
                 <div class="card-body">
-                    <form method="POST" action="{{ route('domain.store')}}">
+                    <form class="ajax-form" novalidate method="POST" action="{{ route('domain.store')}}">
                     @csrf
                     @method('POST')
                         <!-- Form Row-->
@@ -41,9 +41,14 @@
                             </div>
                             <!-- Form Group (username)-->
                             <div class="mb-3">
+                                <label class="small mb-1" for="address">Remarks</label>
+                                <textarea class="lh-base form-control" id="remarks" name="remarks" type="text" placeholder="Enter remarks..." rows="4"></textarea>
+                            </div>
+                            {{--<!-- Form Group (username)-->
+                            <div class="mb-3">
                                 <label class="small mb-1" for="address">Address</label>
                                 <textarea class="lh-base form-control" id="address" name="address" type="text" placeholder="Enter address..." rows="4"></textarea>
-                            </div>
+                            </div>--}}
                             <div class="form-group col-md-4">
                             <label for="enabled">Status</label>
                             <select id="enabled" name="enabled" class="form-control" required>

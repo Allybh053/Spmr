@@ -32,44 +32,31 @@
                             </tr>
                         </thead>
                         <tbody>
-                            {{-- @foreach ($smtpMailServers as $smtpMailServer) --}}
+                             @foreach ($fqdndata as $data)
                             <tr>
-                                <td>1.</td>
-                                <td>artgallery.gov.my</td>
-                                <td>Kementerian Pelancongan, Seni Dan Budaya
-                                {{-- @if($smtpMailServer -> types_req == 0)
-                                    <span class="badge bg-success text-white rounded-pill">New Application</span>
-                                @elseif($smtpMailServer -> types_req == 1)
-                                    <span class="badge bg-danger text-white rounded-pill">Terminate of Service</span>
-                                @else
-                                    <span class="badge bg-primary text-white rounded-pill">Onboarding Agency</span>
-                                @endif --}}
-                                </td>
-                                <td>Lembaga Pembangunan Seni Visual Negara</td>
-                                <td><span class="badge bg-green-soft text-green">Active</span>
-                                {{-- @if($user->enabled == 1)
+                                <td>{{ $loop->iteration }}.</td>
+                                <td>{{ $data->domain_name }}</td>
+                                <td>{{ $data->ministry_name }}</td>
+                                <td>{{ $data->agencies_name }}</td>
+                                <td>
+                                 @if($data->enabled == 1)
                                     <span class="badge bg-green-soft text-green">Active</span>
                                 @else
                                     <span class="badge bg-red-soft text-red">Inactive</span>
-                                @endif --}}
-
-                                    <!-- span class="badge bg-green-soft text-green">Sales</span>
-                                    <span class="badge bg-blue-soft text-blue">Developers</span>
-                                    <span class="badge bg-red-soft text-red">Marketing</span>
-                                    <span class="badge bg-purple-soft text-purple">Managers</span>
-                                    <span class="badge bg-yellow-soft text-yellow">Customer</span -->
+                                @endif
                                 </td>
-                                <td>01/01/2024</td>
+                                <td>{{ $data->created_at->format('d/m/Y') }}</td>
                                 <td>
-                                    <a class="btn btn-datatable btn-icon me-2 text-blue" title="View Detail" href=""><i data-feather="eye"></i></a>
-                                    <form class="btn btn-datatable btn-icon me-2 text-blue" action="" method="POST" onsubmit="return confirm('Are you sure you want to delete this FQDN?')">
+                                    {{--<a class="btn btn-datatable btn-icon me-2 text-blue" title="View Detail" href=""><i data-feather="eye"></i></a>--}}
+                                    <a class="btn btn-datatable btn-icon btn-transparent-dark me-2" title="Edit Detail" href="{{ route('domain.edit', ['id' => $data->id]) }}"><i data-feather="edit"></i></a>
+                                    <form class="btn btn-datatable btn-icon me-2 text-blue" action="{{ route('domain.delete', [$data['id']]) }}" method="POST" onsubmit="return confirm('Are you sure you want to delete this FQDN?')">
                                         @csrf
-                                        @method('DELETE')
+                                        @method('POST')
                                         <button type="submit" class="btn btn-datatable btn-icon text-danger btn-transparent" title="Delete FQDN"><i data-feather="trash-2"></i></button>
                                     </form>
                                 </td>
                             </tr>
-                            {{-- @endforeach --}}
+                             @endforeach
                         </tbody>
                     </table>
 
