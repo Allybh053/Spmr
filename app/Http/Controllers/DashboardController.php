@@ -15,12 +15,13 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\View;
 use App\Models\Server;
 use App\Models\RoleServer;
+use App\Models\DomainMinistryAgencies;
 use Illuminate\Http\JsonResponse;
 use Faker\Factory as Faker;
 
 class DashboardController extends Controller
 {
-    public function index()
+    public function index(Request $request,$limit = null)
     {
         $user = Auth::user();
         $role = $user->roles->isNotEmpty() ? $user->roles->pluck('name')->first() : null;
@@ -33,10 +34,46 @@ class DashboardController extends Controller
         ->where('status', 1)
         ->pluck('hostname', 'id');
 
-        return view('dashboard.index', compact('user', 'role','serverconfig'));
-    }
+        $limit = $request->input('limit', $limit);
 
-    public function api(Request $request)
+        if ($limit === 'all') {
+            $departmentCounts = $this->generateFakerData(); // No limit specified for "All"
+        } else {
+            $departmentCounts = $this->generateFakerData($limit);
+        }
+        
+
+            $faker = Faker::create();
+            $days = range(1, 10);
+
+
+            if ($request->expectsJson()) {
+                return response()->json(['departmentCounts' => $departmentCounts, 'days' => $days]);
+            }
+
+            $p1Data = [];
+            $p2Data = [];
+            $p3Data = [];
+            for ($i = 0; $i < 10; $i++) { // Assuming 10 data points for each P1, P2, P3 for example
+                $p1Data[] = $faker->numberBetween(1, 100);
+                $p2Data[] = $faker->numberBetween(1, 100);
+                $p3Data[] = $faker->numberBetween(1, 100);
+            }
+
+            $mailqData = $this->generateFakerMailQueue(50); // Generate data for 50 entries
+
+            // Extract timestamps and mail queue counts
+            $timestamps = collect($mailqData)->pluck('created_at')->map(function ($timestamp) {
+                return $timestamp->format('Y-m-d H:i:s'); // Format timestamp as needed
+            });
+            $mailCounts = collect($mailqData)->pluck('mail_count');
+        
+        
+            // Pass the data to the view
+            return view('dashboard.index', compact('user', 'role', 'serverconfig', 'departmentCounts', 'limit', 'days', 'p1Data', 'p2Data', 'p3Data','timestamps', 'mailCounts'));
+        }
+
+    public function api(Request $request, $limit=null)
     {
         $faker = Faker::create();
 
@@ -69,6 +106,29 @@ class DashboardController extends Controller
             'Keep Alive' => $faker->randomElement(['Online', 'Offline']),
         ];
 
+        $departmentCounts = $this->generateFakerData($limit);
+
+        
+        $mailqData = $this->generateFakerMailQueue(50); // Generate data for 50 entries
+
+        // Extract timestamps and mail queue counts
+        $timestamps = collect($mailqData)->pluck('created_at')->map(function ($timestamp) {
+            return $timestamp->format('Y-m-d H:i:s'); // Format timestamp as needed
+        });
+        $mailCounts = collect($mailqData)->pluck('mail_count');
+
+        $faker = Faker::create();
+        $days = range(1, 10);
+
+        $p1Data = [];
+        $p2Data = [];
+        $p3Data = [];
+        for ($i = 0; $i < 10; $i++) { // Assuming 10 data points for each P1, P2, P3 for example
+            $p1Data[] = $faker->numberBetween(1, 100);
+            $p2Data[] = $faker->numberBetween(1, 100);
+            $p3Data[] = $faker->numberBetween(1, 100);
+        }
+
         return new JsonResponse([
             'totalApplications' => $totalApplications,
             'totalDomains' => $totalDomains,
@@ -77,6 +137,70 @@ class DashboardController extends Controller
             'status' => $faker->randomElement(['Online', 'Offline']),
             'services' => $services,
             'ipAddress' => $ipAddress,
+            'departmentCounts' => $departmentCounts,
+            'timestamps' => $timestamps,
+            'mailCounts' => $mailCounts,
+            'days' => $days, 
+            'p1Data'=> $p1Data, 
+            'p2Data'=> $p2Data, 
+            'p3Data'=> $p3Data,
         ]);
     }
+
+
+    private function generateFakerData($limit = null)
+    {
+        // Create an instance of Faker
+        $faker = Faker::create();
+
+        // Generate fake department counts
+        $departmentCounts = [];
+
+        // Generating fake data if the limit is specified
+        if ($limit) {
+            for ($i = 0; $i < $limit; $i++) {
+                $departmentCounts[] = [
+                    'ministry_name' => $faker->word, // Generate fake ministry name
+                    'count' => $faker->numberBetween(1, 100) // Generate a random count
+                ];
+            }
+        } else {
+            // If limit is not specified, generate a random number of departments
+            $numDepartments = $faker->numberBetween(5, 20); // Generate a random number of departments between 5 and 20
+            for ($i = 0; $i < $numDepartments; $i++) {
+                $departmentCounts[] = [
+                    'ministry_name' => $faker->word, // Generate fake ministry name
+                    'count' => $faker->numberBetween(1, 100) // Generate a random count
+                ];
+            }
+        }
+
+        // Sort the generated data by count in descending order
+        usort($departmentCounts, function ($a, $b) {
+            return $b['count'] - $a['count'];
+        });
+
+        return collect($departmentCounts);
+    }
+
+    private function generateFakerMailQueue($numEntries)
+    {
+        $faker = Faker::create();
+        $mailQueueData = [];
+
+        // Generate Faker data for mail queue
+        for ($i = 0; $i < $numEntries; $i++) {
+            $timestamp = $faker->dateTimeBetween('-30 days', 'now'); // Random timestamp within the last 30 days
+            $mailCount = $faker->numberBetween(0, 100); // Random number of emails in the queue
+
+            $mailQueueData[] = [
+                'created_at' => $timestamp,
+                'mail_count' => $mailCount
+            ];
+        }
+
+        return $mailQueueData;
+    }
+
+
 }

@@ -28,13 +28,13 @@
                     <div class="sidenav-collapse-arrow"></div>
                 </a>
 
-                <div class="sidenav-menu-heading">Uc Overview</div>
+                <!-- <div class="sidenav-menu-heading">Uc Overview</div> -->
                 <!-- Sidenav Accordion (Dashboard)-->
-                <a class="nav-link" href="{{ route('uc.index') }}">
+                <!-- <a class="nav-link" href="{{ route('uc.index') }}">
                     <div class="nav-link-icon"><i data-feather="activity"></i></div>
                     Uc Overview
                     <div class="sidenav-collapse-arrow"></div>
-                </a>
+                </a> -->
 
                  <!-- Sidenav Menu Heading (Core)-->
                  <div class="sidenav-menu-heading">Management</div>
@@ -72,19 +72,19 @@
                 </div>
 
 
-                <a class="nav-link collapsed" href="javascript:void(0);" data-bs-toggle="collapse" data-bs-target="#collapseHistory" aria-expanded="false" aria-controls="collapseHistory">
+                <!-- <a class="nav-link collapsed" href="javascript:void(0);" data-bs-toggle="collapse" data-bs-target="#collapseHistory" aria-expanded="false" aria-controls="collapseHistory">
                     <div class="nav-link-icon"><i data-feather="link"></i></div>
                    History Connection
                     <div class="sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
                 </a>
                 <div class="collapse" id="collapseHistory" data-bs-parent="#accordionSidenav">
-                <nav class="sidenav-menu-nested nav accordion" id="accordionSidenavPages">
+                <nav class="sidenav-menu-nested nav accordion" id="accordionSidenavPages"> -->
                     <!-- <a class="nav-link" href="{{ route('history.blacklist.index') }}">Blacklist Firewall</a>
                     <a class="nav-link" href="{{ route('history.whitelist.index')}}">Whitelist Firewall</a> -->
-                    <a class="nav-link" href="{{ route('history.fail.index') }}">Fail-to-Ban Blacklist Firewall</a>
-                </nav>
+                    <!-- <a class="nav-link" href="{{ route('history.fail.index') }}">Fail-to-Ban Blacklist Firewall</a>
+                </nav> -->
 
-                </div>
+                <!-- </div> -->
 
                 <div class="sidenav-menu-heading">Report</div>
                 <a class="nav-link collapsed" href="javascript:void(0);" data-bs-toggle="collapse" data-bs-target="#collapseReport" aria-expanded="false" aria-controls="collapseReport">
