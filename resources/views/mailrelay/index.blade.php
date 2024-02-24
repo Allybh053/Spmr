@@ -32,12 +32,12 @@
         @endif
         <div class="card">
             <div class="card-body">
-                <table id="datatablesSimple" class="table table-striped">
+                <table id="datatablesSimple" class="table">
                     <thead>
                         <tr>
                             <th>No</th>
                             <th>Ticket No</th>
-                            <th>Domain (FQDN)</th>
+                            <th>Mail Relay Server</th>
                             <th>Type Application</th>
                             <th>Requestor</th>
                             <th>Status</th>
@@ -50,10 +50,10 @@
                         <tr>
                             <td>{{ $loop->iteration }}.</td>
                             <td>{{ $smtpMailServer -> ticket_id }}</td>
-                            <td>{{ $smtpMailServer -> fqdn_system }}</td>
-                            <td>@if($smtpMailServer -> types_req == 0)
+                            <td>{{ $smtpMailServer -> smtp_relay_server }}</td>
+                            <td>@if($smtpMailServer -> types_req == 1)
                                 <span class="badge bg-success text-white rounded-pill">New Application</span>
-                            @elseif($smtpMailServer -> types_req == 1)
+                            @elseif($smtpMailServer -> types_req == 2)
                                 <span class="badge bg-danger text-white rounded-pill">Terminate of Service</span>
                             @else
                                 <span class="badge bg-primary text-white rounded-pill">Onboarding Agency</span>
@@ -68,7 +68,8 @@
                             </td>
                             <td> {{ \Carbon\Carbon::parse($smtpMailServer->created_at)->format('d-m-Y') }}</td>
                             <td>
-                                <a class="btn btn-datatable btn-icon me-2 text-blue" title="View Detail" href="{{ route('smtp_relay.edit',['id' => $smtpMailServer->id]) }}"><i data-feather="eye"></i></a>
+                                <a class="btn btn-datatable btn-icon me-2 text-blue" title="View Detail" href="{{ route('smtp_relay.view', ['id' => $smtpMailServer->id]) }}"><i data-feather="eye"></i></a>
+                                <a hidden class="btn btn-datatable btn-icon me-2 text-blue" title="Edit Detail" href="{{ route('smtp_relay.edit',['id' => $smtpMailServer->id]) }}"><i data-feather="edit"></i></a>
                                 <form class="btn btn-datatable btn-icon me-2 text-blue" action="#" method="POST" onsubmit="return confirm('Are you sure you want to delete this user?')">
                                     @csrf
                                     @method('DELETE')

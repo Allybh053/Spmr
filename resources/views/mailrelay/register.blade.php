@@ -34,7 +34,8 @@
                         <tr>
                             <th>No</th>
                             <th>Form ID</th>
-                            <th>Domain (FQDN)</th>
+                            <th>Ticket No</th>
+                            <th>Mail Relay Server</th>
                             <th>Type Application</th>
                             <th>Requestor</th>
                             <th>Status</th>
@@ -47,10 +48,11 @@
                         <tr>
                             <td>{{ $loop->iteration }}.</td>
                             <td>{{ $smtpMailServer -> form_id }}</td>
-                            <td>{{ $smtpMailServer -> fqdn_system }}</td>
-                            <td>@if($smtpMailServer -> types_req == 0)
+                            <td>{{ $smtpMailServer -> ticket_id }}</td>
+                            <td>{{ $smtpMailServer -> smtp_relay_server }}</td>
+                            <td>@if($smtpMailServer -> types_req == 1)
                                 <span class="badge bg-success text-white rounded-pill">New Application</span>
-                            @elseif($smtpMailServer -> types_req == 1)
+                            @elseif($smtpMailServer -> types_req == 2)
                                 <span class="badge bg-danger text-white rounded-pill">Terminate of Service</span>
                             @else
                                 <span class="badge bg-primary text-white rounded-pill">Onboarding Agency</span>

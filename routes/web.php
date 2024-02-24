@@ -15,8 +15,10 @@ use App\Http\Controllers\UcOverviewController;
 use App\Http\Controllers\LogOverviewController;
 use App\Http\Controllers\ReportStatisticController;
 use App\Http\Controllers\ReportDetailSenderController;
+use App\Http\Controllers\Setup\RoleController;
 use App\Http\Controllers\SystemInformationController;
 use App\Http\Controllers\DomainMinistryAgenciesListController;
+
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -58,6 +60,8 @@ Route::group(['middleware' => ['auth']], function () {
 
     //testing route
     Route::get('/home', [DashboardController::class, 'index'])->name('dashboard.index');
+    Route::get('/getServer', [DashboardController::class, 'api'])->name('dashboard.api');
+    Route::get('/home/{limit}',[DashboardController::class, 'limit'])->name('dashboard.limit');
 
 	//Dashboard
     Route::group(['prefix' => 'users'], function () {
@@ -95,6 +99,10 @@ Route::group(['middleware' => ['auth']], function () {
         //code sidi
         Route::get('/register', [SmtpRelayController::class, 'daftar'])->name('smtp_relay.daftar');
         Route::post('/saving', [SmtpRelayController::class, 'saving'])->name('smtp_relay.saving');
+        Route::get('/view/{id}', [SmtpRelayController::class, 'papar'])->name('smtp_relay.view');
+        Route::get('/update/{id}', [SmtpRelayController::class, 'kemaskini'])->name('smtp_relay.kemaskini');
+        Route::post('/update/{id}/kemaskinidata', [SmtpRelayController::class, 'kemaskinidata'])->name('smtp_relay.kemaskinidata');
+
 
     });
 
@@ -112,6 +120,8 @@ Route::group(['middleware' => ['auth']], function () {
     Route::group(['prefix' => 'history_connection_mail_relay'], function () {
         Route::get('/blacklist_firewall', [HistoryController::class, 'indexBlacklist'])->name('history.blacklist.index');
         Route::post('/blacklist_firewall/datatable', [HistoryController::class, 'datatableBlacklist'])->name('history.blacklist.datatable');
+        Route::post('/blacklist_firewall/search', [HistoryController::class, 'searching'])->name('history.blacklist.search');
+        Route::post('/blacklist_firewall/search/datatable', [HistoryController::class, 'datatableSearching'])->name('history.blacklist.datatable.search');
 
         Route::get('/whitelist_firewall', [HistoryController::class, 'indexWhitelist'])->name('history.whitelist.index');
         Route::post('/whitelist_firewall/datatable', [HistoryController::class, 'datatableWhitelist'])->name('history.whitelist.datatable');
@@ -122,17 +132,8 @@ Route::group(['middleware' => ['auth']], function () {
 
 
     Route::group(['prefix' => 'uc_overview'], function () {
-        Route::get('/register_application', [UcOverviewController::class, 'indexApplication'])->name('uc.application.index');
-        Route::post('/register_application/datatable', [UcOverviewController::class, 'datatableApplication'])->name('uc.application.datatable');
-
-        Route::get('/register_domain', [UcOverviewController::class, 'indexDomain'])->name('uc.domain.index');
-        Route::post('/register_domain/datatable', [UcOverviewController::class, 'datatableDomain'])->name('uc.domain.datatable');
-
-        Route::get('/register_username', [UcOverviewController::class, 'indexUsername'])->name('uc.username.index');
-        Route::post('/register_username/datatable', [UcOverviewController::class, 'datatableUsername'])->name('uc.username.datatable');
-
-        Route::get('/wildcard', [UcOverviewController::class, 'indexWildcard'])->name('uc.wildcard.index');
-        Route::post('/wildcard/datatable', [UcOverviewController::class, 'datatableWildcard'])->name('uc.wildcard.datatable');
+        Route::get('/', [UcOverviewController::class, 'indexApplication'])->name('uc.index');
+        Route::post('/datatable', [UcOverviewController::class, 'datatableApplication'])->name('uc.datatable');
     });
 
 
@@ -153,9 +154,13 @@ Route::group(['middleware' => ['auth']], function () {
         });
     });
 
-    Route::group(['prefix' => 'systeminformation'], function () {
-        Route::get('/', [SystemInformationController::class, 'index'])->name('systeminformation.index');
-    });
+    		//role
+		Route::group(['prefix' => 'role'], function () {
+			Route::get('/',[RoleController::class,'index'])->name('setup.role.index');
+			Route::post('/add',[RoleController::class,'create'])->name('setup.role.create');
+			Route::post('/delete',[RoleController::class,'delete'])->name('setup.role.delete');
+			Route::post('/storePermission',[RoleController::class,'storePermission'])->name('setup.role.storePermission');
+		});
 
     Route::group(['prefix' => 'domain'], function () {
         Route::get('/', [DomainMinistryAgenciesListController::class, 'index'])->name('domain.index');
@@ -166,6 +171,9 @@ Route::group(['middleware' => ['auth']], function () {
         Route::post('/{id}', [DomainMinistryAgenciesListController::class, 'delete'])->name('domain.delete');
     });
 
+        Route::group(['prefix' => 'systeminformation'], function () {
+            Route::get('/', [SystemInformationController::class, 'index'])->name('systeminformation.index');
+        });
 
 });
 

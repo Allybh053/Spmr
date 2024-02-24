@@ -17,7 +17,7 @@
                             </h1>
                         </div>
                             <div class="col-12 col-xl-auto mb-3">
-                                <a class="btn btn-sm btn-light text-primary" href="{{ route('smtp_relay.create') }}">
+                                <a class="btn btn-sm btn-light text-primary" href="{{ route('smtp_relay.daftar') }}">
                                     <i class="me-1" data-feather="plus"></i>
                                     Add New Request Form
                                 </a>
@@ -47,7 +47,7 @@
                                 <th>Ticket No.</th>
                                 <th>Types Application</th>
                                 <th>Project Name</th>
-                                <th>FQDN System</th>
+                                <th>Server Mail Relay</th>
                                 <th>Date Created</th>
                                 <th>Status</th>
                                 <th>Action</th>
@@ -87,7 +87,7 @@
                         { data: 'ticket_id', name: 'ticket_number', class: 'text-center' },
                         { data: 'types_req', name: 'types_req', class: 'text-center' },
                         { data: 'project_name', name: 'project_name', class: 'text-center' },
-                        { data: 'fqdn_system', name: 'fqdn_system', class: 'text-center' },
+                        { data: 'smtp_relay_server', name: 'smtp_relay_server', class: 'text-center' },
                         { data: 'created_at', name: 'created_at', class: 'text-center' },
                         { data: 'status', name: 'status', class: 'text-center' },
                         { data: 'action', name: 'type', class: 'text-center', orderable: false, searchable: false },

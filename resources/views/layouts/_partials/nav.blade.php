@@ -27,26 +27,23 @@
                     Dashboards
                     <div class="sidenav-collapse-arrow"></div>
                 </a>
+
+                <!-- <div class="sidenav-menu-heading">Uc Overview</div> -->
+                <!-- Sidenav Accordion (Dashboard)-->
+                <!-- <a class="nav-link" href="{{ route('uc.index') }}">
+                    <div class="nav-link-icon"><i data-feather="activity"></i></div>
+                    Uc Overview
+                    <div class="sidenav-collapse-arrow"></div>
+                </a> -->
+
+                 <!-- Sidenav Menu Heading (Core)-->
+                 <div class="sidenav-menu-heading">Management</div>
                 <!-- Sidenav Link (Charts)-->
-                <a class="nav-link collapsed" href="javascript:void(0);" data-bs-toggle="collapse" data-bs-target="#collapseSMTPPages" aria-expanded="false" aria-controls="collapseSMTPPages">
+                <a class="nav-link" href="{{ route('smtp_relay.smtp_relay_req') }}">
                     <div class="nav-link-icon"><i data-feather="grid"></i></div>
-                    SMTP (Mail Relay)
-                    <div class="sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
+                    Mail Relay Req Form
+                    <div class="sidenav-collapse-arrow"></div>
                 </a>
-                <div class="collapse" id="collapseSMTPPages" data-bs-parent="#accordionSidenav">
-                    <nav class="sidenav-menu-nested nav accordion" id="accordionSidenavPages">
-                        <!--<a class="nav-link" href="dashboard-1.html">
-                            Register New
-                        </a>-->
-                        <a class="nav-link" href="{{ route('smtp_relay.smtp_relay_req') }}">
-                            SMTP Form Request
-                        </a>
-                        {{-- penambahbaikan sidi --}}
-                        <a class="nav-link" href="{{ route('smtp_relay.daftar') }}">
-                            Create New Request
-                        </a>
-                    </nav>
-                </div>
                 <!-- Sidenav Link (Mail Relay Module)-->
                 <a class="nav-link collapsed" href="javascript:void(0);" data-bs-toggle="collapse" data-bs-target="#collapseMailPages" aria-expanded="false" aria-controls="collapseMailPages">
                     <div class="nav-link-icon"><i data-feather="mail"></i></div>
@@ -61,46 +58,21 @@
                 </div>
 
 
-                <a class="nav-link collapsed" href="javascript:void(0);" data-bs-toggle="collapse" data-bs-target="#collapseHistory" aria-expanded="false" aria-controls="collapseHistory">
+                <!-- <a class="nav-link collapsed" href="javascript:void(0);" data-bs-toggle="collapse" data-bs-target="#collapseHistory" aria-expanded="false" aria-controls="collapseHistory">
                     <div class="nav-link-icon"><i data-feather="link"></i></div>
                    History Connection
                     <div class="sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
                 </a>
                 <div class="collapse" id="collapseHistory" data-bs-parent="#accordionSidenav">
-                <nav class="sidenav-menu-nested nav accordion" id="accordionSidenavPages">
-                    <a class="nav-link" href="{{ route('history.blacklist.index') }}">Blacklist Firewall</a>
-                    <a class="nav-link" href="{{ route('history.whitelist.index')}}">Whitelist Firewall</a>
-                    <a class="nav-link" href="{{ route('history.fail.index') }}">Fail-to-Ban Blacklist Firewall</a>
-                </nav>
+                <nav class="sidenav-menu-nested nav accordion" id="accordionSidenavPages"> -->
+                    <!-- <a class="nav-link" href="{{ route('history.blacklist.index') }}">Blacklist Firewall</a>
+                    <a class="nav-link" href="{{ route('history.whitelist.index')}}">Whitelist Firewall</a> -->
+                    <!-- <a class="nav-link" href="{{ route('history.fail.index') }}">Fail-to-Ban Blacklist Firewall</a>
+                </nav> -->
 
-                </div>
+                <!-- </div> -->
 
-
-                <a class="nav-link collapsed" href="javascript:void(0);" data-bs-toggle="collapse" data-bs-target="#collapseUcOverview" aria-expanded="false" aria-controls="collapseUcOverview">
-                    <div class="nav-link-icon"><i data-feather="layers"></i></div>
-                   UC Overview
-                    <div class="sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
-                </a>
-                <div class="collapse" id="collapseUcOverview" data-bs-parent="#accordionSidenav">
-                    <nav class="sidenav-menu-nested nav accordion" id="accordionSidenavPages">
-                        <a class="nav-link" href="{{ route('uc.application.index') }}">View Register Application IP</a>
-                        <a class="nav-link" href="{{ route('uc.domain.index') }}">View Register Domain Map</a>
-                        <a class="nav-link" href="{{ route('uc.username.index') }}">View Register Username</a>
-                        <a class="nav-link" href="{{ route('uc.wildcard.index') }}">View List Wildcard</a>
-                    </nav>
-                </div>
-
-                <a class="nav-link collapsed" href="javascript:void(0);" data-bs-toggle="collapse" data-bs-target="#collapseLog" aria-expanded="false" aria-controls="collapseLog">
-                    <div class="nav-link-icon"><i data-feather="mail"></i></div>
-                   Log
-                    <div class="sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
-                </a>
-                <div class="collapse" id="collapseLog" data-bs-parent="#accordionSidenav">
-                    <nav class="sidenav-menu-nested nav accordion" id="accordionSidenavPages">
-                        <a class="nav-link" href="{{ route('log.index') }}">Log</a>
-                    </nav>
-                </div>
-
+                <div class="sidenav-menu-heading">Report</div>
                 <a class="nav-link collapsed" href="javascript:void(0);" data-bs-toggle="collapse" data-bs-target="#collapseReport" aria-expanded="false" aria-controls="collapseReport">
                     <div class="nav-link-icon"><i data-feather="trello"></i></div>
                    Report
@@ -112,6 +84,15 @@
                         <a class="nav-link" href="{{ route('report.detail.index') }}">Detail Report Sender</a>
                     </nav>
                 </div>
+
+                
+                <div class="sidenav-menu-heading">Log</div>
+                <!-- Sidenav Accordion (Dashboard)-->
+                <a class="nav-link" href="{{ route('log.index') }}">
+                    <div class="nav-link-icon"><i data-feather="mail"></i></div>
+                    Log
+                    <div class="sidenav-collapse-arrow"></div>
+                </a>
 
                 <!-- Sidenav Heading (Config)-->
                 <div class="sidenav-menu-heading">Config</div>
@@ -129,19 +110,21 @@
                 </a>
                 <div class="collapse" id="collapseAppsetting" data-bs-parent="#accordionSidenav">
                     <nav class="sidenav-menu-nested nav accordion" id="accordionSidenavAppsMenu">
-                        <!-- Nested Sidenav Accordion (Apps -> Role Management)-->
-                        <a class="nav-link collapsed" href="javascript:void(0);" data-bs-toggle="collapse" data-bs-target="#appsCollapseRoleManagement" aria-expanded="false" aria-controls="appsCollapseRoleManagement">
-                            Roles Management
+                           <!-- Nested Sidenav Accordion (Apps -> User Management)-->
+                           <a class="nav-link collapsed" href="javascript:void(0);" data-bs-toggle="collapse" data-bs-target="#appsCollapseUserManagement" aria-expanded="false" aria-controls="appsCollapseUserManagement">
+                            Appplication User
                             <div class="sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
                         </a>
-                        <div class="collapse" id="appsCollapseRoleManagement" data-bs-parent="#accordionSidenavAppsMenu">
+                        <div class="collapse" id="appsCollapseUserManagement" data-bs-parent="#accordionSidenavAppsMenu">
                             <nav class="sidenav-menu-nested nav">
-                                <a class="nav-link" href="user-management-list.html">Roles List</a>
-                                <a class="nav-link" href="user-management-add-user.html">Add Role</a>
-                                <a class="nav-link" href="user-management-groups-list.html">Permission List</a>
-                                <a class="nav-link" href="user-management-org-details.html">Add Permission</a>
+                                <a class="nav-link" href="{{ route('usermanagements.index') }}">Users List</a>
+                                <a class="nav-link" href="{{ route('usermanagements.create') }}">Add User</a>
                             </nav>
                         </div>
+                        <a class="nav-link" href="{{ route('setup.role.index')}}">
+                            Roles & Permission
+                            <div class="sidenav-collapse-arrow"></div>
+                        </a>
                         <!-- Nested Sidenav Accordion (Apps -> domain Management)-->
                         <a class="nav-link collapsed" href="javascript:void(0);" data-bs-toggle="collapse" data-bs-target="#appsCollapseDomainManagement" aria-expanded="false" aria-controls="appsCollapseDomainManagement">
                             FQDN Setup
@@ -153,17 +136,7 @@
                                 <a class="nav-link" href="{{ route('domain.register') }}">Add New FQDN</a>
                             </nav>
                         </div>
-                        <!-- Nested Sidenav Accordion (Apps -> User Management)-->
-                        <a class="nav-link collapsed" href="javascript:void(0);" data-bs-toggle="collapse" data-bs-target="#appsCollapseUserManagement" aria-expanded="false" aria-controls="appsCollapseUserManagement">
-                            Appplication User
-                            <div class="sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
-                        </a>
-                        <div class="collapse" id="appsCollapseUserManagement" data-bs-parent="#accordionSidenavAppsMenu">
-                            <nav class="sidenav-menu-nested nav">
-                                <a class="nav-link" href="{{ route('usermanagements.index') }}">Users List</a>
-                                <a class="nav-link" href="{{ route('usermanagements.create') }}">Add User</a>
-                            </nav>
-                        </div>
+                     
                     </nav>
                 </div>
                 <a class="nav-link" href="{{ route('systeminformation.index')}}">
