@@ -78,12 +78,85 @@
                         </div>
                     </div>
 
+                    <div class="row mb-4">
+                            <div class="col-xxl-6">
+                                <div class="card">
+                                    <div class="card-header text-center p-5">
+                                        <h5>Kementerian/Agensi/SUK</h5>
+                                    </div>
+                                    <div class="card-body">
+                                    <label for="limitSelectKementerian">Select Limit:</label>
+                                        <select name="limitKementerian" id="limitSelectKementerian">
+                                            <option value="all" {{ $limit === 'all' ? 'selected' : '' }}>All</option>
+                                            <option value="10" {{ $limit == 10 ? 'selected' : '' }}>Top 10</option>
+                                            <option value="20" {{ $limit == 20 ? 'selected' : '' }}>Top 20</option>
+                                            <option value="50" {{ $limit == 50 ? 'selected' : '' }}>Top 50</option>
+                                        </select>
+
+                                    <canvas id="kementerianChart"></canvas>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-xxl-6">
+                                <div class="card">
+                                    <div class="card-header text-center p-5">
+                                        <h5>Department/Division/Unit</h5>
+                                    </div>
+                                    <div class="card-body">
+                                    <label for="limitSelect">Select Limit:</label>
+                                        <select name="limit" id="limitSelect">
+                                            <option value="all" {{ $limit === 'all' ? 'selected' : '' }}>All</option>
+                                            <option value="10" {{ $limit == 10 ? 'selected' : '' }}>Top 10</option>
+                                            <option value="20" {{ $limit == 20 ? 'selected' : '' }}>Top 20</option>
+                                            <option value="50" {{ $limit == 50 ? 'selected' : '' }}>Top 50</option>
+                                        </select>
+
+                                    <canvas id="departmentChart"></canvas>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        
+                        <div class="row mb-4">
+                            <div class="col-xxl-4">
+                                <div class="card">
+                                    <div class="card-header text-center p-5">
+                                        <h5>Graf serial apps vs day</h5>
+                                    </div>
+                                    <div class="card-body">
+                                        <canvas id="appsChart"></canvas>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-xxl-4">
+                                <div class="card">
+                                    <div class="card-header text-center p-5">
+                                        <h5>Graf serial domain vs day</h5>
+                                    </div>
+                                    <div class="card-body">
+                                        <canvas id="domainChart"></canvas>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-xxl-4">
+                                <div class="card">
+                                    <div class="card-header text-center p-5">
+                                        <h5>Graf serial sasl vs day</h5>
+                                    </div>
+                                    <div class="card-body">
+                                        <canvas id="saslChart"></canvas>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
                         <div class="row">
-                            <div class="col-xxl-12">
+                            <div class="col-xxl-6">
                                 <div class="card">
                                     <div class="card-header text-center p-5">
                                         <h5>View MailQueue Statistic (last 5 minutes)</h5>
-                                        <p class="mb-4">Create view monitoring for Email Queue Health</p>
                                     </div>
                                     <div class="card-body">
                                     <div class="table-responsive">
@@ -115,6 +188,17 @@
                                             </tbody>
                                         </table>
                                     </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-xxl-6">
+                                <div class="card">
+                                    <div class="card-header text-center p-5">
+                                        <h5>Graf serial Mail Queue vs Time</h5>
+                                    </div>
+                                    <div class="card-body">
+                                        <canvas id="mailQueueChart"></canvas>
                                     </div>
                                 </div>
                             </div>
@@ -239,6 +323,8 @@
                                     </div>
                                 </div>
                             </div>
+
+                          
                         </div>
 
 
@@ -247,8 +333,659 @@
  @endsection
 
  @push('script')
+ <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.4/Chart.min.js" crossorigin="anonymous"></script>
+ <script src="{{asset('assets/demo/chart-bar-demo.js')}}"></script>
  <script>
     $(document).ready(function() {
+    renderChart();
+
+    function renderChart() {
+        var ctx = document.getElementById('departmentChart').getContext('2d');
+        window.chart = new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: {!! $departmentCounts->pluck('ministry_name') !!},
+                datasets: [{
+                    label: 'Top Department/Division/Unit',
+                    data: {!! $departmentCounts->pluck('count') !!},
+                    backgroundColor: "rgba(0, 97, 242, 1)",
+                    hoverBackgroundColor: "rgba(0, 97, 242, 0.9)",
+                    borderColor: "#4e73df",
+                    maxBarThickness: 25
+                }]
+            },
+            options: {
+                scales: {
+                    y: {
+                        beginAtZero: true
+                    }
+                }
+        }
+        });
+    }
+
+    $('#limitSelect').change(function() {
+        var limit = $(this).val();
+
+        // Check if there's an existing chart instance
+        if (window.chart) {
+            window.chart.destroy(); // Destroy the existing chart instance
+        }
+
+        // Send AJAX request to fetch data based on selected limit
+        $.ajax({
+            url: "{{ route('dashboard.index') }}",
+            method: 'GET',
+            data: { limit: limit },
+            success: function(response) {
+                console.log(response); // Add this line to debug the response
+                if (response && response.departmentCounts) {
+                    updateChart(response.departmentCounts);
+                } else {
+                    console.error("Invalid response format");
+                }
+            },
+            error: function(xhr, status, error) {
+                console.error(error);
+            }
+        });
+    });
+
+    // Function to update the chart
+    function updateChart(data) {
+        var ctx = document.getElementById('departmentChart').getContext('2d');
+
+        // Create new chart instance
+        window.chart = new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: data.map(d => d.ministry_name),
+                datasets: [{
+                    label: 'Top Department/Division/Unit',
+                    data: data.map(d => d.count),
+                    backgroundColor: "rgba(0, 97, 242, 1)",
+                    hoverBackgroundColor: "rgba(0, 97, 242, 0.9)",
+                    borderColor: "#4e73df",
+                    maxBarThickness: 25
+                }]
+            },
+            options: {
+                scales: {
+                    y: {
+                        beginAtZero: true // Example y-axis configuration, adjust as needed
+                    }
+                }
+        }
+        });
+    }
+
+
+    renderChartKementerian();
+
+    function renderChartKementerian() {
+        var ctx = document.getElementById('kementerianChart').getContext('2d');
+        window.kementerianChart = new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: {!! $departmentCounts->pluck('ministry_name') !!},
+                datasets: [{
+                    label: 'Top Kementerian/Agensi/SUK',
+                    data: {!! $departmentCounts->pluck('count') !!},
+                    backgroundColor: "rgba(0, 97, 242, 1)",
+                    hoverBackgroundColor: "rgba(0, 97, 242, 0.9)",
+                    borderColor: "#4e73df",
+                    maxBarThickness: 25
+                }]
+            },
+            options: {
+                scales: {
+                    y: {
+                        beginAtZero: true
+                    }
+                }
+        }
+        });
+    }
+
+    $('#limitSelectKementerian').change(function() {
+        var limitK = $(this).val();
+
+        // Check if there's an existing chart instance
+        if (window.kementerianChart) {
+            window.kementerianChart.destroy(); // Destroy the existing chart instance
+        }
+
+        // Send AJAX request to fetch data based on selected limit
+        $.ajax({
+            url: "{{ route('dashboard.index') }}",
+            method: 'GET',
+            data: { limit: limitK },
+            success: function(response) {
+                console.log(response); // Add this line to debug the response
+                if (response && response.departmentCounts) {
+                    updateChartKementerian(response.departmentCounts);
+                } else {
+                    console.error("Invalid response format");
+                }
+            },
+            error: function(xhr, status, error) {
+                console.error(error);
+            }
+        });
+    });
+
+    // Function to update the chart
+    function updateChartKementerian(data) {
+        var ctx = document.getElementById('kementerianChart').getContext('2d');
+
+        // Create new chart instance
+        window.kementerianChart = new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: data.map(d => d.ministry_name),
+                datasets: [{
+                    label: 'Top Kementerian/Agensi/SUK',
+                    data: data.map(d => d.count),
+                    backgroundColor: "rgba(0, 97, 242, 1)",
+                    hoverBackgroundColor: "rgba(0, 97, 242, 0.9)",
+                    borderColor: "#4e73df",
+                    maxBarThickness: 25
+                }]
+            },
+            options: {
+                scales: {
+                    y: {
+                        beginAtZero: true // Example y-axis configuration, adjust as needed
+                    }
+                }
+        }
+        });
+    }
+
+
+
+// line series
+renderChartLineApps();
+var appsChart;
+var domainChart;
+var saslChart;
+function renderChartLineApps() {
+    var ctx = document.getElementById('appsChart').getContext('2d');
+    var labels = @json($days); // Blade directive to encode PHP array to JSON
+var p1Data = @json($p1Data); // Blade directive to encode PHP array to JSON
+var p2Data = @json($p2Data); // Blade directive to encode PHP array to JSON
+var p3Data = @json($p3Data); // Blade directive to encode PHP array to JSON
+
+appsChart = new Chart(ctx, {
+    type: 'line',
+    data: {
+        labels: labels,
+        datasets: [
+            {
+                label: 'P1',
+                data: p1Data,
+                lineTension: 0.3,
+                backgroundColor: "rgba(0, 97, 242, 0.05)",
+                borderColor: "rgba(0, 97, 242, 1)",
+                pointRadius: 3,
+                pointBackgroundColor: "rgba(0, 97, 242, 1)",
+                pointBorderColor: "rgba(0, 97, 242, 1)",
+                pointHoverRadius: 3,
+                pointHoverBackgroundColor: "rgba(0, 97, 242, 1)",
+                pointHoverBorderColor: "rgba(0, 97, 242, 1)",
+                pointHitRadius: 10,
+                pointBorderWidth: 2,
+            },
+            {
+                label: 'P2',
+                data: p2Data,
+                backgroundColor: "rgba(255, 0, 0, 0.05)",
+                borderColor: "rgba(255, 0, 0, 1)",
+                pointRadius: 3,
+                pointBackgroundColor: "rgba(255, 0, 0, 1)",
+                pointBorderColor: "rgba(255, 0, 0, 1)",
+                pointHoverRadius: 3,
+                pointHoverBackgroundColor: "rgba(255, 0, 0, 1)",
+                pointHoverBorderColor: "rgba(255, 0, 0, 1)",
+                pointHitRadius: 10,
+                pointBorderWidth: 2,
+            },
+            {
+                label: 'P3',
+                data: p3Data,
+                backgroundColor: "rgba(255, 255, 0, 0.05)",
+                borderColor: "rgba(255, 255, 0, 1)",
+                pointRadius: 3,
+                pointBackgroundColor: "rgba(255, 255, 0, 1)",
+                pointBorderColor: "rgba(255, 255, 0, 1)",
+                pointHoverRadius: 3,
+                pointHoverBackgroundColor: "rgba(255, 255, 0, 1)",
+                pointHoverBorderColor: "rgba(255, 255, 0, 1)",
+                pointHitRadius: 10,
+                pointBorderWidth: 2,
+            }
+        ]
+    },
+    options: {
+        scales: {
+            y: {
+                beginAtZero: true
+            }
+        }
+    }
+    });
+}
+
+function renderAppsChart(labels, p1Data, p2Data, p3Data) {
+    var ctx = document.getElementById('appsChart').getContext('2d');
+    appsChart = new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: labels,
+            datasets: [
+                {
+                    label: 'P1',
+                    data: p1Data,
+                    lineTension: 0.3,
+                    backgroundColor: "rgba(0, 97, 242, 0.05)",
+                    borderColor: "rgba(0, 97, 242, 1)",
+                    pointRadius: 3,
+                    pointBackgroundColor: "rgba(0, 97, 242, 1)",
+                    pointBorderColor: "rgba(0, 97, 242, 1)",
+                    pointHoverRadius: 3,
+                    pointHoverBackgroundColor: "rgba(0, 97, 242, 1)",
+                    pointHoverBorderColor: "rgba(0, 97, 242, 1)",
+                    pointHitRadius: 10,
+                    pointBorderWidth: 2,
+                },
+                {
+                    label: 'P2',
+                    data: p2Data,
+                    backgroundColor: "rgba(255, 0, 0, 0.05)",
+                    borderColor: "rgba(255, 0, 0, 1)",
+                    pointRadius: 3,
+                    pointBackgroundColor: "rgba(255, 0, 0, 1)",
+                    pointBorderColor: "rgba(255, 0, 0, 1)",
+                    pointHoverRadius: 3,
+                    pointHoverBackgroundColor: "rgba(255, 0, 0, 1)",
+                    pointHoverBorderColor: "rgba(255, 0, 0, 1)",
+                    pointHitRadius: 10,
+                    pointBorderWidth: 2,
+                },
+                {
+                    label: 'P3',
+                    data: p3Data,
+                    backgroundColor: "rgba(255, 255, 0, 0.05)",
+                    borderColor: "rgba(255, 255, 0, 1)",
+                    pointRadius: 3,
+                    pointBackgroundColor: "rgba(255, 255, 0, 1)",
+                    pointBorderColor: "rgba(255, 255, 0, 1)",
+                    pointHoverRadius: 3,
+                    pointHoverBackgroundColor: "rgba(255, 255, 0, 1)",
+                    pointHoverBorderColor: "rgba(255, 255, 0, 1)",
+                    pointHitRadius: 10,
+                    pointBorderWidth: 2,
+                }
+            ]
+        },
+        options: {
+            scales: {
+                y: {
+                    beginAtZero: true
+                }
+            }
+        }
+    });
+
+    return appsChart;
+}
+
+
+renderChartLineDomain();
+function renderChartLineDomain() {
+    var ctx = document.getElementById('domainChart').getContext('2d');
+    var labels = @json($days); // Blade directive to encode PHP array to JSON
+var p1Data = @json($p1Data); // Blade directive to encode PHP array to JSON
+var p2Data = @json($p2Data); // Blade directive to encode PHP array to JSON
+var p3Data = @json($p3Data); // Blade directive to encode PHP array to JSON
+
+domainChart = new Chart(ctx, {
+    type: 'line',
+    data: {
+        labels: labels,
+        datasets: [
+            {
+                label: 'P1',
+                data: p1Data,
+                lineTension: 0.3,
+                backgroundColor: "rgba(0, 97, 242, 0.05)",
+                borderColor: "rgba(0, 97, 242, 1)",
+                pointRadius: 3,
+                pointBackgroundColor: "rgba(0, 97, 242, 1)",
+                pointBorderColor: "rgba(0, 97, 242, 1)",
+                pointHoverRadius: 3,
+                pointHoverBackgroundColor: "rgba(0, 97, 242, 1)",
+                pointHoverBorderColor: "rgba(0, 97, 242, 1)",
+                pointHitRadius: 10,
+                pointBorderWidth: 2,
+            },
+            {
+                label: 'P2',
+                data: p2Data,
+                backgroundColor: "rgba(255, 0, 0, 0.05)",
+                borderColor: "rgba(255, 0, 0, 1)",
+                pointRadius: 3,
+                pointBackgroundColor: "rgba(255, 0, 0, 1)",
+                pointBorderColor: "rgba(255, 0, 0, 1)",
+                pointHoverRadius: 3,
+                pointHoverBackgroundColor: "rgba(255, 0, 0, 1)",
+                pointHoverBorderColor: "rgba(255, 0, 0, 1)",
+                pointHitRadius: 10,
+                pointBorderWidth: 2,
+            },
+            {
+                label: 'P3',
+                data: p3Data,
+                backgroundColor: "rgba(255, 255, 0, 0.05)",
+                borderColor: "rgba(255, 255, 0, 1)",
+                pointRadius: 3,
+                pointBackgroundColor: "rgba(255, 255, 0, 1)",
+                pointBorderColor: "rgba(255, 255, 0, 1)",
+                pointHoverRadius: 3,
+                pointHoverBackgroundColor: "rgba(255, 255, 0, 1)",
+                pointHoverBorderColor: "rgba(255, 255, 0, 1)",
+                pointHitRadius: 10,
+                pointBorderWidth: 2,
+            }
+        ]
+    },
+    options: {
+        scales: {
+            y: {
+                beginAtZero: true
+            }
+        }
+    }
+    });
+}
+function renderDomainChart(labels, p1Data, p2Data, p3Data) {
+    var ctx = document.getElementById('domainChart').getContext('2d');
+   domainChart = new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: labels,
+            datasets: [
+                {
+                    label: 'P1',
+                    data: p1Data,
+                    lineTension: 0.3,
+                    backgroundColor: "rgba(0, 97, 242, 0.05)",
+                    borderColor: "rgba(0, 97, 242, 1)",
+                    pointRadius: 3,
+                    pointBackgroundColor: "rgba(0, 97, 242, 1)",
+                    pointBorderColor: "rgba(0, 97, 242, 1)",
+                    pointHoverRadius: 3,
+                    pointHoverBackgroundColor: "rgba(0, 97, 242, 1)",
+                    pointHoverBorderColor: "rgba(0, 97, 242, 1)",
+                    pointHitRadius: 10,
+                    pointBorderWidth: 2,
+                },
+                {
+                    label: 'P2',
+                    data: p2Data,
+                    backgroundColor: "rgba(255, 0, 0, 0.05)",
+                    borderColor: "rgba(255, 0, 0, 1)",
+                    pointRadius: 3,
+                    pointBackgroundColor: "rgba(255, 0, 0, 1)",
+                    pointBorderColor: "rgba(255, 0, 0, 1)",
+                    pointHoverRadius: 3,
+                    pointHoverBackgroundColor: "rgba(255, 0, 0, 1)",
+                    pointHoverBorderColor: "rgba(255, 0, 0, 1)",
+                    pointHitRadius: 10,
+                    pointBorderWidth: 2,
+                },
+                {
+                    label: 'P3',
+                    data: p3Data,
+                    backgroundColor: "rgba(255, 255, 0, 0.05)",
+                    borderColor: "rgba(255, 255, 0, 1)",
+                    pointRadius: 3,
+                    pointBackgroundColor: "rgba(255, 255, 0, 1)",
+                    pointBorderColor: "rgba(255, 255, 0, 1)",
+                    pointHoverRadius: 3,
+                    pointHoverBackgroundColor: "rgba(255, 255, 0, 1)",
+                    pointHoverBorderColor: "rgba(255, 255, 0, 1)",
+                    pointHitRadius: 10,
+                    pointBorderWidth: 2,
+                }
+            ]
+        },
+        options: {
+            scales: {
+                y: {
+                    beginAtZero: true
+                }
+            }
+        }
+    });
+
+    return domainChart;
+}
+
+renderChartSaslDomain();
+function renderChartSaslDomain() {
+    var ctx = document.getElementById('saslChart').getContext('2d');
+    var labels = @json($days); // Blade directive to encode PHP array to JSON
+var p1Data = @json($p1Data); // Blade directive to encode PHP array to JSON
+var p2Data = @json($p2Data); // Blade directive to encode PHP array to JSON
+var p3Data = @json($p3Data); // Blade directive to encode PHP array to JSON
+
+saslChart = new Chart(ctx, {
+    type: 'line',
+    data: {
+        labels: labels,
+        datasets: [
+            {
+                label: 'P1',
+                data: p1Data,
+                lineTension: 0.3,
+                backgroundColor: "rgba(0, 97, 242, 0.05)",
+                borderColor: "rgba(0, 97, 242, 1)",
+                pointRadius: 3,
+                pointBackgroundColor: "rgba(0, 97, 242, 1)",
+                pointBorderColor: "rgba(0, 97, 242, 1)",
+                pointHoverRadius: 3,
+                pointHoverBackgroundColor: "rgba(0, 97, 242, 1)",
+                pointHoverBorderColor: "rgba(0, 97, 242, 1)",
+                pointHitRadius: 10,
+                pointBorderWidth: 2,
+            },
+            {
+                label: 'P2',
+                data: p2Data,
+                backgroundColor: "rgba(255, 0, 0, 0.05)",
+                borderColor: "rgba(255, 0, 0, 1)",
+                pointRadius: 3,
+                pointBackgroundColor: "rgba(255, 0, 0, 1)",
+                pointBorderColor: "rgba(255, 0, 0, 1)",
+                pointHoverRadius: 3,
+                pointHoverBackgroundColor: "rgba(255, 0, 0, 1)",
+                pointHoverBorderColor: "rgba(255, 0, 0, 1)",
+                pointHitRadius: 10,
+                pointBorderWidth: 2,
+            },
+            {
+                label: 'P3',
+                data: p3Data,
+                backgroundColor: "rgba(255, 255, 0, 0.05)",
+                borderColor: "rgba(255, 255, 0, 1)",
+                pointRadius: 3,
+                pointBackgroundColor: "rgba(255, 255, 0, 1)",
+                pointBorderColor: "rgba(255, 255, 0, 1)",
+                pointHoverRadius: 3,
+                pointHoverBackgroundColor: "rgba(255, 255, 0, 1)",
+                pointHoverBorderColor: "rgba(255, 255, 0, 1)",
+                pointHitRadius: 10,
+                pointBorderWidth: 2,
+            }
+        ]
+    },
+    options: {
+        scales: {
+            y: {
+                beginAtZero: true
+            }
+        }
+    }
+    });
+}
+
+function renderSaslChart(labels, p1Data, p2Data, p3Data) {
+    var ctx = document.getElementById('saslChart').getContext('2d');
+     saslChart = new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: labels,
+            datasets: [
+                {
+                    label: 'P1',
+                    data: p1Data,
+                    lineTension: 0.3,
+                    backgroundColor: "rgba(0, 97, 242, 0.05)",
+                    borderColor: "rgba(0, 97, 242, 1)",
+                    pointRadius: 3,
+                    pointBackgroundColor: "rgba(0, 97, 242, 1)",
+                    pointBorderColor: "rgba(0, 97, 242, 1)",
+                    pointHoverRadius: 3,
+                    pointHoverBackgroundColor: "rgba(0, 97, 242, 1)",
+                    pointHoverBorderColor: "rgba(0, 97, 242, 1)",
+                    pointHitRadius: 10,
+                    pointBorderWidth: 2,
+                },
+                {
+                    label: 'P2',
+                    data: p2Data,
+                    backgroundColor: "rgba(255, 0, 0, 0.05)",
+                    borderColor: "rgba(255, 0, 0, 1)",
+                    pointRadius: 3,
+                    pointBackgroundColor: "rgba(255, 0, 0, 1)",
+                    pointBorderColor: "rgba(255, 0, 0, 1)",
+                    pointHoverRadius: 3,
+                    pointHoverBackgroundColor: "rgba(255, 0, 0, 1)",
+                    pointHoverBorderColor: "rgba(255, 0, 0, 1)",
+                    pointHitRadius: 10,
+                    pointBorderWidth: 2,
+                },
+                {
+                    label: 'P3',
+                    data: p3Data,
+                    backgroundColor: "rgba(255, 255, 0, 0.05)",
+                    borderColor: "rgba(255, 255, 0, 1)",
+                    pointRadius: 3,
+                    pointBackgroundColor: "rgba(255, 255, 0, 1)",
+                    pointBorderColor: "rgba(255, 255, 0, 1)",
+                    pointHoverRadius: 3,
+                    pointHoverBackgroundColor: "rgba(255, 255, 0, 1)",
+                    pointHoverBorderColor: "rgba(255, 255, 0, 1)",
+                    pointHitRadius: 10,
+                    pointBorderWidth: 2,
+                }
+            ]
+        },
+        options: {
+            scales: {
+                y: {
+                    beginAtZero: true
+                }
+            }
+        }
+    });
+
+    return saslChart;
+}
+
+
+// mailq
+ // Extract data passed from the controller
+ var timestamps = <?php echo json_encode($timestamps); ?>;
+        var mailCounts = <?php echo json_encode($mailCounts); ?>;
+
+        // Create a new Chart.js instance
+        var ctx = document.getElementById('mailQueueChart').getContext('2d');
+        var mailQueueChart = new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: timestamps,
+                datasets: [{
+                    label: 'Mail Queue',
+                    data: mailCounts,
+                    backgroundColor: 'rgba(255, 0, 0, 0.05)', // Fill color
+                    borderColor: 'rgba(255, 0, 0, 1)', // Border color
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                scales: {
+                    x: {
+                        type: 'time', // Use time scale for x-axis
+                        time: {
+                            unit: 'day' // Display unit as day
+                        },
+                        title: {
+                            display: true,
+                            text: 'Time'
+                        }
+                    },
+                    y: {
+                        title: {
+                            display: true,
+                            text: 'Mail Count'
+                        },
+                        beginAtZero: true
+                    }
+                }
+            }
+        });
+
+        function updateMailQueueChart(timestamps, mailCounts) {
+    var ctx = document.getElementById('mailQueueChart').getContext('2d');
+    var mailQueueChart = new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: timestamps,
+            datasets: [{
+                label: 'Mail Queue',
+                data: mailCounts,
+                backgroundColor: 'rgba(255, 0, 0, 0.05)', // Fill color
+                borderColor: 'rgba(255, 0, 0, 1)', // Border color
+                borderWidth: 1
+            }]
+        },
+        options: {
+            scales: {
+                x: {
+                    type: 'time', // Use time scale for x-axis
+                    time: {
+                        unit: 'day' // Display unit as day
+                    },
+                    title: {
+                        display: true,
+                        text: 'Time'
+                    }
+                },
+                y: {
+                    title: {
+                        display: true,
+                        text: 'Mail Count'
+                    },
+                    beginAtZero: true
+                }
+            }
+        }
+    });
+
+    return mailQueueChart;
+}
 
         // Event listener for select change
         $('#server').on('change', function() {
@@ -302,6 +1039,49 @@
                             img.attr('alt', 'Offline');
                         }
                     });
+
+                  
+
+                    // barchart
+                    if (window.chart) {
+                        window.chart.destroy(); // Destroy the existing chart instance
+                    }
+                    updateChart(response.departmentCounts);
+
+                    if (window.kementerianChart) {
+                        window.kementerianChart.destroy(); // Destroy the existing chart instance
+                    }
+
+                    updateChartKementerian(response.departmentCounts);
+
+                    if (appsChart) {
+                    appsChart.destroy();
+                }
+
+                // Render the SASL chart with new data
+                appsChart = renderAppsChart(response.days, response.p1Data, response.p2Data, response.p3Data);
+            
+                if (domainChart) {
+                    domainChart.destroy();
+                }
+
+                // Render the SASL chart with new data
+                domainChart = renderDomainChart(response.days, response.p1Data, response.p2Data, response.p3Data);
+            
+                if (saslChart) {
+                    saslChart.destroy();
+                }
+
+                // Render the SASL chart with new data
+                saslChart = renderSaslChart(response.days, response.p1Data, response.p2Data, response.p3Data);
+            
+
+                    if (mailQueueChart) {
+                     mailQueueChart.destroy();
+                    }
+
+                     // Update the line chart with new data
+                     mailQueueChart = updateMailQueueChart(response.timestamps, response.mailCounts);
 
                 },
                 error: function(xhr, status, error) {
