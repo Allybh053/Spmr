@@ -99,6 +99,10 @@ Route::group(['middleware' => ['auth']], function () {
         //code sidi
         Route::get('/register', [SmtpRelayController::class, 'daftar'])->name('smtp_relay.daftar');
         Route::post('/saving', [SmtpRelayController::class, 'saving'])->name('smtp_relay.saving');
+        Route::get('/view/{id}', [SmtpRelayController::class, 'papar'])->name('smtp_relay.view');
+        Route::get('/update/{id}', [SmtpRelayController::class, 'kemaskini'])->name('smtp_relay.kemaskini');
+        Route::post('/update/{id}/kemaskinidata', [SmtpRelayController::class, 'kemaskinidata'])->name('smtp_relay.kemaskinidata');
+
 
     });
 

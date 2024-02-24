@@ -39,25 +39,11 @@
                  <!-- Sidenav Menu Heading (Core)-->
                  <div class="sidenav-menu-heading">Management</div>
                 <!-- Sidenav Link (Charts)-->
-                <a class="nav-link collapsed" href="javascript:void(0);" data-bs-toggle="collapse" data-bs-target="#collapseSMTPPages" aria-expanded="false" aria-controls="collapseSMTPPages">
+                <a class="nav-link" href="{{ route('smtp_relay.smtp_relay_req') }}">
                     <div class="nav-link-icon"><i data-feather="grid"></i></div>
-                    SMTP (Mail Relay)
-                    <div class="sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
+                    Mail Relay Req Form
+                    <div class="sidenav-collapse-arrow"></div>
                 </a>
-                <div class="collapse" id="collapseSMTPPages" data-bs-parent="#accordionSidenav">
-                    <nav class="sidenav-menu-nested nav accordion" id="accordionSidenavPages">
-                        <!--<a class="nav-link" href="dashboard-1.html">
-                            Register New
-                        </a>-->
-                        <a class="nav-link" href="{{ route('smtp_relay.smtp_relay_req') }}">
-                            SMTP Form Request
-                        </a>
-                        {{-- penambahbaikan sidi --}}
-                        <a class="nav-link" href="{{ route('smtp_relay.daftar') }}">
-                            Create New Request
-                        </a>
-                    </nav>
-                </div>
                 <!-- Sidenav Link (Mail Relay Module)-->
                 <a class="nav-link collapsed" href="javascript:void(0);" data-bs-toggle="collapse" data-bs-target="#collapseMailPages" aria-expanded="false" aria-controls="collapseMailPages">
                     <div class="nav-link-icon"><i data-feather="mail"></i></div>

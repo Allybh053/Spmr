@@ -57,147 +57,97 @@
     <script src="{{asset('js/custom.js')}}" type="text/javascript"></script>
     <script src="{{asset('js/ajaxSubmit.js')}}" type="text/javascript"></script>
     <script type="text/javascript">
-    $(document).ready(function() {
-        $('.select2').select2({
-            placeholder: 'Select an option',
-            allowClear: true,
-        });
-
-        var token = '{{ csrf_token() }}';
-        var windowLocation;
-        $.ajaxSetup({
-            headers: {
-                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-            }
-        });
-
-        $(function() {
-            $(".datepicker").datepicker({
-                format: "dd-mm-yyyy",
-                todayHighlight: true,
-                orientation: "bottom",
+        $(document).ready(function() {
+            $('.select2').select2({
+                placeholder: 'Select an option',
+                allowClear: true,
+                tags: true,
             });
 
-
-        });
-
-            // Handle change event on the dropdown
-            $('#authmethod').change(function () {
-                var selectedOption = $(this).val();
-
-                // Toggle visibility of tables based on selected option
-                $('#tableA, #tableB').hide();
-                if (selectedOption == 1) {
-                    $('#tableA').show();
-                    var server_name_tableB = document.getElementById('server_name_tableB');
-                    server_name_tableB.disabled = true;
-                    var server_name_tableA = document.getElementById('server_name_tableA');
-                    server_name_tableA.disabled = false;
-
-                    var ipaddress_tableB = document.getElementById('ipaddress_tableB');
-                    ipaddress_tableB.disabled = true;
-                    var ipaddress_tableA = document.getElementById('ipaddress_tableA');
-                    ipaddress_tableA.disabled = false;
-
-                    var ports_tableB = document.getElementById('ports_tableB');
-                    ports_tableB.disabled = true;
-                    var ports_tableA = document.getElementById('ports_tableA');
-                    ports_tableA.disabled = false;
-
-                    var domain_tableB = document.getElementById('domain_tableB');
-                    domain_tableB.disabled = true;
-                    var domain_tableA = document.getElementById('domain_tableA');
-                    domain_tableA.disabled = false;
-
-                    var mailrelay_tableB = document.getElementById('mailrelay_tableB');
-                    mailrelay_tableB.disabled = true;
-                    var mailrelay_tableA = document.getElementById('mailrelay_tableA');
-                    mailrelay_tableA.disabled = false;
-
-                    var authusername = document.getElementById('authusername');
-                    authusername.disabled = true;
-
-                    var authpassword = document.getElementById('authpassword');
-                    authpassword.disabled = true;
-
-                } else if (selectedOption == 2) {
-                    $('#tableB').show();
-                    var server_name_tableA = document.getElementById('server_name_tableA');
-                    server_name_tableA.disabled = true;
-                    var server_name_tableB = document.getElementById('server_name_tableB');
-                    server_name_tableB.disabled = false;
-
-                    var ipaddress_tableA = document.getElementById('ipaddress_tableA');
-                    ipaddress_tableA.disabled = true;
-                    var ipaddress_tableB = document.getElementById('ipaddress_tableB');
-                    ipaddress_tableB.disabled = false;
-
-                    var ports_tableA = document.getElementById('ports_tableA');
-                    ports_tableA.disabled = true;
-                    var ports_tableB = document.getElementById('ports_tableB');
-                    ports_tableB.disabled = false;
-
-                    var domain_tableA = document.getElementById('domain_tableA');
-                    domain_tableA.disabled = true;
-                    var domain_tableB = document.getElementById('domain_tableB');
-                    domain_tableB.disabled = false;
-
-                    var mailrelay_tableA = document.getElementById('mailrelay_tableA');
-                    mailrelay_tableA.disabled = true;
-                    var mailrelay_tableB = document.getElementById('mailrelay_tableB');
-                    mailrelay_tableB.disabled = false;
-
-                    var authusername = document.getElementById('authusername');
-                    authusername.disabled = false;
-
-                    var authpassword = document.getElementById('authpassword');
-                    authpassword.disabled = false;
+            var token = '{{ csrf_token() }}';
+            var windowLocation;
+            $.ajaxSetup({
+                headers: {
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
                 }
-            }).change();
-
-            // Add row button click handler
-            $('#add-row').click(function () {
-                addRow('#tableA');
             });
 
-            $('#add-row2').click(function () {
-                addRow('#tableB');
-            });
-
-            // Reusable function to add a row to the specified table
-            function addRow(tableId) {
-                var selectedTable = tableId + ' tbody';
-                var newRow = $(selectedTable + ' .dynamic-input-row').first().clone();
-                newRow.find('input').val('');
-
-                // Reset the Select2 dropdown
-                var clonedSelect = newRow.find('select');
-                clonedSelect.val(null).trigger('change');
-
-                $(selectedTable).append(newRow);
-
-                // Initialize Select2 for the cloned dropdown
-                clonedSelect.select2({
-                    allowClear: true
+            $(function() {
+                $(".datepicker").datepicker({
+                    format: "dd-mm-yyyy",
+                    todayHighlight: true,
+                    orientation: "bottom",
                 });
 
-                newRow.find('input[required]').attr('required', 'required');
-                newRow.find('select[required]').attr('required', 'required');
-            }
 
-            // Remove row
-            $(document).on('click', '.remove-row', function() {
-                var numRows = $(this).closest('tbody').find('.dynamic-input-row').length;
-                if (numRows <= 1){
-                    alert('Not Applicable.');
-                }else{
-                    $(this).closest('.dynamic-input-row').remove();
-                }
             });
-    });
-</script>
 
+                // Handle change event on the dropdown
+                $('#authmethod').change(function () {
+                    var selectedOption = $(this).val();
 
+                    // Toggle visibility of tables based on selected option
+                    $('#tableA').show();
+                    if (selectedOption == 1) {
+                        $('#authusername, #authpassword').prop('disabled', true).hide();
+
+                    } else if (selectedOption == 2) {
+                        $('#authusername, #authpassword').prop('disabled', false).show();
+                    }
+                }).change();
+
+                // Handle change event on the dropdown
+                $('#smtp_relay_auth_method').change(function () {
+                    var selectedOption = $(this).val();
+
+                    // Toggle visibility of tables based on selected option
+                    $('#tableA').show();
+                    if (selectedOption == 1) {
+                        $('#smtp_username, #smtp_password').prop('disabled', true).hide();
+
+                    } else if (selectedOption == 2) {
+                        $('#smtp_username, #smtp_password').prop('disabled', false).show();
+                    }
+                }).change();
+
+                // Add row button click handler
+                $('#add-row').click(function () {
+                    addRow('#tableA');
+                });
+
+                // Reusable function to add a row to the specified table
+                function addRow(tableId) {
+                    var selectedTable = tableId + ' tbody';
+                    var newRow = $(selectedTable + ' .dynamic-input-row').first().clone();
+                    newRow.find('input').val('');
+
+                    // Reset the Select2 dropdown
+                    var clonedSelect = newRow.find('select');
+                    clonedSelect.val(null).trigger('change');
+
+                    $(selectedTable).append(newRow);
+
+                    // Initialize Select2 for the cloned dropdown
+                    clonedSelect.select2({
+                        allowClear: true,
+                        tags: true,
+                    });
+
+                    newRow.find('input[required]').attr('required', 'required');
+                    newRow.find('select[required]').attr('required', 'required');
+                }
+
+                // Remove row
+                $(document).on('click', '.remove-row', function() {
+                    var numRows = $(this).closest('tbody').find('.dynamic-input-row').length;
+                    if (numRows <= 1){
+                        alert('Not Applicable.');
+                    }else{
+                        $(this).closest('.dynamic-input-row').remove();
+                    }
+                });
+        });
+    </script>
     @stack('script')
 </body>
 </html>

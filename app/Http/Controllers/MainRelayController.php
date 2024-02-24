@@ -39,8 +39,8 @@ class MainRelayController extends Controller
         $smtpMailServers = DB::table('smtp_relay_server')
         ->join('smtp_relay_req_form', 'smtp_relay_server.form_id', '=', 'smtp_relay_req_form.form_id')
         ->where('smtp_relay_server.form_id', $id)
-        ->select('smtp_relay_server.*','smtp_relay_req_form.id as smtpid', 'smtp_relay_req_form.created_at as form_created_at', 'smtp_relay_req_form.types_req as types_req', 'smtp_relay_req_form.applicant_name as applicant_name','smtp_relay_req_form.mailbox_created as mailbox_created','smtp_relay_req_form.ticket_id as ticket_id')
-        ->get(); 
+        ->select('smtp_relay_server.*','smtp_relay_req_form.smtp_port as smtp_port','smtp_relay_req_form.smtp_relay_auth_method as smtp_relay_auth_method','smtp_relay_req_form.smtp_relay_server as smtp_relay_server','smtp_relay_req_form.id as smtpid', 'smtp_relay_req_form.created_at as form_created_at', 'smtp_relay_req_form.types_req as types_req', 'smtp_relay_req_form.applicant_name as applicant_name','smtp_relay_req_form.mailbox_created as mailbox_created','smtp_relay_req_form.ticket_id as ticket_id')
+        ->get();
 
         return view('mailrelay.edit', compact('user','smtpMailServers'));
     }
