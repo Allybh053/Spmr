@@ -103,10 +103,42 @@
                                                             </div>
                                                         </div>
 
+                                                        <hr>
+                                                        <h6>List of Server</h6>
+                                                        <div class="row">
+                                                            <div class="col-md-12 mb-4">
+                                                                <div class="row">
+                                                                    @foreach($dataServers as $s => $server)
+                                                                        @php
+                                                                            $per_found = null;
+                                                                            if(isset($role)) {
+                                                                                $per_found = $roleServer->where('role_id', $role->id)->pluck('server_id')->contains($server->id);
+                                                                            }
+                                                                        @endphp
+                                                                        <div class="col-md-4">
+                                                                            <span class="card lift mt-2">
+                                                                                <div class="card-body d-flex justify-content-center flex-column">
+                                                                                    <div class="d-flex align-items-center justify-content-between">
+                                                                                        <div class="me-3">
+                                                                                            <div class="form-check">
+                                                                                                {!! Form::checkbox("servers[]", $server->id, $per_found, ['class' => 'form-check-input', 'id' => 'flexCheckDefault']) !!}
+                                                                                                <label class="form-check-label" for="flexCheckDefault">{{ ucfirst(str_replace("_"," ",$server->hostname)) }}</label>
+                                                                                            </div>
+                                                                                        </div>
+                                                                                    </div>
+                                                                                </div>
+                                                                            </span>
+                                                                        </div>
+                                                                    @endforeach
+                                                                </div>
+                                                            </div>
+                                                        </div>
+
+
                                                         @if($role->name != 'Developer' && $role->name != 'Superadmin')
                                                                         <div class="row">
                                                                             <div class="col s12 m12 l12" style="text-align:right;">
-                                                                                <button type="button" class="btn btn-danger" id="deletePeranan" data-id="{{ $role->id }}" data-url="{{ route('setup.role.delete') }}" style="margin-bottom: 15px; margin-left: 15px; float: left">Delete</button>
+                                                                                <button type="button" class="btn btn-danger" id="deleteRoles" data-id="{{ $role->id }}" data-url="{{ route('setup.role.delete') }}" style="margin-bottom: 15px; margin-left: 15px; float: left">Delete</button>
                                                                                 <button type="button" class="btn btn-primary rename"  data-bs-toggle="modal" data-bs-target="#roleModal" data-id="{{ $role->id }}" data-name="{{ $role->name }}" style="margin-bottom: 15px; margin-left: 15px; float: left">Change Name</button>
                                                                                 <button class="btn btn-success" id="submit" type="submit">Submit</button>
                                                                             </div>

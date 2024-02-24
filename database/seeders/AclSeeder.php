@@ -2,6 +2,8 @@
 namespace Database\Seeders;
 
 use App\Models\User;
+use App\Models\Server;
+use App\Models\RoleServer;
 use Spatie\Permission\Models\Role;
 use Spatie\Permission\Models\Permission;
 use Illuminate\Database\Seeder;
@@ -104,15 +106,28 @@ class AclSeeder extends Seeder
 			'Admin'
 		];
 
-		foreach($roles as $role) {
-			$role = Role::firstOrCreate(['name' => trim($role), 'guard_name' => 'web']);
 
+		foreach($roles as $roleName) {
+			$role = Role::firstOrCreate(['name' => trim($roleName), 'guard_name' => 'web']);
+		
 			if($role->name == 'Superadmin' || $role->name == 'Developer') {
 				// assign all permissions
 				$role->syncPermissions(Permission::all());
 			} else {
 				// for others by default only read access
 				$role->syncPermissions(Permission::where('name', 'LIKE', 'lihat_%')->get());
+			}
+		
+
+		}
+		$servers = Server::get();
+		$roles = Role::get();
+		foreach ($roles as $role) {
+			foreach ($servers as $server) {
+				$serversave = new RoleServer;
+				$serversave->role_id  = $role->id;
+				$serversave->server_id = $server->id;
+				$serversave->save();
 			}
 		}
 
@@ -125,6 +140,8 @@ class AclSeeder extends Seeder
     	$user->save();
 
 		$user->assignRole('Developer');
+
+		
 
 		// Create superadmin user
 		$user           = new User;

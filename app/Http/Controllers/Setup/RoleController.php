@@ -13,6 +13,8 @@ use Mail;
 use Validator;
 use Auth;
 use Illuminate\Support\Facades\View;
+use App\Models\Server;
+use App\Models\RoleServer;
 
 
 class RoleController extends Controller
@@ -21,8 +23,10 @@ class RoleController extends Controller
     {
         $roles = Role::all();
         $permissions = Permission::get()->groupBy(['group','sub_group']);
+        $dataServers = Server::orderBy('id', 'asc')->get();
+        $roleServer = RoleServer::get();
 
-        return view('role.index', compact('roles', 'permissions'));
+        return view('role.index', compact('roles', 'permissions','dataServers','roleServer'));
     }
 
     public function create(Request $request)
@@ -61,7 +65,8 @@ class RoleController extends Controller
     {
         $roleId = $request->id;
         $permissionsArray = $request->permissions; // Assuming $request->permissions contains nested arrays
- 
+        $serverArray = $request->servers;
+
         // Find the role by ID
         $role = Role::find($roleId);
     
@@ -76,6 +81,16 @@ class RoleController extends Controller
                             'permission_id' => $subGroups,
                         ]);
             }
+
+        $roleServer = RoleServer::where('role_id',$roleId)->delete();
+            foreach($serverArray as $servers){
+                $newServer = new RoleServer();
+                $newServer -> role_id = $roleId;
+                $newServer -> server_id = $servers;
+                $newServer ->save();
+            }
+
+        
 
         return response()->json(['success' => '1', 'redirect' => route('setup.role.index'), 'message' => 'Permissions saved successfully.']);
     }
