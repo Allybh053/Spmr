@@ -29,14 +29,14 @@
                         <div class="row">
                             <div class="col-md-12" style="text-align:right;">
                                 <h6 style="float: left">Role And Permission</h6>
-                                <a href="#roleModal"class="btn btn-sm btn-primary">Add Role</a>
+                                <button class="btn btn-primary new" type="button" data-bs-toggle="modal" data-bs-target="#roleModal">Add Role</button>
                             </div>
                             </div>
                         </div>
 
                         
                         <div class="card-body mt-1 mb-4">
-                        <div class="card card-collapsable">
+                        <div class="card card-collapsable mb-4">
                         @foreach ($roles as $role)
                                                 @if($role->name != 'Developer')
                                                         @php
@@ -53,45 +53,51 @@
                                                             @endphp
                                                         @endif
 
-                                        <a class="card-header" href="#{{ $role->name }}" data-bs-toggle="collapse" role="button" aria-expanded="true" aria-controls="{{ $role->name }}">{{ $role->name }}
+                                        <a class="card-header mb-4" href="#{{ str_replace(' ', '', $role->name) }}" data-bs-toggle="collapse" role="button" aria-expanded="true" aria-controls="{{ $role->name }}">{{ $role->name }}
                                             <div class="card-collapsable-arrow">
                                                 <i class="fas fa-chevron-down"></i>
                                             </div>
                                         </a>
-                                        <div class="collapse" id="{{ $role->name }}">
+                                        <div class="collapse" id="{{ str_replace(' ', '', $role->name) }}">
                                                     <div class="card-body">
                                                     <form class="ajax-form-confirm" action="{{ route('setup.role.storePermission', ['id' => $role->id]) }}" method="POST">
                                                         <h6>List of Permission</h6>
                                                     <div class="row">
-                                                            <div class="col-md-4 mb-4">
+                                                            <div class="col-md-12 mb-4">
                                                             @foreach($permissions as $x => $perm)
+                                                            <hr>
+                                                            <h3><b>{{ ucfirst(str_replace("_"," ",strtoupper($x))) }}</b></h3>
                                                             @foreach($perm as $j => $k)
-                                                            <p>{{ ucfirst(str_replace("_"," ",strtoupper($j))) }}</p>
+                                                            @if($j)
+                                                                </br>
+                                                            @endif
+                                                            <p><b>{{ ucfirst(str_replace("_"," ",strtoupper($j))) }}</b></p>
+                                                            <div class="row">
                                                             @foreach($k as $l => $m)
                                                                     @php
                                                                         $per_found = null;
 
                                                                         if( isset($role) ) {
-                                                                            $per_found = $role->hasPermissionTo($m->name);
+                                                                            $per_found = $role->hasPermissionTo($m->id);
                                                                         }
                                                                     @endphp
-                                                                    <!-- <div class="row" style="margin-bottom: -40px">
-                                                                    <div class="col-xl-4 mb-4"> -->
-                                                                            <span class="card lift h-20 w-1500 mt-2">
-                                                                                <div class="card-body d-flex justify-content-center flex-column">
-                                                                                    <div class="d-flex align-items-center justify-content-between">
-                                                                                        <div class="me-3">
+                                                                    <div class="col-md-4">
+                                                                        <span class="card lift h-20 w-1500 mt-2">
+                                                                            <div class="card-body d-flex justify-content-center flex-column">
+                                                                                <div class="d-flex align-items-center justify-content-between">
+                                                                                    <div class="me-3">
+                                                                                        
                                                                                         <div class="form-check">
-                                                                            {!! Form::checkbox("permissions[]", $m->name, $per_found, ['class' => 'form-check-input', 'id' => 'flexCheckDefault']) !!}
-                                                                                    <label class="form-check-label" for="flexCheckDefault">{{ ucfirst(str_replace("_"," ",$m->name)) }}</label>
-                                                                                </div>
+                                                                                            {!! Form::checkbox("permissions[]", $m->id, $per_found, ['class' => 'form-check-input', 'id' => 'flexCheckDefault']) !!}
+                                                                                            <label class="form-check-label" for="flexCheckDefault">{{ ucfirst(str_replace("_"," ",$m->name)) }}</label>
                                                                                         </div>
                                                                                     </div>
                                                                                 </div>
-                                                                    </span>
-                                                                        <!-- </div>
-                                                                     </div> -->
+                                                                            </div>
+                                                                        </span>
+                                                                    </div>
                                                                     @endforeach
+                                                                    </div>
                                                             @endforeach
                                                             @endforeach
                                                             </div>
@@ -101,7 +107,7 @@
                                                                         <div class="row">
                                                                             <div class="col s12 m12 l12" style="text-align:right;">
                                                                                 <button type="button" class="btn btn-danger" id="deletePeranan" data-id="{{ $role->id }}" data-url="{{ route('setup.role.delete') }}" style="margin-bottom: 15px; margin-left: 15px; float: left">Delete</button>
-                                                                                <a href="#roleModal" class="rename modal-trigger btn btn-primary" data-id="{{ $role->id }}" data-name="{{ $role->name }}" style="margin-bottom: 15px; margin-left: 15px; float: left">Change Name</a>
+                                                                                <button type="button" class="btn btn-primary rename"  data-bs-toggle="modal" data-bs-target="#roleModal" data-id="{{ $role->id }}" data-name="{{ $role->name }}" style="margin-bottom: 15px; margin-left: 15px; float: left">Change Name</button>
                                                                                 <button class="btn btn-success" id="submit" type="submit">Submit</button>
                                                                             </div>
                                                                         </div>
@@ -111,40 +117,49 @@
                                                     </div>
                                                 </div>
 
+                                                </br>
                                                 @endif  
-                            @endforeach
+                           
+                                                @endforeach
                                                 
 
                                                
                                             </div>
-                        </div>
+                        
+                                        </div>
 
                     </div>
                 </div>
             </div>
         </div>
 
-    <div id="roleModal" class="modal modal-fixed-footer">
-        <form class="ajax-form" novalidate action="{{ route('setup.role.create') }}" method="POST">
-            @csrf
-            <div class="modal-content">
-                <h4>Role</h4>
-                <div class="row">
-                    {!! Form::hidden('roleId', null, ['id' => 'roleId']) !!}
-                    <div class="input-field col m12 s6 @if ($errors->has('name')) has-error @endif">
-                        <i class="material-icons prefix">class</i>
-                        {!! Form::text('name', null, ['id' => 'name', 'class' => 'form-control']) !!}
-                        <label for="name">Name</label>
-                        @if ($errors->has('name')) <p class="help-block">{{ $errors->first('name') }}</p> @endif
+                <div class="modal fade" id="roleModal" tabindex="-1" role="dialog" aria-labelledby="roleModal" aria-hidden="true">
+                    <div class="modal-dialog modal-lg" role="document">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title">Role</h5>
+                                <button class="btn-close" type="button" data-bs-dismiss="modal" aria-label="Close"></button>
+                            </div>
+                            <form class="ajax-form" novalidate action="{{ route('setup.role.create') }}" method="POST">
+                            <div class="modal-body">
+                            <div class="row">
+                                {!! Form::hidden('roleId', null, ['id' => 'roleId']) !!}
+                                <div class="col-md-6 @if ($errors->has('name')) has-error @endif">   
+                                <label class="small mb-1" for="name">Name</label>
+                                    {!! Form::text('name', null, ['id' => 'name', 'class' => 'form-control']) !!}
+                                    @if ($errors->has('name')) <p class="help-block">{{ $errors->first('name') }}</p> @endif
+                                </div>
+                            </div>
+                            </div>
+                            <div class="modal-footer">
+                                <button class="btn btn-primary" type="button" data-bs-dismiss="modal">Close</button>
+                                <button type="submit" class="btn btn-success">Save</button>
+                            </div>
+                                                                    </form>
+                        </div>
                     </div>
                 </div>
-            </div>
-            <div class="modal-footer">
-                <a href="#!" class="modal-action modal-close waves-effect waves-red btn-flat ">Close</a>
-                <button type="submit" class="modal-action modal-close waves-effect waves-green btn-flat ">Save</button>
-            </div>
-        </form>
-    </div>
+
 @endsection
 @push('script')
     <script>

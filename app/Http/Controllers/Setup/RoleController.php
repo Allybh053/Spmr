@@ -31,9 +31,9 @@ class RoleController extends Controller
             'name.required' => 'Namespace Required.',
             'name.max'      => 'Namespace must not exceed 255 characters.'
         ];
-
+        
         $validation = [
-            'name' => 'required|max:255'
+            'name' => 'required|max:255|unique:roles,name,' . ($request->roleId ? $request->roleId : 'NULL') . ',id'
         ];
 
         $request->validate($validation, $messages);
@@ -51,22 +51,39 @@ class RoleController extends Controller
         $role->name = $request->name;
         $role->save();
 
-        return response()->json(['success' => '1', 'redirect' => route('role.index'), 'message' => 'Role saved successfully.']);
+        $permissions = Permission::where('name', 'LIKE', 'lihat_%')->get();
+        $role->syncPermissions($permissions);
+        
+        return response()->json(['success' => '1', 'redirect' => route('setup.role.index'), 'message' => 'Role saved successfully.']);
     }
 
     public function storePermission(Request $request)
     {
-        $role = Role::find($request->id);
-        $permissions = $request->permissions;
-        $role->syncPermissions($permissions);
+        $roleId = $request->id;
+        $permissionsArray = $request->permissions; // Assuming $request->permissions contains nested arrays
+ 
+        // Find the role by ID
+        $role = Role::find($roleId);
+    
+            // Detach all existing permissions associated with the role
+            DB::table('role_has_permissions')->where('role_id', $roleId)->delete();
 
-        return response()->json(['success' => '1', 'redirect' => route('role.index'), 'message' => 'Permissions saved successfully.']);
+            // Iterate through the top-level array
+            foreach ($permissionsArray as $subGroups) {
+        
+                        DB::table('role_has_permissions')->insert([
+                            'role_id' => $roleId,
+                            'permission_id' => $subGroups,
+                        ]);
+            }
+
+        return response()->json(['success' => '1', 'redirect' => route('setup.role.index'), 'message' => 'Permissions saved successfully.']);
     }
-
+    
     public function delete(Request $request)
     {
         $role = Role::find($request->id)->delete();
 
-        return response()->json(['success' => '1', 'redirect' => route('role.index'), 'message' => 'Role deleted successfully.']);
+        return response()->json(['success' => '1', 'redirect' => route('setup.role.index'), 'message' => 'Role deleted successfully.']);
     }
 }
