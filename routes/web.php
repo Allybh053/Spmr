@@ -60,6 +60,7 @@ Route::group(['middleware' => ['auth']], function () {
 
     //testing route
     Route::get('/home', [DashboardController::class, 'index'])->name('dashboard.index');
+    Route::get('/getServer', [DashboardController::class, 'api'])->name('dashboard.api');
 
 	//Dashboard
     Route::group(['prefix' => 'users'], function () {

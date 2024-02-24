@@ -23,7 +23,7 @@ class RoleController extends Controller
     {
         $roles = Role::all();
         $permissions = Permission::get()->groupBy(['group','sub_group']);
-        $dataServers = Server::orderBy('id', 'asc')->get();
+        $dataServers = Server::where('status', 1)->orderBy('id', 'asc')->get();
         $roleServer = RoleServer::get();
 
         return view('role.index', compact('roles', 'permissions','dataServers','roleServer'));
