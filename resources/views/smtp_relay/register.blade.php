@@ -26,7 +26,6 @@
                 <form id="formserver" action="{{ route('smtp_relay.saving')}}" method="post" enctype="multipart/form-data">
                 @csrf
                 <div class="row gx-3 mb-3">
-                    <!-- Form Group (ticket)-->
                     <div class="col-md-6">
                         <label for="ticketno">Ticket Number</label>
                         <input class="form-control" id="ticketno" name="ticketno" type="text" value="" required/>
@@ -35,7 +34,6 @@
                         @endphp
                         <input class="form-control" id="form_id" name="form_id" type="hidden" value="{{ $randomId }}" required/>
                     </div>
-                    <!-- Form Group (request)-->
                     <div class="col-md-6">
                         <label for="type_req">Type Of Request</label>
                         <select class="form-control select2" name="type_req" id="type_req" aria-label="Default select">
@@ -46,7 +44,7 @@
                         </select>
                     </div>
                 </div>
-                <div class="mb-3">
+                <div class="mb-3" hidden @disabled(true)>
                     <label for="fqdn">System Fully Qualified Domain Name (FQDN)</label>
                     <select class="form-control select2" name="fqdn" id="fqdn" required>
                         <option selected disabled>Select Domain Name</option>
@@ -64,19 +62,25 @@
                     <input class="form-control" id="ownername" name="ownername" type="text" placeholder="" value="" required>
                 </div>
                 <div class="row gx-3 mb-3">
-                    <!-- Form Group (email)-->
                     <div class="col-md-6">
                         <label for="emailadd">Email Address</label>
                         <input class="form-control" id="emailadd" name="emailadd" type="email" value="" required/>
                     </div>
-                    <!-- Form Group (phone)-->
                     <div class="col-md-6">
                         <label for="phone">Phone Number</label>
                         <input class="form-control" id="phone" name="phone" type="phone" value="" required/>
                     </div>
                 </div>
+                <div class="mb-3">
+                    <label for="ministry">Ministry</label>
+                    <select class="form-control select2" name="ministry" id="ministry" aria-label="Default select">
+                        <option selected disabled>Select Department/Division/Unit</option>
+                        @foreach ($domainsArray as $domain)
+                        <option value="{{ $domain['ministry_name'] }}">{{ $domain['ministry_name'] }}</option>
+                        @endforeach
+                    </select>
+                </div>
                 <div class="row gx-3 mb-3">
-                    <!-- Form Group (agency)-->
                     <div class="col-md-6">
                         <label for="agency">Agency</label>
                         <select class="form-control select2" name="agency" id="agency" aria-label="Default select">
@@ -86,7 +90,6 @@
                             @endforeach
                         </select>
                     </div>
-                    <!-- Form Group (depart)-->
                     <div class="col-md-6">
                         <label for="departowner">Department/Division/Unit</label>
                         <select class="form-control select2" name="departowner" id="departowner" aria-label="Default select">
@@ -108,48 +111,39 @@
                 <div class="mb-3">
                     <label for="authmethod">Mail Relay Authentication Method</label>
                     <select class="form-control select2" name="authmethod" id="authmethod" required>
-                        <option selected disabled>Select Authentication:</option>
+                        <option selected disabled>Select Authentication</option>
                         <option value="1">IP Based Authentication Relay</option>
                         <option value="2">Username/Password Authentication Relay</option>
                     </select>
                 </div>
                 <div class="mb-3">
-                    <table class="table table-striped" id="tableA" style="display: none;">
+                    <label for="mailrelay">Server Mail Relay</label>
+                    <select class="form-control select2" name="mailrelay" id="mailrelay" aria-label="Default select" required>
+                        <option selected disabled>Select Server</option>
+                        @foreach ($serversArray as $server)
+                        <option value="{{ $server['hostname'] }}">{{ $server['hostname'] }}</option>
+                        @endforeach
+                    </select>
+                </div>
+                <div class="mb-3">
+                    <table class="table table-striped" id="tableA">
                         <thead class="thead-dark">
                             <tr>
                                 <th scope="col">System Name</th>
                                 <th scope="col">IP Address</th>
-                                <th scope="col">Port Number</th>
                                 <th scope="col">FQDN Sistem</th>
-                                <th scope="col">Server Mail Relay</th>
                                 <th scope="col">Action</th>
                             </tr>
                         </thead>
                         <tbody id="dynamic-inputs-container">
                             <tr class="dynamic-input-row">
-                              <td><input type="text" name="server_name[]" id="server_name_tableA" value="" class="form-control" required></td>
-                              <td><input type="text" name="ipaddress[]" id="ipaddress_tableA" value="" class="form-control" required></td>
+                              <td><input type="text" name="tableSpmr[0][server_name]" id="server_name" value="" class="form-control" required></td>
+                              <td><input type="text" name="tableSpmr[0][ipaddress]" id="ipaddress" value="" class="form-control" required></td>
                               <td>
-                                <select class="form-control select2" name="ports[]" id="ports_tableA" aria-label="Default select" required>
-                                    <option selected disabled></option>
-                                    <option value="25">25/tcp</option>
-                                    <option value="465">465/tcp</option>
-                                    <option value="587">587/tcp</option>
-                                </select>
-                              </td>
-                              <td>
-                                <select class="form-control select2" name="domain[]" id="domain_tableA" aria-label="Default select" required>
+                                <select class="form-control select2" name="tableSpmr[0][domain]" id="domain" aria-label="Default select2" required>
                                     <option selected disabled></option>
                                     @foreach ($domainsArray as $domain)
                                     <option value="{{ $domain['domain_name'] }}">{{ $domain['domain_name'] }}</option>
-                                    @endforeach
-                                </select>
-                              </td>
-                              <td>
-                                <select class="form-control select2" name="mailrelay[]" id="mailrelay_tableA" aria-label="Default select" required>
-                                    <option selected disabled></option>
-                                    @foreach ($serversArray as $server)
-                                    <option value="{{ $server['hostname'] }}">{{ $server['hostname'] }}</option>
                                     @endforeach
                                 </select>
                               </td>
@@ -158,74 +152,43 @@
                         </tbody>
                         <tfoot>
                             <tr>
-                                <th colspan="6" style="text-align: right;">
-                                    <button id="add-row" type="button" class="btn btn-primary "><i class="me-1" data-feather="plus"></i>Add</button>
-                                </th>
-                            </tr>
-                        </tfoot>
-                    </table>
-                    <table class="table table-striped" id="tableB" style="display: none;">
-                        <thead class="thead-dark">
-                            <tr>
-                                <th scope="col">System Name</th>
-                                <th scope="col">IP Address</th>
-                                <th scope="col">Port Number</th>
-                                <th scope="col">FQDN Sistem</th>
-                                <th scope="col">Server Mail Relay</th>
-                                <th scope="col">Username</th>
-                                <th scope="col">password</th>
-                                <th scope="col">Action</th>
-                            </tr>
-                        </thead>
-                        <tbody id="dynamic-inputs-container">
-                            <tr class="dynamic-input-row">
-                              <td><input type="text" name="server_name[]" id="server_name_tableB" value="" class="form-control"></td>
-                              <td><input type="text" name="ipaddress[]" id="ipaddress_tableB" value="" class="form-control"></td>
-                              <td>
-                                <select class="form-control select2" name="ports[]" id="ports_tableB" required>
-                                    <option selected disabled></option>
-                                    <option value="25">25/tcp</option>
-                                    <option value="465">465/tcp</option>
-                                    <option value="587">587/tcp</option>
-                                </select>
-                              </td>
-                              <td>
-                                <select class="form-control select2" name="domain[]" id="domain_tableB" required>
-                                    <option selected disabled></option>
-                                    @foreach ($domainsArray as $domain)
-                                    <option value="{{ $domain['domain_name'] }}">{{ $domain['domain_name'] }}</option>
-                                    @endforeach
-                                </select>
-                              </td>
-                              <td>
-                                <select class="form-control select2" name="mailrelay[]" id="mailrelay_tableB" aria-label="" required>
-                                    <option selected disabled></option>
-                                    @foreach ($serversArray as $server)
-                                    <option value="{{ $server['hostname'] }}">{{ $server['hostname'] }}</option>
-                                    @endforeach
-                                </select>
-                              </td>
-                              <td><input type="text" name="authusername[]" id="authusername" value="" class="form-control" required></td>
-                              <td><input type="text" name="authpassword[]" id="authpassword" value="" class="form-control" required></td>
-                              <td><button class="btn btn-danger  remove-row"><i class="me-1" data-feather="minus"></i>Remove</button></td>
-                            </tr>
-                        </tbody>
-                        <tfoot>
-                            <tr>
-                                <th colspan="8" style="text-align: right;">
-                                    <button id="add-row2" type="button" class="btn btn-primary "><i class="me-1" data-feather="plus"></i>Add</button>
+                                <th colspan="4" style="text-align: right;">
+                                    <button id="add-row-table" type="button" class="btn btn-primary "><i class="me-1" data-feather="plus"></i>Add</button>
                                 </th>
                             </tr>
                         </tfoot>
                     </table>
                 </div>
+
                 <div class="row gx-3 mb-3">
-                    <!-- Form Group (mail from)-->
+                    <div class="col-md-6">
+                        <label for="ports">SMTP Port Number</label>
+                        <select class="form-control select2" name="ports" id="ports" aria-label="Default select" required>
+                            <option selected disabled></option>
+                            <option value="25">25/tcp</option>
+                            <option value="465">465/tcp</option>
+                            <option value="587">587/tcp</option>
+                        </select>
+                    </div>
+                    <div class="col-md-6">
+                        <label for=""></label>
+                    </div>
+                </div>
+                <div class="row gx-3 mb-3" id="authusername" style="display: none;">
+                    <div class="col-md-6">
+                        <label for="authusername">SMTP Username</label>
+                        <input type="text" name="authusername" id="authusername" value="" class="form-control" required>
+                    </div>
+                    <div class="col-md-6" id="authpassword">
+                        <label for="authpassword">SMTP Password</label>
+                        <input type="text" name="authpassword" id="authpassword" value="" class="form-control" required>
+                    </div>
+                </div>
+                <div class="row gx-3 mb-3">
                     <div class="col-md-6">
                         <label for="emailaddfrom">Email Address System (MAILFROM)</label>
                         <input class="form-control" id="emailaddfrom" name="emailaddfrom" type="email" value="" required/>
                     </div>
-                    <!-- Form Group (mailbox)-->
                     <div class="col-md-6">
                         <label for="mailbox">MailBox</label>
                         <select class="form-control select2" name="mailbox" id="mailbox" aria-label="Default select">
@@ -236,12 +199,10 @@
                     </div>
                 </div>
                 <div class="row gx-3 mb-3">
-                    <!-- Form Group (mail from)-->
                     <div class="col-md-6">
                         <label for="enday">Estimated number of system users (per day)</label>
                         <input class="form-control" id="enday" name="enday" type="number" pattern="[0-9]*" inputmode="numeric"  value="" required/>
                     </div>
-                    <!-- Form Group (mailbox)-->
                     <div class="col-md-6">
                         <label for="ensystem">Estimated number of emails sent from the system (per day)</label>
                         <input class="form-control" id="ensystem" name="ensystem" type="number" pattern="[0-9]*" inputmode="numeric"  value="" required/>
@@ -259,16 +220,14 @@
                         <label class=" mb-1" for="applicantposition">Applicant's Position:</label>
                         <select class="form-control select2" name="applicantposition" id="applicantposition" aria-label="Default select">
                             <option selected disabled>Select Position</option>
-                            <option value="1">test</option>
-                            <option value="2">test</option>
+                            <option value="Penolong Pengarah F44">Penolong Pengarah F44</option>
                         </select>
                     </div>
                     <div class="mb-3 col-md-4">
                         <label class=" mb-1" for="applicantdepart">Applicant's Department / Division:</label>
                         <select class="form-control select2" name="applicantdepart" id="applicantdepart" aria-label="Default select">
                             <option selected disabled>Select Department / Division</option>
-                            <option value="1">test</option>
-                            <option value="2">test</option>
+                            <option value="Jabatan Audit Negara/Bahagian Teknologi Maklumat">Jabatan Audit Negara/Bahagian Teknologi Maklumat</option>
                         </select>
                     </div>
                     <div class="mb-3 col-md-4">
@@ -287,16 +246,15 @@
                         <label class=" mb-1" for="verifierposition">Verifier Position:</label>
                         <select class="form-control select2" name="verifierposition" id="verifierposition" aria-label="Default select">
                             <option selected disabled>Select Position</option>
-                            <option value="1">test</option>
-                            <option value="2">test</option>
+                            <option value="Pegawai Teknologi Maklumat F41">Pegawai Teknologi Maklumat F41</option>
+                            <option value="Pegawai Teknologi Maklumat F44">Pegawai Teknologi Maklumat F44</option>
                         </select>
                     </div>
                     <div class="mb-3 col-md-4">
                         <label class=" mb-1" for="verifierdepart">Verifier Department / Division:</label>
                         <select class="form-control select2" name="verifierdepart" id="verifierdepart" aria-label="Default select">
                             <option selected disabled>Select Department / Division</option>
-                            <option value="1">test</option>
-                            <option value="2">test</option>
+                            <option value="Jabatan Audit Negara/Bahagian Teknologi Maklumat">Jabatan Audit Negara/Bahagian Teknologi Maklumat</option>
                         </select>
                     </div>
                     <div class="mb-3 col-md-4">
@@ -305,7 +263,7 @@
                     </div>
                 </div>
                 <hr>
-                <div class="card-header text-center"><h4 class=" text-primary">Helpdesk Oficer</h4></div>
+                <div class="card-header text-center"><h4 class=" text-primary">Helpdesk Oficer</h4></div><br>
                 <div class="row gx-3 mb-3">
                     <div class="col-md-6">
                         <label for="officername">Officer Name</label>
@@ -327,16 +285,14 @@
                         <label class=" mb-1" for="approvalposition">Approval Position</label>
                         <select class="form-control select2" name="approvalposition" id="approvalposition" aria-label="Default select">
                             <option selected disabled>Select Position</option>
-                            <option value="1">test</option>
-                            <option value="2">test</option>
+                            <option value="PPK MAMPU">PPK MAMPU</option>
                         </select>
                     </div>
                     <div class="mb-3 col-md-4">
                         <label class=" mb-1" for="approvaldepart">Approval Department / Division:</label>
                         <select class="form-control select2" name="approvaldepart" id="approvaldepart" aria-label="Default select">
                             <option selected disabled>Select Department / Division</option>
-                            <option value="1">test</option>
-                            <option value="2">test</option>
+                            <option value="Pasukan Projek MyGovUC3.0">Pasukan Projek MyGovUC3.0</option>
                         </select>
                     </div>
                     <div class="mb-3 col-md-4">
@@ -347,7 +303,7 @@
                 <hr>
                 <div class="mb-3">
                     <label for="attachement">Upload Attachement</label>
-                    <input class="form-control btn-primary" type="file" name="attachement" id="attachement" accept=".pdf" required/>
+                    <input class="form-control btn-outline-primary" type="file" name="attachement" id="attachement" accept=".pdf" required/>
                     <span class="text-xs text-danger">Upload File format .pdf</span>
                 </div><hr>
                 <button class="btn btn-primary me-2 my-1" type="submit">Submit</button>
@@ -360,7 +316,7 @@
         label {
             font-weight: bold;
         }
-        th {
+        th,td {
             font-size: var(--bs-body-font-size);
         }
     </style>
@@ -368,3 +324,52 @@
 
 
 @endsection
+@push('script')
+<script>
+    // Add row button click handler
+$('#add-row-table').click(function () {
+    addRow('#dynamic-inputs-container');
+});
+
+// Reusable function to add a row to the specified table
+function addRow(containerId) {
+    var container = $(containerId);
+    var newRow = container.find('.dynamic-input-row').first().clone();
+
+    // Find all input elements inside the cloned row and update their names
+    newRow.find('input').each(function () {
+        var nameAttr = $(this).attr('name');
+        $(this).attr('name', updateNameAttribute(nameAttr));
+        $(this).val(''); // Optionally, clear input values
+    });
+
+    // Find the select element inside the cloned row and update its name
+    var selectElement = newRow.find('select');
+    var nameAttr = selectElement.attr('name');
+    selectElement.attr('name', updateNameAttribute(nameAttr));
+
+    // Append the cloned row to the container
+    container.append(newRow);
+
+    // Initialize Select2 for the cloned dropdown
+    selectElement.select2({
+        allowClear: true,
+        tags: true,
+    });
+}
+
+// Function to update the name attribute of inputs
+function updateNameAttribute(nameAttr) {
+    // Extract the current index from the name attribute
+    var regex = /\[(\d+)\]/;
+    var matches = regex.exec(nameAttr);
+    var currentIndex = matches ? parseInt(matches[1]) : 0;
+
+    // Increment the index for the next row
+    var newIndex = currentIndex + 1;
+
+    // Replace the index in the name attribute
+    return nameAttr.replace('[' + currentIndex + ']', '[' + newIndex + ']');
+}
+</script>
+@endpush

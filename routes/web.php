@@ -100,6 +100,10 @@ Route::group(['middleware' => ['auth']], function () {
         //code sidi
         Route::get('/register', [SmtpRelayController::class, 'daftar'])->name('smtp_relay.daftar');
         Route::post('/saving', [SmtpRelayController::class, 'saving'])->name('smtp_relay.saving');
+        Route::get('/view/{id}', [SmtpRelayController::class, 'papar'])->name('smtp_relay.view');
+        Route::get('/update/{id}', [SmtpRelayController::class, 'kemaskini'])->name('smtp_relay.kemaskini');
+        Route::post('/update/{id}/kemaskinidata', [SmtpRelayController::class, 'kemaskinidata'])->name('smtp_relay.kemaskinidata');
+
 
         Route::get('/index/searching', [SmtpRelayController::class, 'search'])->name('smtp_relay.index.search');
 
@@ -163,11 +167,14 @@ Route::group(['middleware' => ['auth']], function () {
 			Route::post('/storePermission',[RoleController::class,'storePermission'])->name('setup.role.storePermission');
 		});
 
-        Route::group(['prefix' => 'domain'], function () {
-            Route::get('/', [DomainMinistryAgenciesListController::class, 'index'])->name('domain.index');
-            Route::get('/register', [DomainMinistryAgenciesListController::class, 'create'])->name('domain.register');
-            Route::post('/register', [DomainMinistryAgenciesListController::class, 'store'])->name('domain.store');
-        });
+    Route::group(['prefix' => 'domain'], function () {
+        Route::get('/', [DomainMinistryAgenciesListController::class, 'index'])->name('domain.index');
+        Route::get('/register', [DomainMinistryAgenciesListController::class, 'create'])->name('domain.register');
+        Route::post('/register', [DomainMinistryAgenciesListController::class, 'store'])->name('domain.store');
+        Route::get('/{id}', [DomainMinistryAgenciesListController::class, 'edit'])->name('domain.edit');
+        Route::post('/{id}', [DomainMinistryAgenciesListController::class, 'update'])->name('domain.update');
+        Route::post('/{id}', [DomainMinistryAgenciesListController::class, 'delete'])->name('domain.delete');
+    });
 
         Route::group(['prefix' => 'systeminformation'], function () {
             Route::get('/', [SystemInformationController::class, 'index'])->name('systeminformation.index');

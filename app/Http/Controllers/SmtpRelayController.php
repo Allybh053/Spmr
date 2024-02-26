@@ -49,9 +49,9 @@ class SmtpRelayController extends Controller
         $role = $user->roles->isNotEmpty() ? $user->roles->pluck('name')->first() : null;
 
         $applicationType = [
-            "0" => "New Application",
-            "1" => "Service Termination",
-            "2" => "Agency Onboarding",
+            "1" => "New Application",
+            "2" => "Service Termination",
+            "3" => "Agency Onboarding",
         ];
         $mailbox =[
            "0" => "Mailbox Available",
@@ -102,36 +102,6 @@ class SmtpRelayController extends Controller
     }
 
     public function store(Request $request){
-
-        // $messages = [
-            // 'mailfrom_email_addr.required' => 'The MAILFROM Email Address field is required.',
-            // 'mailfrom_email_addr.email' => 'The MAILFROM Email Address must be a valid email address.',
-            // 'owner_email_addr.required' => 'The Email Address Owner System field is required.',
-            // 'owner_email_addr.email' => 'The Email Address Owner System must be a valid email address.',
-        // ];
-
-        // $validation = [
-            // 'mailfrom_email_addr' => 'required|email',
-            // 'owner_email_addr' => 'required|email',
-        // ];
-
-        // $request->validate($validation, $messages);
-
-        // Validate the request data
-        // $validatedData = $request->validate([
-        //     'server_name.*' => 'required',
-        //     'ip_server.*' => 'required',
-        //     'fqdn_system.*' => 'required',
-        // ]);
-
-        // // Process the form submission
-        // foreach ($validatedData['server_name'] as $key => $value) {
-        //     $applicantInfo = new ApplicantInfo();
-        //     $applicantInfo->server_name = $validatedData['server_name'][$key];
-        //     $applicantInfo->ip_server = $validatedData['ip_server'][$key];
-        //     $applicantInfo->fqdn_system = $validatedData['fqdn_system'][$key];
-        //     $applicantInfo->save();
-        // }
 
         try {
             DB::beginTransaction();
@@ -203,9 +173,9 @@ class SmtpRelayController extends Controller
         $role = $user->roles->isNotEmpty() ? $user->roles->pluck('name')->first() : null;
 
         $applicationType = [
-            "0" => "New Application",
-            "1" => "Service Termination",
-            "2" => "Agency Onboarding",
+            "1" => "New Application",
+            "2" => "Service Termination",
+            "3" => "Agency Onboarding",
         ];
         $mailbox =[
            "0" => "Mailbox Available",
@@ -278,28 +248,6 @@ class SmtpRelayController extends Controller
 
     public function update(Request $request,$id)
     {
-        // $messages = [
-        //     'companyName.required' => 'Company name field is required.',
-        //     'address1.required' => 'Address 1 field is required.',
-        //     'postcode.required' => 'Postcode field is required.',
-        //     'city.required' => 'City field is required.',
-        //     'state.required' => 'Please Select State.',
-        //     'phone.max' => 'Phone Number field max is 15 number.',
-        //     'email.required' => 'Email field is required.',
-        // ];
-
-        // $validation = [
-        //     'companyName' => 'required',
-        //     'address1' => 'required',
-        //     'postcode' => 'required',
-        //     'city' => 'required',
-        //     'state' => 'required',
-        //     'phone' => 'max:15',
-        //     'email' => 'required',
-        // ];
-
-        // $request->validate($validation, $messages);
-
         try {
             DB::beginTransaction();
 
@@ -432,7 +380,8 @@ class SmtpRelayController extends Controller
                 return $row['status'] == 0 ? 'Pending Created' : 'Done Created';
             })
             ->addColumn('action', function ($row) {
-                $data = '<a class="btn btn-datatable btn-icon btn-transparent-dark me-2" href="'.route('smtp_relay.edit',[$row['id']]).'"><i class="fas fa-edit text-primary"></i></a>
+                $data = '<a class="btn btn-datatable btn-icon btn-transparent-dark me-2" href="'.route('smtp_relay.view',[$row['id']]).'"><i class="fas fa-eye text-primary"></i></a>
+                <a class="btn btn-datatable btn-icon btn-transparent-dark me-2" href="'.route('smtp_relay.kemaskini',[$row['id']]).'"><i class="fas fa-edit text-primary"></i></a>
                 <a type="button" class="btn btn-datatable btn-icon btn-transparent-dark" id="delete" data-id="'.$row['id'].'" data-url="'.route('smtp_relay.delete',[$row['id']]).'">
                 <i class="fas fa-trash-alt text-danger"></i>
                 </a>';
@@ -477,7 +426,7 @@ class SmtpRelayController extends Controller
             'ticket_id' => $request->input('ticketno'),
             'types_req' => $request->input('type_req'),
             'project_name' => $request->input('projectname'),
-            'fqdn_system' => $request->input('fqdn'),
+            'ministry' => $request->input('ministry'),
             'system_owner_name' => $request->input('ownername'),
             'owner_email_addr' => $request->input('emailadd'),
             'owner_phone_number' => $request->input('phone'),
@@ -505,49 +454,58 @@ class SmtpRelayController extends Controller
             'est_no_system_users_per_day' => $request->input('enday'),
             'est_no_email_sent_from_system_users_per_day' => $request->input('ensystem'),
             'upload_copy_attachment' => $fileName,
+            'smtp_relay_server'=>$request->input('mailrelay'),
+            'smtp_username'=>$request->input('authusername'),
+            'smtp_password'=>$request->input('authpassword'),
+            'smtp_port'=>$request->input('authmethod'),
+            'smtp_port'=>$request->input('ports'),
             'status' => 0,
         ]);
 
         $serverNames = $request->input('server_name');
         $ipAddresses = $request->input('ipaddress');
-        $ports = $request->input('ports');
         $domains = $request->input('domain');
-        $mailRelays = $request->input('mailrelay');
-        $authusernames = $request->input('authusername');
-        $authpasswords = $request->input('authpassword');
-        $smtp_relay_auth_method = $request->input('authmethod');
         $nombor = $request->input('form_id');
 
-        $combinedData=[];
+        $tableSpmrData = $request->input('tableSpmr');
+        $combinedData = [];
 
-        if (!empty($authusernames) && !empty($authpasswords)) {
-            // Combine arrays into a single array
-            $combinedData = array_map(function ($serverName, $ipAddress, $port, $mailRelay, $authusername, $authpassword) use ($nombor, $smtp_relay_auth_method) {
-                return [
-                    'form_id' => $nombor,
-                    'server_name' => $serverName,
-                    'ip_addr_server' => $ipAddress,
-                    'smtp_port' => $port,
-                    'smtp_username' => $authusername,
-                    'smtp_password' => $authpassword,
-                    'smtp_relay_server' => $mailRelay,
-                    'smtp_relay_auth_method' => $smtp_relay_auth_method,
-                ];
-            }, $serverNames, $ipAddresses, $ports, $mailRelays, $authusernames, $authpasswords);
+        if (!empty($request->input('authusername')) && !empty($request->input('authpassword'))) {
+            if(isset($tableSpmrData) && is_array($tableSpmrData)) {
+                foreach ($tableSpmrData as $index => $row) {
+
+                    // Retrieve values from each row
+                    $serverName = $row['server_name'] ?? null;
+                    $ipAddress = $row['ipaddress'] ?? null;
+                    $domain = $row['domain'] ?? null;
+
+                    // Create combined data array
+                    $combinedData[] = [
+                        'form_id' => $nombor,
+                        'server_name' => $serverName,
+                        'ip_addr_server' => $ipAddress,
+                        'fqdn_server' => $domain,
+                    ];
+                }
+            }
 
         } else {
-            // Combine arrays into a single array
-            $combinedData = array_map(function ($serverName, $ipAddress, $port, $mailRelay) use ($nombor, $smtp_relay_auth_method) {
-                return [
-                    'form_id' => $nombor,
-                    'server_name' => $serverName,
-                    'ip_addr_server' => $ipAddress,
-                    'smtp_port' => $port,
-                    'smtp_relay_server' => $mailRelay,
-                    'smtp_relay_auth_method' => $smtp_relay_auth_method,
-                ];
-            }, $serverNames, $ipAddresses, $ports, $mailRelays);
+            if(isset($tableSpmrData) && is_array($tableSpmrData)) {
+                foreach ($tableSpmrData as $index => $row) {
+                    // Retrieve values from each row
+                    $serverName = $row['server_name'] ?? null;
+                    $ipAddress = $row['ipaddress'] ?? null;
+                    $domain = $row['domain'] ?? null;
 
+                    // Create combined data array
+                    $combinedData[] = [
+                        'form_id' => $nombor,
+                        'server_name' => $serverName,
+                        'ip_addr_server' => $ipAddress,
+                        'fqdn_server' => $domain,
+                    ];
+                }
+            }
         }
 
         // Loop through the combined array and store data
@@ -557,6 +515,56 @@ class SmtpRelayController extends Controller
 
         return redirect()->route('smtp_relay.smtp_relay_req')->with('success', 'Form added successfully');
 
+    }
+
+    public function papar($id){
+        $datasmtp = SmtpRelayReqForm::find($id);
+        $details = smtp_relay_server::where('form_id', '=', $datasmtp->form_id)->get();
+        return view('smtp_relay.view',compact('datasmtp','details'));
+    }
+
+    public function kemaskini(Request $request,$id){
+        $formsmtp = SmtpRelayReqForm::find($id);
+        $details = smtp_relay_server::where('form_id', '=', $formsmtp->form_id)->get();
+        $serversArray = Server::all()->toArray();
+        $domainsArray = DomainMinistryAgencies::take(10)->get()->toArray();
+        return view('smtp_relay.update',compact('formsmtp','details','serversArray','domainsArray'));
+    }
+
+    public function kemaskinidata(Request $request,$id){
+
+        // Update the main form data
+        $formdata = $request->only([
+            'ticket_id', 'types_req', 'project_name', 'system_owner_name', 'owner_email_addr', 'owner_phone_number',
+            'agencies', 'dept_div_unit', 'agencies_addr', 'req_justifications', 'smtp_relay_auth_method',
+            'smtp_relay_server', 'smtp_port', 'mailfrom_email_addr', 'mailbox_created', 'est_no_system_users_per_day',
+            'est_no_email_sent_from_system_users_per_day', 'applicant_name', 'applicant_position', 'applicant_dept_div',
+            'date_application', 'verifier_1_name', 'verifier_1_position', 'verifier_1_dept_div', 'date_verification_1',
+            'verifier_2_name', 'date_verification_2', 'verifier_3_name', 'verifier_3_position', 'verifier_3_dept_div',
+            'date_verification_3',
+        ]);
+
+        $formdata['form_id'] = $id;
+        $formdata['status'] = 0;
+
+        SmtpRelayReqForm::where('form_id', $id)->update($formdata);
+
+        // Process 'tableSpmr' data
+        $tableSpmrData = $request->input('tableSpmr');
+        $smtpRelayServers = [];
+
+        // Update or insert 'smtp_relay_servers' based on the form_id
+        foreach ($tableSpmrData as $row) {
+            smtp_relay_server::updateOrInsert(
+                [
+                    'form_id' => $id,
+                    'server_name' => $row['server_name'],
+                    'ip_addr_server' => $row['ip_addr_server'],
+                    'fqdn_server' => $row['fqdn_server'],
+                ]
+            );
+        }
+        return redirect()->route('smtp_relay.smtp_relay_req')->with('success', 'Form updated successfully!');
     }
 
 }
