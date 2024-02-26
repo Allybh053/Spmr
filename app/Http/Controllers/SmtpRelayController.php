@@ -11,6 +11,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\DB;
+use Faker\Factory as Faker;
 
 class SmtpRelayController extends Controller
 {
@@ -18,7 +19,28 @@ class SmtpRelayController extends Controller
     {
         $user = Auth::user();
         $role = $user->roles->isNotEmpty() ? $user->roles->pluck('name')->first() : null;
-        return view('smtp_relay.index', compact('user', 'role'));
+        $agency = [];
+        return view('smtp_relay.index', compact('user', 'role','agency'));
+    }
+
+    public function search(Request $request)
+    {
+        $input1 = $request->input('agency'); // Assuming 'agency' is the name of the select input for Kementerian/Agensi/SUK
+        $input2Type = $request->input('calendarType');
+        
+        // Generate Faker data based on the selected calendar type and agency
+        $faker = Faker::create();
+        $totalApplications = $faker->numberBetween(100, 500);
+        $totalIP = $faker->numberBetween(200, 1000);
+        $totalDeactivated = $faker->numberBetween(5, 50);
+
+        // You can adjust the search logic based on the selected calendar type and agency here
+        
+        return response()->json([
+            'totalApplications' => $totalApplications,
+            'totalIP' => $totalIP,
+            'totalDeactivated' => $totalDeactivated
+        ]);
     }
 
     public function create()

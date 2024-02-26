@@ -4,9 +4,13 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use OwenIt\Auditing\Auditable as AuditableTrait;
+use OwenIt\Auditing\Contracts\Auditable;
 
-class smtp_relay_server extends Model
+class smtp_relay_server extends Model  implements Auditable
 {
+    use AuditableTrait;
+    
     use HasFactory;
     protected $table = 'smtp_relay_server';
 

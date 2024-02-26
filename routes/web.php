@@ -18,6 +18,7 @@ use App\Http\Controllers\ReportDetailSenderController;
 use App\Http\Controllers\Setup\RoleController;
 use App\Http\Controllers\SystemInformationController;
 use App\Http\Controllers\DomainMinistryAgenciesListController;
+use App\Http\Controllers\ActivityLogController;
 
 /*
 |--------------------------------------------------------------------------
@@ -100,6 +101,8 @@ Route::group(['middleware' => ['auth']], function () {
         Route::get('/register', [SmtpRelayController::class, 'daftar'])->name('smtp_relay.daftar');
         Route::post('/saving', [SmtpRelayController::class, 'saving'])->name('smtp_relay.saving');
 
+        Route::get('/index/searching', [SmtpRelayController::class, 'search'])->name('smtp_relay.index.search');
+
     });
 
     Route::group(['prefix' => 'server'], function () {
@@ -136,6 +139,8 @@ Route::group(['middleware' => ['auth']], function () {
     Route::group(['prefix' => 'log_overview'], function () {
         Route::get('/', [LogOverviewController::class, 'index'])->name('log.index');
         Route::post('/api/getServerName', [LogOverviewController::class, 'getNewServerData'])->name('log.api.getServerName');
+
+        Route::get('/activity-logs', [ActivityLogController::class,'showActivityLogs'])->name('activityLog.index');
     });
 
     Route::group(['prefix' => 'report'], function () {
