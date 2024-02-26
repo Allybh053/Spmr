@@ -23,12 +23,8 @@
     </header>
     <!-- Main page content-->
     <div class="container-xl px-4 mt-4">
-        <!-- Account page navigation-->
         <nav class="nav nav-borders">
             <a class="nav-link active ms-0" href="account-profile.html">Details</a>
-            <!--a class="nav-link" href="account-billing.html">Billing</a>
-            <a class="nav-link" href="account-security.html">Security</a>
-            <a class="nav-link" href="account-notifications.html">Notifications</a-->
         </nav>
         <hr class="mt-0 mb-4" />
         <div class="row">
@@ -54,19 +50,19 @@
                             <!-- Form Group (username)-->
                             <div class="mb-3">
                                 <label class="small mb-1" for="username">Username (how the name will appear to other users on the site)</label>
-                                <input class="form-control" id="username" name="username" type="text" value="{{ $user->username }}" readonly/>
+                                <p>{{ $user->username }}</p>
                             </div>
                             <!-- Form Row        -->
                             <div class="row gx-3 mb-3">
                                 <!-- Form Group (organization name)-->
                                 <div class="col-md-6">
                                     <label class="small mb-1" for="fname">First Name</label>
-                                    <input class="form-control" id="fname" name="fname" type="text" value="{{ $user->fname }}" readonly/>
+                                    <p>{{ $user->fname }}</p>
                                 </div>
                                 <!-- Form Group (location)-->
                                 <div class="col-md-6">
                                     <label class="small mb-1" for="lname">Last Name</label>
-                                    <input class="form-control" id="lname" name="lname" type="text" value="{{ $user->lname }}" readonly/>
+                                    <p>{{ $user->lname }}</p>
                                 </div>
                             </div>
                             <!-- Form Row        -->
@@ -74,25 +70,25 @@
                                 <!-- Form Group (organization name)-->
                                 <div class="col-md-6">
                                     <label class="small mb-1" for="acct_types">Account Type</label>
-                                    <input class="form-control" id="acct_types" name="acct_types" type="text" value="{{ $user->acct_types }}" readonly/>
+                                    <p>{{ $user->acct_types }}</p>
                                 </div>
                                 <!-- Form Group (location)-->
                                 <div class="col-md-6">
                                     <label class="small mb-1" for="role_id">Role Type</label>
-                                    <input class="form-control" id="role_id" name="role_id" type="text" value="{{ $user->role_id }}" readonly/>
+                                    <p>{{ $user->role_id }}</p>
                                 </div>
                             </div>
                             <!-- Form Group (email address)-->
-                            <div class="mb-3">
-                                <label class="small mb-1" for="email">Email address</label>
-                                <input class="form-control" id="email" name="email" type="email" value="{{ $user->email }}" readonly/>
-                            </div>
                             <!-- Form Row-->
                             <div class="row gx-3 mb-3">
+                                <div class="col-md-6">
+                                    <label class="small mb-1" for="email">Email address</label>
+                                    <p>{{ $user->email }}</p>
+                                </div>
                                 <!-- Form Group (phone number)-->
                                 <div class="col-md-6" @disabled(true)>
                                     <label class="small mb-1" for="phone">Phone No</label>
-                                    <input class="form-control" id="phone" name="phone" type="text" value="{{ $user->phone }}" readonly/>
+                                    <p>{{ $user->phone }}</p>
                                 </div>
                             </div>
                             <!-- Form Row-->
@@ -100,14 +96,14 @@
                                 <!-- Form Group (phone number)-->
                                 <div class="col-md-6" @disabled(true)>
                                     <label class="small mb-1" for="ldap_authentication">LDAP Authentication</label>
-                                    <input class="form-control" id="ldap_authentication" name="ldap_authentication" type="text" value="{{ $user->ldap_authentication }}" readonly/>
+                                    <p>{{ $user->ldap_authentication }}</p>
                                 </div>
                             </div>
                             <div class="row gx-3 mb-3">
                                 <!-- Form Group (organization name)-->
                                 <div class="col-md-6">
                                     <label class="small mb-1" for="enable">Account Status</label>
-                                    <input class="form-control" id="status" name="status" type="text" value="{{ $user->enabled == 1 ? 'Active' : 'Inactive' }}" readonly/>
+                                    <p>{{ $user->enabled == 1 ? 'Active' : 'Inactive' }}</p>
                                 </div>
                             </div>
                     </div>
@@ -115,6 +111,11 @@
             </div>
         </div>
     </div>
+    <style>
+    p {
+        color: blue;
+    }
+    </style>
 </main>
 
 @endsection

@@ -23,12 +23,33 @@
     </header>
 <div class="container-xl px-4 mt-4">
     @if(session('success'))
-        <div class="alert alert-primary alert-dismissible fade show" role="alert">
-            <h5 class="alert-heading">Message</h5>
-            {{ session('success') }}
-            <button class="btn-close" type="button" data-bs-dismiss="alert" aria-label="Close"></button>
-        </div>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            Swal.fire({
+                icon: 'success',
+                title: 'Success',
+                text: '{{ session('success') }}',
+                showConfirmButton: false,
+                timer: 3000  // Automatically close after 3 seconds
+            });
+        });
+    </script>
     @endif
+
+    @if(session('error'))
+        <script>
+            document.addEventListener('DOMContentLoaded', function () {
+                Swal.fire({
+                    icon: 'error',
+                    title: '',
+                    text: '{{ session('error') }}',
+                    showConfirmButton: false,
+                    timer: 3000  // Automatically close after 3 seconds
+                });
+            });
+        </script>
+    @endif
+
     @foreach ($dataservers as $dataserver)
     <div class="row">
         <div class="col-lg-8">
@@ -59,6 +80,11 @@
                 </div>
                 <div class="card-footer d-flex align-items-center justify-content-between small">
                     <a class="text-primary" href="{{ route('server.edit', ['id' => $dataserver->id]) }}">Edit Configuration</a>
+                    <a class="text-danger" href="{{ route('server.delete', ['id' => $dataserver->id]) }}" onclick="event.preventDefault(); document.getElementById('delete-form').submit();">Delete</a>
+                    <form id="delete-form" action="{{ route('server.delete', ['id' => $dataserver->id]) }}" method="POST" style="display: none;">
+                        @csrf
+                        @method('DELETE')
+                    </form>
                 </div>
             </div>
         </div>

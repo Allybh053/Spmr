@@ -383,4 +383,4 @@ function updateNameAttribute(nameAttr) {
     return nameAttr.replace('[' + currentIndex + ']', '[' + newIndex + ']');
 }
 </script>
-@endpush
+@endpush 
