@@ -98,6 +98,7 @@
                                 <th>Types Application</th>
                                 <th>Project Name</th>
                                 <th>Server Mail Relay</th>
+                                <th>Total Ip Address</th>
                                 <th>Date Created</th>
                                 <th>Status</th>
                                 <th>Action</th>
@@ -125,6 +126,15 @@
                     "headers": {
                         'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
                     },
+                    "data": function (d) {
+                        // Add the agencies and calendar type to the request data
+                        d.agency = $('#agency').val(); // Assuming the select input for agencies has the ID 'agency'
+                        d.calendarType = $('#calendarType').val(); // Assuming the select input for calendar type has the ID 'calendarType'
+                        d.month = $('#month').val(); // Assuming the select input for agencies has the ID 'agency'
+                        d.year = $('#year').val(); 
+                        d.dateFrom = $('#input2_from').val(); // Assuming the select input for agencies has the ID 'agency'
+                        d.dateTo = $('#input2_to').val(); 
+                    },
                     // error callback to handle error
                     "error": function(xhr, error, thrown) {
                         console.log("Error occurred!");
@@ -138,6 +148,7 @@
                         { data: 'types_req', name: 'types_req', class: 'text-center' },
                         { data: 'project_name', name: 'project_name', class: 'text-center' },
                         { data: 'smtp_relay_server', name: 'smtp_relay_server', class: 'text-center' },
+                        { data: 'total_ip', name: 'total_ip', class: 'text-center' },
                         { data: 'created_at', name: 'created_at', class: 'text-center' },
                         { data: 'status', name: 'status', class: 'text-center' },
                         { data: 'action', name: 'type', class: 'text-center', orderable: false, searchable: false },
@@ -154,10 +165,10 @@
         $('#calendarInputs').empty(); // Clear previous inputs
         
         if (selectedType === 'month') {
-            $('#calendarInputs').append('<div class="col-md-6"><label for="input2_month">Month:</label><input type="month" class="form-control" name="input2_month"></div>');
+            $('#calendarInputs').append('<div class="col-md-6"><label for="input2_month">Month:</label><input type="month" class="form-control" name="input2_month" id="month"></div>');
         } else if (selectedType === 'year') {
             var currentYear = new Date().getFullYear();
-            var selectYearHtml = '<div class="col-md-6"><label for="input2_year">Year:</label><select class="form-control" name="input2_year">';
+            var selectYearHtml = '<div class="col-md-6"><label for="input2_year">Year:</label><select class="form-control" name="input2_year" id="year">';
             for (var year = currentYear; year >= currentYear - 10; year--) {
                 selectYearHtml += '<option value="' + year + '">' + year + '</option>';
             }
@@ -183,6 +194,8 @@
                     $('#totalApplications').text(response.totalApplications);
                     $('#totalIP').text(response.totalIP);
                     $('#totalDeactivated').text(response.totalDeactivated);
+
+                    $('#spmrDatatable').DataTable().ajax.reload(); 
                 },
                 error: function (error) {
                     console.log(error);

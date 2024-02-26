@@ -311,9 +311,22 @@ class SmtpRelayController extends Controller
         }
     }
 
-    public function datatable()
+    public function datatable(Request $request)
     {
-        $application = SmtpRelayReqForm::get();
+          // Get search parameters
+    $agency = $request->input('agency');
+    $calendarType = $request->input('calendarType');
+
+      // Start building the query
+      $query = SmtpRelayReqForm::query();
+
+      // Apply filters based on search parameters
+      if (!empty($agency)) {
+          $query->where('agency_column', $agency); // Replace 'agency_column' with the actual column name for agency in your database table
+      }
+  
+      // Execute the query
+      $application = $query->get();
 
             return datatables()->of($application)
             ->addIndexColumn()
@@ -356,6 +369,9 @@ class SmtpRelayController extends Controller
                     return implode(", ", $ipAddrSvr);
                 }
                 return $row['ip_addr_server'];
+            })
+            ->addColumn('total_ip', function ($row) {
+                return '0';
             })
             ->addColumn('fqdn_system', function ($row) {
                 $fqdnSystem = json_decode($row['fqdn_system'], true);
