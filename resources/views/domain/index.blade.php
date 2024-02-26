@@ -16,6 +16,33 @@
             </div>
         </header>
         <div class="container-xl px-4">
+            @if(session('success'))
+            <script>
+                document.addEventListener('DOMContentLoaded', function () {
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Success',
+                        text: '{{ session('success') }}',
+                        showConfirmButton: false,
+                        timer: 3000  // Automatically close after 3 seconds
+                    });
+                });
+            </script>
+            @endif
+
+            @if(session('error'))
+                <script>
+                    document.addEventListener('DOMContentLoaded', function () {
+                        Swal.fire({
+                            icon: 'error',
+                            title: '',
+                            text: '{{ session('error') }}',
+                            showConfirmButton: false,
+                            timer: 3000  // Automatically close after 3 seconds
+                        });
+                    });
+                </script>
+            @endif
             <div class="card mb-4">
                 <div class="card-header">Domain</div>
                 <div class="card-body">

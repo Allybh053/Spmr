@@ -62,7 +62,7 @@ class ServerController extends Controller
             'status' => 0,
             'sshkey' => $fileName, // Save the path relative to the storage directory
         ]);
-        
+
 
         return redirect()->route('server.index')->with('success', 'Server details added successfully');
     }
@@ -163,4 +163,23 @@ class ServerController extends Controller
     {
         //
     }
+
+    public function deleteServer($id)
+    {
+        // Retrieve the server by ID
+        $server = Server::find($id);
+
+        // Check if the server exists
+        if (!$server) {
+            return redirect()->route('server.index')->with('error', 'Server not found.');
+        }
+
+        // Perform the soft delete
+        $server->delete();
+
+        // Redirect with success message
+        return redirect()->route('server.index')->with('error', 'Server deleted successfully!.');
+    }
+
+
 }

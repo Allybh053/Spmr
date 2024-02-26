@@ -4,12 +4,15 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Spatie\Permission\Models\Role;
 
 class Server extends Model
 {
-    use HasFactory;
-    
+    use HasFactory, SoftDeletes;
+
+    protected $table = 'servers';
+
     protected $fillable = [
         'hostname',
         'ipaddress',

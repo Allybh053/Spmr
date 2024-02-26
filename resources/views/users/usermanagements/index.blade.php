@@ -24,11 +24,30 @@
     <!-- Main page content-->
     <div class="container-fluid px-4">
         @if(session('success'))
-            <div class="alert alert-primary alert-dismissible fade show" role="alert">
-                <h5 class="alert-heading">Message</h5>
-                {{ session('success') }}
-                <button class="btn-close" type="button" data-bs-dismiss="alert" aria-label="Close"></button>
-            </div>
+        <script>
+            document.addEventListener('DOMContentLoaded', function () {
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Success',
+                    text: '{{ session('success') }}',
+                    showConfirmButton: false,
+                    timer: 3000  // Automatically close after 3 seconds
+                });
+            });
+        </script>
+        @endif 
+        @if(session('error'))
+            <script>
+                document.addEventListener('DOMContentLoaded', function () {
+                    Swal.fire({
+                        icon: 'error',
+                        title: '',
+                        text: '{{ session('error') }}',
+                        showConfirmButton: false,
+                        timer: 3000  // Automatically close after 3 seconds
+                    });
+                });
+            </script>
         @endif
         <div class="card">
             <div class="card-body">
