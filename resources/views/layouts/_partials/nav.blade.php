@@ -85,7 +85,7 @@
                     </nav>
                 </div>
 
-                
+
                 <div class="sidenav-menu-heading">Log</div>
                 <!-- Sidenav Accordion (Dashboard)-->
                 <a class="nav-link" href="{{ route('log.index') }}">
@@ -136,7 +136,10 @@
                                 <a class="nav-link" href="{{ route('domain.register') }}">Add New FQDN</a>
                             </nav>
                         </div>
-                     
+                        <a class="nav-link" href="{{ route('positiondepartment.index')}}"> 
+                            Position/Department Setup
+                            <div class="sidenav-collapse-arrow"></div>
+                        </a>
                     </nav>
                 </div>
                 <a class="nav-link" href="{{ route('systeminformation.index')}}">
