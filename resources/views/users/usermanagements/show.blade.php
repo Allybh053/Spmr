@@ -75,7 +75,13 @@
                                 <!-- Form Group (location)-->
                                 <div class="col-md-6">
                                     <label class="small mb-1" for="role_id">Role Type</label>
-                                    <p>{{ $user->role_id }}</p>
+                                    <p>
+                                        @if($user->role)
+                                            {{ $user->role->name }}
+                                        @else
+                                            No role assigned for this user.
+                                        @endif
+                                    </p>
                                 </div>
                             </div>
                             <!-- Form Group (email address)-->
