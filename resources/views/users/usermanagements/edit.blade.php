@@ -67,9 +67,9 @@
                                 </div>
                             </div>
                             <!-- Form Row        -->
-                            <div class="row gx-3 mb-3">
+                            {{-- <div class="row gx-3 mb-3"> --}}
                                 <!-- Form Group (organization name)-->
-                                <div class="col-md-6">
+                                {{-- <div class="col-md-6">
                                     <label class="small mb-1" for="acct_types">Account Type</label>
                                     <select class="form-select" name="acct_types" aria-label="Default select example">
                                         <option value="{{ $user->acct_types }}" selected></option>
@@ -78,19 +78,24 @@
                                         <option value="3">xxxx</option>
                                         <option value="4">xxxx</option>
                                     </select>
-                                </div>
+                                </div> --}}
                                 <!-- Form Group (location)-->
-                                <div class="col-md-6">
+                                <div class="md-3">
                                     <label class="small mb-1" for="role_id">Role Type</label>
                                     <select class="form-select" name="role_id" aria-label="Default select example">
-                                        <option value="{{ $user->role_id }}" selected></option>
-                                        <option value="1">SuperAdministrator</option>
-                                        <option value="2">Admin</option>
-                                        <option value="3">Report</option>
-                                        <option value="4">Guest</option>
+                                        <option value="{{ $user->role_id }}" selected>
+                                            @if($user->role)
+                                                {{ $user->role->name }}
+                                            @else
+                                                No role assigned for this user.
+                                            @endif
+                                        </option>
+                                        @foreach ($roles as $role)
+                                        <option value="{{ $role['id'] }}">{{ $role['name'] }}</option>
+                                        @endforeach
                                     </select>
                                 </div>
-                            </div>
+                            {{-- </div> --}}
                             <!-- Form Group (email address)-->
                             <div class="mb-3">
                                 <label class="small mb-1" for="email">Email address</label>

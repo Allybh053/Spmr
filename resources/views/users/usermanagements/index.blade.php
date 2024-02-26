@@ -35,7 +35,7 @@
                 });
             });
         </script>
-        @endif 
+        @endif
         @if(session('error'))
             <script>
                 document.addEventListener('DOMContentLoaded', function () {
@@ -69,7 +69,13 @@
                             <td>{{ $loop->iteration }}.</td>
                             <td>{{ $user->username }}</td>
                             <td>{{ $user->email }}</td>
-                            <td>{{ $user->role_id }}</td>
+                            <td>
+                                @if($user->role)
+                                    {{ $user->role->name }}
+                                @else
+                                    No role assigned for this user.
+                                @endif
+                            </td>
                             <td>
                             @if($user->enabled == 1)
                                 <span class="badge bg-green-soft text-green">Active</span>
