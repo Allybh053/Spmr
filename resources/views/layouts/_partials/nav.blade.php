@@ -88,12 +88,12 @@
 
                 <div class="sidenav-menu-heading">Log</div>
                 <!-- Sidenav Accordion (Dashboard)-->
-                <a class="nav-link" href="{{ route('log.index') }}">
+                <a class="nav-link collapsed" href="javascript:void(0);" data-bs-toggle="collapse" data-bs-target="#collapseAppLog" aria-expanded="false" aria-controls="collapseAppLog">
                     <div class="nav-link-icon"><i data-feather="mail"></i></div>
                     Log
                     <div class="sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
                 </a>
-                <div class="collapse" id="collapseAppsetting" data-bs-parent="#accordionSidenav">
+                <div class="collapse" id="collapseAppLog" data-bs-parent="#accordionSidenav">
                     <nav class="sidenav-menu-nested nav accordion" id="accordionSidenavAppsMenu">
                         <a class="nav-link" href="{{ route('log.index') }}">
                             <div class="nav-link-icon"><i data-feather="mail"></i></div>
