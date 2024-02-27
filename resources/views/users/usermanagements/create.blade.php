@@ -66,9 +66,9 @@
                                 </div>
                             </div>
                             <!-- Form Row        -->
-                            <div class="row gx-3 mb-3">
+                            {{-- <div class="row gx-3 mb-3"> --}}
                                 <!-- Form Group (organization name)-->
-                                <div class="col-md-6">
+                                <div class="col-md-6" hidden @disabled(true)>
                                     <label class="small mb-1" for="acct_types">Account Type</label>
                                     <select class="form-select" name="acct_types" aria-label="Default select example">
                                         <option selected disabled>Select Account Type:</option>
@@ -79,17 +79,16 @@
                                     </select>
                                 </div>
                                 <!-- Form Group (location)-->
-                                <div class="col-md-6">
+                                <div class="md-3">
                                     <label class="small mb-1" for="role_id">Role Type</label>
-                                    <select class="form-select" name="role_id" aria-label="Default select example">
-                                        <option selected disabled>Select Role Type:</option>
-                                        <option value="1">SuperAdministrator</option>
-                                        <option value="2">Admin</option>
-                                        <option value="3">Report</option>
-                                        <option value="4">Guest</option>
+                                    <select class="form-control select2" id="role_id" name="role_id" aria-label="Default select example" required>
+                                        <option selected disabled>Select Role</option>
+                                        @foreach ($roles as $role)
+                                        <option value="{{ $role['id'] }}">{{ $role['name'] }}</option>
+                                        @endforeach
                                     </select>
                                 </div>
-                            </div>
+                            {{-- </div> --}}
                             <!-- Form Group (email address)-->
                             <div class="mb-3">
                                 <label class="small mb-1" for="email">Email address</label>
@@ -129,6 +128,9 @@
                                 </div>
                             </div>
                             <!-- Save changes button-->
+                            <a href="{{ route('usermanagements.index') }}" class="btn btn-danger">
+                                <i class="me-1" data-feather="arrow-left"></i> Cancel
+                            </a>
                             <button class="btn btn-primary" type="submit">Add User</button>
                         </form>
                     </div>

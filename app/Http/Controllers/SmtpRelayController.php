@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use App\Models\SmtpRelayReqForm;
 use App\Models\smtp_relay_server;
 use Carbon\Carbon;
+use App\Models\Department;
+use App\Models\Position;
 use App\Models\Server;
 use App\Models\DomainMinistryAgencies;
 use Illuminate\Http\Request;
@@ -424,8 +426,10 @@ class SmtpRelayController extends Controller
     public function daftar()
     {
         $serversArray = Server::all()->toArray();
-        $domainsArray = DomainMinistryAgencies::take(10)->get()->toArray();
-        return view('smtp_relay.register', compact('serversArray','domainsArray'));
+        $domainsArray = DomainMinistryAgencies::where('enabled', 1)->get()->toArray();
+        $departmentsArray = Department::where('status', 1)->get()->toArray();
+        $positionsArray = Position::where('status', 1)->get()->toArray();
+        return view('smtp_relay.register', compact('serversArray','domainsArray','departmentsArray','positionsArray'));
     }
 
     public function saving(Request $request){

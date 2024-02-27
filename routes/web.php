@@ -19,6 +19,8 @@ use App\Http\Controllers\Setup\RoleController;
 use App\Http\Controllers\SystemInformationController;
 use App\Http\Controllers\DomainMinistryAgenciesListController;
 use App\Http\Controllers\ActivityLogController;
+use App\Http\Controllers\PositionDepartmentController;
+
 
 /*
 |--------------------------------------------------------------------------
@@ -118,6 +120,8 @@ Route::group(['middleware' => ['auth']], function () {
         Route::post('/update/{id}', [ServerController::class, 'update'])->name('server.update');
 
         Route::get('/{id}/file/download', [ServerController::class, 'downloadFile'])->name('server.file.download');
+        Route::delete('/servers/{id}', [ServerController::class, 'deleteServer'])->name('server.delete');
+
     });
 
     Route::group(['prefix' => 'history_connection_mail_relay'], function () {
@@ -176,9 +180,24 @@ Route::group(['middleware' => ['auth']], function () {
         Route::post('/{id}', [DomainMinistryAgenciesListController::class, 'delete'])->name('domain.delete');
     });
 
-        Route::group(['prefix' => 'systeminformation'], function () {
-            Route::get('/', [SystemInformationController::class, 'index'])->name('systeminformation.index');
-        });
+    Route::group(['prefix' => 'systeminformation'], function () {
+        Route::get('/', [SystemInformationController::class, 'index'])->name('systeminformation.index');
+    });
+
+    Route::group(['prefix' => 'positiondepartment'], function () {
+        Route::get('/', [PositionDepartmentController::class, 'index'])->name('positiondepartment.index');
+        Route::get('/addposition', [PositionDepartmentController::class, 'addposition'])->name('positiondepartment.addposition');
+        Route::get('/adddepartment', [PositionDepartmentController::class, 'adddepartment'])->name('positiondepartment.adddepartment');
+        Route::get('/updateposition/{id}', [PositionDepartmentController::class, 'updateposition'])->name('positiondepartment.updateposition');
+        Route::get('/updatedepartment/{id}', [PositionDepartmentController::class, 'updatedepartment'])->name('positiondepartment.updatedepartment');
+        Route::put('/saveupdateposition/{id}', [PositionDepartmentController::class, 'saveupdateposition'])->name('positiondepartment.saveupdateposition');
+        Route::put('/saveupdatedepartment/{id}', [PositionDepartmentController::class, 'saveupdatedepartment'])->name('positiondepartment.saveupdatedepartment');
+        Route::post('/saveposition', [PositionDepartmentController::class, 'savingposition'])->name('positiondepartment.saveposition');
+        Route::post('/savedepartment', [PositionDepartmentController::class, 'savingdepartment'])->name('positiondepartment.savedepartment');
+        Route::delete('/department/{id}/departmentdelete', [PositionDepartmentController::class, 'departmentdelete'])->name('positiondepartment.departmentdelete');
+        Route::delete('/position/{id}/positiondelete', [PositionDepartmentController::class, 'positiondelete'])->name('positiondepartment.positiondelete');
+
+    });
 
 });
 

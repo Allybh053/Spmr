@@ -94,11 +94,17 @@ class DomainMinistryAgenciesListController extends Controller
     public function delete($id)
     {
         $domain = DomainMinistryAgencies::find($id);
-        $domain->updated_by = Auth::user()->id;
+
+        // Check if the server exists
+        if (!$domain) {
+            return redirect()->route('domain.index')->with('error', 'Domain not found.');
+        }
+
+        // Perform the soft delete
         $domain->delete();
 
-        //return response()->json(['success' => '1', 'redirect' => route('domain.index'), 'message' => 'FQDN successfully deleted']);
-        return redirect()->route('domain.index')->with('success', 'FQDN successfully deleted');
+        // Redirect with success message
+        return redirect()->route('domain.index')->with('error', 'FQDN successfully deleted');
 
     }
 }

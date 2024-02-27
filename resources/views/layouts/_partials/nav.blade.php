@@ -85,8 +85,11 @@
                     </nav>
                 </div>
 
-                <a class="nav-link collapsed" href="javascript:void(0);" data-bs-toggle="collapse" data-bs-target="#collapseAppsetting" aria-expanded="false" aria-controls="collapseAppsetting">
-                    <div class="nav-link-icon"><i data-feather="globe"></i></div>
+
+                <div class="sidenav-menu-heading">Log</div>
+                <!-- Sidenav Accordion (Dashboard)-->
+                <a class="nav-link" href="{{ route('log.index') }}">
+                    <div class="nav-link-icon"><i data-feather="mail"></i></div>
                     Log
                     <div class="sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
                 </a>
@@ -149,7 +152,10 @@
                                 <a class="nav-link" href="{{ route('domain.register') }}">Add New FQDN</a>
                             </nav>
                         </div>
-                     
+                        <a class="nav-link" href="{{ route('positiondepartment.index')}}"> 
+                            Position/Department Setup
+                            <div class="sidenav-collapse-arrow"></div>
+                        </a>
                     </nav>
                 </div>
                 <a class="nav-link" href="{{ route('systeminformation.index')}}">
