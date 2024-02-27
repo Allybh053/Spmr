@@ -26,6 +26,56 @@
                 </div>
             </div>
         </header>
+        <div class="container-fluid px-4 mb-4">
+            <div class="card">
+                <div class="card-header">Searching</div>
+                <div class="card-body">
+                    <form id="searchForm">
+                    <div class="row gx-3 mb-3">
+                        <div class="col-md-6">
+                                <div class="mb-3">
+                                        <label class="small mb-1" for="inputAgencies">Kementerian/Agensi/SUK:</label>
+                                        {!! Form::select('agency', $agency, isset($applicantInfo) ? $applicantInfo->agencies : null,  ['id'=>'agency', 'name'=>'agency', 'class'=>'form-control select2', 'placeholder'=>config('params.dropdown_default')]) !!}
+                                </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3" id="calendarSelect">
+                                <label class="small mb-1" for="calendarType">Select Calendar:</label>
+                                <select class="form-control select2" id="calendarType" name="calendarType">
+                                    <option value="date">Date</option>
+                                    <option value="month">Month</option>
+                                    <option value="year">Year</option>
+                                    <option value="dateRange">Date Range</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        </div>
+                        <div class="row gx-3 mb-3">
+                            <div class="mb-3" id="calendarInputs">
+                                <!-- Inputs for date, month, year, and date range will be dynamically appended here -->
+                            </div>
+                        </div>
+                            <div class="text-end"> <!-- Align the button to the right -->
+                                <button type="submit" class="btn btn-primary">Search</button>
+                            </div>
+                    </form>
+
+                    <div id="totals" class="border border-primary rounded p-3 mb-3 mt-3">
+                        <div class="border-bottom border-primary mb-3">
+                            <span class="fw-bold">Total Aplikasi:</span> <span id="totalApplications"></span>
+                        </div>
+                        <div class="border-bottom border-primary mb-3">
+                            <span class="fw-bold">Total IP:</span> <span id="totalIP"></span>
+                        </div>
+                        <div class="border-bottom border-primary">
+                            <span class="fw-bold">Total Deactivated:</span> <span id="totalDeactivated"></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
         <!-- Main page content-->
         <div class="container-fluid px-4">
             @if(session('success'))
@@ -48,6 +98,7 @@
                                 <th>Types Application</th>
                                 <th>Project Name</th>
                                 <th>Server Mail Relay</th>
+                                <th>Total Ip Address</th>
                                 <th>Date Created</th>
                                 <th>Status</th>
                                 <th>Action</th>
@@ -75,6 +126,15 @@
                     "headers": {
                         'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
                     },
+                    "data": function (d) {
+                        // Add the agencies and calendar type to the request data
+                        d.agency = $('#agency').val(); // Assuming the select input for agencies has the ID 'agency'
+                        d.calendarType = $('#calendarType').val(); // Assuming the select input for calendar type has the ID 'calendarType'
+                        d.month = $('#month').val(); // Assuming the select input for agencies has the ID 'agency'
+                        d.year = $('#year').val(); 
+                        d.dateFrom = $('#input2_from').val(); // Assuming the select input for agencies has the ID 'agency'
+                        d.dateTo = $('#input2_to').val(); 
+                    },
                     // error callback to handle error
                     "error": function(xhr, error, thrown) {
                         console.log("Error occurred!");
@@ -88,6 +148,7 @@
                         { data: 'types_req', name: 'types_req', class: 'text-center' },
                         { data: 'project_name', name: 'project_name', class: 'text-center' },
                         { data: 'smtp_relay_server', name: 'smtp_relay_server', class: 'text-center' },
+                        { data: 'total_ip', name: 'total_ip', class: 'text-center' },
                         { data: 'created_at', name: 'created_at', class: 'text-center' },
                         { data: 'status', name: 'status', class: 'text-center' },
                         { data: 'action', name: 'type', class: 'text-center', orderable: false, searchable: false },
@@ -95,5 +156,52 @@
             });
 
         })(jQuery);
+
+
+
+        $(document).ready(function () {
+            $('#calendarType').change(function () {
+        var selectedType = $(this).val();
+        $('#calendarInputs').empty(); // Clear previous inputs
+        
+        if (selectedType === 'month') {
+            $('#calendarInputs').append('<div class="col-md-6"><label for="input2_month">Month:</label><input type="month" class="form-control" name="input2_month" id="month"></div>');
+        } else if (selectedType === 'year') {
+            var currentYear = new Date().getFullYear();
+            var selectYearHtml = '<div class="col-md-6"><label for="input2_year">Year:</label><select class="form-control" name="input2_year" id="year">';
+            for (var year = currentYear; year >= currentYear - 10; year--) {
+                selectYearHtml += '<option value="' + year + '">' + year + '</option>';
+            }
+            selectYearHtml += '</select></div>';
+            $('#calendarInputs').append(selectYearHtml);
+        }  else if (selectedType === 'dateRange') {
+            $('#calendarInputs').append('<div class="row"><div class="col-md-6"><label for="input2_from">Date From:</label><input type="date" class="form-control" name="input2_from" id="input2_from" placeholder="From"></div><div class="col-md-6"><label for="input2_to">Date To:</label><input type="date" class="form-control" name="input2_to" id="input2_to" placeholder="To"></div></div>');
+        } else {
+            $('#calendarInputs').append('<div class="col-md-6"><label for="input2">Calendar:</label><input type="date" class="form-control" name="input2" placeholder="Calendar"></div>');
+        }
+    });
+
+        $('#searchForm').submit(function (e) {
+            e.preventDefault();
+
+            var formData = $(this).serialize();
+
+            $.ajax({
+                type: 'GET',
+                url: "{{ route('smtp_relay.index.search') }}",
+                data: formData,
+                success: function (response) {
+                    $('#totalApplications').text(response.totalApplications);
+                    $('#totalIP').text(response.totalIP);
+                    $('#totalDeactivated').text(response.totalDeactivated);
+
+                    $('#spmrDatatable').DataTable().ajax.reload(); 
+                },
+                error: function (error) {
+                    console.log(error);
+                }
+            });
+        });
+    });
     </script>
 @endpush

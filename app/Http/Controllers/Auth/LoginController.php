@@ -9,6 +9,7 @@ use Illuminate\Foundation\Auth\AuthenticatesUsers;
 use Illuminate\Http\Request;
 use Illuminate\Validation\ValidationException;
 use PragmaRX\Google2FALaravel\Support\Authenticator;
+use App\Models\ActivityLog;
 
 class LoginController extends Controller
 {
@@ -27,6 +28,13 @@ class LoginController extends Controller
 
     protected function authenticated(Request $request, $user)
     {
+        ActivityLog::create([
+            'user_id' => $user->id,
+            'activity_type' => 'login',
+            'ip_address' => $request->ip(),
+            'user_agent' => $request->header('User-Agent'), // Optionally, you can log user agent
+        ]);
+
         $user->update([
             'last_login_at' => now(),
             'last_login_ip' => $request->ip(),
@@ -44,6 +52,8 @@ class LoginController extends Controller
                 $this->username() => [trans('auth.failed')],
             ]);
         }
+
+        return redirect()->intended($this->redirectPath());
     }
     
 
@@ -86,6 +96,14 @@ class LoginController extends Controller
 
     public function logout(Request $request)
     {
+        if (Auth::check()) {
+            ActivityLog::create([
+                'user_id' => Auth::user()->id,
+                'activity_type' => 'logout',
+                'ip_address' => $request->ip(),
+            ]);
+        }
+
         $this->guard()->logout();
         $request->session()->flush();
         $request->session()->regenerate();

@@ -91,8 +91,24 @@
                 <a class="nav-link" href="{{ route('log.index') }}">
                     <div class="nav-link-icon"><i data-feather="mail"></i></div>
                     Log
-                    <div class="sidenav-collapse-arrow"></div>
+                    <div class="sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
                 </a>
+                <div class="collapse" id="collapseAppsetting" data-bs-parent="#accordionSidenav">
+                    <nav class="sidenav-menu-nested nav accordion" id="accordionSidenavAppsMenu">
+                        <a class="nav-link" href="{{ route('log.index') }}">
+                            <div class="nav-link-icon"><i data-feather="mail"></i></div>
+                            Log
+                            <div class="sidenav-collapse-arrow"></div>
+                        </a>
+
+                        <a class="nav-link" href="{{ route('activityLog.index') }}">
+                            <div class="nav-link-icon"><i data-feather="mail"></i></div>
+                            Recent Activity Log
+                            <div class="sidenav-collapse-arrow"></div>
+                        </a>
+                     
+                    </nav>
+                </div>
 
                 <!-- Sidenav Heading (Config)-->
                 <div class="sidenav-menu-heading">Config</div>

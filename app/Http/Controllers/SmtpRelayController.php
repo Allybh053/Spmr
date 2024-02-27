@@ -13,6 +13,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\DB;
+use Faker\Factory as Faker;
 
 class SmtpRelayController extends Controller
 {
@@ -20,7 +21,28 @@ class SmtpRelayController extends Controller
     {
         $user = Auth::user();
         $role = $user->roles->isNotEmpty() ? $user->roles->pluck('name')->first() : null;
-        return view('smtp_relay.index', compact('user', 'role'));
+        $agency = [];
+        return view('smtp_relay.index', compact('user', 'role','agency'));
+    }
+
+    public function search(Request $request)
+    {
+        $input1 = $request->input('agency'); // Assuming 'agency' is the name of the select input for Kementerian/Agensi/SUK
+        $input2Type = $request->input('calendarType');
+        
+        // Generate Faker data based on the selected calendar type and agency
+        $faker = Faker::create();
+        $totalApplications = $faker->numberBetween(100, 500);
+        $totalIP = $faker->numberBetween(200, 1000);
+        $totalDeactivated = $faker->numberBetween(5, 50);
+
+        // You can adjust the search logic based on the selected calendar type and agency here
+        
+        return response()->json([
+            'totalApplications' => $totalApplications,
+            'totalIP' => $totalIP,
+            'totalDeactivated' => $totalDeactivated
+        ]);
     }
 
     public function create()
@@ -291,9 +313,22 @@ class SmtpRelayController extends Controller
         }
     }
 
-    public function datatable()
+    public function datatable(Request $request)
     {
-        $application = SmtpRelayReqForm::get();
+          // Get search parameters
+    $agency = $request->input('agency');
+    $calendarType = $request->input('calendarType');
+
+      // Start building the query
+      $query = SmtpRelayReqForm::query();
+
+      // Apply filters based on search parameters
+      if (!empty($agency)) {
+          $query->where('agency_column', $agency); // Replace 'agency_column' with the actual column name for agency in your database table
+      }
+  
+      // Execute the query
+      $application = $query->get();
 
             return datatables()->of($application)
             ->addIndexColumn()
@@ -336,6 +371,9 @@ class SmtpRelayController extends Controller
                     return implode(", ", $ipAddrSvr);
                 }
                 return $row['ip_addr_server'];
+            })
+            ->addColumn('total_ip', function ($row) {
+                return '0';
             })
             ->addColumn('fqdn_system', function ($row) {
                 $fqdnSystem = json_decode($row['fqdn_system'], true);
