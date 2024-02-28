@@ -137,7 +137,7 @@
         </div>
     <script>
         const terminal = new Terminal();
-        const socket = new WebSocket(`wss://postmaster1a:8000`);
+        const socket = new WebSocket(`wss://20.6.33.199:8000`);
 
         terminal.open(document.getElementById('terminal'));
 
