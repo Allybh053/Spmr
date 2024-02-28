@@ -47,8 +47,8 @@ class MainRelayController extends Controller
 
     public function connect()
     {
-        $host = '20.6.33.199';
-        $port = 22;
+        $host = '10.0.0.5';
+        $port = 8000;
         $username = 'pentadbir';
         $privateKeyPath = storage_path('storage/postmaster_key.pem'); // Adjust the path to your key file
 
