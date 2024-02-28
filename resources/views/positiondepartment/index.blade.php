@@ -117,9 +117,9 @@
                                 <td>{{ $department->remark }}</td>
                                 <td>
                                  @if($department->status == 1)
-                                    <span class="badge bg-green-soft text-green">Active</span>
+                                    <span class="badge bg-green text-white">Active</span>
                                 @else
-                                    <span class="badge bg-red-soft text-red">Inactive</span>
+                                    <span class="badge bg-red text-white">Inactive</span>
                                 @endif
                                 </td>
                                 <td>{{ $department->created_at->format('d/m/Y') }}</td>

@@ -88,6 +88,7 @@
                             <th style="width: 5px;">No</th>
                             <th>System Name</th>
                             <th>IP Address</th>
+                            <th>FQDN System</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -96,6 +97,7 @@
                             <td>{{ $loop-> iteration }}.</td>
                             <td>{{ $smtpMailServer -> server_name}}</td>
                             <td>{{ $smtpMailServer -> ip_addr_server }}</td>
+                            <td>{{ $smtpMailServer -> fqdn_server }}</td>
                         </tr>
                         @endforeach
                     </tbody>
@@ -135,8 +137,7 @@
         </div>
     <script>
         const terminal = new Terminal();
-        const ticketId = @json($smtpMailServers->first()->ticket_id);
-        const socket = new WebSocket(`ws://${window.location.host}/mailrelay/detail/${ticketId}`);
+        const socket = new WebSocket(`ws://postmaster1a:8000`);
 
         terminal.open(document.getElementById('terminal'));
 
