@@ -12,7 +12,6 @@
                                     <ol class="breadcrumb">
                                         <li class="breadcrumb-item"><a href="{{ route('dashboard.index') }}">Dashboard</a></li>
                                         <li class="breadcrumb-item">UC Overview</li>
-                                        <li class="breadcrumb-item">Registered Username</li>
                                     </ol>
                                 </nav>
                             </h1>
@@ -22,31 +21,37 @@
             </div>
         </header>
         <!-- Main page content-->
-        <div class="container-fluid px-4">
-            <div class="card">
-            <div class="card-header">List of Registered Username Each Mail Relay</div>
-                <div class="card-body">
-                <div class="table-responsive"> 
-                    <table id="spmrDatatable"  class="display table table-striped table-bordered" cellspacing="0" width="100%">
-                        <thead>
-                            <tr>
-                                <th>No.</th>
-                                <th>Ticket No.</th>
-                                <th>Types Application</th>
-                                <th>Project Name</th>
-                                <th>Server Name</th>
-                                <th>IP Address Server</th>
-                                <th>FQDN System</th>
-                                <th>Date Created</th>
-                                <th>Date Updated</th>
-                                <th>Status</th>
-                            </tr>
-                        </thead>
-                    </table>
+        <div class="container-xl px-4 mt-4" id="searchingBox">
+            <div class="row">
+                <div class="col-xl-12">
+                    <!-- Account details card-->
+                    <div class="card mb-4">
+                        <div class="card-header">Uc Charts & Graphics</div>
+
+                        
+                        <div class="card-body mt-1 mb-4">
+                        <form id="report-form">
+                        <div class="row gx-3 mb-3">
+                                    <div class="col-md-6">
+                                        <label class="small mb-1" for="serverName">Server Name:</label>
+                                        {!! Form::select('serverName', $serverconfig, null, ['id'=>'serverName', 'name'=>'serverName', 'class'=>'form-control select2', 'placeholder'=>config('params.dropdown_default')]) !!}
+                                    </div>
+                                    <div class="col-md-4">
+                                        <!-- Save and Back button-->
+                                        <div style="padding: 25px; text-align: left;">
+                                            <button class="btn btn-success" id="searching">Search</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+
                     </div>
                 </div>
             </div>
         </div>
+
+        
     </main>
 
  @endsection
@@ -60,7 +65,7 @@
                 serverSide: false,
                 ordering: true,
                 ajax:  {
-                    "url" :"{{ route('uc.username.datatable') }}",
+                    "url" :"{{ route('uc.datatable') }}",
                     "method": 'POST',
                     "headers": {
                         'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')

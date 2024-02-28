@@ -40,13 +40,12 @@ class ServerController extends Controller
 
     public function uploadServer(Request $request)
     {
-        $request->validate([
-            'hostname' => 'required|string|max:255',
-            'ipaddress' => 'required|ip',
-            'sshusername' => 'required|string|max:255',
-            'sshkey' => 'required|mimes:pem|max:1024', // Adjust the file validation rules
-        ]);
-
+        // $request->validate([
+        //     'hostname' => 'required|string|max:255',
+        //     'ipaddress' => 'required|ip',
+        //     'sshusername' => 'required|string|max:255',
+        //     'sshkey' => 'required|mimes:pem|max:1024', // Adjust the file validation rules
+        // ]);
         // Handle other server details and database storage here
 
         $file = $request->file('sshkey');
@@ -63,6 +62,7 @@ class ServerController extends Controller
             'status' => 0,
             'sshkey' => $fileName, // Save the path relative to the storage directory
         ]);
+
 
         return redirect()->route('server.index')->with('success', 'Server details added successfully');
     }
@@ -163,4 +163,23 @@ class ServerController extends Controller
     {
         //
     }
+
+    public function deleteServer($id)
+    {
+        // Retrieve the server by ID
+        $server = Server::find($id);
+
+        // Check if the server exists
+        if (!$server) {
+            return redirect()->route('server.index')->with('error', 'Server not found.');
+        }
+
+        // Perform the soft delete
+        $server->delete();
+
+        // Redirect with success message
+        return redirect()->route('server.index')->with('error', 'Server deleted successfully!.');
+    }
+
+
 }

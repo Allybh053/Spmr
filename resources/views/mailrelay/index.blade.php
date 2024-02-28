@@ -32,12 +32,12 @@
         @endif
         <div class="card">
             <div class="card-body">
-                <table id="datatablesSimple" class="table table-striped">
+                <table id="datatablesSimple" class="table">
                     <thead>
                         <tr>
                             <th>No</th>
                             <th>Ticket No</th>
-                            <th>Domain (FQDN)</th>
+                            <th>Mail Relay Server</th>
                             <th>Type Application</th>
                             <th>Requestor</th>
                             <th>Status</th>
@@ -51,31 +51,26 @@
                             <td>{{ $loop->iteration }}.</td>
                             <td>{{ $smtpMailServer -> ticket_id }}</td>
                             <td>{{ $smtpMailServer -> smtp_relay_server }}</td>
-                            <td>@if($smtpMailServer -> types_req == 0)
+                            <td>@if($smtpMailServer -> types_req == 1)
                                 <span class="badge bg-success text-white rounded-pill">New Application</span>
-                            @elseif($smtpMailServer -> types_req == 1)
+                            @elseif($smtpMailServer -> types_req == 2)
                                 <span class="badge bg-danger text-white rounded-pill">Terminate of Service</span>
                             @else
                                 <span class="badge bg-primary text-white rounded-pill">Onboarding Agency</span>
                             @endif</td>
                             <td>{{ $smtpMailServer -> applicant_name }}</td>
                             <td>
-                            {{-- @if($user->enabled == 1)
-                                <span class="badge bg-green-soft text-green">Active</span>
-                            @else
-                                <span class="badge bg-red-soft text-red">Inactive</span>
-                            @endif --}}
-
-                                <!-- span class="badge bg-green-soft text-green">Sales</span>
-                                <span class="badge bg-blue-soft text-blue">Developers</span>
-                                <span class="badge bg-red-soft text-red">Marketing</span>
-                                <span class="badge bg-purple-soft text-purple">Managers</span>
-                                <span class="badge bg-yellow-soft text-yellow">Customer</span -->
+                                @if($user->status == 0 )
+                                    <span class="badge bg-success text-white rounded-pill">Pending</span>
+                                @else
+                                    <span class="badge bg-red text-white rounded-pill">Pending</span>
+                                @endif
                             </td>
                             <td> {{ \Carbon\Carbon::parse($smtpMailServer->created_at)->format('d-m-Y') }}</td>
                             <td>
-                                <a class="btn btn-datatable btn-icon me-2 text-blue" title="View Detail" href=""><i data-feather="eye"></i></a>
-                                <form class="btn btn-datatable btn-icon me-2 text-blue" action="" method="POST" onsubmit="return confirm('Are you sure you want to delete this user?')">
+                                <a class="btn btn-datatable btn-icon me-2 text-blue" title="View Detail" href="{{ route('smtp_relay.view', ['id' => $smtpMailServer->id]) }}"><i data-feather="eye"></i></a>
+                                <a hidden class="btn btn-datatable btn-icon me-2 text-blue" title="Edit Detail" href="{{ route('smtp_relay.edit',['id' => $smtpMailServer->id]) }}"><i data-feather="edit"></i></a>
+                                <form class="btn btn-datatable btn-icon me-2 text-blue" action="#" method="POST" onsubmit="return confirm('Are you sure you want to delete this user?')">
                                     @csrf
                                     @method('DELETE')
                                     <button type="submit" class="btn btn-datatable btn-icon text-danger btn-transparent" title="Delete User"><i data-feather="trash-2"></i></button>
@@ -88,6 +83,11 @@
             </div>
         </div>
     </div>
+    <style>
+        th,td {
+            font-size: var(--bs-body-font-size);
+        }
+    </style>
 </main>
 
 @endsection

@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Models\User;
 use \Illuminate\Support\Facades\Hash;
+use Spatie\Permission\Models\Role;
 
 
 class UsersController extends Controller
@@ -28,8 +29,9 @@ class UsersController extends Controller
     public function create()
     {
         $user = Auth::user();
+        $roles = Role::all();
 
-        return view('users.usermanagements.create', compact('user'));
+        return view('users.usermanagements.create', compact('user','roles'));
     }
 
     /**
@@ -105,8 +107,9 @@ class UsersController extends Controller
     public function edit(string $id)
     {
         $user = User::findOrFail($id);
+        $roles = Role::all();
 
-        return view('users.usermanagements.edit', compact('user'));
+        return view('users.usermanagements.edit', compact('user','roles'));
     }
 
     /**

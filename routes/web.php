@@ -15,7 +15,12 @@ use App\Http\Controllers\UcOverviewController;
 use App\Http\Controllers\LogOverviewController;
 use App\Http\Controllers\ReportStatisticController;
 use App\Http\Controllers\ReportDetailSenderController;
+use App\Http\Controllers\Setup\RoleController;
 use App\Http\Controllers\SystemInformationController;
+use App\Http\Controllers\DomainMinistryAgenciesListController;
+use App\Http\Controllers\ActivityLogController;
+use App\Http\Controllers\PositionDepartmentController;
+
 
 /*
 |--------------------------------------------------------------------------
@@ -58,6 +63,8 @@ Route::group(['middleware' => ['auth']], function () {
 
     //testing route
     Route::get('/home', [DashboardController::class, 'index'])->name('dashboard.index');
+    Route::get('/getServer', [DashboardController::class, 'api'])->name('dashboard.api');
+    Route::get('/home/{limit}',[DashboardController::class, 'limit'])->name('dashboard.limit');
 
 	//Dashboard
     Route::group(['prefix' => 'users'], function () {
@@ -91,6 +98,17 @@ Route::group(['middleware' => ['auth']], function () {
         Route::post('/form_application_smtp_relay/update/{id}', [SmtpRelayController::class, 'update'])->name('smtp_relay.update');
         Route::post('/form_application_smtp_relay/delete/{id}', [SmtpRelayController::class, 'delete'])->name('smtp_relay.delete');
         Route::post('/form_application_smtp_relay/datatable', [SmtpRelayController::class, 'datatable'])->name('smtp_relay.datatable');
+
+        //code sidi
+        Route::get('/register', [SmtpRelayController::class, 'daftar'])->name('smtp_relay.daftar');
+        Route::post('/saving', [SmtpRelayController::class, 'saving'])->name('smtp_relay.saving');
+        Route::get('/view/{id}', [SmtpRelayController::class, 'papar'])->name('smtp_relay.view');
+        Route::get('/update/{id}', [SmtpRelayController::class, 'kemaskini'])->name('smtp_relay.kemaskini');
+        Route::post('/update/{id}/kemaskinidata', [SmtpRelayController::class, 'kemaskinidata'])->name('smtp_relay.kemaskinidata');
+
+
+        Route::get('/index/searching', [SmtpRelayController::class, 'search'])->name('smtp_relay.index.search');
+
     });
 
     Route::group(['prefix' => 'server'], function () {
@@ -102,11 +120,15 @@ Route::group(['middleware' => ['auth']], function () {
         Route::post('/update/{id}', [ServerController::class, 'update'])->name('server.update');
 
         Route::get('/{id}/file/download', [ServerController::class, 'downloadFile'])->name('server.file.download');
+        Route::delete('/servers/{id}', [ServerController::class, 'deleteServer'])->name('server.delete');
+
     });
 
     Route::group(['prefix' => 'history_connection_mail_relay'], function () {
         Route::get('/blacklist_firewall', [HistoryController::class, 'indexBlacklist'])->name('history.blacklist.index');
         Route::post('/blacklist_firewall/datatable', [HistoryController::class, 'datatableBlacklist'])->name('history.blacklist.datatable');
+        Route::post('/blacklist_firewall/search', [HistoryController::class, 'searching'])->name('history.blacklist.search');
+        Route::post('/blacklist_firewall/search/datatable', [HistoryController::class, 'datatableSearching'])->name('history.blacklist.datatable.search');
 
         Route::get('/whitelist_firewall', [HistoryController::class, 'indexWhitelist'])->name('history.whitelist.index');
         Route::post('/whitelist_firewall/datatable', [HistoryController::class, 'datatableWhitelist'])->name('history.whitelist.datatable');
@@ -117,23 +139,16 @@ Route::group(['middleware' => ['auth']], function () {
 
 
     Route::group(['prefix' => 'uc_overview'], function () {
-        Route::get('/register_application', [UcOverviewController::class, 'indexApplication'])->name('uc.application.index');
-        Route::post('/register_application/datatable', [UcOverviewController::class, 'datatableApplication'])->name('uc.application.datatable');
-
-        Route::get('/register_domain', [UcOverviewController::class, 'indexDomain'])->name('uc.domain.index');
-        Route::post('/register_domain/datatable', [UcOverviewController::class, 'datatableDomain'])->name('uc.domain.datatable');
-
-        Route::get('/register_username', [UcOverviewController::class, 'indexUsername'])->name('uc.username.index');
-        Route::post('/register_username/datatable', [UcOverviewController::class, 'datatableUsername'])->name('uc.username.datatable');
-
-        Route::get('/wildcard', [UcOverviewController::class, 'indexWildcard'])->name('uc.wildcard.index');
-        Route::post('/wildcard/datatable', [UcOverviewController::class, 'datatableWildcard'])->name('uc.wildcard.datatable');
+        Route::get('/', [UcOverviewController::class, 'indexApplication'])->name('uc.index');
+        Route::post('/datatable', [UcOverviewController::class, 'datatableApplication'])->name('uc.datatable');
     });
 
 
     Route::group(['prefix' => 'log_overview'], function () {
         Route::get('/', [LogOverviewController::class, 'index'])->name('log.index');
         Route::post('/api/getServerName', [LogOverviewController::class, 'getNewServerData'])->name('log.api.getServerName');
+
+        Route::get('/activity-logs', [ActivityLogController::class,'showActivityLogs'])->name('activityLog.index');
     });
 
     Route::group(['prefix' => 'report'], function () {
@@ -148,10 +163,41 @@ Route::group(['middleware' => ['auth']], function () {
         });
     });
 
+    		//role
+		Route::group(['prefix' => 'role'], function () {
+			Route::get('/',[RoleController::class,'index'])->name('setup.role.index');
+			Route::post('/add',[RoleController::class,'create'])->name('setup.role.create');
+			Route::post('/delete',[RoleController::class,'delete'])->name('setup.role.delete');
+			Route::post('/storePermission',[RoleController::class,'storePermission'])->name('setup.role.storePermission');
+		});
+
+    Route::group(['prefix' => 'domain'], function () {
+        Route::get('/', [DomainMinistryAgenciesListController::class, 'index'])->name('domain.index');
+        Route::get('/register', [DomainMinistryAgenciesListController::class, 'create'])->name('domain.register');
+        Route::post('/register', [DomainMinistryAgenciesListController::class, 'store'])->name('domain.store');
+        Route::get('/{id}', [DomainMinistryAgenciesListController::class, 'edit'])->name('domain.edit');
+        Route::post('/{id}', [DomainMinistryAgenciesListController::class, 'update'])->name('domain.update');
+        Route::post('/{id}', [DomainMinistryAgenciesListController::class, 'delete'])->name('domain.delete');
+    });
+
     Route::group(['prefix' => 'systeminformation'], function () {
         Route::get('/', [SystemInformationController::class, 'index'])->name('systeminformation.index');
     });
 
+    Route::group(['prefix' => 'positiondepartment'], function () {
+        Route::get('/', [PositionDepartmentController::class, 'index'])->name('positiondepartment.index');
+        Route::get('/addposition', [PositionDepartmentController::class, 'addposition'])->name('positiondepartment.addposition');
+        Route::get('/adddepartment', [PositionDepartmentController::class, 'adddepartment'])->name('positiondepartment.adddepartment');
+        Route::get('/updateposition/{id}', [PositionDepartmentController::class, 'updateposition'])->name('positiondepartment.updateposition');
+        Route::get('/updatedepartment/{id}', [PositionDepartmentController::class, 'updatedepartment'])->name('positiondepartment.updatedepartment');
+        Route::put('/saveupdateposition/{id}', [PositionDepartmentController::class, 'saveupdateposition'])->name('positiondepartment.saveupdateposition');
+        Route::put('/saveupdatedepartment/{id}', [PositionDepartmentController::class, 'saveupdatedepartment'])->name('positiondepartment.saveupdatedepartment');
+        Route::post('/saveposition', [PositionDepartmentController::class, 'savingposition'])->name('positiondepartment.saveposition');
+        Route::post('/savedepartment', [PositionDepartmentController::class, 'savingdepartment'])->name('positiondepartment.savedepartment');
+        Route::delete('/department/{id}/departmentdelete', [PositionDepartmentController::class, 'departmentdelete'])->name('positiondepartment.departmentdelete');
+        Route::delete('/position/{id}/positiondelete', [PositionDepartmentController::class, 'positiondelete'])->name('positiondepartment.positiondelete');
+
+    });
 
 });
 

@@ -7,9 +7,13 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
 use Spatie\Permission\Traits\HasRoles;
+use OwenIt\Auditing\Auditable as AuditableTrait;
+use OwenIt\Auditing\Contracts\Auditable;
 
-class SmtpRelayReqForm extends Model
+class SmtpRelayReqForm extends Model  implements Auditable
 {
+    use AuditableTrait;
+    
     use HasApiTokens, HasFactory, Notifiable, HasRoles;
 
     // Specify the table name
@@ -56,6 +60,7 @@ class SmtpRelayReqForm extends Model
         'verifier_3_position',
         'verifier_3_dept_div',
         'date_verification_3',
+        'upload_copy_attachment',
 
     ];
 
