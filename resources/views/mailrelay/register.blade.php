@@ -60,7 +60,7 @@
                             <td>{{ $smtpMailServer -> applicant_name }}</td>
                             <td>
                             @if($smtpMailServer->status == 0)
-                                <span class="badge bg-green text-white rounded-pill">Pending</span>
+                                <span class="badge bg-yellow text-white rounded-pill">Pending</span>
                             @else
                                 <span class="badge bg-red text-white rounded-pill">Inactive</span>
                             @endif

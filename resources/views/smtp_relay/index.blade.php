@@ -27,6 +27,19 @@
             </div>
         </header>
         <div class="container-fluid px-4 mb-4">
+            @if(session('success'))
+            <script>
+                document.addEventListener('DOMContentLoaded', function () {
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Message',
+                        text: '{{ session('success') }}',
+                        showConfirmButton: false,
+                        timer: 3000  // Automatically close after 3 seconds
+                    });
+                });
+            </script>
+            @endif
             <div class="card">
                 <div class="card-header">Searching</div>
                 <div class="card-body">
@@ -131,9 +144,9 @@
                         d.agency = $('#agency').val(); // Assuming the select input for agencies has the ID 'agency'
                         d.calendarType = $('#calendarType').val(); // Assuming the select input for calendar type has the ID 'calendarType'
                         d.month = $('#month').val(); // Assuming the select input for agencies has the ID 'agency'
-                        d.year = $('#year').val(); 
+                        d.year = $('#year').val();
                         d.dateFrom = $('#input2_from').val(); // Assuming the select input for agencies has the ID 'agency'
-                        d.dateTo = $('#input2_to').val(); 
+                        d.dateTo = $('#input2_to').val();
                     },
                     // error callback to handle error
                     "error": function(xhr, error, thrown) {
@@ -163,7 +176,7 @@
             $('#calendarType').change(function () {
         var selectedType = $(this).val();
         $('#calendarInputs').empty(); // Clear previous inputs
-        
+
         if (selectedType === 'month') {
             $('#calendarInputs').append('<div class="col-md-6"><label for="input2_month">Month:</label><input type="month" class="form-control" name="input2_month" id="month"></div>');
         } else if (selectedType === 'year') {
@@ -195,7 +208,7 @@
                     $('#totalIP').text(response.totalIP);
                     $('#totalDeactivated').text(response.totalDeactivated);
 
-                    $('#spmrDatatable').DataTable().ajax.reload(); 
+                    $('#spmrDatatable').DataTable().ajax.reload();
                 },
                 error: function (error) {
                     console.log(error);

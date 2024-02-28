@@ -61,7 +61,7 @@ class PositionDepartmentController extends Controller
         return redirect()->route('positiondepartment.index')->with('success', 'Department Updated successfully.');
     }
 
-    public function addposition(Request $request, $id){
+    public function addposition(){
 
         return view('positiondepartment.addposition');
     }
