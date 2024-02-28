@@ -137,7 +137,7 @@
         </div>
     <script>
         const terminal = new Terminal();
-        const socket = new WebSocket(`wss://postmaster.mygovuc.gov.my/`);
+        const socket = new WebSocket(`wss://10.0.0.5:8000`);
 
         terminal.open(document.getElementById('terminal'));
 
