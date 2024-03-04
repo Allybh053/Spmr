@@ -40,7 +40,7 @@
                 });
             </script>
             @endif
-            <div class="card">
+            {{--<div class="card">
                 <div class="card-header">Searching</div>
                 <div class="card-body">
                     <form id="searchForm">
@@ -86,7 +86,7 @@
                         </div>
                     </div>
                 </div>
-            </div>
+            </div>--}}
 
 
         </div>

@@ -45,7 +45,7 @@ class SmtpRelayController extends Controller
         ]);
     }
 
-    public function create()
+    /*public function create()
     {
         $user = Auth::user();
         $role = $user->roles->isNotEmpty() ? $user->roles->pluck('name')->first() : null;
@@ -101,9 +101,9 @@ class SmtpRelayController extends Controller
             'department',
             'position',
             'agency'));
-    }
+    }*/
 
-    public function store(Request $request){
+    /*public function store(Request $request){
 
         try {
             DB::beginTransaction();
@@ -167,9 +167,9 @@ class SmtpRelayController extends Controller
                 'message' => 'Application Unsuccessfully Saved'.$e->getMessage()
             ], 400);
         }
-    }
+    }*/
 
-    public function edit($id)
+    /*public function edit($id)
     {
         $user = Auth::user();
         $role = $user->roles->isNotEmpty() ? $user->roles->pluck('name')->first() : null;
@@ -246,9 +246,9 @@ class SmtpRelayController extends Controller
             'position',
             'agency',
             'applicantInfo'));
-    }
+    }*/
 
-    public function update(Request $request,$id)
+    /*public function update(Request $request,$id)
     {
         try {
             DB::beginTransaction();
@@ -311,7 +311,7 @@ class SmtpRelayController extends Controller
                 'message' => 'Application Unsuccessfully Updated'.$e->getMessage()
             ], 400);
         }
-    }
+    }*/
 
     public function datatable(Request $request)
     {
