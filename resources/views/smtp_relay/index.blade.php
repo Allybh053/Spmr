@@ -11,7 +11,7 @@
                                 <nav aria-label="breadcrumb">
                                     <ol class="breadcrumb">
                                         <li class="breadcrumb-item"><a href="{{ route('dashboard.index') }}">Dashboard</a></li>
-                                        <li class="breadcrumb-item">SMTP Relay MyGovUC3.0</li>
+                                        <li class="breadcrumb-item">SMTP Relay Request MyGovUC3.0</li>
                                     </ol>
                                 </nav>
                             </h1>
@@ -19,7 +19,7 @@
                             <div class="col-12 col-xl-auto mb-3">
                                 <a class="btn btn-sm btn-light text-primary" href="{{ route('smtp_relay.daftar') }}">
                                     <i class="me-1" data-feather="plus"></i>
-                                    Add New Request Form
+                                    Add New SMTP Relay Request
                                 </a>
                             </div>
                     </div>
@@ -87,6 +87,8 @@
                     </div>
                 </div>
             </div>
+
+
         </div>
 
         <!-- Main page content-->
@@ -99,7 +101,7 @@
                 </div>
             @endif
             <div class="card">
-                 <div class="card-header">List SMTP Relay MyGovUC3.0</div>
+                 <div class="card-header">List SMTP Relay Request MyGovUC3.0</div>
                 <div class="card-body">
                 <div class="table-responsive">
                     <table id="spmrDatatable"  class="display table table-striped table-bordered" cellspacing="0" width="100%">

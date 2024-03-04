@@ -41,7 +41,7 @@
                 <!-- Sidenav Link (Charts)-->
                 <a class="nav-link" href="{{ route('smtp_relay.smtp_relay_req') }}">
                     <div class="nav-link-icon"><i data-feather="grid"></i></div>
-                    Mail Relay Req Form
+                    SMTP Relay Request
                     <div class="sidenav-collapse-arrow"></div>
                 </a>
                 <!-- Sidenav Link (Mail Relay Module)-->
@@ -106,7 +106,7 @@
                             Recent Activity Log
                             <div class="sidenav-collapse-arrow"></div>
                         </a>
-                     
+
                     </nav>
                 </div>
 
@@ -152,7 +152,7 @@
                                 <a class="nav-link" href="{{ route('domain.register') }}">Add New FQDN</a>
                             </nav>
                         </div>
-                        <a class="nav-link" href="{{ route('positiondepartment.index')}}"> 
+                        <a class="nav-link" href="{{ route('positiondepartment.index')}}">
                             Position/Department Setup
                             <div class="sidenav-collapse-arrow"></div>
                         </a>
