@@ -8,7 +8,7 @@
                     <div class="col-auto mb-3">
                         <h1 class="page-header-title">
                             <div class="page-header-icon"><i data-feather="mail"></i></div>
-                            Update Form Registration Mail Relay MyGovUC3.0
+                            Update SMTP Relay Request MyGovUC3.0
                         </h1>
                     </div>
                     <div class="col-12 col-xl-auto mb-3">
@@ -21,7 +21,7 @@
     <!-- Main page content-->
     <div class="container-fluid px-4">
         <div class="card mb-4">
-            <div class="card-header text-center"><h3 class=" text-primary">Update Form Registration Mail Relay MyGovUC3.0</h3></div>
+            <div class="card-header text-center"><h3 class=" text-primary">Update SMTP Relay Request MyGovUC3.0</h3></div>
             <div class="card-body">
                 <form id="formserver" action="{{ route('smtp_relay.kemaskinidata', ['id' => $formsmtp->form_id]) }}" method="post" enctype="multipart/form-data">
                 @csrf

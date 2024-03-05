@@ -29,7 +29,7 @@ class SmtpRelayController extends Controller
     {
         $input1 = $request->input('agency'); // Assuming 'agency' is the name of the select input for Kementerian/Agensi/SUK
         $input2Type = $request->input('calendarType');
-        
+
         // Generate Faker data based on the selected calendar type and agency
         $faker = Faker::create();
         $totalApplications = $faker->numberBetween(100, 500);
@@ -37,7 +37,7 @@ class SmtpRelayController extends Controller
         $totalDeactivated = $faker->numberBetween(5, 50);
 
         // You can adjust the search logic based on the selected calendar type and agency here
-        
+
         return response()->json([
             'totalApplications' => $totalApplications,
             'totalIP' => $totalIP,
@@ -45,7 +45,7 @@ class SmtpRelayController extends Controller
         ]);
     }
 
-    public function create()
+    /*public function create()
     {
         $user = Auth::user();
         $role = $user->roles->isNotEmpty() ? $user->roles->pluck('name')->first() : null;
@@ -101,9 +101,9 @@ class SmtpRelayController extends Controller
             'department',
             'position',
             'agency'));
-    }
+    }*/
 
-    public function store(Request $request){
+    /*public function store(Request $request){
 
         try {
             DB::beginTransaction();
@@ -167,9 +167,9 @@ class SmtpRelayController extends Controller
                 'message' => 'Application Unsuccessfully Saved'.$e->getMessage()
             ], 400);
         }
-    }
+    }*/
 
-    public function edit($id)
+    /*public function edit($id)
     {
         $user = Auth::user();
         $role = $user->roles->isNotEmpty() ? $user->roles->pluck('name')->first() : null;
@@ -246,9 +246,9 @@ class SmtpRelayController extends Controller
             'position',
             'agency',
             'applicantInfo'));
-    }
+    }*/
 
-    public function update(Request $request,$id)
+    /*public function update(Request $request,$id)
     {
         try {
             DB::beginTransaction();
@@ -311,7 +311,7 @@ class SmtpRelayController extends Controller
                 'message' => 'Application Unsuccessfully Updated'.$e->getMessage()
             ], 400);
         }
-    }
+    }*/
 
     public function datatable(Request $request)
     {
@@ -326,7 +326,7 @@ class SmtpRelayController extends Controller
       if (!empty($agency)) {
           $query->where('agency_column', $agency); // Replace 'agency_column' with the actual column name for agency in your database table
       }
-  
+
       // Execute the query
       $application = $query->get();
 
@@ -343,14 +343,14 @@ class SmtpRelayController extends Controller
             })*/
             ->addColumn('types_req', function ($row) {
                 switch ($row['types_req']) {
-                    case 0:
+                    case 1:
                         return 'New Application';
                         break;
-                    case 1:
+                    case 2:
                         return 'Service Termination';
                         break;
                     // Add more cases if needed
-                    case 2:
+                    case 3:
                         return 'Agency Onboarding';
                         break;
                 }

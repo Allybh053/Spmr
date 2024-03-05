@@ -11,6 +11,12 @@
                                Registered Domain
                             </h1>
                         </div>
+                        <div class="col-12 col-xl-auto mb-3">
+                            <a class="btn btn-sm btn-light text-primary" href="{{ route('domain.register') }}">
+                                <i class="me-1" data-feather="plus"></i>
+                                Add New Domain
+                            </a>
+                        </div>
                     </div>
                 </div>
             </div>
