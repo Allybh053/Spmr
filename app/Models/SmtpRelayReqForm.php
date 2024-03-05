@@ -13,7 +13,7 @@ use OwenIt\Auditing\Contracts\Auditable;
 class SmtpRelayReqForm extends Model  implements Auditable
 {
     use AuditableTrait;
-    
+
     use HasApiTokens, HasFactory, Notifiable, HasRoles;
 
     // Specify the table name
@@ -33,6 +33,7 @@ class SmtpRelayReqForm extends Model  implements Auditable
         'system_owner_name',
         'owner_email_addr',
         'owner_phone_number',
+        'ministry',
         'agencies',
         'dept_div_unit',
         'agencies_addr',

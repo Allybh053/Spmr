@@ -81,7 +81,7 @@
                 </div>
                 <div class="mb-3">
                     <label for="ministry">Ministry</label>
-                    <p></p>
+                    <p>{{ $datasmtp->ministry }}</p>
                 </div>
                 <div class="row gx-3 mb-3">
                     <div class="col-md-6">
