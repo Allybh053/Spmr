@@ -75,7 +75,8 @@
                 <div class="mb-3">
                     <label for="ministry">Ministry</label>
                     <select class="form-control select2" name="ministry" id="ministry" aria-label="Default select">
-                        <option selected disabled>Select Department/Division/Unit</option>
+                        {{--<option selected disabled>Select Department/Division/Unit</option>--}}
+                        <option value="{{ old('ministry', $formsmtp->ministry) }}">{{ old('ministry', $formsmtp->ministry) }}</option>
                         @foreach ($domainsArray as $domain)
                         <option value="{{ $domain['ministry_name'] }}">{{ $domain['ministry_name'] }}</option>
                         @endforeach
