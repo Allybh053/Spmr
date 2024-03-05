@@ -373,7 +373,16 @@ class SmtpRelayController extends Controller
                 return $row['ip_addr_server'];
             })
             ->addColumn('total_ip', function ($row) {
-                return '0';
+                $id = $row['id'];
+                $datasmtp = SmtpRelayReqForm::find($id);
+                $details = smtp_relay_server::where('form_id', '=', $datasmtp->form_id)->get();
+
+                if ($details->isNotEmpty()) {
+                    $totalCount = $details->count(); // Count the total occurrences of form_id
+                    return $totalCount;
+                } else {
+                    return '0';
+                }
             })
             ->addColumn('fqdn_system', function ($row) {
                 $fqdnSystem = json_decode($row['fqdn_system'], true);
