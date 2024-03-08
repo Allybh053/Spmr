@@ -28,11 +28,11 @@
                 <div class="row gx-3 mb-3">
                     <div class="col-md-6">
                         <label for="ticketno">Ticket Number</label>
-                        <input class="form-control" id="ticketno" name="ticketno" type="text" value="" required/>
+                        <input class="form-control" id="ticketno" name="ticketno" type="text" value=""/>
                         @php
                             $randomId = Illuminate\Support\Str::random(9);
                         @endphp
-                        <input class="form-control" id="form_id" name="form_id" type="hidden" value="{{ $randomId }}" required/>
+                        <input class="form-control" id="form_id" name="form_id" type="hidden" value="{{ $randomId }}"/>
                     </div>
                     <div class="col-md-6">
                         <label for="type_req">Type Of Request</label>
@@ -44,31 +44,31 @@
                         </select>
                     </div>
                 </div>
-                <div class="mb-3" hidden @disabled(true)>
+                {{--<div class="mb-3" hidden @disabled(true)>
                     <label for="fqdn">System Fully Qualified Domain Name (FQDN)</label>
-                    <select class="form-control select2" name="fqdn" id="fqdn" required>
+                    <select class="form-control select2" name="fqdn" id="fqdn">
                         <option selected disabled>Select Domain Name</option>
                         @foreach ($domainsArray as $domain)
                         <option value="{{ $domain['domain_name'] }}">{{ $domain['domain_name'] }}</option>
                         @endforeach
                     </select>
-                </div>
+                </div>--}}
                 <div class="mb-3">
                     <label for="projectname">Project Name</label>
-                    <input class="form-control" id="projectname" name="projectname" type="text" placeholder="" value="" required>
+                    <input class="form-control" id="projectname" name="projectname" type="text" placeholder="" value=""/>
                 </div>
                 <div class="mb-3">
                     <label for="ownername">System Owner Name</label>
-                    <input class="form-control" id="ownername" name="ownername" type="text" placeholder="" value="" required>
+                    <input class="form-control" id="ownername" name="ownername" type="text" placeholder="" value=""/>
                 </div>
                 <div class="row gx-3 mb-3">
                     <div class="col-md-6">
                         <label for="emailadd">Email Address</label>
-                        <input class="form-control" id="emailadd" name="emailadd" type="email" value="" required/>
+                        <input class="form-control" id="emailadd" name="emailadd" type="email" value=""/>
                     </div>
                     <div class="col-md-6">
                         <label for="phone">Phone Number</label>
-                        <input class="form-control" id="phone" name="phone" type="phone" value="" required/>
+                        <input class="form-control" id="phone" name="phone" type="phone" value=""/>
                     </div>
                 </div>
                 <div class="mb-3">
@@ -131,22 +131,23 @@
                             <tr>
                                 <th scope="col">System Name</th>
                                 <th scope="col">IP Address</th>
-                                <th scope="col">FQDN Sistem</th>
+                                <th scope="col">FQDN System</th>
                                 <th scope="col">Action</th>
                             </tr>
                         </thead>
                         <tbody id="dynamic-inputs-container">
                             <tr class="dynamic-input-row">
-                              <td><input type="text" name="tableSpmr[0][server_name]" id="server_name" value="" class="form-control" required></td>
-                              <td><input type="text" name="tableSpmr[0][ipaddress]" id="ipaddress" value="" class="form-control" required></td>
-                              <td>
+                              <td><input type="text" name="tableSpmr[0][server_name]" id="server_name" value="" class="form-control" required /></td>
+                              <td><input type="text" name="tableSpmr[0][ipaddress]" id="ipaddress" value="" class="form-control" required /></td>
+                              {{--<td>
                                 <select class="form-control select2" name="tableSpmr[0][domain]" id="domain" aria-label="Default select2" required>
                                     <option selected disabled></option>
                                     @foreach ($domainsArray as $domain)
                                     <option value="{{ $domain['domain_name'] }}">{{ $domain['domain_name'] }}</option>
                                     @endforeach
                                 </select>
-                              </td>
+                              </td>--}}
+                                <td><input type="text" name="tableSpmr[0][domain]" id="domain" value="" class="form-control" required /></td>
                               <td><button class="btn btn-danger remove-row"><i class="me-1" data-feather="minus"></i>Remove</button></td>
                             </tr>
                         </tbody>
@@ -165,6 +166,7 @@
                         <label for="ports">SMTP Port Number</label>
                         <select class="form-control select2" name="ports" id="ports" aria-label="Default select" required>
                             <option selected disabled></option>
+                            <option value="0">Not Answered</option>
                             <option value="25">25/tcp</option>
                             <option value="465">465/tcp</option>
                             <option value="587">587/tcp</option>
@@ -193,6 +195,7 @@
                         <label for="mailbox">MailBox</label>
                         <select class="form-control select2" name="mailbox" id="mailbox" aria-label="Default select">
                             <option selected disabled>Select Mailbox</option>
+                            <option value="0">Not Answered</option>
                             <option value="1">No</option>
                             <option value="2">Yes</option>
                         </select>
@@ -201,11 +204,11 @@
                 <div class="row gx-3 mb-3">
                     <div class="col-md-6">
                         <label for="enday">Estimated number of system users (per day)</label>
-                        <input class="form-control" id="enday" name="enday" type="number" pattern="[0-9]*" inputmode="numeric"  value="" required/>
+                        <input class="form-control" id="enday" name="enday" type="number" pattern="[0-9]*" inputmode="numeric"  value=""/>
                     </div>
                     <div class="col-md-6">
                         <label for="ensystem">Estimated number of emails sent from the system (per day)</label>
-                        <input class="form-control" id="ensystem" name="ensystem" type="number" pattern="[0-9]*" inputmode="numeric"  value="" required/>
+                        <input class="form-control" id="ensystem" name="ensystem" type="number" pattern="[0-9]*" inputmode="numeric"  value=""/>
                     </div>
                 </div>
                 <hr>
@@ -213,7 +216,7 @@
                 <span>I hereby confirm that all information and statements provided in this application form are <b>TRUE</b> and <b>VALID</b>:</span><br><br>
                 <div class="mb-3">
                     <label for="applicantname">Applicant Name</label>
-                    <input class="form-control" id="applicantname" name="applicantname" type="text" placeholder="" value="" required>
+                    <input class="form-control" id="applicantname" name="applicantname" type="text" placeholder="" value="">
                 </div>
                 <div class="row col-12">
                     <div class="mb-3 col-md-4">
@@ -243,7 +246,7 @@
                 <div class="card-header text-center"><h4 class=" text-primary">Verifier I</h4></div><br>
                 <div class="mb-3">
                     <label for="verifiername">Verifier Name</label>
-                    <input class="form-control" id="verifiername" name="verifiername" type="text" placeholder="" value="" required>
+                    <input class="form-control" id="verifiername" name="verifiername" type="text" placeholder="" value="">
                 </div>
                 <div class="row col-12">
                     <div class="mb-3 col-md-4">
@@ -274,7 +277,7 @@
                 <div class="row gx-3 mb-3">
                     <div class="col-md-6">
                         <label for="officername">Officer Name</label>
-                        <input class="form-control" id="officername" name="officername" type="text" placeholder="" value="" required>
+                        <input class="form-control" id="officername" name="officername" type="text" placeholder="" value="">
                     </div>
                     <div class="col-md-6">
                         <label for="officerdate">Date:</label>
@@ -285,7 +288,7 @@
                 <div class="card-header text-center"><h4 class=" text-primary">Approval MAMPU</h4></div><br>
                 <div class="mb-3">
                     <label for="approvalname">Approval Name</label>
-                    <input class="form-control" id="approvalname" name="approvalname" type="text" placeholder="" value="" required>
+                    <input class="form-control" id="approvalname" name="approvalname" type="text" placeholder="" value="">
                 </div>
                 <div class="row col-12">
                     <div class="mb-3 col-md-4">
@@ -314,7 +317,7 @@
                 <hr>
                 <div class="mb-3">
                     <label for="attachement">Upload Attachement</label>
-                    <input class="form-control btn-outline-primary" type="file" name="attachement" id="attachement" accept=".pdf" required/>
+                    <input class="form-control btn-outline-primary" type="file" name="attachement" id="attachement" accept=".pdf"/>
                     <span class="text-xs text-danger">Upload File format .pdf</span>
                 </div><hr>
                 <button class="btn btn-primary me-2 my-1" type="submit">Submit</button>
@@ -350,34 +353,34 @@ function addRow(containerId) {
     // Find all input elements inside the cloned row and update their names
     newRow.find('input').each(function () {
         var nameAttr = $(this).attr('name');
-        $(this).attr('name', updateNameAttribute(nameAttr));
+        $(this).attr('name', updateNameAttribute(nameAttr, container.find('.dynamic-input-row').length));
         $(this).val(''); // Optionally, clear input values
     });
 
     // Find the select element inside the cloned row and update its name
-    var selectElement = newRow.find('select');
-    var nameAttr = selectElement.attr('name');
-    selectElement.attr('name', updateNameAttribute(nameAttr));
+    //var selectElement = newRow.find('select');
+    //var nameAttr = selectElement.attr('name');
+    //selectElement.attr('name', updateNameAttribute(nameAttr));
 
     // Append the cloned row to the container
     container.append(newRow);
 
     // Initialize Select2 for the cloned dropdown
-    selectElement.select2({
+    /*selectElement.select2({
         allowClear: true,
         tags: true,
-    });
+    });*/
 }
 
 // Function to update the name attribute of inputs
-function updateNameAttribute(nameAttr) {
+function updateNameAttribute(nameAttr, newIndex) {
     // Extract the current index from the name attribute
     var regex = /\[(\d+)\]/;
     var matches = regex.exec(nameAttr);
     var currentIndex = matches ? parseInt(matches[1]) : 0;
 
     // Increment the index for the next row
-    var newIndex = currentIndex + 1;
+    //var newIndex = currentIndex + 1;
 
     // Replace the index in the name attribute
     return nameAttr.replace('[' + currentIndex + ']', '[' + newIndex + ']');
