@@ -16,7 +16,7 @@
                                 <div class="col">
                                    
                                     <div class="card-body py-4">
-                                        {!! Form::select('server', $serverconfig, null,  ['id'=>'server', 'name'=>'server', 'class'=>'form-control select2', 'placeholder'=>config('params.dropdown_default')]) !!}
+                                        {!! Form::select('server', $serverconfig,  $defaultServerId,  ['id'=>'server', 'name'=>'server', 'class'=>'form-control select2', 'placeholder'=>config('params.dropdown_default')]) !!}
                                         <p class="card-text mt-1 mb-1" id="ipAddress"></p>
                                         <div class="small text-muted"></div>
                                     </div>
@@ -119,7 +119,7 @@
                         </div>
 
                         
-                        <div class="row mb-4">
+                        <!-- <div class="row mb-4">
                             <div class="col-xxl-4">
                                 <div class="card">
                                     <div class="card-header text-center p-5">
@@ -150,7 +150,7 @@
                                     </div>
                                 </div>
                             </div>
-                        </div>
+                        </div> -->
 
                         <div class="row">
                             <div class="col-xxl-6">
@@ -224,7 +224,14 @@
                                                                 <h5>Postfix</h5>
                                                             </div>
                                                             <img src="{{ isset($status) && $status === 'Online' ? asset('assets/img/demo/online.png') : asset('assets/img/demo/offline.png') }}" alt="{{ $status === 'Online' ? 'Online' : 'Offline' }}" style="width: 5rem">
-
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-md-6 d-flex justify-content-center" style="padding-left: 150px;padding-bottom: 15px;"> <!-- Centering div -->
+                                                        <div class="btn-group" role="group" aria-label="Button group with nested dropdown">
+                                                            <button type="button" class="btn btn-primary"><i class="fas fa-play"></i></button>
+                                                            <button type="button" class="btn btn-danger"><i class="fas fa-stop"></i></button>
+                                                            <button type="button" class="btn btn-warning"><i class="fas fa-redo"></i></button>
+                                                            <button type="button" class="btn btn-info"><i class="fas fa-sync-alt"></i></button>
                                                         </div>
                                                     </div>
                                                 </a>
@@ -253,6 +260,14 @@
                                                             </div>
                                                             <img src="{{ isset($status) && $status === 'Online' ? asset('assets/img/demo/online.png') : asset('assets/img/demo/offline.png') }}" alt="{{ $status === 'Online' ? 'Online' : 'Offline' }}" style="width: 5rem">
 
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-md-6 d-flex justify-content-center" style="padding-left: 150px;padding-bottom: 15px;"> <!-- Centering div -->
+                                                        <div class="btn-group" role="group" aria-label="Button group with nested dropdown">
+                                                            <button type="button" class="btn btn-primary"><i class="fas fa-play"></i></button>
+                                                            <button type="button" class="btn btn-danger"><i class="fas fa-stop"></i></button>
+                                                            <button type="button" class="btn btn-warning"><i class="fas fa-redo"></i></button>
+                                                            <button type="button" class="btn btn-info"><i class="fas fa-sync-alt"></i></button>
                                                         </div>
                                                     </div>
                                                 </a>
@@ -501,6 +516,89 @@
         }
         });
     }
+
+
+// mailq
+ // Extract data passed from the controller
+ var timestamps = <?php echo json_encode($timestamps); ?>;
+        var mailCounts = <?php echo json_encode($mailCounts); ?>;
+
+        // Create a new Chart.js instance
+        var ctx = document.getElementById('mailQueueChart').getContext('2d');
+        var mailQueueChart = new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: timestamps,
+                datasets: [{
+                    label: 'Mail Queue',
+                    data: mailCounts,
+                    backgroundColor: 'rgba(255, 0, 0, 0.05)', // Fill color
+                    borderColor: 'rgba(255, 0, 0, 1)', // Border color
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                scales: {
+                    x: {
+                        type: 'time', // Use time scale for x-axis
+                        time: {
+                            unit: 'day' // Display unit as day
+                        },
+                        title: {
+                            display: true,
+                            text: 'Time'
+                        }
+                    },
+                    y: {
+                        title: {
+                            display: true,
+                            text: 'Mail Count'
+                        },
+                        beginAtZero: true
+                    }
+                }
+            }
+        });
+
+        function updateMailQueueChart(timestamps, mailCounts) {
+    var ctx = document.getElementById('mailQueueChart').getContext('2d');
+    var mailQueueChart = new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: timestamps,
+            datasets: [{
+                label: 'Mail Queue',
+                data: mailCounts,
+                backgroundColor: 'rgba(255, 0, 0, 0.05)', // Fill color
+                borderColor: 'rgba(255, 0, 0, 1)', // Border color
+                borderWidth: 1
+            }]
+        },
+        options: {
+            scales: {
+                x: {
+                    type: 'time', // Use time scale for x-axis
+                    time: {
+                        unit: 'day' // Display unit as day
+                    },
+                    title: {
+                        display: true,
+                        text: 'Time'
+                    }
+                },
+                y: {
+                    title: {
+                        display: true,
+                        text: 'Mail Count'
+                    },
+                    beginAtZero: true
+                }
+            }
+        }
+    });
+
+    return mailQueueChart;
+}
 
 
 
@@ -905,87 +1003,7 @@ function renderSaslChart(labels, p1Data, p2Data, p3Data) {
 }
 
 
-// mailq
- // Extract data passed from the controller
- var timestamps = <?php echo json_encode($timestamps); ?>;
-        var mailCounts = <?php echo json_encode($mailCounts); ?>;
 
-        // Create a new Chart.js instance
-        var ctx = document.getElementById('mailQueueChart').getContext('2d');
-        var mailQueueChart = new Chart(ctx, {
-            type: 'line',
-            data: {
-                labels: timestamps,
-                datasets: [{
-                    label: 'Mail Queue',
-                    data: mailCounts,
-                    backgroundColor: 'rgba(255, 0, 0, 0.05)', // Fill color
-                    borderColor: 'rgba(255, 0, 0, 1)', // Border color
-                    borderWidth: 1
-                }]
-            },
-            options: {
-                scales: {
-                    x: {
-                        type: 'time', // Use time scale for x-axis
-                        time: {
-                            unit: 'day' // Display unit as day
-                        },
-                        title: {
-                            display: true,
-                            text: 'Time'
-                        }
-                    },
-                    y: {
-                        title: {
-                            display: true,
-                            text: 'Mail Count'
-                        },
-                        beginAtZero: true
-                    }
-                }
-            }
-        });
-
-        function updateMailQueueChart(timestamps, mailCounts) {
-    var ctx = document.getElementById('mailQueueChart').getContext('2d');
-    var mailQueueChart = new Chart(ctx, {
-        type: 'line',
-        data: {
-            labels: timestamps,
-            datasets: [{
-                label: 'Mail Queue',
-                data: mailCounts,
-                backgroundColor: 'rgba(255, 0, 0, 0.05)', // Fill color
-                borderColor: 'rgba(255, 0, 0, 1)', // Border color
-                borderWidth: 1
-            }]
-        },
-        options: {
-            scales: {
-                x: {
-                    type: 'time', // Use time scale for x-axis
-                    time: {
-                        unit: 'day' // Display unit as day
-                    },
-                    title: {
-                        display: true,
-                        text: 'Time'
-                    }
-                },
-                y: {
-                    title: {
-                        display: true,
-                        text: 'Mail Count'
-                    },
-                    beginAtZero: true
-                }
-            }
-        }
-    });
-
-    return mailQueueChart;
-}
 
         // Event listener for select change
         $('#server').on('change', function() {
