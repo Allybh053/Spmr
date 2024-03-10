@@ -602,405 +602,405 @@
 
 
 
-// line series
-renderChartLineApps();
-var appsChart;
-var domainChart;
-var saslChart;
-function renderChartLineApps() {
-    var ctx = document.getElementById('appsChart').getContext('2d');
-    var labels = @json($days); // Blade directive to encode PHP array to JSON
-var p1Data = @json($p1Data); // Blade directive to encode PHP array to JSON
-var p2Data = @json($p2Data); // Blade directive to encode PHP array to JSON
-var p3Data = @json($p3Data); // Blade directive to encode PHP array to JSON
+// // line series
+// renderChartLineApps();
+// var appsChart;
+// var domainChart;
+// var saslChart;
+// function renderChartLineApps() {
+//     var ctx = document.getElementById('appsChart').getContext('2d');
+//     var labels = @json($days); // Blade directive to encode PHP array to JSON
+// var p1Data = @json($p1Data); // Blade directive to encode PHP array to JSON
+// var p2Data = @json($p2Data); // Blade directive to encode PHP array to JSON
+// var p3Data = @json($p3Data); // Blade directive to encode PHP array to JSON
 
-appsChart = new Chart(ctx, {
-    type: 'line',
-    data: {
-        labels: labels,
-        datasets: [
-            {
-                label: 'P1',
-                data: p1Data,
-                lineTension: 0.3,
-                backgroundColor: "rgba(0, 97, 242, 0.05)",
-                borderColor: "rgba(0, 97, 242, 1)",
-                pointRadius: 3,
-                pointBackgroundColor: "rgba(0, 97, 242, 1)",
-                pointBorderColor: "rgba(0, 97, 242, 1)",
-                pointHoverRadius: 3,
-                pointHoverBackgroundColor: "rgba(0, 97, 242, 1)",
-                pointHoverBorderColor: "rgba(0, 97, 242, 1)",
-                pointHitRadius: 10,
-                pointBorderWidth: 2,
-            },
-            {
-                label: 'P2',
-                data: p2Data,
-                backgroundColor: "rgba(255, 0, 0, 0.05)",
-                borderColor: "rgba(255, 0, 0, 1)",
-                pointRadius: 3,
-                pointBackgroundColor: "rgba(255, 0, 0, 1)",
-                pointBorderColor: "rgba(255, 0, 0, 1)",
-                pointHoverRadius: 3,
-                pointHoverBackgroundColor: "rgba(255, 0, 0, 1)",
-                pointHoverBorderColor: "rgba(255, 0, 0, 1)",
-                pointHitRadius: 10,
-                pointBorderWidth: 2,
-            },
-            {
-                label: 'P3',
-                data: p3Data,
-                backgroundColor: "rgba(255, 255, 0, 0.05)",
-                borderColor: "rgba(255, 255, 0, 1)",
-                pointRadius: 3,
-                pointBackgroundColor: "rgba(255, 255, 0, 1)",
-                pointBorderColor: "rgba(255, 255, 0, 1)",
-                pointHoverRadius: 3,
-                pointHoverBackgroundColor: "rgba(255, 255, 0, 1)",
-                pointHoverBorderColor: "rgba(255, 255, 0, 1)",
-                pointHitRadius: 10,
-                pointBorderWidth: 2,
-            }
-        ]
-    },
-    options: {
-        scales: {
-            y: {
-                beginAtZero: true
-            }
-        }
-    }
-    });
-}
+// appsChart = new Chart(ctx, {
+//     type: 'line',
+//     data: {
+//         labels: labels,
+//         datasets: [
+//             {
+//                 label: 'P1',
+//                 data: p1Data,
+//                 lineTension: 0.3,
+//                 backgroundColor: "rgba(0, 97, 242, 0.05)",
+//                 borderColor: "rgba(0, 97, 242, 1)",
+//                 pointRadius: 3,
+//                 pointBackgroundColor: "rgba(0, 97, 242, 1)",
+//                 pointBorderColor: "rgba(0, 97, 242, 1)",
+//                 pointHoverRadius: 3,
+//                 pointHoverBackgroundColor: "rgba(0, 97, 242, 1)",
+//                 pointHoverBorderColor: "rgba(0, 97, 242, 1)",
+//                 pointHitRadius: 10,
+//                 pointBorderWidth: 2,
+//             },
+//             {
+//                 label: 'P2',
+//                 data: p2Data,
+//                 backgroundColor: "rgba(255, 0, 0, 0.05)",
+//                 borderColor: "rgba(255, 0, 0, 1)",
+//                 pointRadius: 3,
+//                 pointBackgroundColor: "rgba(255, 0, 0, 1)",
+//                 pointBorderColor: "rgba(255, 0, 0, 1)",
+//                 pointHoverRadius: 3,
+//                 pointHoverBackgroundColor: "rgba(255, 0, 0, 1)",
+//                 pointHoverBorderColor: "rgba(255, 0, 0, 1)",
+//                 pointHitRadius: 10,
+//                 pointBorderWidth: 2,
+//             },
+//             {
+//                 label: 'P3',
+//                 data: p3Data,
+//                 backgroundColor: "rgba(255, 255, 0, 0.05)",
+//                 borderColor: "rgba(255, 255, 0, 1)",
+//                 pointRadius: 3,
+//                 pointBackgroundColor: "rgba(255, 255, 0, 1)",
+//                 pointBorderColor: "rgba(255, 255, 0, 1)",
+//                 pointHoverRadius: 3,
+//                 pointHoverBackgroundColor: "rgba(255, 255, 0, 1)",
+//                 pointHoverBorderColor: "rgba(255, 255, 0, 1)",
+//                 pointHitRadius: 10,
+//                 pointBorderWidth: 2,
+//             }
+//         ]
+//     },
+//     options: {
+//         scales: {
+//             y: {
+//                 beginAtZero: true
+//             }
+//         }
+//     }
+//     });
+// }
 
-function renderAppsChart(labels, p1Data, p2Data, p3Data) {
-    var ctx = document.getElementById('appsChart').getContext('2d');
-    appsChart = new Chart(ctx, {
-        type: 'line',
-        data: {
-            labels: labels,
-            datasets: [
-                {
-                    label: 'P1',
-                    data: p1Data,
-                    lineTension: 0.3,
-                    backgroundColor: "rgba(0, 97, 242, 0.05)",
-                    borderColor: "rgba(0, 97, 242, 1)",
-                    pointRadius: 3,
-                    pointBackgroundColor: "rgba(0, 97, 242, 1)",
-                    pointBorderColor: "rgba(0, 97, 242, 1)",
-                    pointHoverRadius: 3,
-                    pointHoverBackgroundColor: "rgba(0, 97, 242, 1)",
-                    pointHoverBorderColor: "rgba(0, 97, 242, 1)",
-                    pointHitRadius: 10,
-                    pointBorderWidth: 2,
-                },
-                {
-                    label: 'P2',
-                    data: p2Data,
-                    backgroundColor: "rgba(255, 0, 0, 0.05)",
-                    borderColor: "rgba(255, 0, 0, 1)",
-                    pointRadius: 3,
-                    pointBackgroundColor: "rgba(255, 0, 0, 1)",
-                    pointBorderColor: "rgba(255, 0, 0, 1)",
-                    pointHoverRadius: 3,
-                    pointHoverBackgroundColor: "rgba(255, 0, 0, 1)",
-                    pointHoverBorderColor: "rgba(255, 0, 0, 1)",
-                    pointHitRadius: 10,
-                    pointBorderWidth: 2,
-                },
-                {
-                    label: 'P3',
-                    data: p3Data,
-                    backgroundColor: "rgba(255, 255, 0, 0.05)",
-                    borderColor: "rgba(255, 255, 0, 1)",
-                    pointRadius: 3,
-                    pointBackgroundColor: "rgba(255, 255, 0, 1)",
-                    pointBorderColor: "rgba(255, 255, 0, 1)",
-                    pointHoverRadius: 3,
-                    pointHoverBackgroundColor: "rgba(255, 255, 0, 1)",
-                    pointHoverBorderColor: "rgba(255, 255, 0, 1)",
-                    pointHitRadius: 10,
-                    pointBorderWidth: 2,
-                }
-            ]
-        },
-        options: {
-            scales: {
-                y: {
-                    beginAtZero: true
-                }
-            }
-        }
-    });
+// function renderAppsChart(labels, p1Data, p2Data, p3Data) {
+//     var ctx = document.getElementById('appsChart').getContext('2d');
+//     appsChart = new Chart(ctx, {
+//         type: 'line',
+//         data: {
+//             labels: labels,
+//             datasets: [
+//                 {
+//                     label: 'P1',
+//                     data: p1Data,
+//                     lineTension: 0.3,
+//                     backgroundColor: "rgba(0, 97, 242, 0.05)",
+//                     borderColor: "rgba(0, 97, 242, 1)",
+//                     pointRadius: 3,
+//                     pointBackgroundColor: "rgba(0, 97, 242, 1)",
+//                     pointBorderColor: "rgba(0, 97, 242, 1)",
+//                     pointHoverRadius: 3,
+//                     pointHoverBackgroundColor: "rgba(0, 97, 242, 1)",
+//                     pointHoverBorderColor: "rgba(0, 97, 242, 1)",
+//                     pointHitRadius: 10,
+//                     pointBorderWidth: 2,
+//                 },
+//                 {
+//                     label: 'P2',
+//                     data: p2Data,
+//                     backgroundColor: "rgba(255, 0, 0, 0.05)",
+//                     borderColor: "rgba(255, 0, 0, 1)",
+//                     pointRadius: 3,
+//                     pointBackgroundColor: "rgba(255, 0, 0, 1)",
+//                     pointBorderColor: "rgba(255, 0, 0, 1)",
+//                     pointHoverRadius: 3,
+//                     pointHoverBackgroundColor: "rgba(255, 0, 0, 1)",
+//                     pointHoverBorderColor: "rgba(255, 0, 0, 1)",
+//                     pointHitRadius: 10,
+//                     pointBorderWidth: 2,
+//                 },
+//                 {
+//                     label: 'P3',
+//                     data: p3Data,
+//                     backgroundColor: "rgba(255, 255, 0, 0.05)",
+//                     borderColor: "rgba(255, 255, 0, 1)",
+//                     pointRadius: 3,
+//                     pointBackgroundColor: "rgba(255, 255, 0, 1)",
+//                     pointBorderColor: "rgba(255, 255, 0, 1)",
+//                     pointHoverRadius: 3,
+//                     pointHoverBackgroundColor: "rgba(255, 255, 0, 1)",
+//                     pointHoverBorderColor: "rgba(255, 255, 0, 1)",
+//                     pointHitRadius: 10,
+//                     pointBorderWidth: 2,
+//                 }
+//             ]
+//         },
+//         options: {
+//             scales: {
+//                 y: {
+//                     beginAtZero: true
+//                 }
+//             }
+//         }
+//     });
 
-    return appsChart;
-}
+//     return appsChart;
+// }
 
 
-renderChartLineDomain();
-function renderChartLineDomain() {
-    var ctx = document.getElementById('domainChart').getContext('2d');
-    var labels = @json($days); // Blade directive to encode PHP array to JSON
-var p1Data = @json($p1Data); // Blade directive to encode PHP array to JSON
-var p2Data = @json($p2Data); // Blade directive to encode PHP array to JSON
-var p3Data = @json($p3Data); // Blade directive to encode PHP array to JSON
+// renderChartLineDomain();
+// function renderChartLineDomain() {
+//     var ctx = document.getElementById('domainChart').getContext('2d');
+//     var labels = @json($days); // Blade directive to encode PHP array to JSON
+// var p1Data = @json($p1Data); // Blade directive to encode PHP array to JSON
+// var p2Data = @json($p2Data); // Blade directive to encode PHP array to JSON
+// var p3Data = @json($p3Data); // Blade directive to encode PHP array to JSON
 
-domainChart = new Chart(ctx, {
-    type: 'line',
-    data: {
-        labels: labels,
-        datasets: [
-            {
-                label: 'P1',
-                data: p1Data,
-                lineTension: 0.3,
-                backgroundColor: "rgba(0, 97, 242, 0.05)",
-                borderColor: "rgba(0, 97, 242, 1)",
-                pointRadius: 3,
-                pointBackgroundColor: "rgba(0, 97, 242, 1)",
-                pointBorderColor: "rgba(0, 97, 242, 1)",
-                pointHoverRadius: 3,
-                pointHoverBackgroundColor: "rgba(0, 97, 242, 1)",
-                pointHoverBorderColor: "rgba(0, 97, 242, 1)",
-                pointHitRadius: 10,
-                pointBorderWidth: 2,
-            },
-            {
-                label: 'P2',
-                data: p2Data,
-                backgroundColor: "rgba(255, 0, 0, 0.05)",
-                borderColor: "rgba(255, 0, 0, 1)",
-                pointRadius: 3,
-                pointBackgroundColor: "rgba(255, 0, 0, 1)",
-                pointBorderColor: "rgba(255, 0, 0, 1)",
-                pointHoverRadius: 3,
-                pointHoverBackgroundColor: "rgba(255, 0, 0, 1)",
-                pointHoverBorderColor: "rgba(255, 0, 0, 1)",
-                pointHitRadius: 10,
-                pointBorderWidth: 2,
-            },
-            {
-                label: 'P3',
-                data: p3Data,
-                backgroundColor: "rgba(255, 255, 0, 0.05)",
-                borderColor: "rgba(255, 255, 0, 1)",
-                pointRadius: 3,
-                pointBackgroundColor: "rgba(255, 255, 0, 1)",
-                pointBorderColor: "rgba(255, 255, 0, 1)",
-                pointHoverRadius: 3,
-                pointHoverBackgroundColor: "rgba(255, 255, 0, 1)",
-                pointHoverBorderColor: "rgba(255, 255, 0, 1)",
-                pointHitRadius: 10,
-                pointBorderWidth: 2,
-            }
-        ]
-    },
-    options: {
-        scales: {
-            y: {
-                beginAtZero: true
-            }
-        }
-    }
-    });
-}
-function renderDomainChart(labels, p1Data, p2Data, p3Data) {
-    var ctx = document.getElementById('domainChart').getContext('2d');
-   domainChart = new Chart(ctx, {
-        type: 'line',
-        data: {
-            labels: labels,
-            datasets: [
-                {
-                    label: 'P1',
-                    data: p1Data,
-                    lineTension: 0.3,
-                    backgroundColor: "rgba(0, 97, 242, 0.05)",
-                    borderColor: "rgba(0, 97, 242, 1)",
-                    pointRadius: 3,
-                    pointBackgroundColor: "rgba(0, 97, 242, 1)",
-                    pointBorderColor: "rgba(0, 97, 242, 1)",
-                    pointHoverRadius: 3,
-                    pointHoverBackgroundColor: "rgba(0, 97, 242, 1)",
-                    pointHoverBorderColor: "rgba(0, 97, 242, 1)",
-                    pointHitRadius: 10,
-                    pointBorderWidth: 2,
-                },
-                {
-                    label: 'P2',
-                    data: p2Data,
-                    backgroundColor: "rgba(255, 0, 0, 0.05)",
-                    borderColor: "rgba(255, 0, 0, 1)",
-                    pointRadius: 3,
-                    pointBackgroundColor: "rgba(255, 0, 0, 1)",
-                    pointBorderColor: "rgba(255, 0, 0, 1)",
-                    pointHoverRadius: 3,
-                    pointHoverBackgroundColor: "rgba(255, 0, 0, 1)",
-                    pointHoverBorderColor: "rgba(255, 0, 0, 1)",
-                    pointHitRadius: 10,
-                    pointBorderWidth: 2,
-                },
-                {
-                    label: 'P3',
-                    data: p3Data,
-                    backgroundColor: "rgba(255, 255, 0, 0.05)",
-                    borderColor: "rgba(255, 255, 0, 1)",
-                    pointRadius: 3,
-                    pointBackgroundColor: "rgba(255, 255, 0, 1)",
-                    pointBorderColor: "rgba(255, 255, 0, 1)",
-                    pointHoverRadius: 3,
-                    pointHoverBackgroundColor: "rgba(255, 255, 0, 1)",
-                    pointHoverBorderColor: "rgba(255, 255, 0, 1)",
-                    pointHitRadius: 10,
-                    pointBorderWidth: 2,
-                }
-            ]
-        },
-        options: {
-            scales: {
-                y: {
-                    beginAtZero: true
-                }
-            }
-        }
-    });
+// domainChart = new Chart(ctx, {
+//     type: 'line',
+//     data: {
+//         labels: labels,
+//         datasets: [
+//             {
+//                 label: 'P1',
+//                 data: p1Data,
+//                 lineTension: 0.3,
+//                 backgroundColor: "rgba(0, 97, 242, 0.05)",
+//                 borderColor: "rgba(0, 97, 242, 1)",
+//                 pointRadius: 3,
+//                 pointBackgroundColor: "rgba(0, 97, 242, 1)",
+//                 pointBorderColor: "rgba(0, 97, 242, 1)",
+//                 pointHoverRadius: 3,
+//                 pointHoverBackgroundColor: "rgba(0, 97, 242, 1)",
+//                 pointHoverBorderColor: "rgba(0, 97, 242, 1)",
+//                 pointHitRadius: 10,
+//                 pointBorderWidth: 2,
+//             },
+//             {
+//                 label: 'P2',
+//                 data: p2Data,
+//                 backgroundColor: "rgba(255, 0, 0, 0.05)",
+//                 borderColor: "rgba(255, 0, 0, 1)",
+//                 pointRadius: 3,
+//                 pointBackgroundColor: "rgba(255, 0, 0, 1)",
+//                 pointBorderColor: "rgba(255, 0, 0, 1)",
+//                 pointHoverRadius: 3,
+//                 pointHoverBackgroundColor: "rgba(255, 0, 0, 1)",
+//                 pointHoverBorderColor: "rgba(255, 0, 0, 1)",
+//                 pointHitRadius: 10,
+//                 pointBorderWidth: 2,
+//             },
+//             {
+//                 label: 'P3',
+//                 data: p3Data,
+//                 backgroundColor: "rgba(255, 255, 0, 0.05)",
+//                 borderColor: "rgba(255, 255, 0, 1)",
+//                 pointRadius: 3,
+//                 pointBackgroundColor: "rgba(255, 255, 0, 1)",
+//                 pointBorderColor: "rgba(255, 255, 0, 1)",
+//                 pointHoverRadius: 3,
+//                 pointHoverBackgroundColor: "rgba(255, 255, 0, 1)",
+//                 pointHoverBorderColor: "rgba(255, 255, 0, 1)",
+//                 pointHitRadius: 10,
+//                 pointBorderWidth: 2,
+//             }
+//         ]
+//     },
+//     options: {
+//         scales: {
+//             y: {
+//                 beginAtZero: true
+//             }
+//         }
+//     }
+//     });
+// }
+// function renderDomainChart(labels, p1Data, p2Data, p3Data) {
+//     var ctx = document.getElementById('domainChart').getContext('2d');
+//    domainChart = new Chart(ctx, {
+//         type: 'line',
+//         data: {
+//             labels: labels,
+//             datasets: [
+//                 {
+//                     label: 'P1',
+//                     data: p1Data,
+//                     lineTension: 0.3,
+//                     backgroundColor: "rgba(0, 97, 242, 0.05)",
+//                     borderColor: "rgba(0, 97, 242, 1)",
+//                     pointRadius: 3,
+//                     pointBackgroundColor: "rgba(0, 97, 242, 1)",
+//                     pointBorderColor: "rgba(0, 97, 242, 1)",
+//                     pointHoverRadius: 3,
+//                     pointHoverBackgroundColor: "rgba(0, 97, 242, 1)",
+//                     pointHoverBorderColor: "rgba(0, 97, 242, 1)",
+//                     pointHitRadius: 10,
+//                     pointBorderWidth: 2,
+//                 },
+//                 {
+//                     label: 'P2',
+//                     data: p2Data,
+//                     backgroundColor: "rgba(255, 0, 0, 0.05)",
+//                     borderColor: "rgba(255, 0, 0, 1)",
+//                     pointRadius: 3,
+//                     pointBackgroundColor: "rgba(255, 0, 0, 1)",
+//                     pointBorderColor: "rgba(255, 0, 0, 1)",
+//                     pointHoverRadius: 3,
+//                     pointHoverBackgroundColor: "rgba(255, 0, 0, 1)",
+//                     pointHoverBorderColor: "rgba(255, 0, 0, 1)",
+//                     pointHitRadius: 10,
+//                     pointBorderWidth: 2,
+//                 },
+//                 {
+//                     label: 'P3',
+//                     data: p3Data,
+//                     backgroundColor: "rgba(255, 255, 0, 0.05)",
+//                     borderColor: "rgba(255, 255, 0, 1)",
+//                     pointRadius: 3,
+//                     pointBackgroundColor: "rgba(255, 255, 0, 1)",
+//                     pointBorderColor: "rgba(255, 255, 0, 1)",
+//                     pointHoverRadius: 3,
+//                     pointHoverBackgroundColor: "rgba(255, 255, 0, 1)",
+//                     pointHoverBorderColor: "rgba(255, 255, 0, 1)",
+//                     pointHitRadius: 10,
+//                     pointBorderWidth: 2,
+//                 }
+//             ]
+//         },
+//         options: {
+//             scales: {
+//                 y: {
+//                     beginAtZero: true
+//                 }
+//             }
+//         }
+//     });
 
-    return domainChart;
-}
+//     return domainChart;
+// }
 
-renderChartSaslDomain();
-function renderChartSaslDomain() {
-    var ctx = document.getElementById('saslChart').getContext('2d');
-    var labels = @json($days); // Blade directive to encode PHP array to JSON
-var p1Data = @json($p1Data); // Blade directive to encode PHP array to JSON
-var p2Data = @json($p2Data); // Blade directive to encode PHP array to JSON
-var p3Data = @json($p3Data); // Blade directive to encode PHP array to JSON
+// renderChartSaslDomain();
+// function renderChartSaslDomain() {
+//     var ctx = document.getElementById('saslChart').getContext('2d');
+//     var labels = @json($days); // Blade directive to encode PHP array to JSON
+// var p1Data = @json($p1Data); // Blade directive to encode PHP array to JSON
+// var p2Data = @json($p2Data); // Blade directive to encode PHP array to JSON
+// var p3Data = @json($p3Data); // Blade directive to encode PHP array to JSON
 
-saslChart = new Chart(ctx, {
-    type: 'line',
-    data: {
-        labels: labels,
-        datasets: [
-            {
-                label: 'P1',
-                data: p1Data,
-                lineTension: 0.3,
-                backgroundColor: "rgba(0, 97, 242, 0.05)",
-                borderColor: "rgba(0, 97, 242, 1)",
-                pointRadius: 3,
-                pointBackgroundColor: "rgba(0, 97, 242, 1)",
-                pointBorderColor: "rgba(0, 97, 242, 1)",
-                pointHoverRadius: 3,
-                pointHoverBackgroundColor: "rgba(0, 97, 242, 1)",
-                pointHoverBorderColor: "rgba(0, 97, 242, 1)",
-                pointHitRadius: 10,
-                pointBorderWidth: 2,
-            },
-            {
-                label: 'P2',
-                data: p2Data,
-                backgroundColor: "rgba(255, 0, 0, 0.05)",
-                borderColor: "rgba(255, 0, 0, 1)",
-                pointRadius: 3,
-                pointBackgroundColor: "rgba(255, 0, 0, 1)",
-                pointBorderColor: "rgba(255, 0, 0, 1)",
-                pointHoverRadius: 3,
-                pointHoverBackgroundColor: "rgba(255, 0, 0, 1)",
-                pointHoverBorderColor: "rgba(255, 0, 0, 1)",
-                pointHitRadius: 10,
-                pointBorderWidth: 2,
-            },
-            {
-                label: 'P3',
-                data: p3Data,
-                backgroundColor: "rgba(255, 255, 0, 0.05)",
-                borderColor: "rgba(255, 255, 0, 1)",
-                pointRadius: 3,
-                pointBackgroundColor: "rgba(255, 255, 0, 1)",
-                pointBorderColor: "rgba(255, 255, 0, 1)",
-                pointHoverRadius: 3,
-                pointHoverBackgroundColor: "rgba(255, 255, 0, 1)",
-                pointHoverBorderColor: "rgba(255, 255, 0, 1)",
-                pointHitRadius: 10,
-                pointBorderWidth: 2,
-            }
-        ]
-    },
-    options: {
-        scales: {
-            y: {
-                beginAtZero: true
-            }
-        }
-    }
-    });
-}
+// saslChart = new Chart(ctx, {
+//     type: 'line',
+//     data: {
+//         labels: labels,
+//         datasets: [
+//             {
+//                 label: 'P1',
+//                 data: p1Data,
+//                 lineTension: 0.3,
+//                 backgroundColor: "rgba(0, 97, 242, 0.05)",
+//                 borderColor: "rgba(0, 97, 242, 1)",
+//                 pointRadius: 3,
+//                 pointBackgroundColor: "rgba(0, 97, 242, 1)",
+//                 pointBorderColor: "rgba(0, 97, 242, 1)",
+//                 pointHoverRadius: 3,
+//                 pointHoverBackgroundColor: "rgba(0, 97, 242, 1)",
+//                 pointHoverBorderColor: "rgba(0, 97, 242, 1)",
+//                 pointHitRadius: 10,
+//                 pointBorderWidth: 2,
+//             },
+//             {
+//                 label: 'P2',
+//                 data: p2Data,
+//                 backgroundColor: "rgba(255, 0, 0, 0.05)",
+//                 borderColor: "rgba(255, 0, 0, 1)",
+//                 pointRadius: 3,
+//                 pointBackgroundColor: "rgba(255, 0, 0, 1)",
+//                 pointBorderColor: "rgba(255, 0, 0, 1)",
+//                 pointHoverRadius: 3,
+//                 pointHoverBackgroundColor: "rgba(255, 0, 0, 1)",
+//                 pointHoverBorderColor: "rgba(255, 0, 0, 1)",
+//                 pointHitRadius: 10,
+//                 pointBorderWidth: 2,
+//             },
+//             {
+//                 label: 'P3',
+//                 data: p3Data,
+//                 backgroundColor: "rgba(255, 255, 0, 0.05)",
+//                 borderColor: "rgba(255, 255, 0, 1)",
+//                 pointRadius: 3,
+//                 pointBackgroundColor: "rgba(255, 255, 0, 1)",
+//                 pointBorderColor: "rgba(255, 255, 0, 1)",
+//                 pointHoverRadius: 3,
+//                 pointHoverBackgroundColor: "rgba(255, 255, 0, 1)",
+//                 pointHoverBorderColor: "rgba(255, 255, 0, 1)",
+//                 pointHitRadius: 10,
+//                 pointBorderWidth: 2,
+//             }
+//         ]
+//     },
+//     options: {
+//         scales: {
+//             y: {
+//                 beginAtZero: true
+//             }
+//         }
+//     }
+//     });
+// }
 
-function renderSaslChart(labels, p1Data, p2Data, p3Data) {
-    var ctx = document.getElementById('saslChart').getContext('2d');
-     saslChart = new Chart(ctx, {
-        type: 'line',
-        data: {
-            labels: labels,
-            datasets: [
-                {
-                    label: 'P1',
-                    data: p1Data,
-                    lineTension: 0.3,
-                    backgroundColor: "rgba(0, 97, 242, 0.05)",
-                    borderColor: "rgba(0, 97, 242, 1)",
-                    pointRadius: 3,
-                    pointBackgroundColor: "rgba(0, 97, 242, 1)",
-                    pointBorderColor: "rgba(0, 97, 242, 1)",
-                    pointHoverRadius: 3,
-                    pointHoverBackgroundColor: "rgba(0, 97, 242, 1)",
-                    pointHoverBorderColor: "rgba(0, 97, 242, 1)",
-                    pointHitRadius: 10,
-                    pointBorderWidth: 2,
-                },
-                {
-                    label: 'P2',
-                    data: p2Data,
-                    backgroundColor: "rgba(255, 0, 0, 0.05)",
-                    borderColor: "rgba(255, 0, 0, 1)",
-                    pointRadius: 3,
-                    pointBackgroundColor: "rgba(255, 0, 0, 1)",
-                    pointBorderColor: "rgba(255, 0, 0, 1)",
-                    pointHoverRadius: 3,
-                    pointHoverBackgroundColor: "rgba(255, 0, 0, 1)",
-                    pointHoverBorderColor: "rgba(255, 0, 0, 1)",
-                    pointHitRadius: 10,
-                    pointBorderWidth: 2,
-                },
-                {
-                    label: 'P3',
-                    data: p3Data,
-                    backgroundColor: "rgba(255, 255, 0, 0.05)",
-                    borderColor: "rgba(255, 255, 0, 1)",
-                    pointRadius: 3,
-                    pointBackgroundColor: "rgba(255, 255, 0, 1)",
-                    pointBorderColor: "rgba(255, 255, 0, 1)",
-                    pointHoverRadius: 3,
-                    pointHoverBackgroundColor: "rgba(255, 255, 0, 1)",
-                    pointHoverBorderColor: "rgba(255, 255, 0, 1)",
-                    pointHitRadius: 10,
-                    pointBorderWidth: 2,
-                }
-            ]
-        },
-        options: {
-            scales: {
-                y: {
-                    beginAtZero: true
-                }
-            }
-        }
-    });
+// function renderSaslChart(labels, p1Data, p2Data, p3Data) {
+//     var ctx = document.getElementById('saslChart').getContext('2d');
+//      saslChart = new Chart(ctx, {
+//         type: 'line',
+//         data: {
+//             labels: labels,
+//             datasets: [
+//                 {
+//                     label: 'P1',
+//                     data: p1Data,
+//                     lineTension: 0.3,
+//                     backgroundColor: "rgba(0, 97, 242, 0.05)",
+//                     borderColor: "rgba(0, 97, 242, 1)",
+//                     pointRadius: 3,
+//                     pointBackgroundColor: "rgba(0, 97, 242, 1)",
+//                     pointBorderColor: "rgba(0, 97, 242, 1)",
+//                     pointHoverRadius: 3,
+//                     pointHoverBackgroundColor: "rgba(0, 97, 242, 1)",
+//                     pointHoverBorderColor: "rgba(0, 97, 242, 1)",
+//                     pointHitRadius: 10,
+//                     pointBorderWidth: 2,
+//                 },
+//                 {
+//                     label: 'P2',
+//                     data: p2Data,
+//                     backgroundColor: "rgba(255, 0, 0, 0.05)",
+//                     borderColor: "rgba(255, 0, 0, 1)",
+//                     pointRadius: 3,
+//                     pointBackgroundColor: "rgba(255, 0, 0, 1)",
+//                     pointBorderColor: "rgba(255, 0, 0, 1)",
+//                     pointHoverRadius: 3,
+//                     pointHoverBackgroundColor: "rgba(255, 0, 0, 1)",
+//                     pointHoverBorderColor: "rgba(255, 0, 0, 1)",
+//                     pointHitRadius: 10,
+//                     pointBorderWidth: 2,
+//                 },
+//                 {
+//                     label: 'P3',
+//                     data: p3Data,
+//                     backgroundColor: "rgba(255, 255, 0, 0.05)",
+//                     borderColor: "rgba(255, 255, 0, 1)",
+//                     pointRadius: 3,
+//                     pointBackgroundColor: "rgba(255, 255, 0, 1)",
+//                     pointBorderColor: "rgba(255, 255, 0, 1)",
+//                     pointHoverRadius: 3,
+//                     pointHoverBackgroundColor: "rgba(255, 255, 0, 1)",
+//                     pointHoverBorderColor: "rgba(255, 255, 0, 1)",
+//                     pointHitRadius: 10,
+//                     pointBorderWidth: 2,
+//                 }
+//             ]
+//         },
+//         options: {
+//             scales: {
+//                 y: {
+//                     beginAtZero: true
+//                 }
+//             }
+//         }
+//     });
 
-    return saslChart;
-}
+//     return saslChart;
+// }
 
 
 
@@ -1008,7 +1008,7 @@ function renderSaslChart(labels, p1Data, p2Data, p3Data) {
         // Event listener for select change
         $('#server').on('change', function() {
             var selectedServerId = $(this).val();
-
+console.log(selectedServerId);
             // AJAX request to fetch data based on the selected server ID
             $.ajax({
                 url: "{!! route('dashboard.api') !!}",
@@ -1072,26 +1072,26 @@ function renderSaslChart(labels, p1Data, p2Data, p3Data) {
 
                     updateChartKementerian(response.departmentCounts);
 
-                    if (appsChart) {
-                    appsChart.destroy();
-                }
+                //     if (appsChart) {
+                //     appsChart.destroy();
+                // }
 
-                // Render the SASL chart with new data
-                appsChart = renderAppsChart(response.days, response.p1Data, response.p2Data, response.p3Data);
+                // // Render the SASL chart with new data
+                // appsChart = renderAppsChart(response.days, response.p1Data, response.p2Data, response.p3Data);
             
-                if (domainChart) {
-                    domainChart.destroy();
-                }
+                // if (domainChart) {
+                //     domainChart.destroy();
+                // }
 
-                // Render the SASL chart with new data
-                domainChart = renderDomainChart(response.days, response.p1Data, response.p2Data, response.p3Data);
+                // // Render the SASL chart with new data
+                // domainChart = renderDomainChart(response.days, response.p1Data, response.p2Data, response.p3Data);
             
-                if (saslChart) {
-                    saslChart.destroy();
-                }
+                // if (saslChart) {
+                //     saslChart.destroy();
+                // }
 
-                // Render the SASL chart with new data
-                saslChart = renderSaslChart(response.days, response.p1Data, response.p2Data, response.p3Data);
+                // // Render the SASL chart with new data
+                // saslChart = renderSaslChart(response.days, response.p1Data, response.p2Data, response.p3Data);
             
 
                     if (mailQueueChart) {

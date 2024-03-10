@@ -14,6 +14,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\DB;
 use Faker\Factory as Faker;
+use App\Models\RoleServer;
 
 class SmtpRelayController extends Controller
 {
@@ -22,7 +23,18 @@ class SmtpRelayController extends Controller
         $user = Auth::user();
         $role = $user->roles->isNotEmpty() ? $user->roles->pluck('name')->first() : null;
         $agency = [];
-        return view('smtp_relay.index', compact('user', 'role','agency'));
+        
+        $serverIds = RoleServer::whereIn('role_id', $user->roles->pluck('id')->all())
+        ->pluck('server_id');
+
+        $defaultServerId = 1;
+
+        // Filter servers based on the fetched IDs
+        $serverconfig = Server::whereIn('id', $serverIds)
+        ->where('status', 1)
+        ->pluck('hostname', 'id');
+
+        return view('smtp_relay.index', compact('user', 'role','agency','serverIds','defaultServerId','serverconfig'));
     }
 
     public function search(Request $request)
