@@ -50,4 +50,10 @@ class User extends Authenticatable implements Auditable
     {
         return $this->belongsTo(Role::class, 'role_id');
     }
+
+    public function hasPermission($resource, $action)
+    {
+        // Assuming $this->permissions contains the user's permissions
+        return isset($this->permissions[$resource]) && in_array($action, $this->permissions[$resource]);
+    }
 }

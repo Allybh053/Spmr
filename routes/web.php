@@ -22,6 +22,9 @@ use App\Http\Controllers\ActivityLogController;
 use App\Http\Controllers\PositionDepartmentController;
 use App\Http\Controllers\ReportQueryLogController;
 use App\Http\Controllers\MailLogController;
+use App\Http\Controllers\LoopBackController;
+use App\Http\Controllers\ReplicationController;
+use App\Http\Controllers\PrintListController;
 
 
 /*
@@ -209,6 +212,13 @@ Route::group(['middleware' => ['auth']], function () {
         Route::delete('/department/{id}/departmentdelete', [PositionDepartmentController::class, 'departmentdelete'])->name('positiondepartment.departmentdelete');
         Route::delete('/position/{id}/positiondelete', [PositionDepartmentController::class, 'positiondelete'])->name('positiondepartment.positiondelete');
 
+    });
+
+    Route::group(['prefix' => 'validation-verification'], function () {
+        Route::get('/loopback', [LoopBackController::class, 'index'])->name('loopback.index');
+        Route::get('/replication', [ReplicationController::class, 'index'])->name('replication.index');
+        Route::get('/printList', [PrintListController::class, 'index'])->name('printList.index');
+        Route::post('/printList/validation', [PrintListController::class, 'validation'])->name('printList.validation');
     });
 
 });
