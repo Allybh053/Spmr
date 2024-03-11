@@ -168,7 +168,7 @@
                             <div class="sidenav-collapse-arrow"></div>
                         </a>
                         @endcan
-                          @can('role_permission')
+                          @can('role_permission_view')
                         <a class="nav-link" href="{{ route('setup.role.index')}}">
                             Roles & Permission
                             <div class="sidenav-collapse-arrow"></div>

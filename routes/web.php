@@ -25,6 +25,7 @@ use App\Http\Controllers\MailLogController;
 use App\Http\Controllers\LoopBackController;
 use App\Http\Controllers\ReplicationController;
 use App\Http\Controllers\PrintListController;
+use App\Http\Middleware\AuthResource;
 
 
 /*
@@ -88,7 +89,7 @@ Route::group(['middleware' => ['auth']], function () {
     });
 
     Route::group(['prefix' => 'mailrelay'], function () {
-        Route::get('/', [MainRelayController::class, 'index'])->name('mailrelay.index');
+        Route::get('/', [MainRelayController::class, 'index'])->name('mailrelay.index')->middleware('auth.resource:manage_mail_relay_view');
         Route::get('/register', [MainRelayController::class, 'show'])->name('mailrelay.register');
         Route::get('/detail/{id}', [MainRelayController::class, 'view','connect'])->name('mailrelay.edit');
         // Route::get('/detail/{id}', [MainRelayController::class, 'updatestatus']);
@@ -96,7 +97,7 @@ Route::group(['middleware' => ['auth']], function () {
 
     //SMTP Relay Request
     Route::group(['prefix' => 'smtp_relay'], function () {
-        Route::get('/smtp_relay_req', [SmtpRelayController::class, 'index'])->name('smtp_relay.smtp_relay_req');
+        Route::get('/smtp_relay_req', [SmtpRelayController::class, 'index'])->name('smtp_relay.smtp_relay_req')->middleware('auth.resource:smtp_mail_relay_view');
         Route::get('/form_application_smtp_relay', [SmtpRelayController::class, 'create'])->name('smtp_relay.create');
         Route::post('/form_application_smtp_relay/add', [SmtpRelayController::class, 'store'])->name('smtp_relay.store');
         Route::get('/form_application_smtp_relay/edit/{id}', [SmtpRelayController::class, 'edit'])->name('smtp_relay.edit');
@@ -117,7 +118,7 @@ Route::group(['middleware' => ['auth']], function () {
     });
 
     Route::group(['prefix' => 'server'], function () {
-        Route::get('/server', [ServerController::class, 'index'])->name('server.index');
+        Route::get('/server', [ServerController::class, 'index'])->name('server.index')->middleware('auth.resource:server_overview_view');
         Route::get('/create', [ServerController::class, 'create'])->name('server.create');
         Route::get('/edit/{id}', [ServerController::class, 'show'])->name('server.edit');
         Route::post('/update-status', [ServerController::class, 'updateStatus']);
@@ -150,44 +151,50 @@ Route::group(['middleware' => ['auth']], function () {
 
 
     Route::group(['prefix' => 'log_overview'], function () {
-        Route::get('/', [LogOverviewController::class, 'index'])->name('log.index');
+        Route::get('/', [LogOverviewController::class, 'index'])->name('log.index')->middleware('auth.resource:spmr_activity_log_view');
         Route::post('/api/getServerName', [LogOverviewController::class, 'getNewServerData'])->name('log.api.getServerName');
 
         Route::get('/activity-logs', [ActivityLogController::class,'showActivityLogs'])->name('activityLog.index');
     });
 
     Route::group(['prefix' => 'mail_log_overview'], function () {
-        Route::get('/', [MailLogController::class, 'index'])->name('mailLog.index');
+        Route::get('/', [MailLogController::class, 'index'])->name('mailLog.index')->middleware('auth.resource:mail_log_view');
             Route::post('/validation', [MailLogController::class, 'validation'])->name('mailLog.validation');
     });
 
     Route::group(['prefix' => 'report'], function () {
         Route::group(['prefix' => 'statistic-summary'], function () {
-            Route::get('/', [ReportStatisticController::class, 'index'])->name('report.statistic.index');
+            Route::get('/', [ReportStatisticController::class, 'index'])->name('report.statistic.index')->middleware('auth.resource:traffic_statistic_summary_view');
             Route::post('/validation', [ReportStatisticController::class, 'validation'])->name('report.statistic.validation');
         });
 
         Route::group(['prefix' => 'detail-sender'], function () {
-            Route::get('/', [ReportDetailSenderController::class, 'index'])->name('report.detail.index');
+            Route::get('/', [ReportDetailSenderController::class, 'index'])->name('report.detail.index')->middleware('auth.resource:detail_report_sender_view');
             Route::post('/validation', [ReportDetailSenderController::class, 'validation'])->name('report.detail.validation');
         });
 
         Route::group(['prefix' => 'query-log'], function () {
-            Route::get('/', [ReportQueryLogController::class, 'index'])->name('report.queryLog.index');
+            Route::get('/', [ReportQueryLogController::class, 'index'])
+            ->name('report.queryLog.index')
+            ->middleware('auth.resource:query_log_view');
             Route::post('/validation', [ReportQueryLogController::class, 'validation'])->name('report.queryLog.validation');
         });
     });
 
     		//role
 		Route::group(['prefix' => 'role'], function () {
-			Route::get('/',[RoleController::class,'index'])->name('setup.role.index');
+			Route::get('/',[RoleController::class,'index'])
+            ->name('setup.role.index')
+            ->middleware('auth.resource:role_permission_view');
 			Route::post('/add',[RoleController::class,'create'])->name('setup.role.create');
 			Route::post('/delete',[RoleController::class,'delete'])->name('setup.role.delete');
 			Route::post('/storePermission',[RoleController::class,'storePermission'])->name('setup.role.storePermission');
 		});
 
     Route::group(['prefix' => 'domain'], function () {
-        Route::get('/', [DomainMinistryAgenciesListController::class, 'index'])->name('domain.index');
+        Route::get('/', [DomainMinistryAgenciesListController::class, 'index'])
+        ->name('domain.index')
+        ->middleware('auth.resource:domain_name_view');
         Route::get('/register', [DomainMinistryAgenciesListController::class, 'create'])->name('domain.register');
         Route::post('/register', [DomainMinistryAgenciesListController::class, 'store'])->name('domain.store');
         Route::get('/{id}', [DomainMinistryAgenciesListController::class, 'edit'])->name('domain.edit');
@@ -200,7 +207,9 @@ Route::group(['middleware' => ['auth']], function () {
     });
 
     Route::group(['prefix' => 'positiondepartment'], function () {
-        Route::get('/', [PositionDepartmentController::class, 'index'])->name('positiondepartment.index');
+        Route::get('/', [PositionDepartmentController::class, 'index'])
+        ->name('positiondepartment.index')
+        ->middleware('auth.resource:position_department_view');
         Route::get('/addposition', [PositionDepartmentController::class, 'addposition'])->name('positiondepartment.addposition');
         Route::get('/adddepartment', [PositionDepartmentController::class, 'adddepartment'])->name('positiondepartment.adddepartment');
         Route::get('/updateposition/{id}', [PositionDepartmentController::class, 'updateposition'])->name('positiondepartment.updateposition');
@@ -215,9 +224,15 @@ Route::group(['middleware' => ['auth']], function () {
     });
 
     Route::group(['prefix' => 'validation-verification'], function () {
-        Route::get('/loopback', [LoopBackController::class, 'index'])->name('loopback.index');
-        Route::get('/replication', [ReplicationController::class, 'index'])->name('replication.index');
-        Route::get('/printList', [PrintListController::class, 'index'])->name('printList.index');
+        Route::get('/loopback', [LoopBackController::class, 'index'])
+                ->name('loopback.index')
+                ->middleware('auth.resource:loopback_smtp_test_view');
+        Route::get('/replication', [ReplicationController::class, 'index'])
+                ->name('replication.index')
+                ->middleware('auth.resource:replication_status_view');
+        Route::get('/printList', [PrintListController::class, 'index'])
+                ->name('printList.index')
+                ->middleware('auth.resource:print_list_ip_address_view');
         Route::post('/printList/validation', [PrintListController::class, 'validation'])->name('printList.validation');
     });
 
