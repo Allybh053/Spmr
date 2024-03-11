@@ -11,12 +11,14 @@
                                Registered Domain
                             </h1>
                         </div>
+                        @can('domain_name_add')
                         <div class="col-12 col-xl-auto mb-3">
                             <a class="btn btn-sm btn-light text-primary" href="{{ route('domain.register') }}">
                                 <i class="me-1" data-feather="plus"></i>
                                 Add New Domain
                             </a>
                         </div>
+                        @endcan
                     </div>
                 </div>
             </div>
@@ -80,13 +82,17 @@
                                 </td>
                                 <td>{{ $data->created_at->format('d/m/Y') }}</td>
                                 <td>
-                                    {{--<a class="btn btn-datatable btn-icon me-2 text-blue" title="View Detail" href=""><i data-feather="eye"></i></a>--}}
+                                    <!-- <a class="btn btn-datatable btn-icon me-2 text-blue" title="View Detail" href=""><i data-feather="eye"></i></a> -->
+                                    @can('domain_name_update')
                                     <a class="btn btn-datatable btn-icon btn-transparent-dark me-2" title="Edit Detail" href="{{ route('domain.edit', ['id' => $data->id]) }}"><i data-feather="edit"></i></a>
+                                    @endcan
+                                    @can('domain_name_delete')
                                     <form class="btn btn-datatable btn-icon me-2 text-blue" action="{{ route('domain.delete', [$data['id']]) }}" method="POST" onsubmit="return confirm('Are you sure you want to delete this FQDN?')">
                                         @csrf
                                         @method('POST')
                                         <button type="submit" class="btn btn-datatable btn-icon text-danger btn-transparent" title="Delete FQDN"><i data-feather="trash-2"></i></button>
                                     </form>
+                                    @endcan
                                 </td>
                             </tr>
                              @endforeach

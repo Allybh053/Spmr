@@ -419,13 +419,22 @@ class SmtpRelayController extends Controller
                 return $row['status'] == 0 ? 'Pending Created' : 'Done Created';
             })
             ->addColumn('action', function ($row) {
-                $data = '<a class="btn btn-datatable btn-icon btn-transparent-dark me-2" href="'.route('smtp_relay.view',[$row['id']]).'"><i class="fas fa-eye text-primary"></i></a>
-                <a class="btn btn-datatable btn-icon btn-transparent-dark me-2" href="'.route('smtp_relay.kemaskini',[$row['id']]).'"><i class="fas fa-edit text-primary"></i></a>
-                <a type="button" class="btn btn-datatable btn-icon btn-transparent-dark" id="delete" data-id="'.$row['id'].'" data-url="'.route('smtp_relay.delete',[$row['id']]).'">
-                <i class="fas fa-trash-alt text-danger"></i>
-                </a>';
-
-            return $data;
+                $data = '';
+    
+                // Add @can directive to check for permissions
+                if (auth()->user()->can('smtp_mail_relay_view')) {
+                    $data .= '<a class="btn btn-datatable btn-icon btn-transparent-dark me-2" href="'.route('smtp_relay.view',[$row['id']]).'"><i class="fas fa-eye text-primary"></i></a>';
+                }
+                if (auth()->user()->can('smtp_mail_relay_update')) {
+                    $data .= '<a class="btn btn-datatable btn-icon btn-transparent-dark me-2" href="'.route('smtp_relay.kemaskini',[$row['id']]).'"><i class="fas fa-edit text-primary"></i></a>';
+                }
+                if (auth()->user()->can('smtp_mail_relay_delete')) {
+                    $data .= '<a type="button" class="btn btn-datatable btn-icon btn-transparent-dark" id="delete" data-id="'.$row['id'].'" data-url="'.route('smtp_relay.delete',[$row['id']]).'">
+                        <i class="fas fa-trash-alt text-danger"></i>
+                    </a>';
+                }
+            
+                return $data;
 
             })
             ->rawColumns(['action'])

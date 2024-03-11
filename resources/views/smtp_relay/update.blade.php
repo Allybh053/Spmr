@@ -347,7 +347,9 @@
                     <span class="text-xs text-danger">Upload File format .pdf</span>
                 </div><hr>
                 <a class="btn btn-danger me-2 my-1" type="button" href="{{ route('smtp_relay.smtp_relay_req')}}">Cancel</a>
+                @can('smtp_mail_relay_update')
                 <button class="btn btn-primary me-2 my-1" type="submit">Update Request Form</button>
+                @endcan
                 </form>
             </div>
         </div>
