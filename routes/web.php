@@ -20,6 +20,8 @@ use App\Http\Controllers\SystemInformationController;
 use App\Http\Controllers\DomainMinistryAgenciesListController;
 use App\Http\Controllers\ActivityLogController;
 use App\Http\Controllers\PositionDepartmentController;
+use App\Http\Controllers\ReportQueryLogController;
+use App\Http\Controllers\MailLogController;
 
 
 /*
@@ -151,6 +153,11 @@ Route::group(['middleware' => ['auth']], function () {
         Route::get('/activity-logs', [ActivityLogController::class,'showActivityLogs'])->name('activityLog.index');
     });
 
+    Route::group(['prefix' => 'mail_log_overview'], function () {
+        Route::get('/', [MailLogController::class, 'index'])->name('mailLog.index');
+            Route::post('/validation', [MailLogController::class, 'validation'])->name('mailLog.validation');
+    });
+
     Route::group(['prefix' => 'report'], function () {
         Route::group(['prefix' => 'statistic-summary'], function () {
             Route::get('/', [ReportStatisticController::class, 'index'])->name('report.statistic.index');
@@ -160,6 +167,11 @@ Route::group(['middleware' => ['auth']], function () {
         Route::group(['prefix' => 'detail-sender'], function () {
             Route::get('/', [ReportDetailSenderController::class, 'index'])->name('report.detail.index');
             Route::post('/validation', [ReportDetailSenderController::class, 'validation'])->name('report.detail.validation');
+        });
+
+        Route::group(['prefix' => 'query-log'], function () {
+            Route::get('/', [ReportQueryLogController::class, 'index'])->name('report.queryLog.index');
+            Route::post('/validation', [ReportQueryLogController::class, 'validation'])->name('report.queryLog.validation');
         });
     });
 

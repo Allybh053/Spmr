@@ -40,9 +40,22 @@
                 });
             </script>
             @endif
-            {{--<div class="card">
+
+
+            <!-- add choose by server then show this searchong by server -->
+           <div class="card">
                 <div class="card-header">Searching</div>
                 <div class="card-body">
+                <div class="serverBox col-md-6">
+                                <div class="mb-3">
+                    <label class="small mb-1" for="inputAgencies">Choose Server:</label>
+                        {!! Form::select('server', $serverconfig,  $defaultServerId,  ['id'=>'server', 'name'=>'server', 'class'=>'form-control select2', 'placeholder'=>config('params.dropdown_default')]) !!}
+                        <p class="card-text mt-1 mb-1" id="ipAddress"></p>
+                        <div class="small text-muted"></div>
+                    </div>
+            </div>
+
+                    <div  id="searchBox">
                     <form id="searchForm">
                     <div class="row gx-3 mb-3">
                         <div class="col-md-6">
@@ -74,19 +87,26 @@
                             </div>
                     </form>
 
-                    <div id="totals" class="border border-primary rounded p-3 mb-3 mt-3">
-                        <div class="border-bottom border-primary mb-3">
-                            <span class="fw-bold">Total Aplikasi:</span> <span id="totalApplications"></span>
-                        </div>
-                        <div class="border-bottom border-primary mb-3">
-                            <span class="fw-bold">Total IP:</span> <span id="totalIP"></span>
-                        </div>
-                        <div class="border-bottom border-primary">
-                            <span class="fw-bold">Total Deactivated:</span> <span id="totalDeactivated"></span>
-                        </div>
-                    </div>
+                    <table class="display table table-striped mt-2" cellspacing="0" width="100%">
+                        <tfoot id="totals" class="rounded p-3 mb-3 mt-3">
+                            <tr>
+                                <td colspan="3" style="border-left: 1px solid black;"><span style="font-weight: bold;">Total Aplikasi</span></td>
+                                <td colspan="1"><span style="font-weight: bold;">:</span></td>
+                                <td colspan="2" style="text-align:left;border-right: 1px solid black;"><span id="totalApplications" style="font-weight: bold;"></span></td>
+                                <td colspan="3"><span style="font-weight: bold;">Total IP</span></td>
+                                <td colspan="1"><span style="font-weight: bold;">:</span></td>
+                                <td colspan="2"  style="text-align:left;border-right: 1px solid black;"><span id="totalIP" style="font-weight: bold;"></span></td>
+                                <td colspan="3"><span style="font-weight: bold;">Total Deactivated</span></td>
+                                <td colspan="1"><span style="font-weight: bold;">:</span></td>
+                                <td colspan="2"  style="text-align:left;border-right: 1px solid black;"><span id="totalDeactivated" style="font-weight: bold;"></span></td>
+                            </tr>
+                        </tfoot>
+                    </table>
+
+
+            </div>
                 </div>
-            </div>--}}
+            </div>
 
 
         </div>
@@ -214,6 +234,34 @@
                 },
                 error: function (error) {
                     console.log(error);
+                }
+            });
+        });
+
+        $('#searchBox').fadeOut();
+                        $('.serverBox').fadeIn();
+
+         // Event listener for select change
+         $('#server').on('change', function() {
+            var selectedServerId = $(this).val();
+
+            // AJAX request to fetch data based on the selected server ID
+            $.ajax({
+                url: "{!! route('dashboard.api') !!}",
+                method: 'GET',
+                data: {
+                    serverId: selectedServerId
+                },
+                success: function(response) {
+                    // Handle success response and update UI
+                    console.log(response);
+                    $('#searchBox').fadeIn();
+                        $('.serverBox').fadeOut();
+
+                },
+                error: function(xhr, status, error) {
+                    // Handle error
+                    console.error(xhr.responseText);
                 }
             });
         });

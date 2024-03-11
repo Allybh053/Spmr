@@ -82,6 +82,7 @@
                     <nav class="sidenav-menu-nested nav accordion" id="accordionSidenavPages">
                         <a class="nav-link" href="{{ route('report.statistic.index') }}">Statistic Traffic Summary</a>
                         <a class="nav-link" href="{{ route('report.detail.index') }}">Detail Report Sender</a>
+                        <a class="nav-link" href="{{ route('report.queryLog.index') }}">Query Log</a>
                     </nav>
                 </div>
 
@@ -95,7 +96,7 @@
 
 
                 <div class="sidenav-menu-heading">Log</div>
-                <a class="nav-link" href="#">
+                <a class="nav-link" href="{{ route('mailLog.index') }}">
                     <div class="nav-link-icon"><i data-feather="mail"></i></div>
                     Mail Log Viewer
                     <div class="sidenav-collapse-arrow"></div>
@@ -190,11 +191,20 @@
                         </a>
                     </nav>
                 </div>
-                <a class="nav-link" href="#">
+
+                <a class="nav-link collapsed" href="javascript:void(0);" data-bs-toggle="collapse" data-bs-target="#collapseValidation" aria-expanded="false" aria-controls="collapseValidation">
                     <div class="nav-link-icon"><i data-feather="feather"></i></div>
                     Validation & Verification
-                    <div class="sidenav-collapse-arrow"></div>
+                    <div class="sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
                 </a>
+                <div class="collapse" id="collapseValidation" data-bs-parent="#accordionSidenav">
+                    <nav class="sidenav-menu-nested nav accordion" id="accordionSidenavPages">
+                        <a class="nav-link" href="{{ route('report.statistic.index') }}">Loopback SMTP Test</a>
+                        <a class="nav-link" href="{{ route('report.detail.index') }}">Replication Status</a>
+                        <a class="nav-link" href="{{ route('report.queryLog.index') }}">Print List Ip Address</a>
+                    </nav>
+                </div>
+
             </div>
         </div>
         <!-- Sidenav Footer-->
