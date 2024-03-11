@@ -385,7 +385,16 @@ class SmtpRelayController extends Controller
                 return $row['ip_addr_server'];
             })
             ->addColumn('total_ip', function ($row) {
-                return '0';
+                $id = $row['id'];
+                $datasmtp = SmtpRelayReqForm::find($id);
+                $details = smtp_relay_server::where('form_id', '=', $datasmtp->form_id)->get();
+
+                if ($details->isNotEmpty()) {
+                    $totalCount = $details->count(); // Count the total occurrences of form_id
+                    return $totalCount;
+                } else {
+                    return '0';
+                }
             })
             ->addColumn('fqdn_system', function ($row) {
                 $fqdnSystem = json_decode($row['fqdn_system'], true);
@@ -423,11 +432,34 @@ class SmtpRelayController extends Controller
             ->make(true);
     }
 
-    public function delete(Request $request, $id)
+    /*public function delete(Request $request, $id)
     {
+        // delete application SMTP Relay
         $application = SmtpRelayReqForm::find($id);
         $application    ->  updated_by = Auth::user()->id;
         $application    ->  delete();
+
+        // delete data smtp relay server based on form_id
+        $smtpRelaySvr = smtp_relay_server::where('form_id', '=', $application->form_id)->get();
+        $smtpRelaySvr -> updated_by = Auth::user()->id;
+        $smtpRelaySvr -> delete();
+
+        return response()->json(['success' => '1', 'redirect' => route('smtp_relay.smtp_relay_req'), 'message' => 'Application successfully deleted']);
+    }*/
+
+    public function delete(Request $request, $id)
+    {
+        // Delete application SMTP Relay
+        $application = SmtpRelayReqForm::find($id);
+        if (!$application) {
+            return response()->json(['success' => '0', 'message' => 'Application not found']);
+        }
+
+        // Delete data smtp relay server based on form_id
+        smtp_relay_server::where('form_id', $application->form_id)->delete();
+
+        // Delete the application
+        $application->delete();
 
         return response()->json(['success' => '1', 'redirect' => route('smtp_relay.smtp_relay_req'), 'message' => 'Application successfully deleted']);
     }
@@ -447,10 +479,18 @@ class SmtpRelayController extends Controller
     public function saving(Request $request){
 
         $file = $request->file('attachement');
-        $fileName = $file->getClientOriginalName();
+        //$fileName = $file->getClientOriginalName();
+
+        if ($request->hasFile('attachement')) {
+            $fileName = $file->getClientOriginalName();
+            $file->move(storage_path('../Storage/attachements'), $fileName);
+        } else {
+            $fileName = null;
+        }
+
 
         // Move the uploaded file to the 'attachements' directory at the same level as the 'app' folder
-        $file->move(storage_path('../Storage/attachements'), $fileName);
+        //$file->move(storage_path('../Storage/attachements'), $fileName);
 
         // Create the user with the validated data
         $formdata = SmtpRelayReqForm::create([
@@ -559,8 +599,11 @@ class SmtpRelayController extends Controller
         $formsmtp = SmtpRelayReqForm::find($id);
         $details = smtp_relay_server::where('form_id', '=', $formsmtp->form_id)->get();
         $serversArray = Server::all()->toArray();
-        $domainsArray = DomainMinistryAgencies::take(10)->get()->toArray();
-        return view('smtp_relay.update',compact('formsmtp','details','serversArray','domainsArray'));
+        //$domainsArray = DomainMinistryAgencies::take(10)->get()->toArray();
+        $domainsArray = DomainMinistryAgencies::where('enabled', 1)->get()->toArray();
+        $departmentsArray = Department::where('status', 1)->get()->toArray();
+        $positionsArray = Position::where('status', 1)->get()->toArray();
+        return view('smtp_relay.update',compact('formsmtp','details','serversArray','domainsArray','departmentsArray','positionsArray'));
     }
 
     public function kemaskinidata(Request $request,$id){
@@ -568,7 +611,7 @@ class SmtpRelayController extends Controller
         // Update the main form data
         $formdata = $request->only([
             'ticket_id', 'types_req', 'project_name', 'system_owner_name', 'owner_email_addr', 'owner_phone_number',
-            'agencies', 'dept_div_unit', 'agencies_addr', 'req_justifications', 'smtp_relay_auth_method',
+            'ministry', 'agencies', 'dept_div_unit', 'agencies_addr', 'req_justifications', 'smtp_relay_auth_method',
             'smtp_relay_server', 'smtp_port', 'mailfrom_email_addr', 'mailbox_created', 'est_no_system_users_per_day',
             'est_no_email_sent_from_system_users_per_day', 'applicant_name', 'applicant_position', 'applicant_dept_div',
             'date_application', 'verifier_1_name', 'verifier_1_position', 'verifier_1_dept_div', 'date_verification_1',
@@ -585,7 +628,7 @@ class SmtpRelayController extends Controller
         $tableSpmrData = $request->input('tableSpmr');
         $smtpRelayServers = [];
 
-        // Update or insert 'smtp_relay_servers' based on the form_id
+        /*// Update or insert 'smtp_relay_servers' based on the form_id
         foreach ($tableSpmrData as $row) {
             smtp_relay_server::updateOrInsert(
                 [
@@ -593,9 +636,39 @@ class SmtpRelayController extends Controller
                     'server_name' => $row['server_name'],
                     'ip_addr_server' => $row['ip_addr_server'],
                     'fqdn_server' => $row['fqdn_server'],
+                    'created_at' => now(),
+                    'updated_at' => now(),
                 ]
             );
+        }*/
+
+        // Update existing rows or insert new rows based on the form_id
+        foreach ($tableSpmrData as $row) {
+            $existingServer = smtp_relay_server::where('id', $row['id'])
+                ->where('form_id', $id)
+                ->first();
+
+            if ($existingServer) {
+                // Update existing row
+                $existingServer->update([
+                    'server_name' => $row['server_name'],
+                    'ip_addr_server' => $row['ip_addr_server'],
+                    'fqdn_server' => $row['fqdn_server'],
+                    'updated_at' => now(),
+                ]);
+            } else {
+                // Insert new row
+                smtp_relay_server::create([
+                    'form_id' => $id,
+                    'server_name' => $row['server_name'],
+                    'ip_addr_server' => $row['ip_addr_server'],
+                    'fqdn_server' => $row['fqdn_server'],
+                    'created_at' => now(),
+                    'updated_at' => now(),
+                ]);
+            }
         }
+
         return redirect()->route('smtp_relay.smtp_relay_req')->with('success', 'Form updated successfully!');
     }
 
