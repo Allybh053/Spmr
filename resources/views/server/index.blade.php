@@ -11,12 +11,14 @@
                             Server Configuration
                         </h1>
                     </div>
+                    @can('server_add')
                     <div class="col-12 col-xl-auto mb-3">
                         <a class="btn btn-sm btn-light text-primary" href="{{ route('server.create') }}">
                             <i class="me-1" data-feather="plus"></i>
                             Add New Server Config
                         </a>
                     </div>
+                    @endcan
                 </div>
             </div>
         </div>
@@ -79,12 +81,16 @@
                     </div>
                 </div>
                 <div class="card-footer d-flex align-items-center justify-content-between small">
+                    @can('server_update')
                     <a class="text-primary" href="{{ route('server.edit', ['id' => $dataserver->id]) }}">Edit Configuration</a>
+                    @endcan
+                    @can('server_delete')
                     <a class="text-danger" href="{{ route('server.delete', ['id' => $dataserver->id]) }}" onclick="event.preventDefault(); document.getElementById('delete-form').submit();">Delete</a>
                     <form id="delete-form" action="{{ route('server.delete', ['id' => $dataserver->id]) }}" method="POST" style="display: none;">
                         @csrf
                         @method('DELETE')
                     </form>
+                    @endcan
                 </div>
             </div>
         </div>

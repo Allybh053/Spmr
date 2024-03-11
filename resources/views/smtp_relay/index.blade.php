@@ -16,12 +16,14 @@
                                 </nav>
                             </h1>
                         </div>
+                        @can('smtp_mail_relay_add')
                             <div class="col-12 col-xl-auto mb-3">
                                 <a class="btn btn-sm btn-light text-primary" href="{{ route('smtp_relay.daftar') }}">
                                     <i class="me-1" data-feather="plus"></i>
                                     Add New SMTP Relay Request
                                 </a>
                             </div>
+                            @endcan
                     </div>
                 </div>
             </div>

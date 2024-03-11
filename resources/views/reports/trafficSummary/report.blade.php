@@ -7,9 +7,11 @@
             <div class="row">
               <div class="col-md-12" style="text-align:right;">
                 <button type="button" class="btn btn-sm btn-info" id="back" style="float: left">Back</button>
+                @can('traffic_statistic_summary_download')
                 <button id="exportExcel" class="exportReport btn btn-sm btn-success">EXCEL</button>
                 <button id="exportCSV" class="exportReport btn btn-sm btn-primary">CSV</button>
                 <button id="exportPDF" class="exportReport btn btn-sm btn-danger">PDF</button>
+                @endcan
               </div>
             </div>
           </div>
