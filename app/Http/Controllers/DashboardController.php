@@ -29,6 +29,8 @@ class DashboardController extends Controller
         $serverIds = RoleServer::whereIn('role_id', $user->roles->pluck('id')->all())
         ->pluck('server_id');
 
+        $defaultServerId = 1;
+
         // Filter servers based on the fetched IDs
         $serverconfig = Server::whereIn('id', $serverIds)
         ->where('status', 1)
@@ -70,7 +72,7 @@ class DashboardController extends Controller
         
         
             // Pass the data to the view
-            return view('dashboard.index', compact('user', 'role', 'serverconfig', 'departmentCounts', 'limit', 'days', 'p1Data', 'p2Data', 'p3Data','timestamps', 'mailCounts'));
+            return view('dashboard.index', compact('user', 'role', 'serverconfig', 'departmentCounts', 'limit', 'days', 'p1Data', 'p2Data', 'p3Data','timestamps', 'mailCounts','defaultServerId'));
         }
 
     public function api(Request $request, $limit=null)

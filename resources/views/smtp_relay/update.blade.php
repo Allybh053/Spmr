@@ -8,7 +8,7 @@
                     <div class="col-auto mb-3">
                         <h1 class="page-header-title">
                             <div class="page-header-icon"><i data-feather="mail"></i></div>
-                            Update Form Registration Mail Relay MyGovUC3.0
+                            Update SMTP Relay Request MyGovUC3.0
                         </h1>
                     </div>
                     <div class="col-12 col-xl-auto mb-3">
@@ -21,7 +21,7 @@
     <!-- Main page content-->
     <div class="container-fluid px-4">
         <div class="card mb-4">
-            <div class="card-header text-center"><h3 class=" text-primary">Update Form Registration Mail Relay MyGovUC3.0</h3></div>
+            <div class="card-header text-center"><h3 class=" text-primary">Update SMTP Relay Request MyGovUC3.0</h3></div>
             <div class="card-body">
                 <form id="formserver" action="{{ route('smtp_relay.kemaskinidata', ['id' => $formsmtp->form_id]) }}" method="post" enctype="multipart/form-data">
                 @csrf
@@ -75,7 +75,8 @@
                 <div class="mb-3">
                     <label for="ministry">Ministry</label>
                     <select class="form-control select2" name="ministry" id="ministry" aria-label="Default select">
-                        <option selected disabled>Select Department/Division/Unit</option>
+                        {{--<option selected disabled>Select Department/Division/Unit</option>--}}
+                        <option value="{{ old('ministry', $formsmtp->ministry) }}">{{ old('ministry', $formsmtp->ministry) }}</option>
                         @foreach ($domainsArray as $domain)
                         <option value="{{ $domain['ministry_name'] }}">{{ $domain['ministry_name'] }}</option>
                         @endforeach
@@ -136,26 +137,28 @@
                             <tr>
                                 <th scope="col">System Name</th>
                                 <th scope="col">IP Address</th>
-                                <th scope="col">FQDN Sistem</th>
+                                <th scope="col">FQDN System</th>
                                 <th scope="col">Action</th>
                             </tr>
                         </thead>
                         <tbody id="dynamic-inputs-container">
                             @foreach ($details as $detail)
                                 <tr class="dynamic-input-row">
-                                <td>
-                                    <input type="text" name="tableSpmr[{{ $loop->index }}][server_name]" id="server_name" value="{{ old('tableSpmr.' . $loop->index . '.server_name', $detail->server_name) }}" class="form-control" required>
-                                </td>
-                                <td><input type="text" name="tableSpmr[{{ $loop->index }}][ip_addr_server]" id="ip_addr_server" value="{{ old('tableSpmr.' . $loop->index . '.ip_addr_server', $detail->ip_addr_server) }}" class="form-control" required></td>
-                                <td>
-                                    <select class="form-control select2" name="tableSpmr[{{ $loop->index }}][fqdn_server]" id="fqdn_server" required>
-                                        <option value="{{ old('tableSpmr.' . $loop->index . '.fqdn_server', $detail->fqdn_server) }}">{{ old('tableSpmr.' . $loop->index . '.fqdn_server', $detail->fqdn_server) }}</option>
-                                        @foreach ($domainsArray as $domain)
-                                        <option value="{{ $domain['domain_name'] }}">{{ $domain['domain_name'] }}</option>
-                                        @endforeach
-                                    </select>
-                                </td>
-                                <td><button class="btn btn-danger remove-row"><i class="me-1" data-feather="minus"></i>Remove</button></td>
+                                    <td hidden><input type="text" name="tableSpmr[{{ $loop->index }}][id]" id="id" value="{{ old('tableSpmr.' . $loop->index . '.id', $detail->id) }}" class="form-control" /></td>
+                                    <td>
+                                        <input type="text" name="tableSpmr[{{ $loop->index }}][server_name]" id="server_name" value="{{ old('tableSpmr.' . $loop->index . '.server_name', $detail->server_name) }}" class="form-control" required />
+                                    </td>
+                                    <td><input type="text" name="tableSpmr[{{ $loop->index }}][ip_addr_server]" id="ip_addr_server" value="{{ old('tableSpmr.' . $loop->index . '.ip_addr_server', $detail->ip_addr_server) }}" class="form-control" required /></td>
+                                    {{--<td>
+                                        <select class="form-control select2" name="tableSpmr[{{ $loop->index }}][fqdn_server]" id="fqdn_server" required>
+                                            <option value="{{ old('tableSpmr.' . $loop->index . '.fqdn_server', $detail->fqdn_server) }}">{{ old('tableSpmr.' . $loop->index . '.fqdn_server', $detail->fqdn_server) }}</option>
+                                            @foreach ($domainsArray as $domain)
+                                            <option value="{{ $domain['domain_name'] }}">{{ $domain['domain_name'] }}</option>
+                                            @endforeach
+                                        </select>
+                                    </td>--}}
+                                        <td><input type="text" name="tableSpmr[{{ $loop->index }}][fqdn_server]" id="fqdn_server" value="{{ old('tableSpmr.' . $loop->index . '.fqdn_server', $detail->fqdn_server) }}" class="form-control" required /></td>
+                                    <td><button class="btn btn-danger remove-row"><i class="me-1" data-feather="minus"></i>Remove</button></td>
                                 </tr>
                             @endforeach
                         </tbody>
@@ -174,6 +177,7 @@
                         <label for="smtp_port">SMTP Port Number</label>
                         <select class="form-control select2" name="smtp_port" id="smtp_port" aria-label="Default select" required>
                             <option value="{{ old('smtp_port', $formsmtp->smtp_port) }}">{{ old('smtp_port', $formsmtp->smtp_port) }} /tcp</option>
+                            <option value="0">Not Answered</option>
                             <option value="25">25/tcp</option>
                             <option value="465">465/tcp</option>
                             <option value="587">587/tcp</option>
@@ -206,6 +210,7 @@
                             @else
                                 Yes
                             @endif</option>
+                            <option value="0">Not Answered</option>
                             <option value="1">No</option>
                             <option value="2">Yes</option>
                         </select>
@@ -233,14 +238,20 @@
                         <label class=" mb-1" for="applicant_position">Applicant's Position:</label>
                         <select class="form-control select2" name="applicant_position" id="applicant_position" aria-label="Default select">
                             <option value="{{ old('applicant_position', $formsmtp->applicant_position) }}">{{ old('applicant_position', $formsmtp->applicant_position) }}</option>
-                            <option value="Penolong Pengarah F44">Penolong Pengarah F44</option>
+                            {{--<option value="Penolong Pengarah F44">Penolong Pengarah F44</option>--}}
+                            @foreach ($positionsArray as $position)
+                                <option value="{{ $position['name'] }}">{{ $position['name'] }}</option>
+                            @endforeach
                         </select>
                     </div>
                     <div class="mb-3 col-md-4">
                         <label class=" mb-1" for="applicant_dept_div">Applicant's Department / Division:</label>
                         <select class="form-control select2" name="applicant_dept_div" id="applicant_dept_div" aria-label="Default select">
                             <option value="{{ old('applicant_dept_div', $formsmtp->applicant_dept_div) }}">{{ old('applicant_dept_div', $formsmtp->applicant_dept_div) }}</option>
-                            <option value="Jabatan Audit Negara/Bahagian Teknologi Maklumat">Jabatan Audit Negara/Bahagian Teknologi Maklumat</option>
+                            {{--<option value="Jabatan Audit Negara/Bahagian Teknologi Maklumat">Jabatan Audit Negara/Bahagian Teknologi Maklumat</option>--}}
+                            @foreach ($departmentsArray as $department)
+                                <option value="{{ $department['name'] }}">{{ $department['name'] }}</option>
+                            @endforeach
                         </select>
                     </div>
                     <div class="mb-3 col-md-4">
@@ -259,15 +270,21 @@
                         <label class=" mb-1" for="verifier_1_position">Verifier Position:</label>
                         <select class="form-control select2" name="verifier_1_position" id="verifier_1_position" aria-label="Default select">
                             <option value="{{ old('verifier_1_position', $formsmtp->verifier_1_position) }}">{{ old('verifier_1_position', $formsmtp->verifier_1_position) }}</option>
-                            <option value="Pegawai Teknologi Maklumat F41">Pegawai Teknologi Maklumat F41</option>
-                            <option value="Pegawai Teknologi Maklumat F44">Pegawai Teknologi Maklumat F44</option>
+                            {{--<option value="Pegawai Teknologi Maklumat F41">Pegawai Teknologi Maklumat F41</option>
+                            <option value="Pegawai Teknologi Maklumat F44">Pegawai Teknologi Maklumat F44</option>--}}
+                            @foreach ($positionsArray as $position)
+                                <option value="{{ $position['name'] }}">{{ $position['name'] }}</option>
+                            @endforeach
                         </select>
                     </div>
                     <div class="mb-3 col-md-4">
                         <label class=" mb-1" for="verifier_1_dept_div">Verifier Department / Division:</label>
                         <select class="form-control select2" name="verifier_1_dept_div" id="verifier_1_dept_div" aria-label="Default select">
                             <option value="{{ old('verifier_1_dept_div', $formsmtp->verifier_1_dept_div) }}">{{ old('verifier_1_dept_div', $formsmtp->verifier_1_dept_div) }}</option>
-                            <option value="Jabatan Audit Negara/Bahagian Teknologi Maklumat">Jabatan Audit Negara/Bahagian Teknologi Maklumat</option>
+                            {{--<option value="Jabatan Audit Negara/Bahagian Teknologi Maklumat">Jabatan Audit Negara/Bahagian Teknologi Maklumat</option>--}}
+                            @foreach ($departmentsArray as $department)
+                                <option value="{{ $department['name'] }}">{{ $department['name'] }}</option>
+                            @endforeach
                         </select>
                     </div>
                     <div class="mb-3 col-md-4">
@@ -276,7 +293,7 @@
                     </div>
                 </div>
                 <hr>
-                <div class="card-header text-center"><h4 class=" text-primary">Helpdesk Oficer</h4></div><br>
+                <div class="card-header text-center"><h4 class=" text-primary">Helpdesk Officer</h4></div><br>
                 <div class="row gx-3 mb-3">
                     <div class="col-md-6">
                         <label for="verifier_2_name">Officer Name</label>
@@ -298,14 +315,20 @@
                         <label class=" mb-1" for="verifier_3_position">Approval Position</label>
                         <select class="form-control select2" name="verifier_3_position" id="verifier_3_position" aria-label="Default select">
                             <option value="{{ old('verifier_3_position', $formsmtp->verifier_3_position) }}">{{ old('verifier_3_position', $formsmtp->verifier_3_position) }}</option>
-                            <option value="PPK MAMPU">PPK MAMPU</option>
+                            {{--<option value="PPK MAMPU">PPK MAMPU</option>--}}
+                            @foreach ($positionsArray as $position)
+                                <option value="{{ $position['name'] }}">{{ $position['name'] }}</option>
+                            @endforeach
                         </select>
                     </div>
                     <div class="mb-3 col-md-4">
                         <label class=" mb-1" for="verifier_3_dept_div">Approval Department / Division:</label>
                         <select class="form-control select2" name="verifier_3_dept_div" id="verifier_3_dept_div" aria-label="Default select">
                             <option value="{{ old('verifier_3_dept_div', $formsmtp->verifier_3_dept_div) }}">{{ old('verifier_3_dept_div', $formsmtp->verifier_3_dept_div) }}</option>
-                            <option value="Pasukan Projek MyGovUC3.0">Pasukan Projek MyGovUC3.0</option>
+                            {{--<option value="Pasukan Projek MyGovUC3.0">Pasukan Projek MyGovUC3.0</option>--}}
+                            @foreach ($departmentsArray as $department)
+                                <option value="{{ $department['name'] }}">{{ $department['name'] }}</option>
+                            @endforeach
                         </select>
                     </div>
                     <div class="mb-3 col-md-4">
@@ -356,34 +379,37 @@ function addRow(containerId) {
     // Find all input elements inside the cloned row and update their names
     newRow.find('input').each(function () {
         var nameAttr = $(this).attr('name');
-        $(this).attr('name', updateNameAttribute(nameAttr));
+        $(this).attr('name', updateNameAttribute(containerId, nameAttr));
         $(this).val(''); // Optionally, clear input values
     });
 
     // Find the select element inside the cloned row and update its name
-    var selectElement = newRow.find('select');
-    var nameAttr = selectElement.attr('name');
-    selectElement.attr('name', updateNameAttribute(nameAttr));
+    //var selectElement = newRow.find('select');
+    //var nameAttr = selectElement.attr('name');
+    //selectElement.attr('name', updateNameAttribute(nameAttr));
 
     // Append the cloned row to the container
     container.append(newRow);
 
     // Initialize Select2 for the cloned dropdown
-    selectElement.select2({
+    /*selectElement.select2({
         allowClear: true,
         tags: true,
-    });
+    });*/
 }
 
 // Function to update the name attribute of inputs
-function updateNameAttribute(nameAttr) {
+function updateNameAttribute(containerId, nameAttr) {
+    var container = $(containerId);
+    var existingRows = container.find('.dynamic-input-row');
+
     // Extract the current index from the name attribute
     var regex = /\[(\d+)\]/;
     var matches = regex.exec(nameAttr);
     var currentIndex = matches ? parseInt(matches[1]) : 0;
 
     // Increment the index for the next row
-    var newIndex = currentIndex + 1;
+    var newIndex = currentIndex + existingRows.length;
 
     // Replace the index in the name attribute
     return nameAttr.replace('[' + currentIndex + ']', '[' + newIndex + ']');

@@ -60,9 +60,13 @@
                                         <td>{{ $log->ip_address }}</td>
                                         <td style="white-space: pre-line;">{{ $log->user_agent }}</td>
                                         <td>{{ $log->url }}</td>
-                                        <td class="scrollable-column">{{ $log->old_values }}</td>
-                                        <td class="scrollable-column">{{ $log->new_values }}</td>
-                                        <td>{{ $log->created_at }}</td>
+                                        <td class="scrollable-column">
+                                            <pre>{{ json_encode(json_decode($log->old_values), JSON_PRETTY_PRINT) }}</pre>
+                                        </td>
+                                        <td class="scrollable-column">
+                                            <pre>{{ json_encode(json_decode($log->new_values), JSON_PRETTY_PRINT) }}</pre>
+                                        </td>
+                                        <td><pre>{{ $log->created_at }}</pre></td>
                                     </tr>
                                     @endforeach
                                 </tbody>

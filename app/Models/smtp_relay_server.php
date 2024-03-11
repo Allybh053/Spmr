@@ -24,4 +24,7 @@ class smtp_relay_server extends Model  implements Auditable
         'smtp_username',
         'smtp_password',
     ];
+
+    // If your table has timestamps (created_at and updated_at columns)
+    public $timestamps = true;
 }
