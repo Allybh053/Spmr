@@ -95,14 +95,14 @@
 <script>
     function updateStatus(serverId, checkbox) {
         // Check if the server is already active
-        if (checkbox.checked) {
-            const activeServer = document.querySelector('.form-check-input:checked');
-            if (activeServer && activeServer !== checkbox) {
-                alert("One server at a time can be active. Deactivate the current active server before activating another one.");
-                checkbox.checked = false;
-                return;
-            }
-        }
+        // if (checkbox.checked) {
+        //     const activeServer = document.querySelector('.form-check-input:checked');
+        //     if (activeServer && activeServer !== checkbox) {
+        //         alert("One server at a time can be active. Deactivate the current active server before activating another one.");
+        //         checkbox.checked = false;
+        //         return;
+        //     }
+        // }
 
         // Assuming you have the server/update-status route
         fetch('/server/update-status', {

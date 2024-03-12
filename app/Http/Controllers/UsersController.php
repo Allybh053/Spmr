@@ -41,13 +41,12 @@ class UsersController extends Controller
     {
         // Check if the form is submitted (POST request)
         if ($request->isMethod('post')) {
-            // The form has been submitted
 
             // Validate the form data
             $validatedData = $request->validate([
                 'username' => 'required|string',
                 'email' => 'required|email',
-                'acct_types' => 'required', // Adjust validation rules based on your needs
+                'acct_types' => 'required',
                 'role_id' => 'required',
                 'ldap_authentication' => 'required',
                 'password' => 'required',
@@ -56,6 +55,8 @@ class UsersController extends Controller
                 'lname' => 'required',
                 'phone' => 'nullable',
             ]);
+            dd("asdasdasdad");
+            die();
             $username = $validatedData['username'];
             $email = $validatedData['email'];
             $acctTypes = $validatedData['acct_types'];
@@ -128,6 +129,7 @@ class UsersController extends Controller
             'fname' => 'required',
             'lname' => 'required',
             'phone' => 'nullable',
+            'password'=> 'nullable',
             // Add more fields as needed
         ]);
 
@@ -153,7 +155,7 @@ class UsersController extends Controller
             $user->password = Hash::make($request->password);
             $user->save();
         }
-
+        dd($request);
         User::where('id', $id)->update($validatedData);
 
         return redirect()->route('usermanagements.index')->with('success', 'User updated successfully');

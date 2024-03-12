@@ -58,12 +58,12 @@
                                 <!-- Form Group (first name)-->
                                 <div class="col-md-6">
                                     <label class="small mb-1" for="fname">First name</label>
-                                    <input class="form-control" id="fname" name="fname" type="text" placeholder="Enter your first name" value="{{ old('fname', $user->fname) }}" />
+                                    <input class="form-control" id="fname" name="fname" type="text" placeholder="Enter your first name" value="{{ old('fname', $user->fname) }}" required/>
                                 </div>
                                 <!-- Form Group (last name)-->
                                 <div class="col-md-6">
                                     <label class="small mb-1" for="lname">Last name</label>
-                                    <input class="form-control" id="lname" name="lname" type="text" placeholder="Enter your last name" value="{{ old('lname', $user->lname) }}" />
+                                    <input class="form-control" id="lname" name="lname" type="text" placeholder="Enter your last name" value="{{ old('lname', $user->lname) }}" required/>
                                 </div>
                             </div>
                             <!-- Form Row        -->
@@ -82,7 +82,7 @@
                                 <!-- Form Group (location)-->
                                 <div class="md-3">
                                     <label class="small mb-1" for="role_id">Role Type</label>
-                                    <select class="form-select" name="role_id" aria-label="Default select example">
+                                    <select class="form-select" name="role_id" aria-label="Default select example" required>
                                         <option value="{{ $user->role_id }}" selected>
                                             @if($user->role)
                                                 {{ $user->role->name }}
@@ -106,7 +106,7 @@
                                 <!-- Form Group (phone number)-->
                                 <div class="col-md-6" @disabled(true)>
                                     <label class="small mb-1" for="ldap_authentication">LDAP Authentication</label>
-                                    <select class="form-select" name="ldap_authentication" aria-label="Default select example">
+                                    <select class="form-select" name="ldap_authentication" aria-label="Default select example" required>
                                         <option selected value="{{ $user->ldap_authentication }}"></option>
                                         <option value="1">Yes</option>
                                         <option value="0">No</option>
