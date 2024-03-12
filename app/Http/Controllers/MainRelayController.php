@@ -67,4 +67,8 @@ class MainRelayController extends Controller
     public function updatestatus(){
 
     }
+
+    public function reject($id){
+        dd($id);
+    }
 }

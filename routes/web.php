@@ -92,6 +92,8 @@ Route::group(['middleware' => ['auth']], function () {
         Route::get('/', [MainRelayController::class, 'index'])->name('mailrelay.index')->middleware('auth.resource:manage_mail_relay_view');
         Route::get('/register', [MainRelayController::class, 'show'])->name('mailrelay.register');
         Route::get('/detail/{id}', [MainRelayController::class, 'view','connect'])->name('mailrelay.edit');
+        Route::get('/reject/{id}', [MainRelayController::class, 'reject'])->name('mailrelay.reject');
+
         // Route::get('/detail/{id}', [MainRelayController::class, 'updatestatus']);
     });
 

@@ -109,6 +109,11 @@
         <div class="card mb-4">
             <div class="card-header">CLI Section<br><br><span class="text-danger">***</span> <u>Form ID: {{ $smtpMailServers->first()->form_id }}</u><br><br><span class="badge btn-danger">*** Any command execute will RUN at the Server directly</span></div>
             <div class="card-body">
+                <div>
+                    <input class="form-control" type="text" id="commandInput" placeholder="Enter command here...."><br>
+                    <button class="btn btn-primary" id="sendButton">Send</button>
+                    <button class="btn btn-success" id="connectButton">Connect</button>
+                </div><br>
                 <div id="terminal"></div>
             </div>
         </div>
@@ -129,33 +134,123 @@
                     @csrf
                     @method('PUT')
                     <div class="card-body"  style="text-align: center;">
-                            <button class="btn btn-danger me-2 my-1" type="button">Reject Request</button>
+                        <button class="btn btn-danger me-2 my-1" type="button" onclick="rejectRequest()">Reject Request</button>
                         <button class="btn btn-primary me-2 my-1" type="button">Submit Approval</button>
                     </div>
                 </form>
             </div>
         </div>
+
+    <script src="https://unpkg.com/xterm@5.2.1/lib/xterm.js"></script>
+    <script src="https://unpkg.com/xterm-addon-fit"></script>
+
+    <script src="https://unpkg.com/xterm"></script>
     <script>
-        const terminal = new Terminal();
-        const socket = new WebSocket(`wss://10.0.0.5:8000`);
+document.addEventListener('DOMContentLoaded', function () {
+    const term = new Terminal();
+    term.open(document.getElementById('terminal'));
 
-        terminal.open(document.getElementById('terminal'));
+    let socket;
 
+    const connectButton = document.getElementById('connectButton');
+    connectButton.addEventListener('click', connectWebSocket);
+
+    function connectWebSocket() {
+        const serverAddress = 'ws://20.6.33.199:8000/';
+
+        // Close existing socket if any
+        if (socket && socket.readyState === WebSocket.OPEN) {
+            socket.close();
+        }
+
+        // Create a new WebSocket connection
+        socket = new WebSocket(serverAddress);
+
+        // Set up WebSocket event listeners
         socket.addEventListener('open', (event) => {
-            terminal.writeln('SSH connection established.');
+            console.log('Connected to WebSocket');
+            term.writeln('SPMR Connected to the server');
+            term.onData(data => socket.send(data));
+            socket.onmessage = event => handleWebSocketMessage(event.data);
+            window.addEventListener('resize', () => term.fit());
+            socket.addEventListener('close', () => {
+                term.writeln('\r\nConnection closed.');
+                term.detach(socket);
+            }); 
         });
 
-        socket.addEventListener('message', (event) => {
-            terminal.write(event.data);
+        socket.addEventListener('error', (event) => {
+            console.error('WebSocket connection error:', event);
+            // Handle the error as needed
         });
+    }
 
-        socket.addEventListener('close', (event) => {
-            terminal.writeln('SSH connection closed.');
-        });
+    function handleWebSocketMessage(message) {
+    const formattedOutput = message.replace(/\n/g, '<br>');
 
-        terminal.onData((data) => {
-            socket.send(data);
-        });
+    if (message.startsWith('responded')) {
+        term.write('<span style="color: green;">' + formattedOutput + '</span>');
+    } else if (message.startsWith('FILE_CONTENT:')) {
+        const fileContent = message.substring('FILE_CONTENT:'.length);
+        term.writeln(fileContent);
+    } else {
+        term.writeln(formattedOutput);
+    }
+}
+
+
+    function sendCommand() {
+        const commandInput = document.getElementById('commandInput');
+        const command = commandInput.value.trim();
+
+        if (command) {
+            term.writeln('Sent: ' + command);
+            socket.send(command);
+            commandInput.value = '';
+        }
+    }
+
+    // Handle the 'key' event to send command when Enter is pressed
+    term.onKey(e => {
+        const printable = !e.altKey && !e.ctrlKey && !e.metaKey;
+        if (e.key === '\r' && printable) {
+            sendCommand();
+        }
+    });
+
+    // Handle button click to send command
+    document.getElementById('sendButton').addEventListener('click', sendCommand);
+
+    socket.addEventListener('close', (event) => {
+        console.log('Connection closed:', event);
+    });
+});
+
+function rejectRequest() {
+    // Assuming you have some identifier for the request (e.g., request ID)
+    var requestId = 123;  // Replace with your actual request ID or dynamically retrieve it
+
+    // Make an AJAX request to update the column on the server
+    fetch(`/mailrelay/reject/${requestId}`, {
+        method: 'GET',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+    })
+    .then(response => {
+        if (!response.ok) {
+            throw new Error('Network response was not ok');
+        }
+        return response.json();
+    })
+    .then(data => {
+        console.log('Success:', data);
+        // Handle success, if needed
+    })
+    .catch(error => {
+        console.error('Error:', error);
+    });
+}
     </script>
     <style>
         th,td {

@@ -21,6 +21,7 @@
         <link rel="stylesheet" href="{{ asset('css/xterm.css') }}">
         <script data-search-pseudo-elements defer src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/js/all.min.js" crossorigin="anonymous"></script>
 
+
 <style>
     .select2-selection__clear {
     display: none;
