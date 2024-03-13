@@ -5,6 +5,9 @@ namespace App\Http\Controllers;
 use App\Models\Server;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use App\Models\RoleServer;
+use Spatie\Permission\Models\Role;
+use Illuminate\Support\Facades\DB;
 
 class ServerController extends Controller
 {
@@ -63,7 +66,13 @@ class ServerController extends Controller
             'sshkey' => $fileName, // Save the path relative to the storage directory
         ]);
 
+        $roles = Role::get();
 
+        foreach ($roles as $role) {
+            DB::insert('INSERT INTO role_servers (role_id, server_id) VALUES (?, ?)', [$role->id, $server->id]);
+
+        }
+        
         return redirect()->route('server.index')->with('success', 'Server details added successfully');
     }
     /**
