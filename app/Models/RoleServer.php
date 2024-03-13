@@ -12,8 +12,8 @@ class RoleServer extends Model  implements Auditable
     use AuditableTrait;
     
     protected $table = 'role_servers';
-    protected $fillable = ['role_id', 'server_id'];
-    protected $primaryKey = null; // Set the primary key to null to indicate no primary key
+    protected $primaryKey = ['role_id', 'server_id'];
+
     
     public $incrementing = false; 
     public $timestamps = false;

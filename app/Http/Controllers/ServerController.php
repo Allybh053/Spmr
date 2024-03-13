@@ -6,7 +6,9 @@ use App\Models\RoleServer;
 use App\Models\Server;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use App\Models\RoleServer;
 use Spatie\Permission\Models\Role;
+use Illuminate\Support\Facades\DB;
 
 class ServerController extends Controller
 {
@@ -65,24 +67,13 @@ class ServerController extends Controller
             'sshkey' => $fileName, // Save the path relative to the storage directory
         ]);
 
-        //penambahbaikkan aimi
-        $developerRole = Role::where('name', 'Developer')->first();
-        $superadminRole = Role::where('name', 'Superadmin')->first();
+        $roles = Role::get();
 
-        // Make sure the roles exist before proceeding
-        if ($developerRole && $superadminRole) {
-            // Create RoleServer records for developer and superadmin roles
-            $roleServerDeveloper = new RoleServer();
-            $roleServerDeveloper->role_id = $developerRole->id;
-            $roleServerDeveloper->server_id = $server->id;
-            $roleServerDeveloper->save();
+        foreach ($roles as $role) {
+            DB::insert('INSERT INTO role_servers (role_id, server_id) VALUES (?, ?)', [$role->id, $server->id]);
 
-            $roleServerSuperadmin = new RoleServer();
-            $roleServerSuperadmin->role_id = $superadminRole->id;
-            $roleServerSuperadmin->server_id = $server->id;
-            $roleServerSuperadmin->save();
         }
-
+        
         return redirect()->route('server.index')->with('success', 'Server details added successfully');
     }
     /**
