@@ -14,9 +14,6 @@ return new class extends Migration
         Schema::create('role_servers', function (Blueprint $table) {
             $table->unsignedInteger('server_id');
             $table->unsignedInteger('role_id');
-
-            
-        $table->primary(['server_id', 'role_id']);
         });
 
     }
