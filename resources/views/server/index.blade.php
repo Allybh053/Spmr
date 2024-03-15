@@ -85,12 +85,8 @@
                     <a class="text-primary" href="{{ route('server.edit', ['id' => $dataserver->id]) }}">Edit Configuration</a>
                     @endcan
                     @can('server_delete')
-                    <a class="text-danger" href="{{ route('server.delete', ['id' => $dataserver->id]) }}" onclick="event.preventDefault(); document.getElementById('delete-form').submit();">Delete</a>
-                    <form id="delete-form" action="{{ route('server.delete', ['id' => $dataserver->id]) }}" method="POST" style="display: none;">
-                        @csrf
-                        @method('DELETE')
-                    </form>
-                    @endcan
+                            <button class="btn btn-danger delete-btn" data-id="{{ $dataserver->id }}">Delete</button>
+                        @endcan
                 </div>
             </div>
         </div>
@@ -133,6 +129,60 @@
             checkbox.checked = !checkbox.checked;
         });
     }
+
+
+    document.addEventListener('DOMContentLoaded', function () {
+        document.querySelectorAll('.delete-btn').forEach(function (button) {
+            button.addEventListener('click', function () {
+                var serverId = this.getAttribute('data-id');
+                confirmDelete(serverId); // Call confirmDelete function with server ID
+            });
+        });
+    });
+
+    function confirmDelete(serverId) {
+        Swal.fire({
+            title: 'Are you sure?',
+            text: 'You will not be able to recover this server!',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#d33',
+            cancelButtonColor: '#3085d6',
+            confirmButtonText: 'Yes, delete it!'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                deleteServer(serverId); // Call deleteServer function if user confirms
+            }
+        });
+    }
+
+    // Function to handle deletion with Ajax
+    function deleteServer(serverId) {
+        var deleteUrl = '/server/servers/' + serverId;
+
+        fetch(deleteUrl, {
+            method: 'POST',
+            headers: {
+                'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                'Content-Type': 'application/json'
+            }
+        })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                return response.json();
+            })
+            .then(data => {
+                console.log('Server deleted successfully');
+                location.reload();
+            })
+            .catch(error => {
+                console.error('There was a problem with the deletion:', error);
+                // Optionally, handle error and display message to user
+            });
+    }
+
 </script>
 
 </main>
