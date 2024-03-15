@@ -128,7 +128,7 @@ Route::group(['middleware' => ['auth']], function () {
         Route::post('/update/{id}', [ServerController::class, 'update'])->name('server.update');
 
         Route::get('/{id}/file/download', [ServerController::class, 'downloadFile'])->name('server.file.download');
-        Route::delete('/servers/{id}', [ServerController::class, 'deleteServer'])->name('server.delete');
+        Route::post('/servers/{id}', [ServerController::class, 'deleteServer'])->name('server.delete');
 
     });
 
