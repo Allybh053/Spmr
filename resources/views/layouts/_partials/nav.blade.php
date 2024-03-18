@@ -20,11 +20,11 @@
                     <span class="badge bg-success-soft text-success ms-auto">2 New!</span>
                 </a>
                 <!-- Sidenav Menu Heading (Core)-->
-                <div class="sidenav-menu-heading">Dashboard</div>
+                <div class="sidenav-menu-heading">Main Page</div>
                 <!-- Sidenav Accordion (Dashboard)-->
                 <a class="nav-link" href="{{ route('dashboard.index')}}">
                     <div class="nav-link-icon"><i data-feather="activity"></i></div>
-                    Dashboards
+                    Dashboard
                     <div class="sidenav-collapse-arrow"></div>
                 </a>
 
@@ -37,7 +37,7 @@
                 </a> -->
 
                  <!-- Sidenav Menu Heading (Core)-->
-                 <div class="sidenav-menu-heading">Management</div>
+                 <div class="sidenav-menu-heading">Mail Relay Management</div>
                 <!-- Sidenav Link (Charts)-->
                 @can('smtp_mail_relay_view')
                 <a class="nav-link" href="{{ route('smtp_relay.smtp_relay_req') }}">
@@ -76,39 +76,24 @@
 
                 <!-- </div> -->
 
-                <div class="sidenav-menu-heading">Report</div>
-                <a class="nav-link collapsed" href="javascript:void(0);" data-bs-toggle="collapse" data-bs-target="#collapseReport" aria-expanded="false" aria-controls="collapseReport">
-                    <div class="nav-link-icon"><i data-feather="trello"></i></div>
-                   Reporting
-                    <div class="sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
-                </a>
-                <div class="collapse" id="collapseReport" data-bs-parent="#accordionSidenav">
-                    <nav class="sidenav-menu-nested nav accordion" id="accordionSidenavPages">
-                    @can('traffic_statistic_summary_view')
-                        <a class="nav-link" href="{{ route('report.statistic.index') }}">Statistic Traffic Summary</a>
-                    @endcan
-                     @can('detail_report_sender_view')
-                        <a class="nav-link" href="{{ route('report.detail.index') }}">Detail Report Sender</a>
-                         @endcan
-                         @can('query_log_view')
-                        <a class="nav-link" href="{{ route('report.queryLog.index') }}">Query Log</a>
-                         @endcan
-                    </nav>
-                </div>
-
                 @can('server_overview_view')
-                <div class="sidenav-menu-heading">Services</div>
+                <div class="sidenav-menu-heading">Services Management</div>
                 <a class="nav-link" href="{{ route('log.index') }}">
                     <div class="nav-link-icon"><i data-feather="globe"></i></div>
                     Server Overview
                     <div class="sidenav-collapse-arrow"></div>
                 </a>
                 @endcan
+                <a class="nav-link" href="#">
+                    <div class="nav-link-icon"><i data-feather="target"></i></div>
+                    Manage Services
+                    <div class="sidenav-collapse-arrow"></div>
+                </a>
 
 
-                <div class="sidenav-menu-heading">Log</div>
+                <div class="sidenav-menu-heading">Review Management</div>
                 <!-- Sidenav Accordion (Dashboard)-->
-                <a class="nav-link collapsed" href="javascript:void(0);" data-bs-toggle="collapse" data-bs-target="#collapseAppLog" aria-expanded="false" aria-controls="collapseAppLog">
+                {{--<a class="nav-link collapsed" href="javascript:void(0);" data-bs-toggle="collapse" data-bs-target="#collapseAppLog" aria-expanded="false" aria-controls="collapseAppLog">
                     <div class="nav-link-icon"><i data-feather="mail"></i></div>
                     Log
                     <div class="sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
@@ -131,15 +116,67 @@
                         @endcan
 
                     </nav>
+                </div>--}}
+                @can('mail_log_view')
+                    <a class="nav-link" href="{{ route('mailLog.index') }}">
+                        <div class="nav-link-icon"><i data-feather="mail"></i></div>
+                        Mail Log Viewer
+                        <div class="sidenav-collapse-arrow"></div>
+                    </a>
+                @endcan
+
+                <a class="nav-link collapsed" href="javascript:void(0);" data-bs-toggle="collapse" data-bs-target="#collapseValidation" aria-expanded="false" aria-controls="collapseValidation">
+                    <div class="nav-link-icon"><i data-feather="feather"></i></div>
+                    Validation & Verification
+                    <div class="sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
+                </a>
+                <div class="collapse" id="collapseValidation" data-bs-parent="#accordionSidenav">
+                    <nav class="sidenav-menu-nested nav accordion" id="accordionSidenavPages">
+                        @can('loopback_smtp_test_view')
+                            <a class="nav-link" href="{{ route('loopback.index') }}">Loopback SMTP Test</a>
+                        @endcan
+                        {{--@can('replication_status_view')
+                            <a class="nav-link" href="{{ route('replication.index') }}">Replication Status</a>
+                        @endcan--}}
+                        {{--@can('print_list_ip_address_view')
+                            <a class="nav-link" href="{{ route('printList.index') }}">Print List Ip Address</a>
+                        @endcan--}}
+                    </nav>
                 </div>
+
+
+                <div class="sidenav-menu-heading">Report Management</div>
+                {{--<a class="nav-link collapsed" href="javascript:void(0);" data-bs-toggle="collapse" data-bs-target="#collapseReport" aria-expanded="false" aria-controls="collapseReport">
+                    <div class="nav-link-icon"><i data-feather="trello"></i></div>
+                    Reporting
+                    <div class="sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
+                </a>
+                <div class="collapse" id="collapseReport" data-bs-parent="#accordionSidenav">
+                    <nav class="sidenav-menu-nested nav accordion" id="accordionSidenavPages">
+                        @can('traffic_statistic_summary_view')
+                            <a class="nav-link" href="{{ route('report.statistic.index') }}">Statistic Traffic Summary</a>
+                        @endcan
+                        @can('detail_report_sender_view')
+                            <a class="nav-link" href="{{ route('report.detail.index') }}">Detail Report Sender</a>
+                        @endcan
+                        @can('query_log_view')
+                            <a class="nav-link" href="{{ route('report.queryLog.index') }}">Query Log</a>
+                        @endcan
+                    </nav>
+                </div>--}}
+                <a class="nav-link collapsed" href="#" data-bs-toggle="collapse" data-bs-target="#collapseReport" aria-expanded="false" aria-controls="collapseReport">
+                    <div class="nav-link-icon"><i data-feather="trello"></i></div>
+                    Generate Reporting
+                    <div class="sidenav-collapse-arrow"></div>
+                </a>
 
                 @can('server_view')
                 <!-- Sidenav Heading (Config)-->
-                <div class="sidenav-menu-heading">Config</div>
+                <div class="sidenav-menu-heading">System Management</div>
                 <!-- Sidenav Accordion (UC log file)-->
                 <a class="nav-link" href="{{ route('server.index')}}">
                     <div class="nav-link-icon"><i data-feather="server"></i></div>
-                    Server
+                    Server Configuration
                     <div class="sidenav-collapse-arrow"></div>
                 </a>
                 @endcan
@@ -203,24 +240,11 @@
                             <div class="sidenav-collapse-arrow"></div>
                         </a>
                         @endcan
-                    </nav>
-                </div>
-
-                <a class="nav-link collapsed" href="javascript:void(0);" data-bs-toggle="collapse" data-bs-target="#collapseValidation" aria-expanded="false" aria-controls="collapseValidation">
-                    <div class="nav-link-icon"><i data-feather="feather"></i></div>
-                    Validation & Verification
-                    <div class="sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
-                </a>
-                <div class="collapse" id="collapseValidation" data-bs-parent="#accordionSidenav">
-                    <nav class="sidenav-menu-nested nav accordion" id="accordionSidenavPages">
-                          @can('loopback_smtp_test_view')
-                        <a class="nav-link" href="{{ route('loopback.index') }}">Loopback SMTP Test</a>
-                        @endcan
-                          @can('replication_status_view')
-                        <a class="nav-link" href="{{ route('replication.index') }}">Replication Status</a>
-                        @endcan
-                          @can('print_list_ip_address_view')
-                        <a class="nav-link" href="{{ route('printList.index') }}">Print List Ip Address</a>
+                        @can('spmr_activity_log_view')
+                        <a class="nav-link" href="{{ route('activityLog.index') }}">
+                            SPMR Activity Log
+                            <div class="sidenav-collapse-arrow"></div>
+                        </a>
                         @endcan
                     </nav>
                 </div>
