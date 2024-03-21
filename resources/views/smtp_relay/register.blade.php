@@ -27,17 +27,17 @@
                 @csrf
                 <div class="row gx-3 mb-3">
                     <div class="col-md-6">
-                        <label for="ticketno">Ticket Number</label>
-                        <input class="form-control" id="ticketno" name="ticketno" type="text" value=""/>
+                        <label for="ticketno">Ticket Number<span style="color: red"> *</span></label>
+                        <input class="form-control" id="ticketno" name="ticketno" type="text" value="" required/>
                         @php
                             $randomId = Illuminate\Support\Str::random(9);
                         @endphp
                         <input class="form-control" id="form_id" name="form_id" type="hidden" value="{{ $randomId }}"/>
                     </div>
                     <div class="col-md-6">
-                        <label for="type_req">Type Of Request</label>
-                        <select class="form-control select2" name="type_req" id="type_req" aria-label="Default select">
-                            <option selected disabled>Select Type Of Request:</option>
+                        <label for="type_req">Type Of Request<span style="color: red"> *</span></label>
+                        <select class="form-control select2" name="type_req" id="type_req" aria-label="Default select" required>
+                            <option selected disabled value="">Select Type Of Request:</option>
                             <option value="1">New Application</option>
                             <option value="2">Service Termination</option>
                             <option value="3">Onboarding Agency</option>
@@ -58,17 +58,17 @@
                     <input class="form-control" id="projectname" name="projectname" type="text" placeholder="" value=""/>
                 </div>
                 <div class="mb-3">
-                    <label for="ownername">System Owner Name</label>
-                    <input class="form-control" id="ownername" name="ownername" type="text" placeholder="" value=""/>
+                    <label for="ownername">System Owner Name<span style="color: red"> *</span></label>
+                    <input class="form-control" id="ownername" name="ownername" type="text" placeholder="" value="" required/>
                 </div>
                 <div class="row gx-3 mb-3">
                     <div class="col-md-6">
-                        <label for="emailadd">Email Address</label>
-                        <input class="form-control" id="emailadd" name="emailadd" type="email" value=""/>
+                        <label for="emailadd">Email Address<span style="color: red"> *</span></label>
+                        <input class="form-control" id="emailadd" name="emailadd" type="email" value="" required/>
                     </div>
                     <div class="col-md-6">
-                        <label for="phone">Phone Number</label>
-                        <input class="form-control" id="phone" name="phone" type="phone" value=""/>
+                        <label for="phone">Phone Number<span style="color: red"> *</span></label>
+                        <input class="form-control" id="phone" name="phone" type="phone" value="" required/>
                     </div>
                 </div>
                 <div class="mb-3">
@@ -82,8 +82,8 @@
                 </div>
                 <div class="row gx-3 mb-3">
                     <div class="col-md-6">
-                        <label for="agency">Agency</label>
-                        <select class="form-control select2" name="agency" id="agency" aria-label="Default select">
+                        <label for="agency">Agency<span style="color: red"> *</span></label>
+                        <select class="form-control select2" name="agency" id="agency" aria-label="Default select" required>
                             <option selected disabled>Select Agency</option>
                             @foreach ($domainsArray as $domain)
                             <option value="{{ $domain['agencies_name'] }}">{{ $domain['agencies_name'] }}</option>
@@ -109,7 +109,7 @@
                     <textarea class="form-control" id="justification" name="justification" rows="3"></textarea>
                 </div>
                 <div class="mb-3">
-                    <label for="authmethod">Mail Relay Authentication Method</label>
+                    <label for="authmethod">Mail Relay Authentication Method<span style="color: red"> *</span></label>
                     <select class="form-control select2" name="authmethod" id="authmethod" required>
                         <option selected disabled>Select Authentication</option>
                         <option value="1">IP Based Authentication Relay</option>
@@ -117,7 +117,7 @@
                     </select>
                 </div>
                 <div class="mb-3">
-                    <label for="mailrelay">Server Mail Relay</label>
+                    <label for="mailrelay">Server Mail Relay<span style="color: red"> *</span></label>
                     <select class="form-control select2" name="mailrelay" id="mailrelay" aria-label="Default select" required>
                         <option selected disabled>Select Server</option>
                         @foreach ($serversArray as $server)
@@ -129,9 +129,9 @@
                     <table class="table table-striped" id="tableA">
                         <thead class="thead-dark">
                             <tr>
-                                <th scope="col">System Name</th>
-                                <th scope="col">IP Address</th>
-                                <th scope="col">FQDN System</th>
+                                <th scope="col">System Name<span style="color: red"> *</span></th>
+                                <th scope="col">IP Address<span style="color: red"> *</span></th>
+                                <th scope="col">FQDN System<span style="color: red"> *</span></th>
                                 <th scope="col">Action</th>
                             </tr>
                         </thead>
@@ -163,7 +163,7 @@
 
                 <div class="row gx-3 mb-3">
                     <div class="col-md-6">
-                        <label for="ports">SMTP Port Number</label>
+                        <label for="ports">SMTP Port Number<span style="color: red"> *</span></label>
                         <select class="form-control select2" name="ports" id="ports" aria-label="Default select" required>
                             <option selected disabled></option>
                             <option value="0">Not Answered</option>
@@ -178,22 +178,22 @@
                 </div>
                 <div class="row gx-3 mb-3" id="authusername" style="display: none;">
                     <div class="col-md-6">
-                        <label for="authusername">SMTP Username</label>
+                        <label for="authusername">SMTP Username<span style="color: red"> *</span></label>
                         <input type="text" name="authusername" id="authusername" value="" class="form-control" required>
                     </div>
                     <div class="col-md-6" id="authpassword">
-                        <label for="authpassword">SMTP Password</label>
+                        <label for="authpassword">SMTP Password<span style="color: red"> *</span></label>
                         <input type="text" name="authpassword" id="authpassword" value="" class="form-control" required>
                     </div>
                 </div>
                 <div class="row gx-3 mb-3">
                     <div class="col-md-6">
-                        <label for="emailaddfrom">Email Address System (MAILFROM)</label>
+                        <label for="emailaddfrom">Email Address System (MAILFROM)<span style="color: red"> *</span></label>
                         <input class="form-control" id="emailaddfrom" name="emailaddfrom" type="email" value="" required/>
                     </div>
                     <div class="col-md-6">
-                        <label for="mailbox">MailBox</label>
-                        <select class="form-control select2" name="mailbox" id="mailbox" aria-label="Default select">
+                        <label for="mailbox">MailBox<span style="color: red"> *</span></label>
+                        <select class="form-control select2" name="mailbox" id="mailbox" aria-label="Default select" required>
                             <option selected disabled>Select Mailbox</option>
                             <option value="0">Not Answered</option>
                             <option value="1">No</option>
@@ -238,8 +238,8 @@
                         </select>
                     </div>
                     <div class="mb-3 col-md-4">
-                        <label class=" mb-1" for="applicantdate">Date:</label>
-                        <input class="form-control" type="date" id="applicantdate" name="applicantdate">
+                        <label class=" mb-1" for="applicantdate">Date:<span style="color: red"> *</span></label>
+                        <input class="form-control" type="date" id="applicantdate" name="applicantdate" required>
                     </div>
                 </div>
                 <hr>
@@ -310,8 +310,8 @@
                         </select>
                     </div>
                     <div class="mb-3 col-md-4">
-                        <label class=" mb-1" for="approvaldate">Date:</label>
-                        <input class="form-control" type="date" id="approvaldate" name="approvaldate">
+                        <label class=" mb-1" for="approvaldate">Date:<span style="color: red"> *</span></label>
+                        <input class="form-control" type="date" id="approvaldate" name="approvaldate" required>
                     </div>
                 </div>
                 <hr>

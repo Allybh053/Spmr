@@ -61,18 +61,24 @@
                     <div class="card mb-4">
                         <div class="card-header">Mail Log Overview</div>
 
-                        
+
                         <div class="card-body mt-1 mb-4">
                         <form id="report-form">
                         <div class="row gx-3 mb-3">
                                     <div class="col-md-6">
-                                        <label class="small mb-1" for="serverName">Server Name:</label>
-                                        {!! Form::select('serverName', $serverName, null, ['id'=>'serverName', 'name'=>'serverName', 'class'=>'form-control select2', 'placeholder'=>config('params.dropdown_default')]) !!}
+                                        <label class="small mb-1" for="serverName">Server Mail Relay Name:</label>
+                                        {{--{!! Form::select('serverName', $serverName, null, ['id'=>'serverName', 'name'=>'serverName', 'class'=>'form-control select2', 'placeholder'=>config('params.dropdown_default')]) !!}--}}
+                                        <select class="form-control select2" name="mailrelay" id="mailrelay" aria-label="Default select" required>
+                                            <option selected disabled>Select Server</option>
+                                            @foreach ($serversArray as $server)
+                                                <option value="{{ $server['hostname'] }}">{{ $server['hostname'] }}</option>
+                                            @endforeach
+                                        </select>
                                     </div>
                                     <div class="col-md-4">
                                         <!-- Save and Back button-->
                                         <div style="padding: 25px; text-align: left;">
-                                            <button class="btn btn-success" id="searching">Search</button>
+                                            <button class="btn btn-success" id="viewer">View</button>
                                         </div>
                                     </div>
                                 </div>
@@ -83,45 +89,60 @@
                 </div>
             </div>
         </div>
-        
+
         @include('mailLog.log')
 
  @endsection
  @push('script')
  <script>
-    $('#back').on('click', function (e) {
+     $(document).ready(function() {
+         $('form').on('submit', function(e) {
+             e.preventDefault();
+
+             var mailRelaySelected = $('#mailrelay').val();
+
+             // Check if a value is selected
+             if (mailRelaySelected) {
+                 location.href = "https://" + mailRelaySelected + ":8443";
+             } else {
+                 alert("Please select a mail relay.");
+             }
+         });
+     });
+
+/*    $('#back').on('click', function (e) {
         $('#reportBox').fadeOut();
        $('#searchingBox').fadeIn();
-    });
+    });*/
 
 
-    $('form').on('submit', function (e) {
-				e.preventDefault();
-				$(".form-group").removeClass("has-error");
-				$(".form-control").removeClass("was-validated invalid is-invalid custom-select.is-invalid valid is-valid custom-select.is-valid");
-				$(".form-group").children("span.help-block").remove();
-             
-				toggleLoader();
+    /*$('form').on('submit', function (e) {
+        e.preventDefault();
+        $(".form-group").removeClass("has-error");
+        $(".form-control").removeClass("was-validated invalid is-invalid custom-select.is-invalid valid is-valid custom-select.is-valid");
+        $(".form-group").children("span.help-block").remove();
 
-                var senderEmailDatatable = $('#senderEmailDatatable').DataTable({
+        toggleLoader();
+
+        var senderEmailDatatable = $('#senderEmailDatatable').DataTable({
             // DataTable options
-                        "paging": true,
-                        "ordering": true,
-                        "info": true,
-                        // ... other options
-                        });
+            "paging": true,
+            "ordering": true,
+            "info": true,
+            // ... other options
+            });
 
 
 
-				$.ajax({
-					type: 'POST',
-					url: "{!! route('mailLog.validation') !!}",
-					data: $('form').serialize(),
-					success: function ($response) {
-                        console.log($response);
-                        $('#reportBox').fadeIn();
-                        $('#searchingBox').fadeOut();
-                          // Clear existing rows from DataTables
+        $.ajax({
+            type: 'POST',
+            url: "{!! route('mailLog.validation') !!}",
+            data: $('form').serialize(),
+            success: function ($response) {
+                console.log($response);
+                $('#reportBox').fadeIn();
+                $('#searchingBox').fadeOut();
+                // Clear existing rows from DataTables
                 //     senderEmailDatatable.clear().draw();
 
                 //     $.each($response.data, function (index, row) {
@@ -136,49 +157,49 @@
                 //     ]).draw();
                 // });
 
-                    toggleLoader();
-                
-                },
-		            error: function (xhr, status) {
-		                toggleLoader();
-		                var response = xhr.responseJSON;
+                toggleLoader();
 
-		                if ( $.isEmptyObject(response.errors) ){
-		                    var message = response.message;
+            },
+            error: function (xhr, status) {
+                toggleLoader();
+                var response = xhr.responseJSON;
 
-		                    if (! message.length && response.exception){
-		                        message = response.exception;
-		                    }
+                if ( $.isEmptyObject(response.errors) ){
+                    var message = response.message;
 
-		                    swal("Warning", message, "warning");
-		                } else {
-		                    swal('Amaran', 'Invalid Information.', 'warning');
+                    if (! message.length && response.exception){
+                        message = response.exception;
+                    }
 
-		                    $.each(response.errors, function (key, message) {
-		                        if (key.indexOf('.') !== -1) {
-		                            var splits = key.split('.');
-		                            key = '';
+                    swal("Warning", message, "warning");
+                } else {
+                    swal('Amaran', 'Invalid Information.', 'warning');
 
-		                            $.each(splits, function(i, val) {
-		                                if (i === 0) {
-		                                    key = val;
-		                                } else {
-		                                    key += '[' + val + ']';
-		                                }
-		                            });
-		                        }
+                    $.each(response.errors, function (key, message) {
+                        if (key.indexOf('.') !== -1) {
+                            var splits = key.split('.');
+                            key = '';
 
-		                        $('[name="' + key + '"]').closest('.form-group').addClass("has-error");
-		                        $('[name="' + key + '"]').addClass("was-validated is-invalid invalid custom-select.is-invalid");
-		                        $('[name="' + key + '"]').closest('.form-group').append("<span class=\"help-block\" style='color:red; font-family:Nunito, sans-serif;'>" + message[0] + "</span>");
-		                    });
-		                    $('html, body').animate({
-		                        scrollTop: ($(".has-error").first().offset().top) - 200
-		                    }, 500);
-		                }
-		            }
-				});
-			});
+                            $.each(splits, function(i, val) {
+                                if (i === 0) {
+                                    key = val;
+                                } else {
+                                    key += '[' + val + ']';
+                                }
+                            });
+                        }
+
+                        $('[name="' + key + '"]').closest('.form-group').addClass("has-error");
+                        $('[name="' + key + '"]').addClass("was-validated is-invalid invalid custom-select.is-invalid");
+                        $('[name="' + key + '"]').closest('.form-group').append("<span class=\"help-block\" style='color:red; font-family:Nunito, sans-serif;'>" + message[0] + "</span>");
+                    });
+                    $('html, body').animate({
+                        scrollTop: ($(".has-error").first().offset().top) - 200
+                    }, 500);
+                }
+            }
+        });
+    });*/
 
 
  </script>
