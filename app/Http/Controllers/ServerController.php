@@ -6,7 +6,6 @@ use App\Models\RoleServer;
 use App\Models\Server;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use App\Models\RoleServer;
 use Spatie\Permission\Models\Role;
 use Illuminate\Support\Facades\DB;
 
