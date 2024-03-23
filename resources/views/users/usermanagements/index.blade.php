@@ -72,10 +72,15 @@
                             <td>{{ $user->username }}</td>
                             <td>{{ $user->email }}</td>
                             <td>
-                                @if($user->role)
-                                    {{ $user->role->name }}
+                                @if ($user->roles->isNotEmpty())
+                                    @foreach ($user->roles as $role)
+                                        {{ $role->name }}
+                                        @if (!$loop->last)
+                                            , <!-- Add comma separator if it's not the last role -->
+                                        @endif
+                                    @endforeach
                                 @else
-                                    No role assigned for this user.
+                                    No roles assigned
                                 @endif
                             </td>
                             <td>

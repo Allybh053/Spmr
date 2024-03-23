@@ -82,7 +82,9 @@
                                 <!-- Form Group (location)-->
                                 <div class="md-3">
                                     <label class="small mb-1" for="role_id">Role Type</label>
-                                    <select class="form-select" name="role_id" aria-label="Default select example" required>
+                                    {!! Form::select('role_id', $roles, isset($user) ? $user->roles->pluck('id')->toArray() : null,  ['class'=>'form-control','name'=>'role_id', 'placeholder'=>' No role assigned for this user.']) !!}
+
+                                    {{-- <select class="form-select" name="role_id" aria-label="Default select example" required>
                                         <option value="{{ $user->role_id }}" selected>
                                             @if($user->role)
                                                 {{ $user->role->name }}
@@ -93,7 +95,7 @@
                                         @foreach ($roles as $role)
                                         <option value="{{ $role['id'] }}">{{ $role['name'] }}</option>
                                         @endforeach
-                                    </select>
+                                    </select> --}}
                                 </div>
                             {{-- </div> --}}
                             <!-- Form Group (email address)-->

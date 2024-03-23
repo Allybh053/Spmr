@@ -36,7 +36,7 @@
                     <div class="card mb-4">
                         <div class="card-header">Activity Log</div>
 
-                        
+
                         <div class="card-body mt-1 mb-4">
                         <div class="table-responsive">
                         <table id="spmrDatatable" class="display table table-striped table-bordered" cellspacing="0" width="100%">
@@ -71,7 +71,7 @@
                                     @endforeach
                                 </tbody>
                             </table>
-                            {{ $logsPaginated->links() }}
+                            {{-- {{ $logsPaginated->links() }} --}}
                             </div>
                         </div>
 
@@ -80,3 +80,15 @@
             </div>
         </div>
 @endsection
+@push('script')
+    <script>
+        (function ($) {
+            var table = $('#spmrDatatable').DataTable({
+                processing: true,
+                serverSide: false,
+                ordering: true,
+            });
+        })(jQuery);
+
+    </script>
+    @endpush

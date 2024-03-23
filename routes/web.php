@@ -1,31 +1,33 @@
 <?php
 
-use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\DashboardController;
-use App\Http\Controllers\ProfileController;
-use App\Http\Controllers\UsersController;
-use App\Http\Controllers\Auth\LoginController;
-use App\Http\Controllers\SmtpRelayController;
-use App\Http\Controllers\MainRelayController;
-use App\Http\Controllers\ServerController;
-use App\Http\Controllers\Auth\Saml2Controller;
-use App\Http\Controllers\Auth\LdapController;
-use App\Http\Controllers\HistoryController;
-use App\Http\Controllers\UcOverviewController;
-use App\Http\Controllers\LogOverviewController;
-use App\Http\Controllers\ReportStatisticController;
-use App\Http\Controllers\ReportDetailSenderController;
-use App\Http\Controllers\Setup\RoleController;
-use App\Http\Controllers\SystemInformationController;
-use App\Http\Controllers\DomainMinistryAgenciesListController;
 use App\Http\Controllers\ActivityLogController;
-use App\Http\Controllers\PositionDepartmentController;
-use App\Http\Controllers\ReportQueryLogController;
-use App\Http\Controllers\MailLogController;
+use App\Http\Controllers\Auth\LdapController;
+use App\Http\Controllers\Auth\LoginController;
+use App\Http\Controllers\Auth\Saml2Controller;
+use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\DomainMinistryAgenciesListController;
+use App\Http\Controllers\HistoryController;
+use App\Http\Controllers\LogOverviewController;
 use App\Http\Controllers\LoopBackController;
-use App\Http\Controllers\ReplicationController;
+use App\Http\Controllers\MailLogController;
+use App\Http\Controllers\MainRelayController;
+use App\Http\Controllers\PositionDepartmentController;
 use App\Http\Controllers\PrintListController;
+use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\ReplicationController;
+use App\Http\Controllers\ReportDetailSenderController;
+use App\Http\Controllers\ReportQueryLogController;
+use App\Http\Controllers\ReportStatisticController;
+use App\Http\Controllers\ServerController;
+use App\Http\Controllers\Setup\RoleController;
+use App\Http\Controllers\SmtpRelayController;
+use App\Http\Controllers\SystemInformationController;
+use App\Http\Controllers\UcOverviewController;
+use App\Http\Controllers\UsersController;
 use App\Http\Middleware\AuthResource;
+use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\ManageServiceController;
+use App\Http\Controllers\GenerateReportingController;
 
 
 /*
@@ -156,7 +158,6 @@ Route::group(['middleware' => ['auth']], function () {
         Route::get('/', [LogOverviewController::class, 'index'])->name('log.index')->middleware('auth.resource:spmr_activity_log_view');
         Route::post('/api/getServerName', [LogOverviewController::class, 'getNewServerData'])->name('log.api.getServerName');
 
-        Route::get('/activity-logs', [ActivityLogController::class,'showActivityLogs'])->name('activityLog.index');
     });
 
     Route::group(['prefix' => 'mail_log_overview'], function () {
@@ -237,6 +238,22 @@ Route::group(['middleware' => ['auth']], function () {
                 ->middleware('auth.resource:print_list_ip_address_view');
         Route::post('/printList/validation', [PrintListController::class, 'validation'])->name('printList.validation');
     });
+
+
+    Route::group(['prefix' => 'manage-service'], function () {
+        Route::get('/{server_id?}/{server_type?}', [ManageServiceController::class, 'index'])->name('manageService.index');
+        // ->middleware('auth.resource:manage_service_view');
+    });
+
+    Route::group(['prefix' => 'generate-report'], function () {
+        Route::get('/', [GenerateReportingController::class, 'index'])->name('generateReport.index');
+        // ->middleware('auth.resource:generate_report_view');
+        Route::get('/index/searching', [GenerateReportingController::class, 'search'])->name('generateReport.index.search');
+    });
+
+
+    Route::get('/activity-logs', [ActivityLogController::class,'showActivityLogs'])->name('activityLog.index');
+      // ->middleware('auth.resource:spmr_activity_log_view');
 
 });
 
