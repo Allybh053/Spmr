@@ -16,9 +16,14 @@
                                 </nav>
                             </h1>
                         </div>
+
                         @can('smtp_mail_relay_add')
                             <div class="col-12 col-xl-auto mb-3">
-                                <a class="btn btn-sm btn-light text-primary" href="{{ route('smtp_relay.daftar') }}">
+                                <a class="btn btn-sm btn-green" href="#">
+                                    <i class="me-1" data-feather="plus"></i>
+                                    Bulk Add
+                                </a>
+                                <a class="btn btn-sm btn-blue" href="{{ route('smtp_relay.daftar') }}">
                                     <i class="me-1" data-feather="plus"></i>
                                     Add New SMTP Relay Request
                                 </a>
@@ -46,14 +51,14 @@
 
             <!-- add choose by server then show this searchong by server -->
            <div class="card">
-                <div class="card-header">Searching</div>
+                <div class="card-header">Filter</div>
                 <div class="card-body">
                 <div class="serverBox col-md-6">
-                                <div class="mb-3">
-                    <label class="small mb-1" for="inputAgencies">Choose Server:</label>
-                        {!! Form::select('server', $serverconfig,  $defaultServerId,  ['id'=>'server', 'name'=>'server', 'class'=>'form-control select2', 'placeholder'=>config('params.dropdown_default')]) !!}
-                        <p class="card-text mt-1 mb-1" id="ipAddress"></p>
-                        <div class="small text-muted"></div>
+                    <div class="mb-3">
+                        <label class="small mb-1" for="inputAgencies">Choose Server:</label>
+                            {!! Form::select('server', $serverconfig,  $defaultServerId,  ['id'=>'server', 'name'=>'server', 'class'=>'form-control select2', 'placeholder'=>config('params.dropdown_default')]) !!}
+                            <p class="card-text mt-1 mb-1" id="ipAddress"></p>
+                            <div class="small text-muted"></div>
                     </div>
             </div>
 
@@ -61,10 +66,16 @@
                     <form id="searchForm">
                     <div class="row gx-3 mb-3">
                         <div class="col-md-6">
-                                <div class="mb-3">
-                                        <label class="small mb-1" for="inputAgencies">Kementerian/Agensi/SUK:</label>
-                                        {!! Form::select('agency', $agency, isset($applicantInfo) ? $applicantInfo->agencies : null,  ['id'=>'agency', 'name'=>'agency', 'class'=>'form-control select2', 'placeholder'=>config('params.dropdown_default')]) !!}
-                                </div>
+                            <div class="mb-3">
+                                <label class="small mb-1" for="inputAgencies">Ministry/Agency/SUK:</label>
+                                {{--{!! Form::select('agency', $agency, isset($applicantInfo) ? $applicantInfo->agencies : null,  ['id'=>'agency', 'name'=>'agency', 'class'=>'form-control select2', 'placeholder'=>config('params.dropdown_default')]) !!}--}}
+                                <select class="form-control select2" name="ministry" id="ministry" aria-label="Default select">
+                                    <option selected disabled>Select Ministry/Agency/SUK</option>
+                                    @foreach ($domainsArray as $domain)
+                                        <option value="{{ $domain['ministry_name'] }}">{{ $domain['ministry_name'] }}</option>
+                                    @endforeach
+                                </select>
+                            </div>
                         </div>
                         <div class="col-md-6">
                             <div class="mb-3" id="calendarSelect">
@@ -95,10 +106,10 @@
                                 <td colspan="3" style="border-left: 1px solid black;"><span style="font-weight: bold;">Total Aplikasi</span></td>
                                 <td colspan="1"><span style="font-weight: bold;">:</span></td>
                                 <td colspan="2" style="text-align:left;border-right: 1px solid black;"><span id="totalApplications" style="font-weight: bold;"></span></td>
-                                <td colspan="3"><span style="font-weight: bold;">Total IP</span></td>
+                                <td colspan="3"><span style="font-weight: bold;">Total IP Address</span></td>
                                 <td colspan="1"><span style="font-weight: bold;">:</span></td>
                                 <td colspan="2"  style="text-align:left;border-right: 1px solid black;"><span id="totalIP" style="font-weight: bold;"></span></td>
-                                <td colspan="3"><span style="font-weight: bold;">Total Deactivated</span></td>
+                                <td colspan="3"><span style="font-weight: bold;">Total IP Deactivated</span></td>
                                 <td colspan="1"><span style="font-weight: bold;">:</span></td>
                                 <td colspan="2"  style="text-align:left;border-right: 1px solid black;"><span id="totalDeactivated" style="font-weight: bold;"></span></td>
                             </tr>
@@ -135,7 +146,8 @@
                                 <th>Types Application</th>
                                 <th>Project Name</th>
                                 <th>Server Mail Relay</th>
-                                <th>Total Ip Address</th>
+                                {{--<th>Total Ip Address</th>--}}
+                                <th>Ip Address</th>
                                 <th>Date Created</th>
                                 <th>Status</th>
                                 <th>Action</th>
@@ -185,7 +197,8 @@
                         { data: 'types_req', name: 'types_req', class: 'text-center' },
                         { data: 'project_name', name: 'project_name', class: 'text-center' },
                         { data: 'smtp_relay_server', name: 'smtp_relay_server', class: 'text-center' },
-                        { data: 'total_ip', name: 'total_ip', class: 'text-center' },
+                        /*{ data: 'total_ip', name: 'total_ip', class: 'text-center' },*/
+                        { data: 'ip_addr_server', name: 'ip_addr_server', class: 'text-center' },
                         { data: 'created_at', name: 'created_at', class: 'text-center' },
                         { data: 'status', name: 'status', class: 'text-center' },
                         { data: 'action', name: 'type', class: 'text-center', orderable: false, searchable: false },
