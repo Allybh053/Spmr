@@ -84,11 +84,13 @@
                     <div class="sidenav-collapse-arrow"></div>
                 </a>
                 @endcan
-                <a class="nav-link" href="#">
+                {{-- @can('manage_service_view') --}}
+                <a class="nav-link" href="{{ route('manageService.index') }}">
                     <div class="nav-link-icon"><i data-feather="target"></i></div>
                     Manage Services
                     <div class="sidenav-collapse-arrow"></div>
                 </a>
+                {{-- @endcan --}}
 
 
                 <div class="sidenav-menu-heading">Review Management</div>
@@ -164,11 +166,14 @@
                         @endcan
                     </nav>
                 </div>--}}
-                <a class="nav-link collapsed" href="#" data-bs-toggle="collapse" data-bs-target="#collapseReport" aria-expanded="false" aria-controls="collapseReport">
+
+                {{-- @can('generate_report_view') --}}
+                <a class="nav-link" href="{{ route('generateReport.index') }}">
                     <div class="nav-link-icon"><i data-feather="trello"></i></div>
                     Generate Reporting
                     <div class="sidenav-collapse-arrow"></div>
                 </a>
+                {{-- @endcan --}}
 
                 @can('server_view')
                 <!-- Sidenav Heading (Config)-->

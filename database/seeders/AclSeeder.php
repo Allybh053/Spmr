@@ -43,6 +43,10 @@ class AclSeeder extends Seeder
 			// ],
 			"server_overview" => [
 				'server_overview_view',
+				"manage_service" => [
+					"manage_service_view",
+					"manage_service_update"
+				]
 			],
 			"log" => [
 				"mail_log" => [
@@ -64,6 +68,9 @@ class AclSeeder extends Seeder
 				"query_log" => [
 					'query_log_view',
 					'query_log_download',
+				],
+                "generate_report" => [
+					'generate_report_view',
 				],
 			],
 			"configuration" => [
@@ -147,7 +154,7 @@ class AclSeeder extends Seeder
 
 		foreach($roles as $roleName) {
 			$role = Role::firstOrCreate(['name' => trim($roleName), 'guard_name' => 'web']);
-		
+
 			if($role->name == 'Superadmin' || $role->name == 'Developer') {
 				// assign all permissions
 				$role->syncPermissions(Permission::all());
@@ -155,7 +162,7 @@ class AclSeeder extends Seeder
 				// for others by default only read access
 				$role->syncPermissions(Permission::where('name', 'LIKE', 'lihat_%')->get());
 			}
-		
+
 
 		}
 		$servers = Server::get();
@@ -179,7 +186,7 @@ class AclSeeder extends Seeder
 
 		$user->assignRole('Developer');
 
-		
+
 
 		// Create superadmin user
 		$user           = new User;
