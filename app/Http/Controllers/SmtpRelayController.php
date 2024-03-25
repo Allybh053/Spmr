@@ -550,6 +550,7 @@ class SmtpRelayController extends Controller
         $ipAddresses = $request->input('ipaddress');
         $domains = $request->input('domain');
         $nombor = $request->input('form_id');
+        $deactivated = 0;
 
         $tableSpmrData = $request->input('tableSpmr');
         $combinedData = [];
@@ -562,6 +563,7 @@ class SmtpRelayController extends Controller
                     $serverName = $row['server_name'] ?? null;
                     $ipAddress = $row['ipaddress'] ?? null;
                     $domain = $row['domain'] ?? null;
+                    $deactivated = $row['deactivated'] ?? null;
 
                     // Create combined data array
                     $combinedData[] = [
@@ -569,6 +571,7 @@ class SmtpRelayController extends Controller
                         'server_name' => $serverName,
                         'ip_addr_server' => $ipAddress,
                         'fqdn_server' => $domain,
+                        'deactivated' => 0,
                     ];
                 }
             }
@@ -580,6 +583,7 @@ class SmtpRelayController extends Controller
                     $serverName = $row['server_name'] ?? null;
                     $ipAddress = $row['ipaddress'] ?? null;
                     $domain = $row['domain'] ?? null;
+                    $deactivated = $row['deactivated'] ?? null;
 
                     // Create combined data array
                     $combinedData[] = [
@@ -587,6 +591,7 @@ class SmtpRelayController extends Controller
                         'server_name' => $serverName,
                         'ip_addr_server' => $ipAddress,
                         'fqdn_server' => $domain,
+                        'deactivated' => 0,
                     ];
                 }
             }
@@ -666,6 +671,7 @@ class SmtpRelayController extends Controller
                     'server_name' => $row['server_name'],
                     'ip_addr_server' => $row['ip_addr_server'],
                     'fqdn_server' => $row['fqdn_server'],
+                    'deactivated' => $row['deactivated'],
                     'updated_at' => now(),
                 ]);
             } else {
@@ -675,6 +681,7 @@ class SmtpRelayController extends Controller
                     'server_name' => $row['server_name'],
                     'ip_addr_server' => $row['ip_addr_server'],
                     'fqdn_server' => $row['fqdn_server'],
+                    'deactivated' => 0,
                     'created_at' => now(),
                     'updated_at' => now(),
                 ]);
