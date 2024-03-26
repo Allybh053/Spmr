@@ -21,6 +21,7 @@
         <link rel="stylesheet" href="{{ asset('css/xterm.css') }}">
         <script data-search-pseudo-elements defer src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/js/all.min.js" crossorigin="anonymous"></script>
 
+
 <style>
     .select2-selection__clear {
     display: none;
@@ -56,6 +57,19 @@
     <script src="{{asset('js/datatables/datatables-simple-demo.js')}}"></script>
     <script src="{{asset('js/custom.js')}}" type="text/javascript"></script>
     <script src="{{asset('js/ajaxSubmit.js')}}" type="text/javascript"></script>
+    <script>
+$(document).ready(function() {
+    var currentUrl = window.location.href;
+    $('.nav-link').each(function() {
+        var href = $(this).attr('href');
+        if (currentUrl.indexOf(href) !== -1) {
+            $(this).addClass('active');
+            $(this).parents('.collapse').addClass('show');
+            $(this).parents('.nav-link').addClass('active');
+        }
+    });
+});
+</script>
     <script type="text/javascript">
         $(document).ready(function() {
             $('.select2').select2({

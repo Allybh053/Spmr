@@ -15,6 +15,7 @@ return new class extends Migration
             $table->unsignedInteger('server_id');
             $table->unsignedInteger('role_id');
         });
+
     }
 
     /**

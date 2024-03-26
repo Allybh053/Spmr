@@ -11,6 +11,7 @@ use App\Models\Server;
 use App\Models\DomainMinistryAgencies;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\DB;
 use Faker\Factory as Faker;
@@ -23,7 +24,8 @@ class SmtpRelayController extends Controller
         $user = Auth::user();
         $role = $user->roles->isNotEmpty() ? $user->roles->pluck('name')->first() : null;
         $agency = [];
-        
+        $domainsArray = DomainMinistryAgencies::where('enabled', 1)->get()->toArray();
+
         $serverIds = RoleServer::whereIn('role_id', $user->roles->pluck('id')->all())
         ->pluck('server_id');
 
@@ -34,7 +36,7 @@ class SmtpRelayController extends Controller
         ->where('status', 1)
         ->pluck('hostname', 'id');
 
-        return view('smtp_relay.index', compact('user', 'role','agency','serverIds','defaultServerId','serverconfig'));
+        return view('smtp_relay.index', compact('user', 'role','agency','serverIds','defaultServerId','serverconfig','domainsArray'));
     }
 
     public function search(Request $request)
@@ -332,7 +334,8 @@ class SmtpRelayController extends Controller
     $calendarType = $request->input('calendarType');
 
       // Start building the query
-      $query = SmtpRelayReqForm::query();
+      $query =  SmtpRelayReqForm::select('smtp_relay_req_form.*', 'smtp_relay_server.ip_addr_server')
+            ->leftJoin('smtp_relay_server', 'smtp_relay_req_form.form_id', '=', 'smtp_relay_server.form_id');
 
       // Apply filters based on search parameters
       if (!empty($agency)) {
@@ -350,9 +353,6 @@ class SmtpRelayController extends Controller
             ->addColumn('ticket_id', function ($row) {
                 return $row['ticket_id'];
             })
-            /*->addColumn('types_req', function ($row) {
-                return $row['types_req'];
-            })*/
             ->addColumn('types_req', function ($row) {
                 switch ($row['types_req']) {
                     case 1:
@@ -377,14 +377,7 @@ class SmtpRelayController extends Controller
                 }
                 return $row['server_name'];
             })
-            ->addColumn('ip_addr_server', function ($row) {
-                $ipAddrSvr = (array)json_decode($row['ip_addr_server']);
-                if (is_array($ipAddrSvr)) {
-                    return implode(", ", $ipAddrSvr);
-                }
-                return $row['ip_addr_server'];
-            })
-            ->addColumn('total_ip', function ($row) {
+            /*->addColumn('total_ip', function ($row) {
                 $id = $row['id'];
                 $datasmtp = SmtpRelayReqForm::find($id);
                 $details = smtp_relay_server::where('form_id', '=', $datasmtp->form_id)->get();
@@ -395,6 +388,16 @@ class SmtpRelayController extends Controller
                 } else {
                     return '0';
                 }
+            })*/
+            ->addColumn('ip_addr_server', function ($row) {
+                /*$ipAddrSvr = (array)json_decode($row['ip_addr_server']);
+                if (is_array($ipAddrSvr)) {
+                    return implode(", ", $ipAddrSvr);
+                }
+                return $row['ip_addr_server'];*/
+
+                return $row->ip_addr_server;
+
             })
             ->addColumn('fqdn_system', function ($row) {
                 $fqdnSystem = json_decode($row['fqdn_system'], true);
@@ -419,13 +422,22 @@ class SmtpRelayController extends Controller
                 return $row['status'] == 0 ? 'Pending Created' : 'Done Created';
             })
             ->addColumn('action', function ($row) {
-                $data = '<a class="btn btn-datatable btn-icon btn-transparent-dark me-2" href="'.route('smtp_relay.view',[$row['id']]).'"><i class="fas fa-eye text-primary"></i></a>
-                <a class="btn btn-datatable btn-icon btn-transparent-dark me-2" href="'.route('smtp_relay.kemaskini',[$row['id']]).'"><i class="fas fa-edit text-primary"></i></a>
-                <a type="button" class="btn btn-datatable btn-icon btn-transparent-dark" id="delete" data-id="'.$row['id'].'" data-url="'.route('smtp_relay.delete',[$row['id']]).'">
-                <i class="fas fa-trash-alt text-danger"></i>
-                </a>';
+                $data = '';
 
-            return $data;
+                // Add @can directive to check for permissions
+                if (auth()->user()->can('smtp_mail_relay_view')) {
+                    $data .= '<a class="btn btn-datatable btn-icon btn-transparent-dark me-2" href="'.route('smtp_relay.view',[$row['id']]).'"><i class="fas fa-eye text-primary"></i></a>';
+                }
+                if (auth()->user()->can('smtp_mail_relay_update')) {
+                    $data .= '<a class="btn btn-datatable btn-icon btn-transparent-dark me-2" href="'.route('smtp_relay.kemaskini',[$row['id']]).'"><i class="fas fa-edit text-primary"></i></a>';
+                }
+                if (auth()->user()->can('smtp_mail_relay_delete')) {
+                    $data .= '<a type="button" class="btn btn-datatable btn-icon btn-transparent-dark" id="delete" data-id="'.$row['id'].'" data-url="'.route('smtp_relay.delete',[$row['id']]).'">
+                        <i class="fas fa-trash-alt text-danger"></i>
+                    </a>';
+                }
+
+                return $data;
 
             })
             ->rawColumns(['action'])
@@ -538,6 +550,7 @@ class SmtpRelayController extends Controller
         $ipAddresses = $request->input('ipaddress');
         $domains = $request->input('domain');
         $nombor = $request->input('form_id');
+        $deactivated = 0;
 
         $tableSpmrData = $request->input('tableSpmr');
         $combinedData = [];
@@ -550,6 +563,7 @@ class SmtpRelayController extends Controller
                     $serverName = $row['server_name'] ?? null;
                     $ipAddress = $row['ipaddress'] ?? null;
                     $domain = $row['domain'] ?? null;
+                    $deactivated = $row['deactivated'] ?? null;
 
                     // Create combined data array
                     $combinedData[] = [
@@ -557,6 +571,7 @@ class SmtpRelayController extends Controller
                         'server_name' => $serverName,
                         'ip_addr_server' => $ipAddress,
                         'fqdn_server' => $domain,
+                        'deactivated' => 0,
                     ];
                 }
             }
@@ -568,6 +583,7 @@ class SmtpRelayController extends Controller
                     $serverName = $row['server_name'] ?? null;
                     $ipAddress = $row['ipaddress'] ?? null;
                     $domain = $row['domain'] ?? null;
+                    $deactivated = $row['deactivated'] ?? null;
 
                     // Create combined data array
                     $combinedData[] = [
@@ -575,6 +591,7 @@ class SmtpRelayController extends Controller
                         'server_name' => $serverName,
                         'ip_addr_server' => $ipAddress,
                         'fqdn_server' => $domain,
+                        'deactivated' => 0,
                     ];
                 }
             }
@@ -654,6 +671,7 @@ class SmtpRelayController extends Controller
                     'server_name' => $row['server_name'],
                     'ip_addr_server' => $row['ip_addr_server'],
                     'fqdn_server' => $row['fqdn_server'],
+                    'deactivated' => $row['deactivated'],
                     'updated_at' => now(),
                 ]);
             } else {
@@ -663,6 +681,7 @@ class SmtpRelayController extends Controller
                     'server_name' => $row['server_name'],
                     'ip_addr_server' => $row['ip_addr_server'],
                     'fqdn_server' => $row['fqdn_server'],
+                    'deactivated' => 0,
                     'created_at' => now(),
                     'updated_at' => now(),
                 ]);

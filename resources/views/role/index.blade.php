@@ -29,7 +29,9 @@
                         <div class="row">
                             <div class="col-md-12" style="text-align:right;">
                                 <h6 style="float: left">Role And Permission</h6>
+                                @can('role_permission_add')
                                 <button class="btn btn-primary new" type="button" data-bs-toggle="modal" data-bs-target="#roleModal">Add Role</button>
+                                @endcan
                             </div>
                             </div>
                         </div>
@@ -138,9 +140,15 @@
                                                         @if($role->name != 'Developer' && $role->name != 'Superadmin')
                                                                         <div class="row">
                                                                             <div class="col s12 m12 l12" style="text-align:right;">
+                                                                            @can('role_permission_delete')
                                                                                 <button type="button" class="btn btn-danger" id="deleteRoles" data-id="{{ $role->id }}" data-url="{{ route('setup.role.delete') }}" style="margin-bottom: 15px; margin-left: 15px; float: left">Delete</button>
+                                                                            @endcan
+                                                                            @can('role_permission_update')
                                                                                 <button type="button" class="btn btn-primary rename"  data-bs-toggle="modal" data-bs-target="#roleModal" data-id="{{ $role->id }}" data-name="{{ $role->name }}" style="margin-bottom: 15px; margin-left: 15px; float: left">Change Name</button>
+                                                                            @endcan
+                                                                            @can('role_permission_update')
                                                                                 <button class="btn btn-success" id="submit" type="submit">Submit</button>
+                                                                            @endcan
                                                                             </div>
                                                                         </div>
                                                                         @endif

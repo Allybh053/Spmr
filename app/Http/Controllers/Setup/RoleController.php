@@ -35,7 +35,7 @@ class RoleController extends Controller
             'name.required' => 'Namespace Required.',
             'name.max'      => 'Namespace must not exceed 255 characters.'
         ];
-        
+
         $validation = [
             'name' => 'required|max:255|unique:roles,name,' . ($request->roleId ? $request->roleId : 'NULL') . ',id'
         ];
@@ -57,7 +57,7 @@ class RoleController extends Controller
 
         $permissions = Permission::where('name', 'LIKE', 'lihat_%')->get();
         $role->syncPermissions($permissions);
-        
+
         return response()->json(['success' => '1', 'redirect' => route('setup.role.index'), 'message' => 'Role saved successfully.']);
     }
 
@@ -69,32 +69,33 @@ class RoleController extends Controller
 
         // Find the role by ID
         $role = Role::find($roleId);
-    
+
             // Detach all existing permissions associated with the role
             DB::table('role_has_permissions')->where('role_id', $roleId)->delete();
 
             // Iterate through the top-level array
+            if (!is_null($permissionsArray)) {
             foreach ($permissionsArray as $subGroups) {
-        
+
                         DB::table('role_has_permissions')->insert([
                             'role_id' => $roleId,
                             'permission_id' => $subGroups,
                         ]);
             }
+        }
 
         $roleServer = RoleServer::where('role_id',$roleId)->delete();
-            foreach($serverArray as $servers){
-                $newServer = new RoleServer();
-                $newServer -> role_id = $roleId;
-                $newServer -> server_id = $servers;
-                $newServer ->save();
-            }
 
-        
+        if (!is_null($serverArray)) {
+            foreach ($serverArray as $server) {
+                DB::insert('INSERT INTO role_servers (role_id, server_id) VALUES (?, ?)', [$roleId, $server]);
+            }
+        }
+
 
         return response()->json(['success' => '1', 'redirect' => route('setup.role.index'), 'message' => 'Permissions saved successfully.']);
     }
-    
+
     public function delete(Request $request)
     {
         $role = Role::find($request->id)->delete();

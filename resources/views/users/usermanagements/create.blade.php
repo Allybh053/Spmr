@@ -57,12 +57,12 @@
                                 <!-- Form Group (first name)-->
                                 <div class="col-md-6">
                                     <label class="small mb-1" for="fname">First name</label>
-                                    <input class="form-control" id="fname" name="fname" type="text" placeholder="Enter your first name" value="" />
+                                    <input class="form-control" id="fname" name="fname" type="text" placeholder="Enter your first name" value="" required/>
                                 </div>
                                 <!-- Form Group (last name)-->
                                 <div class="col-md-6">
                                     <label class="small mb-1" for="lname">Last name</label>
-                                    <input class="form-control" id="lname" name="lname" type="text" placeholder="Enter your last name" value="" />
+                                    <input class="form-control" id="lname" name="lname" type="text" placeholder="Enter your last name" value="" required/>
                                 </div>
                             </div>
                             <!-- Form Row        -->
@@ -99,7 +99,7 @@
                                 <!-- Form Group (phone number)-->
                                 <div class="col-md-6" @disabled(true)>
                                     <label class="small mb-1" for="ldap_authentication">LDAP Authentication</label>
-                                    <select class="form-select" name="ldap_authentication" aria-label="Default select example">
+                                    <select class="form-select" name="ldap_authentication" aria-label="Default select example" required>
                                         <option selected disabled>Select Status:</option>
                                         <option value="1">Yes</option>
                                         <option value="0">No</option>
@@ -114,13 +114,13 @@
                             <!-- Form Group (inputPassword)-->
                             <div class="mb-3">
                                 <label class="small mb-1" for="password">Password</label>
-                                <input class="form-control" id="password" name="password" type="password" placeholder="Enter New Password" value="" minlength="8"/>
+                                <input class="form-control" id="password" name="password" type="password" placeholder="Enter New Password" value="" minlength="8" required/>
                             </div>
                             <div class="row gx-3 mb-3">
                                 <!-- Form Group (organization name)-->
                                 <div class="col-md-6">
                                     <label class="small mb-1" for="enabled">Account Status</label>
-                                    <select class="form-select" name="enabled" aria-label="Default select example">
+                                    <select class="form-select" name="enabled" aria-label="Default select example" required>
                                         <option selected disabled>Select Account Status:</option>
                                         <option value="1">Active</option>
                                         <option value="0">In-Active</option>

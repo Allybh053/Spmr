@@ -68,13 +68,19 @@
                             </td>
                             <td> {{ \Carbon\Carbon::parse($smtpMailServer->created_at)->format('d-m-Y') }}</td>
                             <td>
+                            @can('manage_mail_relay_view')
                                 <a class="btn btn-datatable btn-icon me-2 text-blue" title="View Detail" href="{{ route('smtp_relay.view', ['id' => $smtpMailServer->id]) }}"><i data-feather="eye"></i></a>
+                            @endcan
+                            @can('manage_mail_relay_edit')
                                 <a hidden class="btn btn-datatable btn-icon me-2 text-blue" title="Edit Detail" href="{{ route('smtp_relay.edit',['id' => $smtpMailServer->id]) }}"><i data-feather="edit"></i></a>
+                            @endcan
+                            @can('manage_mail_relay_delete')
                                 <form class="btn btn-datatable btn-icon me-2 text-blue" action="#" method="POST" onsubmit="return confirm('Are you sure you want to delete this user?')">
                                     @csrf
                                     @method('DELETE')
                                     <button type="submit" class="btn btn-datatable btn-icon text-danger btn-transparent" title="Delete User"><i data-feather="trash-2"></i></button>
                                 </form>
+                            @endcan
                             </td>
                         </tr>
                         @endforeach

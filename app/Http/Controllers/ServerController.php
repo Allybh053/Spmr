@@ -2,9 +2,12 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\RoleServer;
 use App\Models\Server;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Spatie\Permission\Models\Role;
+use Illuminate\Support\Facades\DB;
 
 class ServerController extends Controller
 {
@@ -63,6 +66,12 @@ class ServerController extends Controller
             'sshkey' => $fileName, // Save the path relative to the storage directory
         ]);
 
+        $roles = Role::get();
+
+        foreach ($roles as $role) {
+            DB::insert('INSERT INTO role_servers (role_id, server_id) VALUES (?, ?)', [$role->id, $server->id]);
+
+        }
 
         return redirect()->route('server.index')->with('success', 'Server details added successfully');
     }
@@ -164,21 +173,21 @@ class ServerController extends Controller
         //
     }
 
-    public function deleteServer($id)
+    public function deleteServer(Request $request,$id)
     {
         // Retrieve the server by ID
         $server = Server::find($id);
 
         // Check if the server exists
         if (!$server) {
-            return redirect()->route('server.index')->with('error', 'Server not found.');
+            return response()->json(['error' => 'Server not found.'], 404);
         }
 
         // Perform the soft delete
         $server->delete();
 
         // Redirect with success message
-        return redirect()->route('server.index')->with('error', 'Server deleted successfully!.');
+        return response()->json(['message' => 'Server deleted successfully.']);
     }
 
 

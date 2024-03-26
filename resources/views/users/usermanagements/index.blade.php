@@ -11,12 +11,14 @@
                             Users List
                         </h1>
                     </div>
+                    @can('user_add')
                     <div class="col-12 col-xl-auto mb-3">
                         <a class="btn btn-sm btn-light text-primary" href="{{route('usermanagements.create')}}">
                             <i class="me-1" data-feather="user-plus"></i>
                             Add New User
                         </a>
                     </div>
+                    @endcan
                 </div>
             </div>
         </div>
@@ -70,10 +72,15 @@
                             <td>{{ $user->username }}</td>
                             <td>{{ $user->email }}</td>
                             <td>
-                                @if($user->role)
-                                    {{ $user->role->name }}
+                                @if ($user->roles->isNotEmpty())
+                                    @foreach ($user->roles as $role)
+                                        {{ $role->name }}
+                                        @if (!$loop->last)
+                                            , <!-- Add comma separator if it's not the last role -->
+                                        @endif
+                                    @endforeach
                                 @else
-                                    No role assigned for this user.
+                                    No roles assigned
                                 @endif
                             </td>
                             <td>
@@ -91,13 +98,19 @@
                             </td>
                             <td>{{ $user->created_at->format('d/m/Y') }}</td>
                             <td>
+                            @can('user_view')
                                 <a class="btn btn-datatable btn-icon me-2 text-blue" title="View Detail" href="{{ route('usersmanagements.show', ['id' => $user->id]) }}"><i data-feather="eye"></i></a>
+                                @endcan
+                                @can('user_update')
                                 <a class="btn btn-datatable btn-icon btn-transparent-dark me-2" title="Edit Detail" href="{{ route('usersmanagements.edit', ['id' => $user->id]) }}"><i data-feather="edit"></i></a>
+                                @endcan
+                                @can('user_delete')
                                 <form class="btn btn-datatable btn-icon me-2 text-blue" action="{{ route('usersmanagements.destroy', $user->id) }}" method="POST" onsubmit="return confirm('Are you sure you want to delete this user?')">
                                     @csrf
                                     @method('DELETE')
                                     <button type="submit" class="btn btn-datatable btn-icon text-danger btn-transparent" title="Delete User"><i data-feather="trash-2"></i></button>
                                 </form>
+                                @endcan
                             </td>
                         </tr>
                         @endforeach

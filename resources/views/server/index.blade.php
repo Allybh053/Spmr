@@ -11,12 +11,14 @@
                             Server Configuration
                         </h1>
                     </div>
+                    @can('server_add')
                     <div class="col-12 col-xl-auto mb-3">
                         <a class="btn btn-sm btn-light text-primary" href="{{ route('server.create') }}">
                             <i class="me-1" data-feather="plus"></i>
                             Add New Server Config
                         </a>
                     </div>
+                    @endcan
                 </div>
             </div>
         </div>
@@ -79,12 +81,12 @@
                     </div>
                 </div>
                 <div class="card-footer d-flex align-items-center justify-content-between small">
+                    @can('server_update')
                     <a class="text-primary" href="{{ route('server.edit', ['id' => $dataserver->id]) }}">Edit Configuration</a>
-                    <a class="text-danger" href="{{ route('server.delete', ['id' => $dataserver->id]) }}" onclick="event.preventDefault(); document.getElementById('delete-form').submit();">Delete</a>
-                    <form id="delete-form" action="{{ route('server.delete', ['id' => $dataserver->id]) }}" method="POST" style="display: none;">
-                        @csrf
-                        @method('DELETE')
-                    </form>
+                    @endcan
+                    @can('server_delete')
+                            <button class="btn btn-danger delete-btn" data-id="{{ $dataserver->id }}">Delete</button>
+                        @endcan
                 </div>
             </div>
         </div>
@@ -95,14 +97,14 @@
 <script>
     function updateStatus(serverId, checkbox) {
         // Check if the server is already active
-        if (checkbox.checked) {
-            const activeServer = document.querySelector('.form-check-input:checked');
-            if (activeServer && activeServer !== checkbox) {
-                alert("One server at a time can be active. Deactivate the current active server before activating another one.");
-                checkbox.checked = false;
-                return;
-            }
-        }
+        // if (checkbox.checked) {
+        //     const activeServer = document.querySelector('.form-check-input:checked');
+        //     if (activeServer && activeServer !== checkbox) {
+        //         alert("One server at a time can be active. Deactivate the current active server before activating another one.");
+        //         checkbox.checked = false;
+        //         return;
+        //     }
+        // }
 
         // Assuming you have the server/update-status route
         fetch('/server/update-status', {
@@ -127,6 +129,60 @@
             checkbox.checked = !checkbox.checked;
         });
     }
+
+
+    document.addEventListener('DOMContentLoaded', function () {
+        document.querySelectorAll('.delete-btn').forEach(function (button) {
+            button.addEventListener('click', function () {
+                var serverId = this.getAttribute('data-id');
+                confirmDelete(serverId); // Call confirmDelete function with server ID
+            });
+        });
+    });
+
+    function confirmDelete(serverId) {
+        Swal.fire({
+            title: 'Are you sure?',
+            text: 'You will not be able to recover this server!',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#d33',
+            cancelButtonColor: '#3085d6',
+            confirmButtonText: 'Yes, delete it!'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                deleteServer(serverId); // Call deleteServer function if user confirms
+            }
+        });
+    }
+
+    // Function to handle deletion with Ajax
+    function deleteServer(serverId) {
+        var deleteUrl = '/server/servers/' + serverId;
+
+        fetch(deleteUrl, {
+            method: 'POST',
+            headers: {
+                'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                'Content-Type': 'application/json'
+            }
+        })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                return response.json();
+            })
+            .then(data => {
+                console.log('Server deleted successfully');
+                location.reload();
+            })
+            .catch(error => {
+                console.error('There was a problem with the deletion:', error);
+                // Optionally, handle error and display message to user
+            });
+    }
+
 </script>
 
 </main>

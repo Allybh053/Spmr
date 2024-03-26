@@ -33,8 +33,8 @@
                 <div class="row gx-3 mb-3">
                     <div class="col-md-6">
                         <label for="ticket_id">Ticket Number</label><br>
-                        <p style="color: #0061f2 !important;">{{ $formsmtp->ticket_id }}</p>
-                        <input class="form-control" id="ticket_id" name="ticket_id" type="hidden" value="{{ old('ticket_id', $formsmtp->ticket_id) }}" required>
+                        {{--<p style="color: #0061f2 !important;">{{ $formsmtp->ticket_id }}</p>--}}
+                        <input class="form-control" id="ticket_id" name="ticket_id" type="text" value="{{ old('ticket_id', $formsmtp->ticket_id) }}" required>
                     </div>
                     <div class="col-md-6">
                         <label for="types_req">Type Of Request</label>
@@ -339,7 +339,10 @@
                 <hr>
                 <div class="mb-3">
                     <label for="attachement">Current Attachement</label><br>
-                    <a href="" target="_blank">test</a>
+                    {{--<a href="" target="_blank">test</a>--}}
+                    <a href="{{ asset('storage/' . old('upload_copy_attachment', $formsmtp->upload_copy_attachment)) }}" target="_blank">
+                        {{ old('upload_copy_attachment', $formsmtp->upload_copy_attachment) }}
+                    </a>
                 </div>
                 <div class="mb-3">
                     <label for="upload_copy_attachment">Upload Attachement</label>
@@ -347,7 +350,9 @@
                     <span class="text-xs text-danger">Upload File format .pdf</span>
                 </div><hr>
                 <a class="btn btn-danger me-2 my-1" type="button" href="{{ route('smtp_relay.smtp_relay_req')}}">Cancel</a>
+                @can('smtp_mail_relay_update')
                 <button class="btn btn-primary me-2 my-1" type="submit">Update Request Form</button>
+                @endcan
                 </form>
             </div>
         </div>
