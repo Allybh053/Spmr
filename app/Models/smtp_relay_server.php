@@ -19,6 +19,7 @@ class smtp_relay_server extends Model  implements Auditable
         'server_name',
         'ip_addr_server',
         'fqdn_server',
+        'deactivated',
         'smtp_relay_server',
         'smtp_port',
         'smtp_username',

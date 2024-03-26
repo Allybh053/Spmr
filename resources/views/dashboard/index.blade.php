@@ -15,11 +15,15 @@
                                         <p class="card-text mt-1 mb-1" id="ipAddress"></p><div class="small text-muted"></div></div></div></div></a> -->
 
 <!-- Start Loop By Server Here -->
+    @foreach ($serverconfig as $server)
   <div class="row mb-4">
     <div class="col-xxl-12">
       <div class="card">
         <div class="card-header text-center p-5">
-          <h5 style="text-align:left;">Server 1</h5>
+          <h5 style="text-align:left;">
+              {{ $server->hostname }}
+              <p>{{ $server->ipaddress }}</p>
+          </h5>
         </div>
         <div class="card-body">
           <div class="row">
@@ -32,7 +36,7 @@
                       <h5>Total Application Registered</h5>
                       <div class="inline">
                         <i class="feather-l text-primary" data-feather="corner-down-right"></i>
-                        <h2 id="totalApplications" style="display: inline-block; margin-left: 5px;">123</h2>
+                        <h2 id="totalApplications" style="display: inline-block; margin-left: 5px;">-</h2>
                       </div>
                     </div>
                     <img src="{{asset ('assets/img/illustrations/dash_app.svg')}}" alt="..." style="width: 8rem" />
@@ -49,7 +53,7 @@
                       <h5>Total Domain Registered</h5>
                       <div class="inline">
                         <i class="feather-l text-primary" data-feather="corner-down-right"></i>
-                        <h2 id="totalDomains" style="display: inline-block; margin-left: 5px;">123</h2>
+                        <h2 id="totalDomains" style="display: inline-block; margin-left: 5px;">-</h2>
                       </div>
                     </div>
                     <img src="{{asset ('assets/img/illustrations/dash_domain.svg')}}" alt="..." style="width: 8rem" />
@@ -66,7 +70,7 @@
                       <h5>Numbers of Registered SASL</h5>
                       <div class="inline">
                         <i class="feather-l text-primary" data-feather="corner-down-right"></i>
-                        <h2 id="totalSASL" style="display: inline-block; margin-left: 5px;">123</h2>
+                        <h2 id="totalSASL" style="display: inline-block; margin-left: 5px;">-</h2>
                       </div>
                     </div>
                     <img src="{{asset ('assets/img/illustrations/dash_sasl.svg')}}" alt="..." style="width: 8rem" />
@@ -79,6 +83,7 @@
       </div>
     </div>
   </div>
+    @endforeach
 <!-- End Loop By Server Here -->
 
   <div class="row mb-4">
@@ -117,24 +122,16 @@
             <table id="spmrDatatable" class="display table table-striped table-bordered" cellspacing="0" width="100%">
               <thead>
                 <tr>
-                  <th>No.</th>
-                  <th>Server A</th>
-                  <th>Server B</th>
-                  <th>Server C</th>
+                    @foreach ($serverconfig as $server)
+                        <th>{{ $server->hostname }}</th>
+                    @endforeach
                 </tr>
               </thead>
               <tbody>
                 <tr>
-                  <td>1.</td>
-                  <td>Data 1</td>
-                  <td>Data 1</td>
-                  <td>Data 1</td>
-                </tr>
-                <tr>
-                  <td>2.</td>
-                  <td>Data 2</td>
-                  <td>Data 2</td>
-                  <td>Data 2</td>
+                    @foreach ($serverconfig as $server)
+                        <td id="mailQueueCount">--</td>
+                    @endforeach
                 </tr>
               </tbody>
             </table>
@@ -150,95 +147,107 @@
         <div class="card-header text-center p-5">
           <h5>RealTime Service Status</h5> @php $status = 'Online'; @endphp
         </div>
-        <div class="card-body mainRealtime" style="min-height: auto; max-height: 800px;overflow-y: auto;">
-          <div class="row">
-            <div class="col-xl-4 mb-4">
-              <a class="card lift h-100 mService" href="{{ route('manageService.index', ['server_id' => '1', 'server_type' => 'postfix']) }}">
-                <div class="card-body cardService d-flex justify-content-center flex-column">
-                  <div class="d-flex align-items-center justify-content-between">
-                    <div class="me-3">
-                      <h5>Postfix</h5>
+        {{--<div class="card-body mainRealtime" style="min-height: auto; max-height: 800px;overflow-y: auto;">--}}
+        <div class="card-body mainRealtime">
+            @foreach ($serverconfig as $server)
+                <div class="card" style="margin: 15px">
+                    <div class="card-header">{{ $server->hostname }}</div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-xl-4 mb-4">
+                                <a class="card lift h-100 mService" href="{{ route('manageService.index', ['server_id' => '1', 'server_type' => 'postfix']) }}">
+                                    <div class="card-body cardService d-flex justify-content-center flex-column">
+                                        <div class="d-flex align-items-center justify-content-between">
+                                            <div class="me-3">
+                                                <h5>Postfix</h5>
+                                            </div>
+                                            <img src="{{ isset($status) && $status === 'Online' ? asset('assets/img/demo/online.png') : asset('assets/img/demo/offline.png') }}" alt="{{ $status === 'Online' ? 'Online' : 'Offline' }}" style="width: 5rem">
+                                        </div>
+                                        <p id="statusPostfix" style="display: inline-block; margin-left: 5px;">--</p>
+                                    </div>
+                                    <!-- <div class="col-md-6 d-flex justify-content-center" style="padding-left: 150px;padding-bottom: 15px;"><div class="btn-group" role="group" aria-label="Button group with nested dropdown"><button type="button" class="btn btn-primary"><i class="fas fa-play"></i></button><button type="button" class="btn btn-danger"><i class="fas fa-stop"></i></button><button type="button" class="btn btn-warning"><i class="fas fa-redo"></i></button><button type="button" class="btn btn-info"><i class="fas fa-sync-alt"></i></button></div></div> -->
+                                </a>
+                            </div>
+                            {{--<div class="col-xl-4 mb-4">
+                              <a class="card lift h-100" href="#!">
+                                <div class="card-body cardService d-flex justify-content-center flex-column">
+                                  <div class="d-flex align-items-center justify-content-between">
+                                    <div class="me-3">
+                                      <h5>Fail-To-Ban</h5>
+                                    </div>
+                                    <img src="{{ isset($status) && $status === 'Online' ? asset('assets/img/demo/online.png') : asset('assets/img/demo/offline.png') }}" alt="{{ $status === 'Online' ? 'Online' : 'Offline' }}" style="width: 5rem">
+                                  </div>
+                                    <p id="statusFail2ban" style="display: inline-block; margin-left: 5px;">--</p>
+                                </div>
+                              </a>
+                            </div>--}}
+                            <div class="col-xl-4 mb-4">
+                                <a class="card lift h-100 mService" href="{{ route('manageService.index', ['server_id' => '1', 'server_type' => 'apache']) }}">
+                                    <div class="card-body cardService d-flex justify-content-center flex-column">
+                                        <div class="d-flex align-items-center justify-content-between">
+                                            <div class="me-3">
+                                                <h5>Apache</h5>
+                                            </div>
+                                            <img src="{{ isset($status) && $status === 'Online' ? asset('assets/img/demo/online.png') : asset('assets/img/demo/offline.png') }}" alt="{{ $status === 'Online' ? 'Online' : 'Offline' }}" style="width: 5rem">
+                                        </div>
+                                        <p id="statusApache2" style="display: inline-block; margin-left: 5px;">--</p>
+                                    </div>
+                                    <!-- <div class="col-md-6 d-flex justify-content-center" style="padding-left: 150px;padding-bottom: 15px;"><div class="btn-group" role="group" aria-label="Button group with nested dropdown"><button type="button" class="btn btn-primary"><i class="fas fa-play"></i></button><button type="button" class="btn btn-danger"><i class="fas fa-stop"></i></button><button type="button" class="btn btn-warning"><i class="fas fa-redo"></i></button><button type="button" class="btn btn-info"><i class="fas fa-sync-alt"></i></button></div></div> -->
+                                </a>
+                            </div>
+                            <div class="col-xl-4 mb-4">
+                                <a class="card lift h-100" href="#!">
+                                    <div class="card-body cardService d-flex justify-content-center flex-column">
+                                        <div class="d-flex align-items-center justify-content-between">
+                                            <div class="me-3">
+                                                <h5>Webmin</h5>
+                                            </div>
+                                            <img src="{{ isset($status) && $status === 'Online' ? asset('assets/img/demo/online.png') : asset('assets/img/demo/offline.png') }}" alt="{{ $status === 'Online' ? 'Online' : 'Offline' }}" style="width: 5rem">
+                                        </div>
+                                        <p id="statusWebmin" style="display: inline-block; margin-left: 5px;">--</p>
+                                    </div>
+                                </a>
+                            </div>
+                            {{--<div class="col-xl-4 mb-4">
+                              <a class="card lift h-100" href="#!">
+                                <div class="card-body cardService d-flex justify-content-center flex-column">
+                                  <div class="d-flex align-items-center justify-content-between">
+                                    <div class="me-3">
+                                      <h5>Replicate Mail Relay</h5>
+                                    </div>
+                                    <img src="{{ isset($status) && $status === 'Online' ? asset('assets/img/demo/online.png') : asset('assets/img/demo/offline.png') }}" alt="{{ $status === 'Online' ? 'Online' : 'Offline' }}" style="width: 5rem">
+                                  </div>
+                                </div>
+                              </a>
+                            </div>--}}
+                            {{--<div class="col-xl-4 mb-4">
+                              <a class="card lift h-100" href="#!">
+                                <div class="card-body cardService d-flex justify-content-center flex-column">
+                                  <div class="d-flex align-items-center justify-content-between">
+                                    <div class="me-3">
+                                      <h5>Policy Server</h5>
+                                    </div>
+                                    <img src="{{ isset($status) && $status === 'Online' ? asset('assets/img/demo/online.png') : asset('assets/img/demo/offline.png') }}" alt="{{ $status === 'Online' ? 'Online' : 'Offline' }}" style="width: 5rem">
+                                  </div>
+                                </div>
+                              </a>
+                            </div>--}}
+                            {{--<div class="col-xl-4 mb-4">
+                              <a class="card lift h-100" href="#!">
+                                <div class="card-body cardService d-flex justify-content-center flex-column">
+                                  <div class="d-flex align-items-center justify-content-between">
+                                    <div class="me-3">
+                                      <h5>Keep Alive</h5>
+                                    </div>
+                                    <img src="{{ isset($status) && $status === 'Online' ? asset('assets/img/demo/online.png') : asset('assets/img/demo/offline.png') }}" alt="{{ $status === 'Online' ? 'Online' : 'Offline' }}" style="width: 5rem">
+                                  </div>
+                                </div>
+                              </a>
+                            </div>--}}
+                        </div>
                     </div>
-                    <img src="{{ isset($status) && $status === 'Online' ? asset('assets/img/demo/online.png') : asset('assets/img/demo/offline.png') }}" alt="{{ $status === 'Online' ? 'Online' : 'Offline' }}" style="width: 5rem">
-                  </div>
                 </div>
-                <!-- <div class="col-md-6 d-flex justify-content-center" style="padding-left: 150px;padding-bottom: 15px;"><div class="btn-group" role="group" aria-label="Button group with nested dropdown"><button type="button" class="btn btn-primary"><i class="fas fa-play"></i></button><button type="button" class="btn btn-danger"><i class="fas fa-stop"></i></button><button type="button" class="btn btn-warning"><i class="fas fa-redo"></i></button><button type="button" class="btn btn-info"><i class="fas fa-sync-alt"></i></button></div></div> -->
-              </a>
-            </div>
-            <div class="col-xl-4 mb-4">
-              <a class="card lift h-100" href="#!">
-                <div class="card-body cardService d-flex justify-content-center flex-column">
-                  <div class="d-flex align-items-center justify-content-between">
-                    <div class="me-3">
-                      <h5>Fail-To-Ban</h5>
-                    </div>
-                    <img src="{{ isset($status) && $status === 'Online' ? asset('assets/img/demo/online.png') : asset('assets/img/demo/offline.png') }}" alt="{{ $status === 'Online' ? 'Online' : 'Offline' }}" style="width: 5rem">
-                  </div>
-                </div>
-              </a>
-            </div>
-            <div class="col-xl-4 mb-4">
-              <a class="card lift h-100 mService" href="{{ route('manageService.index', ['server_id' => '1', 'server_type' => 'apache']) }}">
-                <div class="card-body cardService d-flex justify-content-center flex-column">
-                  <div class="d-flex align-items-center justify-content-between">
-                    <div class="me-3">
-                      <h5>Apache</h5>
-                    </div>
-                    <img src="{{ isset($status) && $status === 'Online' ? asset('assets/img/demo/online.png') : asset('assets/img/demo/offline.png') }}" alt="{{ $status === 'Online' ? 'Online' : 'Offline' }}" style="width: 5rem">
-                  </div>
-                </div>
-                <!-- <div class="col-md-6 d-flex justify-content-center" style="padding-left: 150px;padding-bottom: 15px;"><div class="btn-group" role="group" aria-label="Button group with nested dropdown"><button type="button" class="btn btn-primary"><i class="fas fa-play"></i></button><button type="button" class="btn btn-danger"><i class="fas fa-stop"></i></button><button type="button" class="btn btn-warning"><i class="fas fa-redo"></i></button><button type="button" class="btn btn-info"><i class="fas fa-sync-alt"></i></button></div></div> -->
-              </a>
-            </div>
-            <div class="col-xl-4 mb-4">
-              <a class="card lift h-100" href="#!">
-                <div class="card-body cardService d-flex justify-content-center flex-column">
-                  <div class="d-flex align-items-center justify-content-between">
-                    <div class="me-3">
-                      <h5>Webmin</h5>
-                    </div>
-                    <img src="{{ isset($status) && $status === 'Online' ? asset('assets/img/demo/online.png') : asset('assets/img/demo/offline.png') }}" alt="{{ $status === 'Online' ? 'Online' : 'Offline' }}" style="width: 5rem">
-                  </div>
-                </div>
-              </a>
-            </div>
-            <div class="col-xl-4 mb-4">
-              <a class="card lift h-100" href="#!">
-                <div class="card-body cardService d-flex justify-content-center flex-column">
-                  <div class="d-flex align-items-center justify-content-between">
-                    <div class="me-3">
-                      <h5>Replicate Mail Relay</h5>
-                    </div>
-                    <img src="{{ isset($status) && $status === 'Online' ? asset('assets/img/demo/online.png') : asset('assets/img/demo/offline.png') }}" alt="{{ $status === 'Online' ? 'Online' : 'Offline' }}" style="width: 5rem">
-                  </div>
-                </div>
-              </a>
-            </div>
-            <div class="col-xl-4 mb-4">
-              <a class="card lift h-100" href="#!">
-                <div class="card-body cardService d-flex justify-content-center flex-column">
-                  <div class="d-flex align-items-center justify-content-between">
-                    <div class="me-3">
-                      <h5>Policy Server</h5>
-                    </div>
-                    <img src="{{ isset($status) && $status === 'Online' ? asset('assets/img/demo/online.png') : asset('assets/img/demo/offline.png') }}" alt="{{ $status === 'Online' ? 'Online' : 'Offline' }}" style="width: 5rem">
-                  </div>
-                </div>
-              </a>
-            </div>
-            <div class="col-xl-4 mb-4">
-              <a class="card lift h-100" href="#!">
-                <div class="card-body cardService d-flex justify-content-center flex-column">
-                  <div class="d-flex align-items-center justify-content-between">
-                    <div class="me-3">
-                      <h5>Keep Alive</h5>
-                    </div>
-                    <img src="{{ isset($status) && $status === 'Online' ? asset('assets/img/demo/online.png') : asset('assets/img/demo/offline.png') }}" alt="{{ $status === 'Online' ? 'Online' : 'Offline' }}" style="width: 5rem">
-                  </div>
-                </div>
-              </a>
-            </div>
-          </div>
+            @endforeach
         </div>
       </div>
     </div>
@@ -995,5 +1004,128 @@ function number_format(number, decimals, dec_point, thousands_sep) {
         //                                       });
         //                                   });
                                       });
+
+
+
+  //TEST GET DATA FROM SERVER MAIL RELAY
+  let sockets = [];
+  let serverIpaddresses = [];
+
+  @foreach ($serverconfig as $server)
+  let serverMailRelay{{$loop->iteration}} = "{{ $server->ipaddress }}";
+  serverIpaddresses.push(serverMailRelay{{$loop->iteration}});
+  @endforeach
+
+  // Connect to each server IP address
+  serverIpaddresses.forEach(ip => {
+      const serverAddress = 'ws://' + ip + ':8000/';
+      //console.log('Connecting to WebSocket server:', serverAddress);
+      const socket = new WebSocket(serverAddress);
+      sockets.push(socket); // Store the socket object in an array
+  });
+
+  // Handle events for each socket if needed
+  sockets.forEach((socket, index) => {
+      getDataMailServer1(socket);
+      socket.addEventListener('open', (event) => {
+          //console.log('Connected to WebSocket server:', serverIpaddresses[index]);
+      });
+
+      socket.addEventListener('close', (event) => {
+          //console.log('WebSocket connection closed:', serverIpaddresses[index]);
+      });
+
+      socket.addEventListener('error', (event) => {
+          //console.error('WebSocket error occurred:', event);
+      });
+
+      socket.addEventListener('message', (event) => {
+          //console.log('Message received from WebSocket server:', event.data);
+      });
+  });
+
+
+  //let socket;
+  //const serverAddress1 = 'ws://20.6.33.199:8000/';
+  // Create a new WebSocket connection
+  //socket = new WebSocket(serverAddress1);
+
+  //getDataMailServer1();
+  function getDataMailServer1(socket) {
+      // Define commands to execute
+      const commands = [
+          'wc -l /opt/cluster/postfix/access_list | cut -d " " -f1',
+          'wc -l /opt/cluster/postfix/sender_relay_maps | cut -d " " -f1',
+          '/usr/sbin/sasldblistusers2 | wc -l',
+          'mailq | grep -c "^[A-F0-9]"',
+          'status=$(systemctl --no-pager status postfix | grep Active:); if echo "$status" | grep -q "active (exited) since"; then echo "Postfix is running"; elif echo "$status" | grep -q "inactive (dead) since"; then echo "Postfix is down"; else echo "Something is wrong"; fi',
+          'status=$(systemctl --no-pager status fail2ban | grep Active:); if echo "$status" | grep -q "active (running) since"; then echo "Fail2ban is running"; elif echo "$status" | grep -q "inactive (dead) since"; then echo "Fail2ban is down"; else echo "Something is wrong"; fi',
+          'status=$(systemctl --no-pager status webmin | grep Active:); if echo "$status" | grep -q "active (running) since"; then echo "Webmin is running"; elif echo "$status" | grep -q "inactive (dead) since"; then echo "Webmin is down"; else echo "Something is wrong"; fi',
+          'status=$(systemctl --no-pager status apache2 | grep Active:); if echo "$status" | grep -q "active (running) since"; then echo "Apache2 is running"; elif echo "$status" | grep -q "inactive (dead) since"; then echo "Apache2 is down"; else echo "Something is wrong"; fi',
+          // Add more commands as needed
+      ];
+
+      // Store the output of each command
+      const outputs = [];
+
+      // Create a new WebSocket connection
+      //socket = new WebSocket(serverAddress);
+
+      socket.addEventListener('open', (event) => {
+          // Once connected, send commands to execute
+          commands.forEach(command => {
+              socket.send(command);
+          });
+      });
+
+      socket.addEventListener('message', (event) => {
+          // Handle messages received from the server
+          const response = event.data;
+
+          // Extract the output
+          const output = extractOutput(response);
+          if (output !== null) {
+              //console.log(output);
+              outputs.push(output); // Store the output in the array
+
+              // If all commands have been executed and their outputs are received
+              if (outputs.length === commands.length) {
+                  // Process the outputs accordingly
+                  $('#totalApplications').text(outputs[0]);
+                  $('#totalDomains').text(outputs[1]);
+                  $('#totalSASL').text(outputs[2]);
+                  $('#mailQueueCount').text(outputs[3]);
+                  $('#statusPostfix').text(outputs[4]);
+                  $('#statusFail2ban').text(outputs[5]);
+                  $('#statusWebmin').text(outputs[6]);
+                  $('#statusApache2').text(outputs[7]);
+                  // Add cases for other commands as needed
+              }
+          }
+      });
+
+      function extractOutput(response) {
+          // Remove color codes and extra characters
+          const cleanResponse = response.replace(/\[\d;?\d*m/g, '').trim();
+
+          // Extract the outputs
+          const outputMatch = cleanResponse.match(/command: (.*)/);
+
+          // Initialize an array to store the outputs
+          const outputs = [];
+
+          // Check if both matches were successful and extract the outputs
+          if (outputMatch && outputMatch.length > 1) {
+              // Add the matched values to the array
+              outputs.push(outputMatch[1]);
+
+              // Return the array containing the outputs
+              return outputs;
+          } else {
+              return null; // Or handle the case where output extraction fails
+          }
+      }
+  }
+
 </script>
 @endpush

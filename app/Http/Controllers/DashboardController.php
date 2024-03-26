@@ -32,9 +32,13 @@ class DashboardController extends Controller
         $defaultServerId = 1;
 
         // Filter servers based on the fetched IDs
-        $serverconfig = Server::whereIn('id', $serverIds)
-        ->where('status', 1)
-        ->pluck('hostname', 'id');
+        /*$serverconfig = Server::whereIn('id', $serverIds)
+        ->where('status', 1)->orderBy('id', 'asc')
+        ->pluck('hostname', 'id');*/
+        $serverconfig =  Server::whereIn('id', $serverIds)
+            ->where('status', 1)
+            ->select('id', 'hostname', 'ipaddress')
+            ->get();
 
         $limit = $request->input('limit', $limit);
 
@@ -43,7 +47,7 @@ class DashboardController extends Controller
         } else {
             $departmentCounts = $this->generateFakerData($limit);
         }
-        
+
 
             $faker = Faker::create();
             $days = range(1, 10);
@@ -69,8 +73,8 @@ class DashboardController extends Controller
                 return $timestamp->format('Y-m-d H:i:s'); // Format timestamp as needed
             });
             $mailCounts = collect($mailqData)->pluck('mail_count');
-        
-        
+
+
             // Pass the data to the view
             return view('dashboard.index', compact('user', 'role', 'serverconfig', 'departmentCounts', 'limit', 'days', 'p1Data', 'p2Data', 'p3Data','timestamps', 'mailCounts','defaultServerId'));
         }
@@ -110,7 +114,7 @@ class DashboardController extends Controller
 
         $departmentCounts = $this->generateFakerData($limit);
 
-        
+
         $mailqData = $this->generateFakerMailQueue(50); // Generate data for 50 entries
 
         // Extract timestamps and mail queue counts
@@ -142,9 +146,9 @@ class DashboardController extends Controller
             'departmentCounts' => $departmentCounts,
             'timestamps' => $timestamps,
             'mailCounts' => $mailCounts,
-            'days' => $days, 
-            'p1Data'=> $p1Data, 
-            'p2Data'=> $p2Data, 
+            'days' => $days,
+            'p1Data'=> $p1Data,
+            'p2Data'=> $p2Data,
             'p3Data'=> $p3Data,
         ]);
     }
