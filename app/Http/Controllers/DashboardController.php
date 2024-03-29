@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\SmtpRelayReqForm;
+use App\Models\smtp_relay_server;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Spatie\Permission\Models\Permission;
@@ -44,8 +46,10 @@ class DashboardController extends Controller
 
         if ($limit === 'all') {
             $departmentCounts = $this->generateFakerData(); // No limit specified for "All"
+            $departmentCounts2 = $this->generateFakerData2();
         } else {
             $departmentCounts = $this->generateFakerData($limit);
+            $departmentCounts2 = $this->generateFakerData2($limit);
         }
 
 
@@ -53,9 +57,19 @@ class DashboardController extends Controller
             $days = range(1, 10);
 
 
-            if ($request->expectsJson()) {
+            /*if ($request->expectsJson()) {
                 return response()->json(['departmentCounts' => $departmentCounts, 'days' => $days]);
-            }
+            }*/
+
+        if ($request->expectsJson()) {
+            $responseData = [
+                'departmentCounts' => $departmentCounts,
+                'departmentCounts2' => $departmentCounts2,
+                'days' => $days
+            ];
+
+            return response()->json($responseData);
+        }
 
             $p1Data = [];
             $p2Data = [];
@@ -76,7 +90,7 @@ class DashboardController extends Controller
 
 
             // Pass the data to the view
-            return view('dashboard.index', compact('user', 'role', 'serverconfig', 'departmentCounts', 'limit', 'days', 'p1Data', 'p2Data', 'p3Data','timestamps', 'mailCounts','defaultServerId'));
+            return view('dashboard.index', compact('user', 'role', 'serverconfig', 'departmentCounts', 'departmentCounts2', 'limit', 'days', 'p1Data', 'p2Data', 'p3Data','timestamps', 'mailCounts','defaultServerId'));
         }
 
     public function api(Request $request, $limit=null)
@@ -113,6 +127,7 @@ class DashboardController extends Controller
         ];
 
         $departmentCounts = $this->generateFakerData($limit);
+        $departmentCounts2 = $this->generateFakerData2($limit);
 
 
         $mailqData = $this->generateFakerMailQueue(50); // Generate data for 50 entries
@@ -144,6 +159,7 @@ class DashboardController extends Controller
             'services' => $services,
             'ipAddress' => $ipAddress,
             'departmentCounts' => $departmentCounts,
+            'departmentCounts2' => $departmentCounts2,
             'timestamps' => $timestamps,
             'mailCounts' => $mailCounts,
             'days' => $days,
@@ -157,7 +173,25 @@ class DashboardController extends Controller
     private function generateFakerData($limit = null)
     {
         // Create an instance of Faker
-        $faker = Faker::create();
+        //$faker = Faker::create();
+
+        $dataSmtpForm = SmtpRelayReqForm::where('status', 0)->get()->toArray();
+        $ids = [];
+        foreach ($dataSmtpForm as $item) {
+            $ids[] = $item['id'];
+        }
+
+        $arraySmtpForm = SmtpRelayReqForm::find($ids);
+        $totalCounts = []; // Initialize an array to store total counts for each form_id
+        $totalCountsAgencies = [];
+
+        foreach ($arraySmtpForm as $val) {
+            $totalAgencies = SmtpRelayReqForm::where('agencies', $val['agencies'])->count();
+            $totalCountsAgencies[$val['agencies']] = $totalAgencies;
+            $count = smtp_relay_server::where('form_id', $val['form_id'])->count();
+            $totalCounts[$val['form_id']] = $count;
+        }
+        //dd($totalCountsAgencies);
 
         // Generate fake department counts
         $departmentCounts = [];
@@ -165,19 +199,32 @@ class DashboardController extends Controller
         // Generating fake data if the limit is specified
         if ($limit) {
             for ($i = 0; $i < $limit; $i++) {
-                $departmentCounts[] = [
+                /*$departmentCounts[] = [
                     'ministry_name' => $faker->word, // Generate fake ministry name
                     'count' => $faker->numberBetween(1, 100) // Generate a random count
-                ];
+                ];*/
+                foreach ($totalCountsAgencies as $agenciesName => $count) {
+                    $departmentCounts[] = [
+                        'ministry_name' => $agenciesName,
+                        'count' => $count
+                    ];
+                }
             }
         } else {
             // If limit is not specified, generate a random number of departments
-            $numDepartments = $faker->numberBetween(5, 20); // Generate a random number of departments between 5 and 20
+            //$numDepartments = $faker->numberBetween(5, 20); // Generate a random number of departments between 5 and 20
+            $numDepartments = 1;
             for ($i = 0; $i < $numDepartments; $i++) {
-                $departmentCounts[] = [
+                /*$departmentCounts[] = [
                     'ministry_name' => $faker->word, // Generate fake ministry name
                     'count' => $faker->numberBetween(1, 100) // Generate a random count
-                ];
+                ];*/
+                foreach ($totalCountsAgencies as $agenciesName => $count) {
+                    $departmentCounts[] = [
+                        'ministry_name' => $agenciesName,
+                        'count' => $count
+                    ];
+                }
             }
         }
 
@@ -186,7 +233,61 @@ class DashboardController extends Controller
             return $b['count'] - $a['count'];
         });
 
+        //dd($departmentCounts);
         return collect($departmentCounts);
+    }
+
+    private function generateFakerData2($limit = null)
+    {
+
+        $dataSmtpForm = SmtpRelayReqForm::where('status', 0)->get()->toArray();
+        $ids = [];
+        foreach ($dataSmtpForm as $item) {
+            $ids[] = $item['id'];
+        }
+
+        $arraySmtpForm = SmtpRelayReqForm::find($ids);
+        $totalCounts = [];
+        $totalCountsDpt = [];
+
+        foreach ($arraySmtpForm as $val) {
+            $totalDpt = SmtpRelayReqForm::where('dept_div_unit', $val['dept_div_unit'])->count();
+            $totalCountsDpt[$val['dept_div_unit']] = $totalDpt;
+            $count = smtp_relay_server::where('form_id', $val['form_id'])->count();
+            $totalCounts[$val['form_id']] = $count;
+        }
+
+        $departmentCounts2 = [];
+
+        // Generating fake data if the limit is specified
+        if ($limit) {
+            for ($i = 0; $i < $limit; $i++) {
+                foreach ($totalCountsDpt as $dptName => $count) {
+                    $departmentCounts2[] = [
+                        'department_name' => $dptName,
+                        'count' => $count
+                    ];
+                }
+            }
+        } else {
+            // If limit is not specified, generate a random number of departments
+            $numDepartments = 1;
+            for ($i = 0; $i < $numDepartments; $i++) {
+                foreach ($totalCountsDpt as $dptName => $count) {
+                    $departmentCounts2[] = [
+                        'department_name' => $dptName,
+                        'count' => $count
+                    ];
+                }
+            }
+        }
+
+        // Sort the generated data by count in descending order
+        usort($departmentCounts2, function ($a, $b) {
+            return $b['count'] - $a['count'];
+        });
+
+        return collect($departmentCounts2);
     }
 
     private function generateFakerMailQueue($numEntries)
