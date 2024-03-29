@@ -308,10 +308,10 @@ function number_format(number, decimals, dec_point, thousands_sep) {
             window.chart = new Chart(departmentChart, {
                 type: 'bar',
                 data: {
-                labels: <?php echo json_encode($departmentCounts->pluck('ministry_name')); ?>,
+                labels: <?php echo json_encode($departmentCounts2->pluck('department_name')); ?>,
                 datasets: [{
                     label: 'Top Department/Division/Unit',
-                    data: <?php echo json_encode($departmentCounts->pluck('count')); ?>,
+                    data: <?php echo json_encode($departmentCounts2->pluck('count')); ?>,
                     backgroundColor: "rgba(0, 97, 242, 1)",
                     hoverBackgroundColor: "rgba(0, 97, 242, 0.9)",
                     borderColor: "#4e73df",

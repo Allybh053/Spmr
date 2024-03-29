@@ -189,7 +189,7 @@
                 <div class="row gx-3 mb-3">
                     <div class="col-md-6">
                         <label for="emailaddfrom">Email Address System (MAILFROM)<span style="color: red"> *</span></label>
-                        <input class="form-control" id="emailaddfrom" name="emailaddfrom" type="email" value="" required/>
+                        <input class="form-control" id="emailaddfrom" name="emailaddfrom" type="text" value="" required/>
                     </div>
                     <div class="col-md-6">
                         <label for="mailbox">MailBox<span style="color: red"> *</span></label>
