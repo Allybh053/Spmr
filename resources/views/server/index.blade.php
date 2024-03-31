@@ -52,47 +52,62 @@
         </script>
     @endif
 
-    @foreach ($dataservers as $dataserver)
+
     <div class="row">
-        <div class="col-lg-8">
-            <div class="card card-header-actions mb-4">
-                <div class="card-header text-white {{ $dataserver->status == 1 ? 'bg-success' : 'bg-warning' }}">
-                    {{ $dataserver -> hostname}}
-                    <div class="form-check form-switch">
-                        <input class="form-check-input" type="checkbox"
-                        id="flexSwitchCheck{{ $dataserver->id }}"
-                        {{ $dataserver->status == 1 ? 'checked' : '' }}
-                        onclick="updateStatus({{ $dataserver->id }}, this)"/>
-                        <label class="form-check-label" for="flexSwitchCheck{{ $dataserver->id }}">{{ $dataserver->status == 1 ? 'Active' : 'Disconnected' }}</label>
-                    </div>
-                </div>
+        <div class="col-xl-12">
+            <div class="card">
+                <div class="card-header">PDSA NAME LOOP HERE</div>
                 <div class="card-body">
-                    <div class="mb-3">
-                        <label class="small mb-1" for="inputNotificationEmail">IP Address : {{ $dataserver->ipaddress}}</label>
-                    </div>
-                    <div class="mb-3">
-                        <label class="small mb-1" for="inputNotificationEmail">SSH Username : {{ $dataserver->sshusername}}</label>
-                    </div>
-                    <div class="mb-3">
-                        <label class="small mb-1" for="inputNotificationEmail">SSH key Path : {{ $dataserver->sshkey}}</label>
-                    </div>
-                    <div class="mb-3">
-                        <label class="small mb-1" for="inputNotificationEmail">Created At : {{ $dataserver->created_at->format('d/m/Y')}}</label>
-                    </div>
+                    <div class="row col-md-12">
+                    @foreach ($dataservers as $dataserver)
+                        <div class="col-lg-6">
+                            <div class="card card-header-actions mb-4">
+                                <div class="card-header text-white {{ $dataserver->status == 1 ? 'bg-success' : 'bg-warning' }}">
+                                    {{ $dataserver -> hostname}}
+                                    <div class="form-check form-switch">
+                                        <input class="form-check-input" type="checkbox"
+                                        id="flexSwitchCheck{{ $dataserver->id }}"
+                                        {{ $dataserver->status == 1 ? 'checked' : '' }}
+                                        onclick="updateStatus({{ $dataserver->id }}, this)"/>
+                                        <label class="form-check-label" for="flexSwitchCheck{{ $dataserver->id }}">{{ $dataserver->status == 1 ? 'Active' : 'Disconnected' }}</label>
+                                    </div>
+                                </div>
+                                <div class="card-body">
+                                    <div class="mb-3">
+                                        <label class="small mb-1" for="inputNotificationEmail">IP Address : {{ $dataserver->ipaddress}}</label>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label class="small mb-1" for="inputNotificationEmail">SSH Username : {{ $dataserver->sshusername}}</label>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label class="small mb-1" for="inputNotificationEmail">SSH key Path : {{ $dataserver->sshkey}}</label>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label class="small mb-1" for="inputNotificationEmail">Created At : {{ $dataserver->created_at->format('d/m/Y')}}</label>
+                                    </div>
+                                </div>
+                                <div class="card-footer d-flex align-items-center justify-content-between small">
+                                    @can('server_update')
+                                    <a class="text-primary" href="{{ route('server.edit', ['id' => $dataserver->id]) }}">Edit Configuration</a>
+                                    @endcan
+                                    @can('server_delete')
+                                            <button class="btn btn-danger delete-btn" data-id="{{ $dataserver->id }}">Delete</button>
+                                        @endcan
+                                </div>
+                            </div>
+                        </div>
+                    @endforeach
+
                 </div>
-                <div class="card-footer d-flex align-items-center justify-content-between small">
-                    @can('server_update')
-                    <a class="text-primary" href="{{ route('server.edit', ['id' => $dataserver->id]) }}">Edit Configuration</a>
-                    @endcan
-                    @can('server_delete')
-                            <button class="btn btn-danger delete-btn" data-id="{{ $dataserver->id }}">Delete</button>
-                        @endcan
+
+
+            </div>
                 </div>
             </div>
         </div>
-    </div>
 
-    @endforeach
+
+
 </div>
 <script>
     function updateStatus(serverId, checkbox) {
