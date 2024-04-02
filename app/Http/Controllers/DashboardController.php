@@ -42,16 +42,31 @@ class DashboardController extends Controller
             ->select('id', 'hostname', 'ipaddress')
             ->get();
 
+        $serverList = [];
+        $listServer = Server::whereIn('id', $serverIds)->get();
+        foreach ($listServer as $server) {
+            $serverList[] = [
+                'hostname' => $server->hostname
+            ];
+        }
+
         $limit = $request->input('limit', $limit);
 
         if ($limit === 'all') {
-            $departmentCounts = $this->generateFakerData(); // No limit specified for "All"
-            $departmentCounts2 = $this->generateFakerData2();
+            $departmentCounts = $this->generateDataMinistry(); // No limit specified for "All"
+            $departmentCounts2 = $this->generateDataDept();
         } else {
-            $departmentCounts = $this->generateFakerData($limit);
-            $departmentCounts2 = $this->generateFakerData2($limit);
+            $departmentCounts = $this->generateDataMinistry($limit);
+            $departmentCounts2 = $this->generateDataDept($limit);
         }
 
+        $filteredMinistries = $departmentCounts->filter(function ($department) use ($serverList) {
+            return in_array($department['postmasters'], array_column($serverList, 'hostname'));
+        })->pluck('ministry_name')->toArray();
+
+        $filteredDept = $departmentCounts2->filter(function ($department2) use ($serverList) {
+            return in_array($department2['postmasters'], array_column($serverList, 'hostname'));
+        })->pluck('department_name')->toArray();
 
             $faker = Faker::create();
             $days = range(1, 10);
@@ -90,7 +105,7 @@ class DashboardController extends Controller
 
 
             // Pass the data to the view
-            return view('dashboard.index', compact('user', 'role', 'serverconfig', 'departmentCounts', 'departmentCounts2', 'limit', 'days', 'p1Data', 'p2Data', 'p3Data','timestamps', 'mailCounts','defaultServerId'));
+            return view('dashboard.index', compact('user', 'role', 'serverconfig', 'serverList', 'filteredMinistries', 'filteredDept', 'departmentCounts', 'departmentCounts2', 'limit', 'days', 'p1Data', 'p2Data', 'p3Data','timestamps', 'mailCounts','defaultServerId'));
         }
 
     public function api(Request $request, $limit=null)
@@ -126,8 +141,8 @@ class DashboardController extends Controller
             'Keep Alive' => $faker->randomElement(['Online', 'Offline']),
         ];
 
-        $departmentCounts = $this->generateFakerData($limit);
-        $departmentCounts2 = $this->generateFakerData2($limit);
+        $departmentCounts = $this->generateDataMinistry($limit);
+        $departmentCounts2 = $this->generateDataDept($limit);
 
 
         $mailqData = $this->generateFakerMailQueue(50); // Generate data for 50 entries
@@ -170,11 +185,8 @@ class DashboardController extends Controller
     }
 
 
-    private function generateFakerData($limit = null)
+    private function generateDataMinistry($limit = null)
     {
-        // Create an instance of Faker
-        //$faker = Faker::create();
-
         $dataSmtpForm = SmtpRelayReqForm::where('status', 0)->get()->toArray();
         $ids = [];
         foreach ($dataSmtpForm as $item) {
@@ -184,60 +196,86 @@ class DashboardController extends Controller
         $arraySmtpForm = SmtpRelayReqForm::find($ids);
         $totalCounts = []; // Initialize an array to store total counts for each form_id
         $totalCountsAgencies = [];
+        $totalPostmaster = [];
+        $totalDataPostmaster = [];
 
         foreach ($arraySmtpForm as $val) {
-            $totalAgencies = SmtpRelayReqForm::where('agencies', $val['agencies'])->count();
-            $totalCountsAgencies[$val['agencies']] = $totalAgencies;
+            $totalDataServer = SmtpRelayReqForm::where('smtp_relay_server', $val['smtp_relay_server'])->get();
+            $totalDataPostmaster[$val['smtp_relay_server']] = $totalDataServer;
+
+            $totalServer = SmtpRelayReqForm::where('smtp_relay_server', $val['smtp_relay_server'])->count();
+            $totalPostmaster[$val['smtp_relay_server']] = $totalServer;
+
+            $totalAgencies = SmtpRelayReqForm::where('agencies', $val['agencies'])->where('smtp_relay_server', $val['smtp_relay_server'])->count();
+            $totalCountsAgencies[$val['agencies']][$val['smtp_relay_server']] = $totalAgencies;
+
             $count = smtp_relay_server::where('form_id', $val['form_id'])->count();
             $totalCounts[$val['form_id']] = $count;
         }
-        //dd($totalCountsAgencies);
 
-        // Generate fake department counts
+        // Generate department counts
         $departmentCounts = [];
 
-        // Generating fake data if the limit is specified
+        // Generating data if the limit is specified
         if ($limit) {
             for ($i = 0; $i < $limit; $i++) {
-                /*$departmentCounts[] = [
-                    'ministry_name' => $faker->word, // Generate fake ministry name
-                    'count' => $faker->numberBetween(1, 100) // Generate a random count
-                ];*/
-                foreach ($totalCountsAgencies as $agenciesName => $count) {
-                    $departmentCounts[] = [
-                        'ministry_name' => $agenciesName,
-                        'count' => $count
-                    ];
+                foreach ($totalCountsAgencies as $agenciesName => $smtpRelayServers) {
+                    foreach ($smtpRelayServers as $smtpRelayServer => $count) {
+                        $departmentCounts[] = [
+                            'ministry_name' => $agenciesName,
+                            'postmasters' => $smtpRelayServer,
+                            'count' => $count
+                        ];
+                    }
                 }
             }
         } else {
-            // If limit is not specified, generate a random number of departments
-            //$numDepartments = $faker->numberBetween(5, 20); // Generate a random number of departments between 5 and 20
             $numDepartments = 1;
             for ($i = 0; $i < $numDepartments; $i++) {
-                /*$departmentCounts[] = [
-                    'ministry_name' => $faker->word, // Generate fake ministry name
-                    'count' => $faker->numberBetween(1, 100) // Generate a random count
-                ];*/
-                foreach ($totalCountsAgencies as $agenciesName => $count) {
-                    $departmentCounts[] = [
-                        'ministry_name' => $agenciesName,
-                        'count' => $count
-                    ];
+                foreach ($totalCountsAgencies as $agenciesName => $smtpRelayServers) {
+                    foreach ($smtpRelayServers as $smtpRelayServer => $count) {
+                        $departmentCounts[] = [
+                            'ministry_name' => $agenciesName,
+                            'postmasters' => $smtpRelayServer,
+                            'count' => $count
+                        ];
+                    }
                 }
             }
         }
 
-        // Sort the generated data by count in descending order
-        usort($departmentCounts, function ($a, $b) {
-            return $b['count'] - $a['count'];
-        });
+        // Get all unique servers from the departmentCounts array
+        $allServers = collect($departmentCounts)->pluck('postmasters')->unique();
 
-        //dd($departmentCounts);
-        return collect($departmentCounts);
+        // Group the departmentCounts array by the postmaster/server
+        $groupedDepartmentCounts = collect($departmentCounts)->groupBy('postmasters');
+
+        // Initialize an empty array to store the limited data
+        $limitedDepartmentCounts = [];
+
+        // Iterate over each unique server
+        foreach ($allServers as $server) {
+            // If the server exists in the grouped data, retrieve its data
+            // Otherwise, set an empty array for this server
+            $serverData = $groupedDepartmentCounts[$server] ?? [];
+
+            // Sort the server data by count in descending order
+            $sortedServerData = collect($serverData)->sortByDesc('count');
+
+            // Take the first 5 elements for this server
+            $limitedServerData = $sortedServerData->take(5);
+
+            // Add the limited server data to the result array
+            $limitedDepartmentCounts = array_merge($limitedDepartmentCounts, $limitedServerData->toArray());
+        }
+
+        // Convert the limited array to a collection
+        $limitedCollection = collect($limitedDepartmentCounts);
+
+        return $limitedCollection;
     }
 
-    private function generateFakerData2($limit = null)
+    private function generateDataDept($limit = null)
     {
 
         $dataSmtpForm = SmtpRelayReqForm::where('status', 0)->get()->toArray();
@@ -249,35 +287,49 @@ class DashboardController extends Controller
         $arraySmtpForm = SmtpRelayReqForm::find($ids);
         $totalCounts = [];
         $totalCountsDpt = [];
+        $totalPostmaster = [];
+        $totalDataPostmaster = [];
 
         foreach ($arraySmtpForm as $val) {
-            $totalDpt = SmtpRelayReqForm::where('dept_div_unit', $val['dept_div_unit'])->count();
-            $totalCountsDpt[$val['dept_div_unit']] = $totalDpt;
+            $totalDataServer = SmtpRelayReqForm::where('smtp_relay_server', $val['smtp_relay_server'])->get();
+            $totalDataPostmaster[$val['smtp_relay_server']] = $totalDataServer;
+
+            $totalServer = SmtpRelayReqForm::where('smtp_relay_server', $val['smtp_relay_server'])->count();
+            $totalPostmaster[$val['smtp_relay_server']] = $totalServer;
+
+            $totalDpt = SmtpRelayReqForm::where('dept_div_unit', $val['dept_div_unit'])->where('smtp_relay_server', $val['smtp_relay_server'])->count();
+            $totalCountsDpt[$val['dept_div_unit']][$val['smtp_relay_server']] = $totalDpt;
+
             $count = smtp_relay_server::where('form_id', $val['form_id'])->count();
             $totalCounts[$val['form_id']] = $count;
         }
 
         $departmentCounts2 = [];
 
-        // Generating fake data if the limit is specified
+        // Generating data if the limit is specified
         if ($limit) {
             for ($i = 0; $i < $limit; $i++) {
-                foreach ($totalCountsDpt as $dptName => $count) {
-                    $departmentCounts2[] = [
-                        'department_name' => $dptName,
-                        'count' => $count
-                    ];
+                foreach ($totalCountsDpt as $dptName => $smtpRelayServers) {
+                    foreach ($smtpRelayServers as $smtpRelayServer => $count) {
+                        $departmentCounts2[] = [
+                            'department_name' => $dptName,
+                            'postmasters' => $smtpRelayServer,
+                            'count' => $count
+                        ];
+                    }
                 }
             }
         } else {
-            // If limit is not specified, generate a random number of departments
             $numDepartments = 1;
             for ($i = 0; $i < $numDepartments; $i++) {
-                foreach ($totalCountsDpt as $dptName => $count) {
-                    $departmentCounts2[] = [
-                        'department_name' => $dptName,
-                        'count' => $count
-                    ];
+                foreach ($totalCountsDpt as $dptName => $smtpRelayServers) {
+                    foreach ($smtpRelayServers as $smtpRelayServer => $count) {
+                        $departmentCounts2[] = [
+                            'department_name' => $dptName,
+                            'postmasters' => $smtpRelayServer,
+                            'count' => $count
+                        ];
+                    }
                 }
             }
         }
@@ -287,7 +339,35 @@ class DashboardController extends Controller
             return $b['count'] - $a['count'];
         });
 
-        return collect($departmentCounts2);
+        // Get all unique servers from the departmentCounts array
+        $allServers2 = collect($departmentCounts2)->pluck('postmasters')->unique();
+
+        // Group the departmentCounts array by the postmaster/server
+        $groupedDepartmentCounts2 = collect($departmentCounts2)->groupBy('postmasters');
+
+        // Initialize an empty array to store the limited data
+        $limitedDepartmentCounts2 = [];
+
+        // Iterate over each unique server
+        foreach ($allServers2 as $server2) {
+            // If the server exists in the grouped data, retrieve its data
+            // Otherwise, set an empty array for this server
+            $serverData2 = $groupedDepartmentCounts2[$server2] ?? [];
+
+            // Sort the server data by count in descending order
+            $sortedServerData2 = collect($serverData2)->sortByDesc('count');
+
+            // Take the first 5 elements for this server
+            $limitedServerData2 = $sortedServerData2->take(5);
+
+            // Add the limited server data to the result array
+            $limitedDepartmentCounts2 = array_merge($limitedDepartmentCounts2, $limitedServerData2->toArray());
+        }
+
+        // Convert the limited array to a collection
+        $limitedCollection2 = collect($limitedDepartmentCounts2);
+
+        return $limitedCollection2;
     }
 
     private function generateFakerMailQueue($numEntries)

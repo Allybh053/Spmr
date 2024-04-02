@@ -90,7 +90,7 @@
     <div class="col-xxl-6">
       <div class="card">
         <div class="card-header text-center p-5">
-          <h5>Top List Ministry/Agency/SUK by Server</h5>
+          <h5>Top 5 List Ministry/Agency/SUK</h5>
         </div>
         <div class="card-body">
           <!-- <label for="limitSelectKementerian">Select Limit:</label><select name="limitKementerian" id="limitSelectKementerian"><option value="all" {{ $limit === 'all' ? 'selected' : '' }}>All</option><option value="10" {{ $limit == 10 ? 'selected' : '' }}>Top 10</option><option value="20" {{ $limit == 20 ? 'selected' : '' }}>Top 20</option><option value="50" {{ $limit == 50 ? 'selected' : '' }}>Top 50</option></select> -->
@@ -101,7 +101,7 @@
     <div class="col-xxl-6">
       <div class="card">
         <div class="card-header text-center p-5">
-          <h5>Top List Department/Division/Unit by Server</h5>
+          <h5>Top 5 List Department/Division/Unit</h5>
         </div>
         <div class="card-body">
           <!-- <label for="limitSelect">Select Limit:</label><select name="limit" id="limitSelect"><option value="all" {{ $limit === 'all' ? 'selected' : '' }}>All</option><option value="10" {{ $limit == 10 ? 'selected' : '' }}>Top 10</option><option value="20" {{ $limit == 20 ? 'selected' : '' }}>Top 20</option><option value="50" {{ $limit == 50 ? 'selected' : '' }}>Top 50</option></select> -->
@@ -284,59 +284,29 @@ $(document).ready(function() {
     }
 
 
-    renderChart();
-
-    function renderChart() {
-        var departmentChart = document.getElementById('departmentChart').getContext('2d');
-        window.chart = new Chart(departmentChart, {
-            type: 'bar',
-            data: {
-                labels: <?php echo json_encode($departmentCounts2->pluck('department_name')); ?>,
-                datasets: [
-                    <?php foreach($departmentCounts2 as $department): ?>
-                    {
-                        label: '<?php echo $department->department_name; ?>',
-                        data: <?php echo json_encode($department->postmasters->pluck('data')->toArray()); ?>,
-                        backgroundColor: getRandomColor(),
-                        borderColor: "#4e73df",
-                        borderWidth: 1
-                    },
-                    <?php endforeach; ?>
-                ]
-            },
-            options: {
-                scales: {
-                    y: {
-                        beginAtZero: true
-                    }
-                },
-                plugins: {
-                    legend: {
-                        display: true,
-                        position: 'bottom',
-                    }
-                }
-            }
-        });
-    }
     renderChartKementerian();
     function renderChartKementerian() {
         var ctx = document.getElementById('kementerianChart').getContext('2d');
         window.kementerianChart = new Chart(ctx, {
             type: 'bar',
             data: {
-                labels: <?php echo json_encode($departmentCounts->pluck('ministry_name')); ?>,
-                datasets: [
-                    <?php foreach($departmentCounts as $departmentCount): ?>
-                    {
-                        label: '<?php echo $departmentCount->ministry_name; ?>',
-                        data: <?php echo json_encode($departmentCount->postmasters->pluck('data')->toArray()); ?>,
+                labels: <?php echo json_encode($filteredMinistries); ?>,
+                datasets: <?php echo json_encode($serverList); ?>.map(server => {
+                    const serverHostname = server.hostname;
+                    return {
+                        label: serverHostname,
+                        data: <?php echo json_encode($departmentCounts->toArray()); ?>.map(data => {
+                            if (data.postmasters === serverHostname) {
+                                return data.count;
+                            } else {
+                                return 0;
+                            }
+                        }),
                         backgroundColor: getRandomColor(),
                         borderColor: "#4e73df",
                         borderWidth: 1
-                    },
-                    <?php endforeach; ?>
-                ]
+                    };
+                })
             },
             options: {
                 scales: {
@@ -354,7 +324,47 @@ $(document).ready(function() {
         });
     }
 
- });
+    renderChart();
+    function renderChart() {
+        var departmentChart = document.getElementById('departmentChart').getContext('2d');
+        window.chart = new Chart(departmentChart, {
+            type: 'bar',
+            data: {
+                labels: <?php echo json_encode($filteredDept); ?>,
+                datasets: <?php echo json_encode($serverList); ?>.map(server => {
+                    const serverHostname = server.hostname;
+                    return {
+                        label: serverHostname,
+                        data: <?php echo json_encode($departmentCounts2->toArray()); ?>.map(data => {
+                            if (data.postmasters === serverHostname) {
+                                return data.count;
+                            } else {
+                                return 0;
+                            }
+                        }),
+                        backgroundColor: getRandomColor(),
+                        borderColor: "#4e73df",
+                        borderWidth: 1
+                    };
+                })
+            },
+            options: {
+                scales: {
+                    y: {
+                        beginAtZero: true
+                    }
+                },
+                plugins: {
+                    legend: {
+                        display: true,
+                        position: 'bottom',
+                    }
+                }
+            }
+        });
+    }
+
+});
 
       let sockets = [];
       let serverIpaddresses = [];
