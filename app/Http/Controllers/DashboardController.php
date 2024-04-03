@@ -38,12 +38,12 @@ class DashboardController extends Controller
         ->where('status', 1)->orderBy('id', 'asc')
         ->pluck('hostname', 'id');*/
         $serverconfig =  Server::whereIn('id', $serverIds)
-            ->where('status', 1)
+            ->where('status', 1)->orderBy('id', 'asc')
             ->select('id', 'hostname', 'ipaddress')
             ->get();
 
         $serverList = [];
-        $listServer = Server::whereIn('id', $serverIds)->get();
+        $listServer = Server::whereIn('id', $serverIds)->where('status', 1)->orderBy('id', 'asc')->get();
         foreach ($listServer as $server) {
             $serverList[] = [
                 'hostname' => $server->hostname
@@ -52,12 +52,26 @@ class DashboardController extends Controller
 
         $limit = $request->input('limit', $limit);
 
+        $collectedDataMinistry = $this->generateDataMinistry();
+        $filteredDataMinistry = collect($collectedDataMinistry)->filter(function ($fdm) use ($serverList) {
+            return in_array($fdm['postmasters'], array_column($serverList, 'hostname'));
+        });
+
+        $collectedDataDept = $this->generateDataDept();
+        $filteredDataDept = collect($collectedDataDept)->filter(function ($fdm) use ($serverList) {
+            return in_array($fdm['postmasters'], array_column($serverList, 'hostname'));
+        });
+
         if ($limit === 'all') {
-            $departmentCounts = $this->generateDataMinistry(); // No limit specified for "All"
-            $departmentCounts2 = $this->generateDataDept();
+            //$departmentCounts = $this->generateDataMinistry(); // No limit specified for "All"
+            $departmentCounts = $filteredDataMinistry; // No limit specified for "All"
+            //$departmentCounts2 = $this->generateDataDept();
+            $departmentCounts2 = $filteredDataDept;
         } else {
-            $departmentCounts = $this->generateDataMinistry($limit);
-            $departmentCounts2 = $this->generateDataDept($limit);
+            //$departmentCounts = $this->generateDataMinistry($limit);
+            $departmentCounts = $filteredDataMinistry;
+            //$departmentCounts2 = $this->generateDataDept($limit);
+            $departmentCounts2 = $filteredDataDept;
         }
 
         $filteredMinistries = $departmentCounts->filter(function ($department) use ($serverList) {
@@ -105,7 +119,10 @@ class DashboardController extends Controller
 
 
             // Pass the data to the view
-            return view('dashboard.index', compact('user', 'role', 'serverconfig', 'serverList', 'filteredMinistries', 'filteredDept', 'departmentCounts', 'departmentCounts2', 'limit', 'days', 'p1Data', 'p2Data', 'p3Data','timestamps', 'mailCounts','defaultServerId'));
+            return view('dashboard.index', compact(
+                'user', 'role', 'serverconfig', 'serverList', 'filteredMinistries',
+                'filteredDept', 'departmentCounts', 'departmentCounts2', 'limit', 'days', 'p1Data',
+                'p2Data', 'p3Data','timestamps', 'mailCounts','defaultServerId'));
         }
 
     public function api(Request $request, $limit=null)

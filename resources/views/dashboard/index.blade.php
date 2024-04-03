@@ -291,22 +291,24 @@ $(document).ready(function() {
             type: 'bar',
             data: {
                 labels: <?php echo json_encode($filteredMinistries); ?>,
-                datasets: <?php echo json_encode($serverList); ?>.map(server => {
-                    const serverHostname = server.hostname;
-                    return {
-                        label: serverHostname,
-                        data: <?php echo json_encode($departmentCounts->toArray()); ?>.map(data => {
-                            if (data.postmasters === serverHostname) {
-                                return data.count;
-                            } else {
-                                return 0;
-                            }
-                        }),
-                        backgroundColor: getRandomColor(),
-                        borderColor: "#4e73df",
-                        borderWidth: 1
-                    };
-                })
+                datasets: <?php
+                          $datasets = [];
+                          foreach ($serverList as $server) {
+                              $serverHostname = $server['hostname'];
+                              $color = sprintf('#%06X', mt_rand(0, 0xFFFFFF));
+                              $data = collect($departmentCounts)->map(function ($data) use ($serverHostname) {
+                                  return $data['postmasters'] === $serverHostname ? $data['count'] : 0;
+                              })->values()->toArray(); // Convert to array
+                              $datasets[] = [
+                                  'label' => $serverHostname,
+                                  'data' => $data,
+                                  'backgroundColor' => $color, // Corrected syntax
+                                  'borderColor' => '#4e73df',
+                                  'borderWidth' => 1
+                              ];
+                      }
+                          echo json_encode($datasets);
+                          ?>
             },
             options: {
                 scales: {
@@ -331,22 +333,24 @@ $(document).ready(function() {
             type: 'bar',
             data: {
                 labels: <?php echo json_encode($filteredDept); ?>,
-                datasets: <?php echo json_encode($serverList); ?>.map(server => {
-                    const serverHostname = server.hostname;
-                    return {
-                        label: serverHostname,
-                        data: <?php echo json_encode($departmentCounts2->toArray()); ?>.map(data => {
-                            if (data.postmasters === serverHostname) {
-                                return data.count;
-                            } else {
-                                return 0;
-                            }
-                        }),
-                        backgroundColor: getRandomColor(),
-                        borderColor: "#4e73df",
-                        borderWidth: 1
-                    };
-                })
+                datasets: <?php
+                          $datasets = [];
+                          foreach ($serverList as $server) {
+                              $serverHostname = $server['hostname'];
+                              $color = sprintf('#%06X', mt_rand(0, 0xFFFFFF));
+                              $data = collect($departmentCounts2)->map(function ($data) use ($serverHostname) {
+                                  return $data['postmasters'] === $serverHostname ? $data['count'] : 0;
+                              })->values()->toArray(); // Convert to array
+                              $datasets[] = [
+                                  'label' => $serverHostname,
+                                  'data' => $data,
+                                  'backgroundColor' => $color, // Corrected syntax
+                                  'borderColor' => '#4e73df',
+                                  'borderWidth' => 1
+                              ];
+                          }
+                          echo json_encode($datasets);
+                          ?>
             },
             options: {
                 scales: {
