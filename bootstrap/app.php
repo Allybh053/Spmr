@@ -52,4 +52,10 @@ $app->singleton(
 |
 */
 
+if (isset($_SERVER['HTTP_HOST'])) {
+    $protocol = isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? "https" : "http";
+    $url = $protocol . "://" . $_SERVER['HTTP_HOST'];
+    $_ENV['APP_URL'] = $url;
+}
+
 return $app;
