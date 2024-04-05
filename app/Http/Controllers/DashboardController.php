@@ -26,6 +26,8 @@ class DashboardController extends Controller
     public function index(Request $request,$limit = null)
     {
         $user = Auth::user();
+
+
         $role = $user->roles->isNotEmpty() ? $user->roles->pluck('name')->first() : null;
        // Fetch server IDs associated with the user's roles
         $serverIds = RoleServer::whereIn('role_id', $user->roles->pluck('id')->all())

@@ -16,6 +16,8 @@ use Illuminate\Support\Facades\View;
 use App\Models\Server;
 use App\Models\RoleServer;
 
+use Illuminate\Support\Facades\Artisan;
+
 
 class RoleController extends Controller
 {
@@ -92,6 +94,9 @@ class RoleController extends Controller
             }
         }
 
+        $this->clearCacheAndAutoload();
+
+
 
         return response()->json(['success' => '1', 'redirect' => route('setup.role.index'), 'message' => 'Permissions saved successfully.']);
     }
@@ -102,4 +107,16 @@ class RoleController extends Controller
 
         return response()->json(['success' => '1', 'redirect' => route('setup.role.index'), 'message' => 'Role deleted successfully.']);
     }
+
+    private function clearCacheAndAutoload()
+{
+    // Clear the application cache
+    Artisan::call('cache:clear');
+
+    // Clear and optimize the configuration cache
+    Artisan::call('config:cache');
+
+    // Dump the autoloader
+    exec('composer dump-autoload');
+}
 }
