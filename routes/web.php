@@ -248,6 +248,7 @@ Route::group(['middleware' => ['auth']], function () {
     Route::group(['prefix' => 'generate-report'], function () {
         Route::get('/', [GenerateReportingController::class, 'index'])->name('generateReport.index');
         // ->middleware('auth.resource:generate_report_view');
+        Route::get('/getServer', [GenerateReportingController::class, 'api'])->name('generateReport.api');
         Route::get('/index/searching', [GenerateReportingController::class, 'search'])->name('generateReport.index.search');
     });
 
