@@ -196,7 +196,7 @@
                                 </a>
                             </div>
                             <div class="col-xl-4 mb-4">
-                                <a class="card lift h-100" href="#!">
+                                <a class="card lift h-100 mService" href="{{ route('manageService.index', ['server_id' => '1', 'server_type' => 'webmin']) }}">
                                     <div class="card-body cardService d-flex justify-content-center flex-column">
                                         <div class="d-flex align-items-center justify-content-between">
                                             <div class="me-3">
@@ -374,12 +374,14 @@ $(document).ready(function() {
       let serverIpaddresses = [];
 
       @foreach ($serverconfig as $server)
-      let serverMailRelay{{$loop->iteration}} = "{{ $server->ipaddress }}";
+      //let serverMailRelay{{$loop->iteration}} = "{{ $server->ipaddress }}";
+      let serverMailRelay{{$loop->iteration}} = "{{ $server->hostname }}";
       serverIpaddresses.push(serverMailRelay{{$loop->iteration}});
       @endforeach
 
-      serverIpaddresses.forEach(ip => {
-          const serverAddress = 'ws://' + ip + ':8000/';
+      serverIpaddresses.forEach(hostname => {
+          //const serverAddress = 'ws://' + ip + ':8000/';
+          const serverAddress = 'wss://' + hostname + '/wss/';
 
           const socket = new WebSocket(serverAddress);
           sockets.push(socket);
