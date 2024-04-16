@@ -93,6 +93,37 @@
                       {{-- @endcan --}}
                     </a>
                   </div>
+                    <div class="col-xl-6 mb-4 selected-item webmin serverId-1">
+                        <a class="card lift h-100" href="#!">
+                            <div class="card-body cardService d-flex justify-content-center flex-column">
+                                <div class="d-flex align-items-center justify-content-between">
+                                    <div class="me-3">
+                                        <h5>Webmin</h5>
+                                    </div>
+                                    <img src="{{ isset($status) && $status === 'Online' ? asset('assets/img/demo/online.png') : asset('assets/img/demo/offline.png') }}" alt="{{ $status === 'Online' ? 'Online' : 'Offline' }}" style="width: 5rem">
+                                </div>
+                                <span>Active</span>
+                            </div>
+                            {{-- @can('manage_service_update') --}}
+                            <div class="col-md-6 d-flex justify-content-center" style="padding-left: 150px;padding-bottom: 15px;">
+                                <div class="btn-group" role="group" aria-label="Button group with nested dropdown">
+                                    <button type="button" class="btn btn-primary">
+                                        <i class="fas fa-play"></i>
+                                    </button>
+                                    <button type="button" class="btn btn-danger">
+                                        <i class="fas fa-stop"></i>
+                                    </button>
+                                    <button type="button" class="btn btn-warning">
+                                        <i class="fas fa-redo"></i>
+                                    </button>
+                                    <button type="button" class="btn btn-info">
+                                        <i class="fas fa-sync-alt"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            {{-- @endcan --}}
+                        </a>
+                    </div>
                 </div>
               </div>
           </div>
