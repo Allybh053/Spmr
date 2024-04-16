@@ -12,6 +12,7 @@ use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\JsonResponse;
 use Faker\Factory as Faker;
+use Illuminate\Support\Facades\File;
 use function Laravel\Prompts\search;
 
 class GenerateReportingController extends Controller
@@ -82,7 +83,7 @@ class GenerateReportingController extends Controller
         $totalIpAddr = '';
         $totalDeactivated = '';
         $valDataTables = '';
-        $abc = '';
+        $valDataTablesJoin = '';
 
         // Searching and filtering
         /*$queryJoin = SmtpRelayReqForm::select('smtp_relay_req_form.*', 'smtp_relay_server.ip_addr_server')
@@ -163,12 +164,12 @@ class GenerateReportingController extends Controller
             }
 
             $valDataTables = $totalDataForm;
-            $abc = $totalDataJoin;
+            $valDataTablesJoin = $totalDataJoin;
         }
 
         return response()->json([
             'data' => $valDataTables,
-            'data2' => $abc,
+            'data2' => $valDataTablesJoin,
             'totalApplications' => $totalApplications,
             'totalIP' => $totalIpAddr,
             'totalDeactivated' => $totalDeactivated,
