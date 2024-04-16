@@ -62,7 +62,7 @@
                 @endcan
 
 
-                <!-- <a class="nav-link collapsed" href="javascript:void(0);" data-bs-toggle="collapse" data-bs-target="#collapseHistory" aria-expanded="false" aria-controls="collapseHistory">
+                {{-- <!-- <a class="nav-link collapsed" href="javascript:void(0);" data-bs-toggle="collapse" data-bs-target="#collapseHistory" aria-expanded="false" aria-controls="collapseHistory">
                     <div class="nav-link-icon"><i data-feather="link"></i></div>
                    History Connection
                     <div class="sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
@@ -74,7 +74,7 @@
                     <!-- <a class="nav-link" href="{{ route('history.fail.index') }}">Fail-to-Ban Blacklist Firewall</a>
                 </nav> -->
 
-                <!-- </div> -->
+                <!-- </div> --> --}}
 
                 @can('server_overview_view')
                 <div class="sidenav-menu-heading">Services Management</div>
@@ -119,6 +119,7 @@
 
                     </nav>
                 </div>--}}
+
                 @can('mail_log_view')
                     <a class="nav-link" href="{{ route('mailLog.index') }}">
                         <div class="nav-link-icon"><i data-feather="mail"></i></div>

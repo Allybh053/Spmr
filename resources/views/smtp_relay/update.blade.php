@@ -158,6 +158,7 @@
                                         </select>
                                     </td>--}}
                                         <td><input type="text" name="tableSpmr[{{ $loop->index }}][fqdn_server]" id="fqdn_server" value="{{ old('tableSpmr.' . $loop->index . '.fqdn_server', $detail->fqdn_server) }}" class="form-control" required /></td>
+                                        <td hidden><input type="text" name="tableSpmr[{{ $loop->index }}][deactivated]" id="deactivated" value="{{ old('tableSpmr.' . $loop->index . '.deactivated', $detail->deactivated) }}" class="form-control" /></td>
                                     <td><button class="btn btn-danger remove-row"><i class="me-1" data-feather="minus"></i>Remove</button></td>
                                 </tr>
                             @endforeach
@@ -200,7 +201,7 @@
                 <div class="row gx-3 mb-3">
                     <div class="col-md-6">
                         <label for="mailfrom_email_addr">Email Address System (MAILFROM)</label>
-                        <input class="form-control" id="mailfrom_email_addr" name="mailfrom_email_addr" type="email" value="{{ old('mailfrom_email_addr', $formsmtp->mailfrom_email_addr) }}" required/>
+                        <input class="form-control" id="mailfrom_email_addr" name="mailfrom_email_addr" type="text" value="{{ old('mailfrom_email_addr', $formsmtp->mailfrom_email_addr) }}" required/>
                     </div>
                     <div class="col-md-6">
                         <label for="mailbox_created">MailBox</label>
