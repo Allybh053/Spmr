@@ -87,6 +87,10 @@
                 processing: true,
                 serverSide: false,
                 ordering: true,
+                dom: 'Bfrtip', // Show buttons at the top
+                buttons: [
+                    'copy', 'csv', 'excel', 'pdf', 'print'
+                ]
             });
         })(jQuery);
 
