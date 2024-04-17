@@ -42,7 +42,7 @@
                         </div>
                         <span>Active</span>
                       </div>
-                      {{-- @can('manage_service_update') --}}
+                      @can('manage_service_update')
                       <div class="col-md-6 d-flex justify-content-center" style="padding-left: 150px;padding-bottom: 15px;">
                         <div class="btn-group" role="group" aria-label="Button group with nested dropdown">
                           <button type="button" class="btn btn-primary">
@@ -59,7 +59,7 @@
                           </button>
                         </div>
                       </div>
-                       {{-- @endcan  --}}
+                       @endcan 
                     </a>
                   </div>
                   <div class="col-xl-6 mb-4 selected-item apache serverId-1">
@@ -73,7 +73,7 @@
                         </div>
                         <span>Active</span>
                       </div>
-                    {{-- @can('manage_service_update') --}}
+                    @can('manage_service_update')
                       <div class="col-md-6 d-flex justify-content-center" style="padding-left: 150px;padding-bottom: 15px;">
                         <div class="btn-group" role="group" aria-label="Button group with nested dropdown">
                           <button type="button" class="btn btn-primary">
@@ -90,7 +90,7 @@
                           </button>
                         </div>
                       </div>
-                      {{-- @endcan --}}
+                      @endcan
                     </a>
                   </div>
                 </div>

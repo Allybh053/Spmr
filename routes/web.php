@@ -241,20 +241,20 @@ Route::group(['middleware' => ['auth']], function () {
 
 
     Route::group(['prefix' => 'manage-service'], function () {
-        Route::get('/{server_id?}/{server_type?}', [ManageServiceController::class, 'index'])->name('manageService.index');
-        // ->middleware('auth.resource:manage_service_view');
+        Route::get('/{server_id?}/{server_type?}', [ManageServiceController::class, 'index'])->name('manageService.index')
+        ->middleware('auth.resource:manage_service_view');
     });
 
     Route::group(['prefix' => 'generate-report'], function () {
-        Route::get('/', [GenerateReportingController::class, 'index'])->name('generateReport.index');
-        // ->middleware('auth.resource:generate_report_view');
+        Route::get('/', [GenerateReportingController::class, 'index'])->name('generateReport.index')
+        ->middleware('auth.resource:generate_report_view');
         Route::get('/getServer', [GenerateReportingController::class, 'api'])->name('generateReport.api');
         Route::get('/index/searching', [GenerateReportingController::class, 'search'])->name('generateReport.index.search');
     });
 
 
-    Route::get('/activity-logs', [ActivityLogController::class,'showActivityLogs'])->name('activityLog.index');
-      // ->middleware('auth.resource:spmr_activity_log_view');
+    Route::get('/activity-logs', [ActivityLogController::class,'showActivityLogs'])->name('activityLog.index')
+      ->middleware('auth.resource:spmr_activity_log_view');
 
 });
 

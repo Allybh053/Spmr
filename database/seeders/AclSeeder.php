@@ -57,18 +57,18 @@ class AclSeeder extends Seeder
 				],
 			],
 			"report" => [
-				"traffic_statistic_summary" => [
-					'traffic_statistic_summary_view',
-					'traffic_statistic_summary_download',
-				],
-				"detail_report_sender" => [
-					'detail_report_sender_view',
-					'detail_report_sender_download',
-				],
-				"query_log" => [
-					'query_log_view',
-					'query_log_download',
-				],
+				// "traffic_statistic_summary" => [
+				// 	'traffic_statistic_summary_view',
+				// 	'traffic_statistic_summary_download',
+				// ],
+				// "detail_report_sender" => [
+				// 	'detail_report_sender_view',
+				// 	'detail_report_sender_download',
+				// ],
+				// "query_log" => [
+				// 	'query_log_view',
+				// 	'query_log_download',
+				// ],
                 "generate_report" => [
 					'generate_report_view',
 				],
@@ -112,12 +112,12 @@ class AclSeeder extends Seeder
 				"loopback_smtp_test" => [
 					'loopback_smtp_test_view'
 				],
-				"replication_status" => [
-					'replication_status_view'
-				],
-				"print_list_ip_address" => [
-					'print_list_ip_address_view'
-				],
+				// "replication_status" => [
+				// 	'replication_status_view'
+				// ],
+				// "print_list_ip_address" => [
+				// 	'print_list_ip_address_view'
+				// ],
 			],
 		];
 
