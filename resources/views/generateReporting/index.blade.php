@@ -228,11 +228,11 @@
               </div>--}}
 
                   {{-- Table List SASL Start --}}
-                  <div class="row">
+                  {{--<div class="row">
                     <div class="table-responsive">
-                    <table id="senderEmailDatatable" class="fixed_header display table table-striped table-bordered" cellspacing="0" width="100%">
+                    <table id="monthlyPflogSummDatatable" class="fixed_header display table table-striped table-bordered" cellspacing="0" width="100%">
                         <thead>
-                            <th colspan="3" style="background-color: aliceblue">List of Monthly Longsumm</th>
+                            <th colspan="3" style="background-color: aliceblue">List of Monthly Pflogsumm</th>
                         </thead>
                         <tbody>
                           <tr>
@@ -250,7 +250,7 @@
                       </tbody>
                       </table>
                     </div>
-              </div>
+                  </div>--}}
                   {{-- Table List SASL End --}}
 
 
