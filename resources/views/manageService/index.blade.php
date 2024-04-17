@@ -17,159 +17,91 @@
     </div>
   </header>
   <!-- Main page content-->
-  <!-- Start Loop By Server Here -->
-    <div class="container-fluid px-4">
-        @foreach ($serverconfig as $server)
-        <div class="card">
-            <div class="card-header text-center p-5">
-                <h5 style="text-align:left;">
-                    {{ $server->hostname }}
-                    <p>{{ $server->ipaddress }}</p>
-                </h5>
-            </div>
-            <div class="card-body">
-                <div class="row">
-                    {{-- Start Loop Server Here --}}
-                    <div class="col-xxl-12 ">
-                        @php $status = 'Online'; @endphp
-                        <div class="card-body mainRealtime" style="min-height: auto; max-height: 800px;overflow-y: auto;">
-                            <div class="row">
-                                <div class="col-xl-6 mb-4 selected-item postfix serverId-1">
-                                    <a class="card lift h-100">
-                                        <div class="card-body cardService d-flex justify-content-center flex-column">
-                                            <div class="d-flex align-items-center justify-content-between">
-                                              <div class="me-3">
-                                                <h5>Postfix</h5>
-                                              </div>
-                                                <img src="{{ isset($status) && $status === 'Online' ? asset('assets/img/demo/online.png') : asset('assets/img/demo/offline.png') }}" alt="{{ $status === 'Online' ? 'Online' : 'Offline' }}" style="width: 5rem">
-                                            </div>
-                                            <p id="statusPostfix" style="display: inline-block; margin-left: 5px;">--</p>
-                                        </div>
-                                        {{-- @can('manage_service_update') --}}
-                                        <div class="col-md-6 d-flex justify-content-center" style="padding-left: 150px;padding-bottom: 15px;">
-                                            <div class="btn-group" role="group" aria-label="Button group with nested dropdown">
-                                                <button type="button" id="postfixStart" class="btn btn-primary" value="{{ $server->hostname }}">
-                                                    <i class="fas fa-play"></i>
-                                                </button>
-                                                <button type="button" id="postfixStop" class="btn btn-danger" value="{{ $server->hostname }}">
-                                                    <i class="fas fa-stop"></i>
-                                                </button>
-                                                <button type="button" id="postfixRestart" class="btn btn-warning" value="{{ $server->hostname }}">
-                                                    <i class="fas fa-redo"></i>
-                                                </button>
-                                                <button type="button" id="postfixReload" class="btn btn-info" value="{{ $server->hostname }}">
-                                                    <i class="fas fa-sync-alt"></i>
-                                                </button>
-                                            </div>
-                                        </div>
-                                        {{-- @endcan  --}}
-                                    </a>
-                                </div>
-                                {{--<div class="col-xl-6 mb-4 selected-item fail2ban serverId-1">
-                                    <a class="card lift h-100">
-                                        <div class="card-body cardService d-flex justify-content-center flex-column">
-                                            <div class="d-flex align-items-center justify-content-between">
-                                                <div class="me-3">
-                                                    <h5>Fail-To-Ban</h5>
-                                                </div>
-                                                <img src="{{ isset($status) && $status === 'Online' ? asset('assets/img/demo/online.png') : asset('assets/img/demo/offline.png') }}" alt="{{ $status === 'Online' ? 'Online' : 'Offline' }}" style="width: 5rem">
-                                            </div>
-                                            <p id="statusFail2ban" style="display: inline-block; margin-left: 5px;">--</p>
-                                        </div>
-                                        --}}{{-- @can('manage_service_update') --}}{{--
-                                        <div class="col-md-6 d-flex justify-content-center" style="padding-left: 150px;padding-bottom: 15px;">
-                                            <div class="btn-group" role="group" aria-label="Button group with nested dropdown">
-                                                <button type="button" class="btn btn-primary">
-                                                    <i class="fas fa-play"></i>
-                                                </button>
-                                                <button type="button" class="btn btn-danger">
-                                                    <i class="fas fa-stop"></i>
-                                                </button>
-                                                <button type="button" class="btn btn-warning">
-                                                    <i class="fas fa-redo"></i>
-                                                </button>
-                                                <button type="button" class="btn btn-info">
-                                                    <i class="fas fa-sync-alt"></i>
-                                                </button>
-                                            </div>
-                                        </div>
-                                        --}}{{-- @endcan  --}}{{--
-                                    </a>
-                                </div>--}}
-                                <div class="col-xl-6 mb-4 selected-item apache serverId-1">
-                                    <a class="card lift h-100">
-                                        <div class="card-body cardService d-flex justify-content-center flex-column">
-                                            <div class="d-flex align-items-center justify-content-between">
-                                                <div class="me-3">
-                                                    <h5>Apache</h5>
-                                                </div>
-                                                <img src="{{ isset($status) && $status === 'Online' ? asset('assets/img/demo/online.png') : asset('assets/img/demo/offline.png') }}" alt="{{ $status === 'Online' ? 'Online' : 'Offline' }}" style="width: 5rem">
-                                            </div>
-                                            <p id="statusApache2" style="display: inline-block; margin-left: 5px;">--</p>
-                                        </div>
-                                        {{-- @can('manage_service_update') --}}
-                                        <div class="col-md-6 d-flex justify-content-center" style="padding-left: 150px;padding-bottom: 15px;">
-                                            <div class="btn-group" role="group" aria-label="Button group with nested dropdown">
-                                                <button type="button" id="apacheStart" class="btn btn-primary" value="{{ $server->hostname }}">
-                                                    <i class="fas fa-play"></i>
-                                                </button>
-                                                <button type="button" id="apacheStop" class="btn btn-danger" value="{{ $server->hostname }}">
-                                                    <i class="fas fa-stop"></i>
-                                                </button>
-                                                <button type="button" id="apacheRestart" class="btn btn-warning" value="{{ $server->hostname }}">
-                                                    <i class="fas fa-redo"></i>
-                                                </button>
-                                                <button type="button" id="apacheReload" class="btn btn-info" value="{{ $server->hostname }}">
-                                                    <i class="fas fa-sync-alt"></i>
-                                                </button>
-                                            </div>
-                                        </div>
-                                        {{-- @endcan --}}
-                                    </a>
-                                </div>
-                                <div class="col-xl-6 mb-4 selected-item webmin serverId-1">
-                                    <a class="card lift h-100">
-                                        <div class="card-body cardService d-flex justify-content-center flex-column">
-                                            <div class="d-flex align-items-center justify-content-between">
-                                                <div class="me-3">
-                                                    <h5>Webmin</h5>
-                                                </div>
-                                                <img src="{{ isset($status) && $status === 'Online' ? asset('assets/img/demo/online.png') : asset('assets/img/demo/offline.png') }}" alt="{{ $status === 'Online' ? 'Online' : 'Offline' }}" style="width: 5rem">
-                                            </div>
-                                            <p id="statusWebmin" style="display: inline-block; margin-left: 5px;">--</p>
-                                        </div>
-                                        {{-- @can('manage_service_update') --}}
-                                        <div class="col-md-6 d-flex justify-content-center" style="padding-left: 150px;padding-bottom: 15px;">
-                                            <div class="btn-group" role="group" aria-label="Button group with nested dropdown">
-                                                <button type="button" id="webminStart" class="btn btn-primary" value="{{ $server->hostname }}">
-                                                    <i class="fas fa-play"></i>
-                                                </button>
-                                                <button type="button" id="webminStop" class="btn btn-danger" value="{{ $server->hostname }}">
-                                                    <i class="fas fa-stop"></i>
-                                                </button>
-                                                <button type="button" id="webminRestart" class="btn btn-warning" value="{{ $server->hostname }}">
-                                                    <i class="fas fa-redo"></i>
-                                                </button>
-                                                <button type="button" id="webminReload" class="btn btn-info" value="{{ $server->hostname }}">
-                                                    <i class="fas fa-sync-alt"></i>
-                                                </button>
-                                            </div>
-                                        </div>
-                                        {{-- @endcan --}}
-                                    </a>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    {{-- End Loop Server Here --}}
-                </div>
-            </div>
-        </div>
-            <br>
-        @endforeach
-    </div>
+  <div class="container-fluid px-4">
+    <div class="card">
+        <div class="card-header text-center p-5">
+            <h5 style="text-align:left">Server Name</h5>
+          </div>
+      <div class="card-body">
+        <div class="row  mt-5">
+            {{-- Start Loop Server Here --}}
+          <div class="col-xxl-12 ">
 
-    <!-- End Loop By Server Here -->
+              @php $status = 'Online'; @endphp
+              <div class="card-body mainRealtime" style="min-height: auto; max-height: 800px;overflow-y: auto;">
+                <div class="row">
+                  <div class="col-xl-6 mb-4 selected-item postfix serverId-1">
+                    <a class="card lift h-100" href="#!">
+                      <div class="card-body cardService d-flex justify-content-center flex-column">
+                        <div class="d-flex align-items-center justify-content-between">
+                          <div class="me-3">
+                            <h5>Postfix</h5>
+                          </div>
+                          <img src="{{ isset($status) && $status === 'Online' ? asset('assets/img/demo/online.png') : asset('assets/img/demo/offline.png') }}" alt="{{ $status === 'Online' ? 'Online' : 'Offline' }}" style="width: 5rem">
+
+                        </div>
+                        <span>Active</span>
+                      </div>
+                      @can('manage_service_update')
+                      <div class="col-md-6 d-flex justify-content-center" style="padding-left: 150px;padding-bottom: 15px;">
+                        <div class="btn-group" role="group" aria-label="Button group with nested dropdown">
+                          <button type="button" class="btn btn-primary">
+                            <i class="fas fa-play"></i>
+                          </button>
+                          <button type="button" class="btn btn-danger">
+                            <i class="fas fa-stop"></i>
+                          </button>
+                          <button type="button" class="btn btn-warning">
+                            <i class="fas fa-redo"></i>
+                          </button>
+                          <button type="button" class="btn btn-info">
+                            <i class="fas fa-sync-alt"></i>
+                          </button>
+                        </div>
+                      </div>
+                       @endcan
+                    </a>
+                  </div>
+                  <div class="col-xl-6 mb-4 selected-item apache serverId-1">
+                    <a class="card lift h-100" href="#!">
+                      <div class="card-body cardService d-flex justify-content-center flex-column">
+                        <div class="d-flex align-items-center justify-content-between">
+                          <div class="me-3">
+                            <h5>Apache</h5>
+                          </div>
+                          <img src="{{ isset($status) && $status === 'Online' ? asset('assets/img/demo/online.png') : asset('assets/img/demo/offline.png') }}" alt="{{ $status === 'Online' ? 'Online' : 'Offline' }}" style="width: 5rem">
+                        </div>
+                        <span>Active</span>
+                      </div>
+                    @can('manage_service_update')
+                      <div class="col-md-6 d-flex justify-content-center" style="padding-left: 150px;padding-bottom: 15px;">
+                        <div class="btn-group" role="group" aria-label="Button group with nested dropdown">
+                          <button type="button" class="btn btn-primary">
+                            <i class="fas fa-play"></i>
+                          </button>
+                          <button type="button" class="btn btn-danger">
+                            <i class="fas fa-stop"></i>
+                          </button>
+                          <button type="button" class="btn btn-warning">
+                            <i class="fas fa-redo"></i>
+                          </button>
+                          <button type="button" class="btn btn-info">
+                            <i class="fas fa-sync-alt"></i>
+                          </button>
+                        </div>
+                      </div>
+                      @endcan
+                    </a>
+                  </div>
+                </div>
+              </div>
+          </div>
+
+          {{-- End Loop Server Here --}}
+        </div>
+      </div>
+    </div>
+  </div>
 </main>
 @endsection
 @push('script')

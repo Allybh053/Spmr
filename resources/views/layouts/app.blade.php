@@ -16,6 +16,7 @@
         <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
         <link rel="stylesheet" href="{{asset('css/sweetalert2.min.css')}}">
         <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.24/css/jquery.dataTables.min.css">
+        <link rel="stylesheet" href="https://cdn.datatables.net/buttons/2.2.2/css/buttons.dataTables.min.css">
         <link href="{{asset('css/custom.css')}}" rel="stylesheet" />
         <script src="{{ asset('js/xterm.js') }}"></script>
         <link rel="stylesheet" href="{{ asset('css/xterm.css') }}">
@@ -26,6 +27,32 @@
     .select2-selection__clear {
     display: none;
 }
+
+/* Custom styles for DataTables Buttons */
+.dt-buttons {
+    margin-bottom: 10px;
+    text-align: right; /* Align buttons to the right */
+}
+
+.dt-buttons button {
+    background-color: #007bff !important; /* Set background color */
+    color: #fff; /* Set text color */
+    border: none; /* Remove border */
+    padding: 8px 12px; /* Add padding */
+    border-radius: 4px; /* Add border radius */
+    margin-right: 5px; /* Add some space between buttons */
+    cursor: pointer; /* Change cursor to pointer on hover */
+}
+
+.dt-buttons button:hover {
+    background-color: #0056b3; /* Darken background color on hover */
+}
+
+/* Adjust the spacing of buttons container */
+.dataTables_wrapper .col-md-6:eq(0) {
+    text-align: right; /* Align buttons to the right */
+}
+
 </style>
     @stack('meta')
     @stack('css')
@@ -52,6 +79,9 @@
     <script src="{{asset('js/sweetalert2.min.js')}}"></script>
     <script src="{{asset('js/feather.min.js')}}" type="text/javascript"></script>
     <script src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/buttons/2.2.2/js/dataTables.buttons.min.js"></script>
+    <script src="https://cdn.datatables.net/buttons/2.2.2/js/buttons.html5.min.js"></script>
+    <script src="https://cdn.datatables.net/buttons/2.2.2/js/buttons.print.min.js"></script>
 
     <script src="https://cdn.jsdelivr.net/npm/simple-datatables@latest" crossorigin="anonymous"></script>
     <script src="{{asset('js/datatables/datatables-simple-demo.js')}}"></script>
