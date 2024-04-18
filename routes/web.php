@@ -155,7 +155,7 @@ Route::group(['middleware' => ['auth']], function () {
 
 
     Route::group(['prefix' => 'log_overview'], function () {
-        Route::get('/', [LogOverviewController::class, 'index'])->name('log.index')->middleware('auth.resource:spmr_activity_log_view');
+        Route::get('/', [LogOverviewController::class, 'index'])->name('log.index')->middleware('auth.resource:server_overview_view');
         Route::post('/api/getServerName', [LogOverviewController::class, 'getNewServerData'])->name('log.api.getServerName');
 
     });
