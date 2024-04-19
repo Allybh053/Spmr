@@ -115,7 +115,7 @@
     <div class="col-xxl-12">
       <div class="card">
         <div class="card-header text-center p-5">
-          <h5>View MailQueue Count (last 5 minutes)</h5>
+          <h5>View Current MailQueue Count</h5>
         </div>
         <div class="card-body">
           <div class="table-responsive">
@@ -155,7 +155,7 @@
                     <div class="card-body">
                         <div class="row">
                             <div class="col-xl-4 mb-4">
-                                <a class="card lift h-100 mService" href="{{ route('manageService.index', ['server_id' => '1', 'server_type' => 'postfix']) }}">
+                                <a class="card lift h-100 mService" href="{{ route('manageService.index', ['server_id' => $server->id, 'server_type' => 'postfix']) }}">
                                     <div class="card-body cardService d-flex justify-content-center flex-column">
                                         <div class="d-flex align-items-center justify-content-between">
                                             <div class="me-3">
@@ -182,7 +182,7 @@
                               </a>
                             </div>--}}
                             <div class="col-xl-4 mb-4">
-                                <a class="card lift h-100 mService" href="{{ route('manageService.index', ['server_id' => '1', 'server_type' => 'apache']) }}">
+                                <a class="card lift h-100 mService" href="{{ route('manageService.index', ['server_id' => $server->id , 'server_type' => 'apache']) }}">
                                     <div class="card-body cardService d-flex justify-content-center flex-column">
                                         <div class="d-flex align-items-center justify-content-between">
                                             <div class="me-3">
@@ -196,7 +196,7 @@
                                 </a>
                             </div>
                             <div class="col-xl-4 mb-4">
-                                <a class="card lift h-100 mService" href="{{ route('manageService.index', ['server_id' => '1', 'server_type' => 'webmin']) }}">
+                                <a class="card lift h-100 mService" href="{{ route('manageService.index', ['server_id' => $server->id, 'server_type' => 'webmin']) }}">
                                     <div class="card-body cardService d-flex justify-content-center flex-column">
                                         <div class="d-flex align-items-center justify-content-between">
                                             <div class="me-3">
@@ -438,16 +438,16 @@ $(document).ready(function() {
 
                   outputs.push(output);
 
-                  if (outputs.length === commands.length) {
+                  if (outputs.length > commands.length) {
 
-                      $('#totalApplications').text(outputs[0]);
-                      $('#totalDomains').text(outputs[1]);
-                      $('#totalSASL').text(outputs[2]);
-                      $('#mailQueueCount').text(outputs[3]);
-                      $('#statusPostfix').text(outputs[4]);
-                      $('#statusFail2ban').text(outputs[5]);
-                      $('#statusWebmin').text(outputs[6]);
-                      $('#statusApache2').text(outputs[7]);
+                      $('#totalApplications').text(outputs[1]);
+                      $('#totalDomains').text(outputs[3]);
+                      $('#totalSASL').text(outputs[5]);
+                      $('#mailQueueCount').text(outputs[7]);
+                      $('#statusPostfix').text(outputs[9]);
+                      $('#statusFail2ban').text(outputs[11]);
+                      $('#statusWebmin').text(outputs[13]);
+                      $('#statusApache2').text(outputs[15]);
 
                   }
               }
@@ -457,7 +457,8 @@ $(document).ready(function() {
 
               const cleanResponse = response.replace(/\[\d;?\d*m/g, '').trim();
 
-              const outputMatch = cleanResponse.match(/command: (.*)/);
+              //const outputMatch = cleanResponse.match(/command: (.*)/);
+              const outputMatch = cleanResponse.match(/\[.*?\]#\S (.*)/);
 
               const outputs = [];
 
