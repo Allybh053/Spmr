@@ -8,6 +8,7 @@ use Carbon\Carbon;
 use App\Models\Department;
 use App\Models\Position;
 use App\Models\Server;
+use App\Models\User;
 use App\Models\DomainMinistryAgencies;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -16,6 +17,8 @@ use Illuminate\Support\Str;
 use Illuminate\Support\Facades\DB;
 use Faker\Factory as Faker;
 use App\Models\RoleServer;
+use Illuminate\Support\Facades\Mail;
+use App\Mail\mailForm;
 
 class SmtpRelayController extends Controller
 {
@@ -59,288 +62,20 @@ class SmtpRelayController extends Controller
         ]);
     }
 
-    /*public function create()
-    {
-        $user = Auth::user();
-        $role = $user->roles->isNotEmpty() ? $user->roles->pluck('name')->first() : null;
-
-        $applicationType = [
-            "1" => "New Application",
-            "2" => "Service Termination",
-            "3" => "Agency Onboarding",
-        ];
-        $mailbox =[
-           "0" => "Mailbox Available",
-           "1" => "No Existing Mailbox",
-        ];
-        $smtpAuth =[
-            "0" => "SMTP IP Based Authentication Relay",
-            "1" => "SMTP Username/Password Authentication Relay",
-         ];
-         $smtpRelayServer =[
-            "0" => "postmaster.mygovuc.gov.my",
-            "1" => "postmaster2.mygovuc.gov.my",
-            "2" => "postmaster3.mygovuc.gov.my",
-         ];
-         $smtpPort =[
-            "0" => "25/tcp",
-            "1" => "465/tcp",
-            "2" => "587/tcp",
-         ];
-         $department =[
-            "0" => "department 1",
-            "1" => "department 2",
-            "2" => "department 3",
-         ];
-         $position =[
-            "0" => "position 1",
-            "1" => "position 2",
-            "2" => "position 3",
-         ];
-         $agency =[
-            "0" => "agency 1",
-            "1" => "agency 2",
-            "2" => "agency 3",
-         ];
-
-        return view('smtp_relay.form',
-        compact(
-            'user',
-            'role',
-            'applicationType',
-            'mailbox',
-            'smtpAuth',
-            'smtpRelayServer',
-            'smtpPort',
-            'department',
-            'position',
-            'agency'));
-    }*/
-
-    /*public function store(Request $request){
-
-        try {
-            DB::beginTransaction();
-            $smtpRelayReq = new SmtpRelayReqForm();
-            $smtpRelayReq->form_id = Str::random(9);
-            $smtpRelayReq->ticket_id = $request->ticket_no;
-            $smtpRelayReq->types_req = $request->type;
-            $smtpRelayReq->project_name = $request->project_name;
-            $smtpRelayReq->server_name = is_array($request->server_name) ? json_encode($request->server_name) : $request->server_name;
-            $smtpRelayReq->ip_addr_server = is_array($request->ip_server) ? json_encode($request->ip_server) : $request->ip_server;
-            $smtpRelayReq->fqdn_system = is_array($request->fqdn_system) ? json_encode($request->fqdn_system) : $request->fqdn_system;
-            $smtpRelayReq->mailfrom_email_addr = $request->mail_add;
-            $smtpRelayReq->mailbox_created = $request->mailbox;
-            $smtpRelayReq->system_owner_name = $request->sys_owner;
-            $smtpRelayReq->owner_email_addr = $request->email_add_owner;
-            $smtpRelayReq->owner_phone_number = $request->phone_owner;
-            $smtpRelayReq->agencies = $request->agency;
-            $smtpRelayReq->dept_div_unit = $request->department;
-            $smtpRelayReq->agencies_addr = $request->agency_Addr;
-            $smtpRelayReq->req_justifications = $request->justify_app;
-            $smtpRelayReq->smtp_relay_auth_method = $request->smtpAuth;
-            $smtpRelayReq->smtp_relay_server = $request->smtpRelayServer;
-            $smtpRelayReq->smtp_port = $request->smtpPort;
-            $smtpRelayReq->smtp_username = $request->smtp_username;
-            $smtpRelayReq->smtp_password = $request->smtp_pass;
-            $smtpRelayReq->est_no_system_users_per_day = $request->number_user;
-            $smtpRelayReq->est_no_email_sent_from_system_users_per_day = $request->number_system;
-            $smtpRelayReq->applicant_name = $request->applicant_name;
-            $smtpRelayReq->applicant_position = $request->applicantPosition;
-            $smtpRelayReq->applicant_dept_div = $request->applicantDepartment;
-            //$smtpRelayReq->date_application = Carbon::parse($request->applicant_date)->format('Y-m-d H:i:s');
-            $smtpRelayReq->date_application = $request->applicant_date;
-            $smtpRelayReq->verifier_1_name = $request->verifier_name_1;
-            $smtpRelayReq->verifier_1_position = $request->verifierPosition;
-            $smtpRelayReq->verifier_1_dept_div = $request->verifierDepartment;
-            //$smtpRelayReq->date_verification_1 = Carbon::parse($request->verifier_date)->format('Y-m-d H:i:s');
-            $smtpRelayReq->date_verification_1 = $request->verifier_date;
-            $smtpRelayReq->verifier_2_name = $request->verifier_name_2;
-            $smtpRelayReq->verifier_2_position = $request->verifierPosition2;
-            $smtpRelayReq->verifier_2_dept_div = $request->verifierDepartment2;
-            //$smtpRelayReq->date_verification_2 = Carbon::parse($request->verifier_date_2)->format('Y-m-d H:i:s');
-            $smtpRelayReq->date_verification_2 = $request->verifier_date_2;
-            $smtpRelayReq->verifier_3_name = $request->verifier_name_3;
-            $smtpRelayReq->verifier_3_position = $request->verifierPosition3;
-            $smtpRelayReq->verifier_3_dept_div = $request->verifierDepartment3;
-            //$smtpRelayReq->date_verification_3 = Carbon::parse($request->verifier_date_3)->format('Y-m-d H:i:s');
-            $smtpRelayReq->date_verification_3 = $request->verifier_date_3;
-            $smtpRelayReq->save();
-
-            DB::commit();
-            return response()->json([
-                'success' => '1',
-                'redirect' => route('smtp_relay.smtp_relay_req'),
-                'message' => 'Application Successfully Saved'
-            ]);
-        }catch (\Throwable $e) {
-            DB::rollback();
-
-            return response()->json([
-                'error' => '1',
-                'message' => 'Application Unsuccessfully Saved'.$e->getMessage()
-            ], 400);
-        }
-    }*/
-
-    /*public function edit($id)
-    {
-        $user = Auth::user();
-        $role = $user->roles->isNotEmpty() ? $user->roles->pluck('name')->first() : null;
-
-        $applicationType = [
-            "1" => "New Application",
-            "2" => "Service Termination",
-            "3" => "Agency Onboarding",
-        ];
-        $mailbox =[
-           "0" => "Mailbox Available",
-           "1" => "No Existing Mailbox",
-        ];
-        $smtpAuth =[
-            "0" => "SMTP IP Based Authentication Relay",
-            "1" => "SMTP Username/Password Authentication Relay",
-         ];
-        $smtpRelayServer =[
-            "0" => "postmaster.mygovuc.gov.my",
-            "1" => "postmaster2.mygovuc.gov.my",
-            "2" => "postmaster3.mygovuc.gov.my",
-        ];
-        $smtpPort =[
-            "0" => "25/tcp",
-            "1" => "465/tcp",
-            "2" => "587/tcp",
-        ];
-        $department =[
-            "0" => "department 1",
-            "1" => "department 2",
-            "2" => "department 3",
-        ];
-        $position =[
-            "0" => "position 1",
-            "1" => "position 2",
-            "2" => "position 3",
-        ];
-        $agency =[
-            "0" => "agency 1",
-            "1" => "agency 2",
-            "2" => "agency 3",
-        ];
-
-        //$applicantInfo=null;
-        $applicantInfo = SmtpRelayReqForm::find($id);
-
-        $serverNames = json_decode($applicantInfo['server_name'], true);
-        if (is_array($serverNames)) {
-            $applicantInfo->server_name = implode(", ", $serverNames);
-        }
-        $ipAddrSvr = json_decode($applicantInfo['ip_addr_server'], true);
-        if (is_array($ipAddrSvr)) {
-            $applicantInfo->ip_addr_server = implode(", ", $ipAddrSvr);
-        }
-        $fqdnSystem = json_decode($applicantInfo['fqdn_system'], true);
-        if (is_array($fqdnSystem)) {
-            $applicantInfo->fqdn_system = implode(", ", $fqdnSystem);
-        }
-        $applicantInfo->date_application = Carbon::parse($applicantInfo->date_application)->format('d/m/Y');
-        $applicantInfo->date_verification_1 = Carbon::parse($applicantInfo->date_verification_1)->format('d/m/Y');
-        $applicantInfo->date_verification_2 = Carbon::parse($applicantInfo->date_verification_2)->format('d/m/Y');
-        $applicantInfo->date_verification_3 = Carbon::parse($applicantInfo->date_verification_3)->format('d/m/Y');
-
-
-        return view('smtp_relay.form',
-        compact( 'user',
-            'role',
-            'applicationType',
-            'mailbox',
-            'smtpAuth',
-            'smtpRelayServer',
-            'smtpPort',
-            'department',
-            'position',
-            'agency',
-            'applicantInfo'));
-    }*/
-
-    /*public function update(Request $request,$id)
-    {
-        try {
-            DB::beginTransaction();
-
-            $application = SmtpRelayReqForm::find($id);
-            $application->ticket_id = $request->ticket_no;
-            $application->types_req = $request->type;
-            $application->project_name = $request->project_name;
-
-
-            $application->mailfrom_email_addr = $request->mail_add;
-            $application->mailbox_created = $request->mailbox;
-            $application->system_owner_name = $request->sys_owner;
-            $application->owner_email_addr = $request->email_add_owner;
-            $application->owner_phone_number = $request->phone_owner;
-            $application->agencies = $request->agency;
-            $application->dept_div_unit = $request->department;
-            $application->agencies_addr = $request->agency_Addr;
-            $application->req_justifications = $request->justify_app;
-            $application->smtp_relay_auth_method = $request->smtpAuth;
-            $application->smtp_relay_server = $request->smtpRelayServer;
-            $application->smtp_port = $request->smtpPort;
-            $application->smtp_username = $request->smtp_username;
-            $application->smtp_password = $request->smtp_pass;
-            $application->est_no_system_users_per_day = $request->number_user;
-            $application->est_no_email_sent_from_system_users_per_day = $request->number_system;
-            $application->applicant_name = $request->applicant_name;
-            $application->applicant_position = $request->applicantPosition;
-            $application->applicant_dept_div = $request->applicantDepartment;
-            //$application->date_application = Carbon::parse($request->applicant_date)->format('Y-m-d H:i:s');
-            $application->date_application = $request->applicant_date;
-            $application->verifier_1_name = $request->verifier_name_1;
-            $application->verifier_1_position = $request->verifierPosition;
-            $application->verifier_1_dept_div = $request->verifierDepartment;
-            //$application->date_verification_1 = Carbon::parse($request->verifier_date)->format('Y-m-d H:i:s');
-            $application->date_verification_1 = $request->verifier_date;
-            $application->verifier_2_name = $request->verifier_name_2;
-            $application->verifier_2_position = $request->verifierPosition2;
-            $application->verifier_2_dept_div = $request->verifierDepartment2;
-            //$application->date_verification_2 = Carbon::parse($request->verifier_date_2)->format('Y-m-d H:i:s');
-            $application->date_verification_2 = $request->verifier_date_2;
-            $application->verifier_3_name = $request->verifier_name_3;
-            $application->verifier_3_position = $request->verifierPosition3;
-            $application->verifier_3_dept_div = $request->verifierDepartment3;
-            //$application->date_verification_3 = Carbon::parse($request->verifier_date_3)->format('Y-m-d H:i:s');
-            $application->date_verification_3 = $request->verifier_date_3;
-            $application->save();
-
-            DB::commit();
-            return response()->json([
-                'success' => '1',
-                'redirect' => route('smtp_relay.smtp_relay_req'),
-                'message' => 'Application Successfully Updated'
-            ]);
-        }catch (\Throwable $e) {
-            DB::rollback();
-
-            return response()->json([
-                'error' => '1',
-                'message' => 'Application Unsuccessfully Updated'.$e->getMessage()
-            ], 400);
-        }
-    }*/
-
     public function datatable(Request $request)
     {
           // Get search parameters
-    $agency = $request->input('agency');
-    $calendarType = $request->input('calendarType');
+        $agency = $request->input('agency');
+        $calendarType = $request->input('calendarType');
 
-      // Start building the query
-      $query =  SmtpRelayReqForm::select('smtp_relay_req_form.*', 'smtp_relay_server.ip_addr_server')
+        // Start building the query
+        $query =  SmtpRelayReqForm::select('smtp_relay_req_form.*', 'smtp_relay_server.ip_addr_server')
             ->leftJoin('smtp_relay_server', 'smtp_relay_req_form.form_id', '=', 'smtp_relay_server.form_id');
 
-      // Apply filters based on search parameters
-      if (!empty($agency)) {
+        // Apply filters based on search parameters
+        if (!empty($agency)) {
           $query->where('agency_column', $agency); // Replace 'agency_column' with the actual column name for agency in your database table
-      }
+        }
 
       // Execute the query
       $application = $query->get();
@@ -418,8 +153,8 @@ class SmtpRelayController extends Controller
                 return $date->format('d/m/Y');
             })
             ->addColumn('status', function ($row) {
-                //return $row['status'];
-                return $row['status'] == 0 ? 'Pending Created' : 'Done Created';
+                //return $row['status']; value 0 is pending, 1 done created and 2 rejected
+                return $row['status'] == 0 ? 'Pending Created' : ($row['status'] == 1 ? 'Done Created' : 'Rejected');
             })
             ->addColumn('action', function ($row) {
                 $data = '';
@@ -443,21 +178,6 @@ class SmtpRelayController extends Controller
             ->rawColumns(['action'])
             ->make(true);
     }
-
-    /*public function delete(Request $request, $id)
-    {
-        // delete application SMTP Relay
-        $application = SmtpRelayReqForm::find($id);
-        $application    ->  updated_by = Auth::user()->id;
-        $application    ->  delete();
-
-        // delete data smtp relay server based on form_id
-        $smtpRelaySvr = smtp_relay_server::where('form_id', '=', $application->form_id)->get();
-        $smtpRelaySvr -> updated_by = Auth::user()->id;
-        $smtpRelaySvr -> delete();
-
-        return response()->json(['success' => '1', 'redirect' => route('smtp_relay.smtp_relay_req'), 'message' => 'Application successfully deleted']);
-    }*/
 
     public function delete(Request $request, $id)
     {
@@ -490,19 +210,75 @@ class SmtpRelayController extends Controller
 
     public function saving(Request $request){
 
-        $file = $request->file('attachement');
-        //$fileName = $file->getClientOriginalName();
+        // Check if a file was uploaded
+        if ($request->hasFile('attachment')) {
+            // Retrieve the uploaded file
+            $files = $request->file('attachment');
 
-        if ($request->hasFile('attachement')) {
-            $fileName = $file->getClientOriginalName();
-            $file->move(storage_path('../Storage/attachements'), $fileName);
+            // Get the original name of the file
+            $originalFileName = pathinfo($files->getClientOriginalName(), PATHINFO_FILENAME);
+            $currentDateTime = date('dmYHis');
+            $fileExtension = $files->getClientOriginalExtension();
+            $fileName = $originalFileName . '_' . $currentDateTime . '.' . $fileExtension;
+
+            // Move the uploaded file to the storage directory
+            $files->move(storage_path('../Storage/attachments'), $fileName);
         } else {
+            // No file was uploaded, set fileName to null
             $fileName = null;
         }
 
+        $ministry = $request->input('ministry');
+        $agency = $request->input('agency');
 
-        // Move the uploaded file to the 'attachements' directory at the same level as the 'app' folder
-        //$file->move(storage_path('../Storage/attachements'), $fileName);
+        // $existingMinistry = DomainMinistryAgencies::where('ministry_name', $ministry)->first();
+        // if (!$existingMinistry) {
+        //     // Ministry does not exist, store it in the DomainMinistryAgencies table
+        //     DomainMinistryAgencies::create([
+        //         'ministry_name' => $ministry,
+        //         'agencies_name' => $agency,
+        //         'enabled'=> 0,
+        //         'domain_name'=>$row['domain'], // You need to provide the domain name here
+        //     ]);
+        // }
+
+        $departowner = $request->input('departowner');
+        $existingdepartonwer = Department::where('name', $departowner)->first();
+        if(!$existingdepartonwer){
+            Department::create(['name'=>$departowner, 'status'=>1]);
+        }
+        $applicantdepart = $request->input('applicantdepart');
+        $existingapplicantdepart = Department::where('name', $applicantdepart)->first();
+        if(!$existingapplicantdepart){
+            Department::create(['name'=>$applicantdepart, 'status'=>1]);
+        }
+        $verifierdepart = $request->input('verifierdepart');
+        $existingverifierdepart = Department::where('name', $verifierdepart)->first();
+        if(!$existingverifierdepart){
+            Department::create(['name'=>$verifierdepart, 'status'=>1]);
+        }
+        $approvaldepart = $request->input('approvaldepart');
+        $existingapprovaldepart = Department::where('name', $approvaldepart)->first();
+        if(!$existingapprovaldepart){
+            Department::create(['name'=>$approvaldepart, 'status'=>1]);
+        }
+
+        $applicantposition = $request->input('applicantposition');
+        $existingapplicantposition = Position::where('name', $applicantposition)->first();
+        if(!$existingapplicantposition){
+            Position::create(['name'=>$applicantposition, 'status'=>1]);
+        }
+        $verifierposition = $request->input('verifierposition');
+        $existingverifierposition = Position::where('name', $verifierposition)->first();
+        if(!$existingverifierposition){
+            Position::create(['name'=>$verifierposition, 'status'=>1]);
+        }
+
+        $approvalposition =$request->input('approvalposition');
+        $existingapprovalposition = Position::where('name', $approvalposition)->first();
+        if(!$existingapprovalposition){
+            Position::create(['name'=>$approvalposition, 'status'=>1]);
+        }
 
         // Create the user with the validated data
         $formdata = SmtpRelayReqForm::create([
@@ -601,6 +377,10 @@ class SmtpRelayController extends Controller
         foreach ($combinedData as $data) {
             smtp_relay_server::create($data);
         }
+        $adminEmails = User::where('role_id', 3)->pluck('email')->toArray(); //role admin will receive the email and cc to the helpdesk
+        Mail::to($adminEmails)
+        ->cc($request->input('emailadd'))
+        ->send(new MailForm($request));
 
         return redirect()->route('smtp_relay.smtp_relay_req')->with('success', 'Form added successfully');
 
@@ -624,7 +404,62 @@ class SmtpRelayController extends Controller
     }
 
     public function kemaskinidata(Request $request,$id){
+            // Check if a file was uploaded
+        if ($request->hasFile('upload_copy_attachment')) {
+            // Retrieve the uploaded file
+            $files = $request->file('upload_copy_attachment');
 
+            // Get the original name of the file
+            $originalFileName = pathinfo($files->getClientOriginalName(), PATHINFO_FILENAME);
+
+            $currentDateTime = date('dmYHis');
+            $fileExtension = $files->getClientOriginalExtension();
+            $fileName = $originalFileName . '_' . $currentDateTime . '.' . $fileExtension;
+
+            // Move the uploaded file to the storage directory
+            $files->move(storage_path('../Storage/attachments'), $fileName);
+        } else {
+            // No file was uploaded, set fileName to null
+            $fileName = null;
+        }
+
+        $departowner = $request->input('dept_div_unit');
+        $existingdepartonwer = Department::where('name', $departowner)->first();
+        if(!$existingdepartonwer){
+            Department::create(['name'=>$departowner, 'status'=>1]);
+        }
+        $applicantdepart = $request->input('applicant_dept_div');
+        $existingapplicantdepart = Department::where('name', $applicantdepart)->first();
+        if(!$existingapplicantdepart){
+            Department::create(['name'=>$applicantdepart, 'status'=>1]);
+        }
+        $verifierdepart = $request->input('verifier_1_dept_div');
+        $existingverifierdepart = Department::where('name', $verifierdepart)->first();
+        if(!$existingverifierdepart){
+            Department::create(['name'=>$verifierdepart, 'status'=>1]);
+        }
+        $approvaldepart = $request->input('verifier_3_dept_div');
+        $existingapprovaldepart = Department::where('name', $approvaldepart)->first();
+        if(!$existingapprovaldepart){
+            Department::create(['name'=>$approvaldepart, 'status'=>1]);
+        }
+
+        $applicantposition = $request->input('applicant_position');
+        $existingapplicantposition = Position::where('name', $applicantposition)->first();
+        if(!$existingapplicantposition){
+            Position::create(['name'=>$applicantposition, 'status'=>1]);
+        }
+        $verifierposition = $request->input('verifier_1_position');
+        $existingverifierposition = Position::where('name', $verifierposition)->first();
+        if(!$existingverifierposition){
+            Position::create(['name'=>$verifierposition, 'status'=>1]);
+        }
+
+        $approvalposition =$request->input('verifier_3_position');
+        $existingapprovalposition = Position::where('name', $approvalposition)->first();
+        if(!$existingapprovalposition){
+            Position::create(['name'=>$approvalposition, 'status'=>1]);
+        }
         // Update the main form data
         $formdata = $request->only([
             'ticket_id', 'types_req', 'project_name', 'system_owner_name', 'owner_email_addr', 'owner_phone_number',
@@ -638,26 +473,12 @@ class SmtpRelayController extends Controller
 
         $formdata['form_id'] = $id;
         $formdata['status'] = 0;
-
+        $formdata['upload_copy_attachment'] = $fileName;
         SmtpRelayReqForm::where('form_id', $id)->update($formdata);
 
         // Process 'tableSpmr' data
         $tableSpmrData = $request->input('tableSpmr');
         $smtpRelayServers = [];
-
-        /*// Update or insert 'smtp_relay_servers' based on the form_id
-        foreach ($tableSpmrData as $row) {
-            smtp_relay_server::updateOrInsert(
-                [
-                    'form_id' => $id,
-                    'server_name' => $row['server_name'],
-                    'ip_addr_server' => $row['ip_addr_server'],
-                    'fqdn_server' => $row['fqdn_server'],
-                    'created_at' => now(),
-                    'updated_at' => now(),
-                ]
-            );
-        }*/
 
         // Update existing rows or insert new rows based on the form_id
         foreach ($tableSpmrData as $row) {

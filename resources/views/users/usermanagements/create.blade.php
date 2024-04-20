@@ -70,7 +70,7 @@
                                 <!-- Form Group (organization name)-->
                                 <div class="col-md-6" hidden @disabled(true)>
                                     <label class="small mb-1" for="acct_types">Account Type</label>
-                                    <select class="form-select" name="acct_types" aria-label="Default select example">
+                                    <select class="form-select" name="acct_types" aria-label="Default select ">
                                         <option selected disabled>Select Account Type:</option>
                                         <option value="1">xxxx</option>
                                         <option value="2">xxxx</option>
@@ -81,11 +81,11 @@
                                 <!-- Form Group (location)-->
                                 <div class="md-3">
                                     <label class="small mb-1" for="role_id">Role Type</label>
-                                    <select class="form-control select2" id="role_id" name="role_id" aria-label="Default select example" required>
+                                    <select class="form-control select2" id="role_id" name="role_id" aria-label="Default select" required>
                                         <option selected disabled>Select Role</option>
-                                        @foreach ($roles as $role)
-                                        <option value="{{ $role['id'] }}">{{ $role['name'] }}</option>
-                                        @endforeach
+                                        @foreach ($roles as $roleId => $roleName)
+                                        <option value="{{ $roleId }}">{{ $roleName }}</option>
+                                    @endforeach
                                     </select>
                                 </div>
                             {{-- </div> --}}
@@ -99,7 +99,7 @@
                                 <!-- Form Group (phone number)-->
                                 <div class="col-md-6" @disabled(true)>
                                     <label class="small mb-1" for="ldap_authentication">LDAP Authentication</label>
-                                    <select class="form-select" name="ldap_authentication" aria-label="Default select example" required>
+                                    <select class="form-select" name="ldap_authentication" aria-label="Default select " required>
                                         <option selected disabled>Select Status:</option>
                                         <option value="1">Yes</option>
                                         <option value="0">No</option>
@@ -120,7 +120,7 @@
                                 <!-- Form Group (organization name)-->
                                 <div class="col-md-6">
                                     <label class="small mb-1" for="enabled">Account Status</label>
-                                    <select class="form-select" name="enabled" aria-label="Default select example" required>
+                                    <select class="form-select" name="enabled" aria-label="Default select " required>
                                         <option selected disabled>Select Account Status:</option>
                                         <option value="1">Active</option>
                                         <option value="0">In-Active</option>

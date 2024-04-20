@@ -74,7 +74,7 @@
                 <div class="mb-3">
                     <label for="ministry">Ministry</label>
                     <select class="form-control select2" name="ministry" id="ministry" aria-label="Default select">
-                        <option selected disabled>Select Department/Division/Unit</option>
+                        <option selected disabled>Select Ministry</option>
                         @foreach ($domainsArray as $domain)
                         <option value="{{ $domain['ministry_name'] }}">{{ $domain['ministry_name'] }}</option>
                         @endforeach
@@ -315,11 +315,19 @@
                     </div>
                 </div>
                 <hr>
+
                 <div class="mb-3">
+                    <label for="attachment">Upload Attachment</label>
+                    <input class="form-control btn-outline-primary" type="file" name="attachment" accept=".pdf"/>
+                    <span class="text-xs text-danger">Upload File format .pdf</span>
+                </div>
+                {{-- <div class="mb-3">
                     <label for="attachement">Upload Attachement</label>
                     <input class="form-control btn-outline-primary" type="file" name="attachement" id="attachement" accept=".pdf"/>
                     <span class="text-xs text-danger">Upload File format .pdf</span>
-                </div><hr>
+                </div> --}}
+
+                <hr>
                 <button class="btn btn-primary me-2 my-1" type="submit">Submit</button>
                 <a class="btn btn-danger me-2 my-1" type="button" href="{{ route('smtp_relay.smtp_relay_req')}}">Cancel</a>
                 </form>

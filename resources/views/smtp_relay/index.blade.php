@@ -55,13 +55,13 @@
 
         <!-- Main page content-->
         <div class="container-fluid px-4">
-            @if(session('success'))
+            {{-- @if(session('success'))
                 <div class="alert alert-primary alert-dismissible fade show" role="alert">
                     <h5 class="alert-heading">Message</h5>
                     {{ session('success') }}
                     <button class="btn-close" type="button" data-bs-dismiss="alert" aria-label="Close"></button>
                 </div>
-            @endif
+            @endif --}}
             <div class="card">
                  <div class="card-header">List SMTP Relay Request MyGovUC3.0</div>
                 <div class="card-body">

@@ -34,7 +34,7 @@
                     <div class="col-md-6">
                         <label for="ticket_id">Ticket Number</label><br>
                         {{--<p style="color: #0061f2 !important;">{{ $formsmtp->ticket_id }}</p>--}}
-                        <input class="form-control" id="ticket_id" name="ticket_id" type="text" value="{{ old('ticket_id', $formsmtp->ticket_id) }}" required>
+                        <input class="form-control" id="ticket_id" name="ticket_id" type="text" value="{{ old('ticket_id', $formsmtp->ticket_id) }}" disabled>
                     </div>
                     <div class="col-md-6">
                         <label for="types_req">Type Of Request</label>

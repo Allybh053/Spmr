@@ -53,7 +53,7 @@
         @endif
         <div class="card">
             <div class="card-body">
-                <table id="datatablesSimple">
+                <table id="datatablesSimple" class="table">
                     <thead>
                         <tr>
                             <th>No</th>
