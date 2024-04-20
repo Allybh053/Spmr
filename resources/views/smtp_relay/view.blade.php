@@ -271,7 +271,7 @@
                 <div class="mb-3">
                     <label for="attachement">Attachement</label><br>
                     @if ($datasmtp->upload_copy_attachment)
-                    <a href="{{ Storage::url('attachments/' . $datasmtp->upload_copy_attachment) }}" target="_blank">{{$datasmtp->upload_copy_attachment}}</a>
+                    <a href="{{ asset('attachments/' . $datasmtp->upload_copy_attachment) }}" target="_blank">{{$datasmtp->upload_copy_attachment}}</a>
                     @else
                         <span class="text-muted">No Attachment</span>
                     @endif
