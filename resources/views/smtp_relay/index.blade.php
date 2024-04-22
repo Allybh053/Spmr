@@ -19,10 +19,10 @@
 
                         @can('smtp_mail_relay_add')
                             <div class="col-12 col-xl-auto mb-3">
-                                <a class="btn btn-sm btn-green" href="#">
+                               {{-- <a class="btn btn-sm btn-green" href="#">
                                     <i class="me-1" data-feather="plus"></i>
                                     Bulk Add
-                                </a>
+                                </a>--}}
                                 <a class="btn btn-sm btn-blue" href="{{ route('smtp_relay.daftar') }}">
                                     <i class="me-1" data-feather="plus"></i>
                                     Add New SMTP Relay Request
@@ -77,6 +77,7 @@
                                 <th>Server Mail Relay</th>
                                 {{--<th>Total Ip Address</th>--}}
                                 <th>Ip Address</th>
+                                <th>Date Approval</th>
                                 <th>Date Created</th>
                                 <th>Status</th>
                                 <th>Action</th>
@@ -125,6 +126,7 @@
                 { data: 'project_name', name: 'project_name', class: 'text-center' },
                 { data: 'smtp_relay_server', name: 'smtp_relay_server', class: 'text-center' },
                 { data: 'ip_addr_server', name: 'ip_addr_server', class: 'text-center' },
+                { data: 'date_verification_3', name: 'date_verification_3', class: 'text-center' },
                 { data: 'created_at', name: 'created_at', class: 'text-center' },
                 { data: 'status', name: 'status', class: 'text-center' },
                 { data: 'action', name: 'type', class: 'text-center', orderable: false, searchable: false },
