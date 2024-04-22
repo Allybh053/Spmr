@@ -230,6 +230,8 @@ Route::group(['middleware' => ['auth']], function () {
         Route::get('/loopback', [LoopBackController::class, 'index'])
                 ->name('loopback.index')
                 ->middleware('auth.resource:loopback_smtp_test_view');
+        Route::get('/getServer', [LoopBackController::class, 'api'])->name('loopback.api');
+        Route::get('/smtpTest', [LoopBackController::class, 'smtpTest'])->name('loopback.smtpTest');
         Route::get('/replication', [ReplicationController::class, 'index'])
                 ->name('replication.index')
                 ->middleware('auth.resource:replication_status_view');
