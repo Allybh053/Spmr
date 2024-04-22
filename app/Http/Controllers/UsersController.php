@@ -7,6 +7,8 @@ use Illuminate\Support\Facades\Auth;
 use App\Models\User;
 use \Illuminate\Support\Facades\Hash;
 use Spatie\Permission\Models\Role;
+use App\Models\Department;
+use App\Models\Position;
 
 
 class UsersController extends Controller
@@ -31,7 +33,9 @@ class UsersController extends Controller
 			$q->whereNotIn('name', ['Developer','Superadmin']);
 		})->orderBy('username','ASC')->get();
         $roles = Role::whereNotIn('name', ['Developer', 'Superadmin'])->pluck('name', 'id')->toArray();
-        return view('users.usermanagements.create', compact('user','roles'));
+        $departments = Department::where('status',1)->get();
+        $positions = Position::where('status',1)->get();
+        return view('users.usermanagements.create', compact('user','roles','departments','positions'));
     }
 
     /**
@@ -46,8 +50,10 @@ class UsersController extends Controller
                 'fname' => 'required',
                 'lname' => 'required',
                 'role_id' => 'required',
+                'position' => 'required',
+                'department' => 'required',
                 'email' => 'required',
-                'ldap_authentication' => 'required',
+                // 'ldap_authentication' => 'nullable',
                 'phone' => 'required',
                 'password' => 'required',
                 'enabled' => 'required',
@@ -62,11 +68,13 @@ class UsersController extends Controller
                 'password' => $hashedPassword,
                 'email' => $validatedData['email'],
                 'role_id' => $validatedData['role_id'],
-                'ldap_authentication' => $validatedData['ldap_authentication'],
+                // 'ldap_authentication' => $validatedData['ldap_authentication'],
                 'enabled' => $validatedData['enabled'],
                 'fname' => $validatedData['fname'],
                 'lname' => $validatedData['lname'],
                 'phone' => $validatedData['phone'],
+                'position_id' => $validatedData['position'],
+                'department_id' => $validatedData['department'],
             ]);
 
             // Check if user was created successfully
@@ -106,9 +114,11 @@ class UsersController extends Controller
     public function edit(string $id)
     {
         $user = User::findOrFail($id);
-        $roles = Role::whereNotIn('name', ['Developer', 'Superadmin'])->get()->pluck('name', 'id');
+        $roles = Role::whereNotIn('name', ['Developer', 'Superadmin'])->get();
+        $departments = Department::where('status',1)->get();
+        $positions = Position::where('status',1)->get();
 
-        return view('users.usermanagements.edit', compact('user','roles'));
+        return view('users.usermanagements.edit', compact('user','roles','departments','positions'));
     }
 
     /**
@@ -116,48 +126,43 @@ class UsersController extends Controller
      */
     public function update(Request $request, $id)
     {
-        // Validation rules can be adjusted based on your requirements
+        // Validate the request data
         $validatedData = $request->validate([
             'username' => 'required|string',
             'email' => 'required|email',
-            'acct_types' => 'required', // Adjust validation rules based on your needs
+            // 'acct_types' => 'required',
             'role_id' => 'required',
-            'ldap_authentication' => 'required',
             'enabled' => 'required',
             'fname' => 'required',
             'lname' => 'required',
             'phone' => 'nullable',
-            'password'=> 'nullable',
-            // Add more fields as needed
+            'password' => 'nullable|string|min:8',
+            'position_id' => 'nullable', // Add validation rule for position_id
+            'department_id' => 'nullable', // Add validation rule for department_id
         ]);
+        // Find the user by ID
+        $user = User::findOrFail($id);
 
-        $username = $validatedData['username'];
-        $email = $validatedData['email'];
-        $acctTypes = $validatedData['acct_types'];
-        $role = $validatedData['role_id'];
-        $ldapAuthentication = $validatedData['ldap_authentication'];
-        $enable = $validatedData['enabled'];
-        $fname = $validatedData['fname'];
-        $lname = $validatedData['lname'];
-        $phone = $validatedData['phone'];
-
-        // Check if the password fields are provided
-        if ($request->filled('password')) {
-            // Validate password and password_confirmation fields
-            $request->validate([
-                'password' => 'string|min:8',
-            ]);
-
-            // Update the user's password
-            $user = User::find($id);
-            $user->password = Hash::make($request->password);
-            $user->save();
+        // Update the user's password only if new data is provided
+        if ($request->filled('password') && $validatedData['password'] !== null) {
+            $validatedData['password'] = Hash::make($validatedData['password']);
+        } else {
+            // Remove the password from validated data to prevent it from being updated
+            unset($validatedData['password']);
         }
-        dd($request);
-        User::where('id', $id)->update($validatedData);
 
+        // Update the user with validated data
+        $user->update($validatedData);
+
+        // Update position_id and department_id separately
+        $user->position_id = $validatedData['position_id'];
+        $user->department_id = $validatedData['department_id'];
+        $user->save();
+
+        // Redirect back to the user management index page with a success message
         return redirect()->route('usermanagements.index')->with('success', 'User updated successfully');
     }
+
 
     /**
      * Remove the specified resource from storage.

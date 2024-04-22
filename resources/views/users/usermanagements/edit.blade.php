@@ -66,36 +66,16 @@
                                     <input class="form-control" id="lname" name="lname" type="text" placeholder="Enter your last name" value="{{ old('lname', $user->lname) }}" required/>
                                 </div>
                             </div>
-                            <!-- Form Row        -->
-                            {{-- <div class="row gx-3 mb-3"> --}}
-                                <!-- Form Group (organization name)-->
-                                {{-- <div class="col-md-6">
-                                    <label class="small mb-1" for="acct_types">Account Type</label>
-                                    <select class="form-select" name="acct_types" aria-label="Default select example">
-                                        <option value="{{ $user->acct_types }}" selected></option>
-                                        <option value="1">xxxx</option>
-                                        <option value="2">xxxx</option>
-                                        <option value="3">xxxx</option>
-                                        <option value="4">xxxx</option>
-                                    </select>
-                                </div> --}}
                                 <!-- Form Group (location)-->
                                 <div class="md-3">
                                     <label class="small mb-1" for="role_id">Role Type</label>
-                                    {!! Form::select('role_id', $roles, isset($user) ? $user->roles->pluck('id')->toArray() : null,  ['class'=>'form-control','name'=>'role_id', 'placeholder'=>' No role assigned for this user.']) !!}
-
-                                    {{-- <select class="form-select" name="role_id" aria-label="Default select example" required>
-                                        <option value="{{ $user->role_id }}" selected>
-                                            @if($user->role)
-                                                {{ $user->role->name }}
-                                            @else
-                                                No role assigned for this user.
-                                            @endif
-                                        </option>
+                                    <select class="form-control select2" name="role_id" id="role_id" aria-label="Default select2" required>
                                         @foreach ($roles as $role)
-                                        <option value="{{ $role['id'] }}">{{ $role['name'] }}</option>
+                                            <option value="{{ $role->id }}" {{ $user->role_id == $role->id ? 'selected' : '' }}>
+                                                {{ $role->name }}
+                                            </option>
                                         @endforeach
-                                    </select> --}}
+                                    </select>
                                 </div>
                             {{-- </div> --}}
                             <!-- Form Group (email address)-->
@@ -105,15 +85,30 @@
                             </div>
                             <!-- Form Row-->
                             <div class="row gx-3 mb-3">
-                                <!-- Form Group (phone number)-->
-                                <div class="col-md-6" @disabled(true)>
-                                    <label class="small mb-1" for="ldap_authentication">LDAP Authentication</label>
-                                    <select class="form-select" name="ldap_authentication" aria-label="Default select example" required>
-                                        <option selected value="{{ $user->ldap_authentication }}"></option>
-                                        <option value="1">Yes</option>
-                                        <option value="0">No</option>
+                                <div class="col-md-6">
+                                    <label class="small mb-1" for="position">Position</label>
+                                    <select class="form-control select2" name="position_id" aria-label="Default select2" required>
+                                        @foreach ($positions as $position)
+                                            <option value="{{ $position->id }}" {{ $user->position == $position->id ? 'selected' : '' }}>
+                                                {{ $position->name }}
+                                            </option>
+                                        @endforeach
                                     </select>
                                 </div>
+                                <!-- Form Group (phone number)-->
+                                <div class="col-md-6" @disabled(true)>
+                                    <label class="small mb-1" for="department">Department</label>
+                                    <select class="form-control select2" name="department_id" aria-label="Default select2" required>
+                                        @foreach ($departments as $department)
+                                            <option value="{{ $department->id }}" {{ $user->department_id == $department->id ? 'selected' : '' }}>
+                                                {{ $department->name }}
+                                            </option>
+                                        @endforeach
+                                    </select>
+                                </div>
+                            </div>
+                            <!-- Form Row-->
+                            <div class="row gx-3 mb-3">
                                 <!-- Form Group (phone number)-->
                                 <div class="col-md-6" @disabled(true)>
                                     <label class="small mb-1" for="phone">Phone No</label>
@@ -131,7 +126,7 @@
                                 <!-- Form Group (organization name)-->
                                 <div class="col-md-6">
                                     <label class="small mb-1" for="enabled">Account Status</label>
-                                    <select class="form-select" name="enabled" aria-label="Default select example">
+                                    <select class="form-control select2" name="enabled" aria-label="Default select example">
                                         <option value="1" {{ $user->enabled == 1 ? 'selected' : '' }}>Active</option>
                                         <option value="0" {{ $user->enabled == 0 ? 'selected' : '' }}>Not Active</option>
                                     </select>
@@ -146,6 +141,11 @@
             </div>
         </div>
     </div>
+    <style>
+        label {
+            font-weight: bold;
+        }
+    </style>
 </main>
 
 @endsection

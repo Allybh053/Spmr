@@ -17,9 +17,9 @@ class ProfileController extends Controller
     public function index()
     {
         // Get the currently authenticated user
-        $user = Auth::user();
+        $profile = Auth::user();
 
-        return view('users.profile.index', compact('user'));
+        return view('users.profile.index', compact('profile'));
     }
 
     public function updatepassword(Request $request, $id)

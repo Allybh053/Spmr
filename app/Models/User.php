@@ -12,6 +12,8 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 use OwenIt\Auditing\Auditable as AuditableTrait;
 use OwenIt\Auditing\Contracts\Auditable;
 use Spatie\Permission\Models\Role;
+use App\Models\Department;
+use App\Models\Position;
 
 class User extends Authenticatable implements Auditable
 {
@@ -49,6 +51,14 @@ class User extends Authenticatable implements Auditable
     public function role()
     {
         return $this->belongsTo(Role::class, 'role_id');
+    }
+    public function department()
+    {
+        return $this->belongsTo(Department::class, 'department_id');
+    }
+    public function position()
+    {
+        return $this->belongsTo(Position::class, 'position_id');
     }
 
     public function hasPermission($resource, $action)
