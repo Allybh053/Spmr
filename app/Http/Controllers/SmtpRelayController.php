@@ -141,6 +141,11 @@ class SmtpRelayController extends Controller
                 }
                 return $row['fqdn_system'];
             })
+            ->addColumn('date_verification_3', function ($row) {
+                $date = Carbon::parse($row['date_verification_3']);
+                return $date->format('d/m/Y');
+                //return $row['date_verification_3'];
+            })
             ->addColumn('created_at', function ($row) {
                 $date = $row['created_at'];
                 return $date->format('d/m/Y');
