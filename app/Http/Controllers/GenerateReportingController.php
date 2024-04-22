@@ -146,7 +146,7 @@ class GenerateReportingController extends Controller
                 foreach ($totalDataForm as $dataForm) {
                     // Get the count of $totalApp, $totalIp and $totalDeactivated for the current $dataForm element
                     //$getTotalApp = smtp_relay_server::where('form_id', $dataForm['form_id'])->select('server_name')->count();
-                    $getTotalIp = smtp_relay_server::where('form_id', $dataForm['form_id'])->select('ip_addr_server')->count();
+                    $getTotalIp = smtp_relay_server::where('form_id', $dataForm['form_id'])->where('deactivated', 0)->select('ip_addr_server')->count();
                     //$getTotalDeactivated = smtp_relay_server::where('form_id', $dataForm['form_id'])->where('deactivated', 1)->count();
                     $getTotalDomain = smtp_relay_server::where('form_id', $dataForm['form_id'])->select('fqdn_server')->count();
 
