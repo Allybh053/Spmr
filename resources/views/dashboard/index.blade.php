@@ -390,19 +390,19 @@ $(document).ready(function() {
       sockets.forEach((socket, index) => {
           getDataMailServer1(socket);
           socket.addEventListener('open', (event) => {
-
+            // console.log('WebSocket connection closed.'+event);
           });
 
           socket.addEventListener('close', (event) => {
-
+            // console.log('WebSocket connection closed.'+event);
           });
 
           socket.addEventListener('error', (event) => {
-
+            console.clear(); // Clear the console
           });
 
           socket.addEventListener('message', (event) => {
-
+            // console.log('WebSocket connection closed.'+event);
           });
       });
 

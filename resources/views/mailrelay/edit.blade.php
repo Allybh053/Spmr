@@ -89,6 +89,7 @@
                             <th>System Name</th>
                             <th>IP Address</th>
                             <th>FQDN System</th>
+                            <th style="text-align: center;">Action</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -98,6 +99,7 @@
                             <td>{{ $smtpMailServer -> server_name}}</td>
                             <td>{{ $smtpMailServer -> ip_addr_server }}</td>
                             <td>{{ $smtpMailServer -> fqdn_server }}</td>
+                            <td style="text-align: center;"><input type="checkbox" id="myCheckbox" name="myCheckbox" value="checkboxValue"></td>
                         </tr>
                         @endforeach
                     </tbody>
@@ -110,9 +112,9 @@
             <div class="card-header">CLI Section<br><br><span class="text-danger">***</span> <u>Form ID: {{ $smtpMailServers->first()->form_id }}</u><br><br><span class="badge btn-danger">*** Any command execute will RUN at the Server directly</span></div>
             <div class="card-body">
                 <div>
-                    <input class="form-control" type="text" id="commandInput" placeholder="Enter command here...."><br>
-                    <button class="btn btn-primary" id="sendButton">Send</button>
-                    <button class="btn btn-success" id="connectButton">Connect</button>
+                    {{-- <input class="form-control" type="text" id="commandInput" placeholder="Enter command here...."><br> --}}
+                    {{-- <button class="btn btn-primary" id="sendButton">Send</button> --}}
+                    {{-- <button class="btn btn-success" id="connectButton">Connect</button> --}}
                 </div><br>
                 <div id="terminal"></div>
             </div>
@@ -134,8 +136,8 @@
                     @csrf
                     @method('PUT')
                     <div class="card-body"  style="text-align: center;">
-                        <button class="btn btn-danger me-2 my-1" type="button" onclick="rejectRequest()">Reject Request</button>
-                        <button class="btn btn-primary me-2 my-1" type="button">Submit Approval</button>
+                        <button class="btn btn-danger me-2 my-1" type="button" onclick="rejectSubmit()">Reject Request</button>
+                        <button class="btn btn-primary me-2 my-1" type="button" onclick="confirmSubmit()">Submit Approval</button>
                     </div>
                 </form>
             </div>
@@ -146,42 +148,88 @@
 
     <script src="https://unpkg.com/xterm"></script>
     <script>
+        function confirmSubmit() {
+            if (confirm('Are you sure all Information of List of New Mail Relay Detail has been Completed and tick? ')) {
+                // If the user clicks "OK" in the confirmation dialog, submit the form
+                // document.getElementById('yourFormId').submit();
+            }
+        }
+        function rejectSubmit() {
+            if (confirm('This for Mail Request Form will be rejected in SPMR record!')) {
+                // If the user clicks "OK" in the confirmation dialog, submit the form
+                // document.getElementById('yourFormId').submit();
+            }
+        }
 document.addEventListener('DOMContentLoaded', function () {
-    const term = new Terminal();
-    term.open(document.getElementById('terminal'));
+    const term = new Terminal({
+    scrollback: 9999999 // Set the maximum number of lines in the buffer
+    });
 
+    term.open(document.getElementById('terminal'));
+    // Enable mouse wheel scrolling
+term.element.addEventListener('wheel', (event) => {
+    if (event.deltaY > 0) {
+        term.scrollLines(-1); // Scroll up
+    } else {
+        term.scrollLines(1); // Scroll down
+    }
+});
     let socket;
 
-    const connectButton = document.getElementById('connectButton');
-    connectButton.addEventListener('click', connectWebSocket);
+    // const connectButton = document.getElementById('connectButton');
+    // connectButton.addEventListener('click', connectWebSocket);
 
+    window.onload = function() {
+        connectWebSocket();
+    };
+    
+    const inputBuffer = []; // Buffer to store input data
     function connectWebSocket() {
-        const serverAddress = 'ws://20.6.33.199:8000/';
+        const ipaddresshostname = {!! $smtpMailServers->pluck('ipaddresshostname')->unique()->toJson() !!}[0];
+        // const serverAddress = `wss://${ipaddresshostname}/wss`;
+        const serverAddress = `ws://${ipaddresshostname}:8000/`;
 
         // Close existing socket if any
         if (socket && socket.readyState === WebSocket.OPEN) {
-            socket.close();
+            // socket.close();
         }
-
         // Create a new WebSocket connection
         socket = new WebSocket(serverAddress);
-
-        // Set up WebSocket event listeners
         socket.addEventListener('open', (event) => {
-            console.log('Connected to WebSocket');
             term.writeln('SPMR Connected to the server');
-            term.onData(data => socket.send(data));
-            socket.onmessage = event => handleWebSocketMessage(event.data);
             window.addEventListener('resize', () => term.fit());
             socket.addEventListener('close', () => {
                 term.writeln('\r\nConnection closed.');
                 term.detach(socket);
-            }); 
-        });
+            });
 
+            socket.onmessage = event => handleWebSocketMessage(event.data);
+        });
         socket.addEventListener('error', (event) => {
             console.error('WebSocket connection error:', event);
             // Handle the error as needed
+        });
+        // Handle key press events in the terminal
+        term.onKey(function (e) {
+            if (event.key === 'Enter') { // If Enter key is pressed
+
+                if (e === '\u001b:') {
+                    // Save the file using the sendCommand function
+                    sendCommand('wq!');
+                } else {
+                    // Send other keystrokes to the terminal
+                    sendCommand(); // Send the command
+                }
+            } else if (e.domEvent.key === 'Backspace') { // If Backspace key is pressed
+                if (inputBuffer.length > 0) {
+                    inputBuffer.pop(); // Remove last character from input buffer
+                    term.write('\b \b'); // Move cursor back and clear character from terminal
+                }
+            }else {
+                // console.log("Add key to input buffer");
+                inputBuffer.push(e.key); // Add key to input buffer
+                term.write(e.key); // Write the key to the terminal
+            }
         });
     }
 
@@ -198,59 +246,18 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 }
 
-
     function sendCommand() {
-        const commandInput = document.getElementById('commandInput');
-        const command = commandInput.value.trim();
+        const command = inputBuffer.join('').trim(); // Get command from input buffer
+        inputBuffer.length = 0; // Clear input buffer
 
         if (command) {
-            term.writeln('Sent: ' + command);
-            socket.send(command);
-            commandInput.value = '';
+            // console.log(command);
+            term.writeln('\r\n$ ' + command); // Display command in terminal
+            socket.send(command); // Send command via WebSocket
         }
     }
-
-    // Handle the 'key' event to send command when Enter is pressed
-    term.onKey(e => {
-        const printable = !e.altKey && !e.ctrlKey && !e.metaKey;
-        if (e.key === '\r' && printable) {
-            sendCommand();
-        }
-    });
-
-    // Handle button click to send command
-    document.getElementById('sendButton').addEventListener('click', sendCommand);
-
-    socket.addEventListener('close', (event) => {
-        console.log('Connection closed:', event);
-    });
 });
 
-function rejectRequest() {
-    // Assuming you have some identifier for the request (e.g., request ID)
-    var requestId = 123;  // Replace with your actual request ID or dynamically retrieve it
-
-    // Make an AJAX request to update the column on the server
-    fetch(`/mailrelay/reject/${requestId}`, {
-        method: 'GET',
-        headers: {
-            'Content-Type': 'application/json',
-        },
-    })
-    .then(response => {
-        if (!response.ok) {
-            throw new Error('Network response was not ok');
-        }
-        return response.json();
-    })
-    .then(data => {
-        console.log('Success:', data);
-        // Handle success, if needed
-    })
-    .catch(error => {
-        console.error('Error:', error);
-    });
-}
     </script>
     <style>
         th,td {

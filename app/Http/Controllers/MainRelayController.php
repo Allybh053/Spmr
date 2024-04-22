@@ -36,10 +36,29 @@ class MainRelayController extends Controller
     {
         // Register mail relay that is pending
         $user = Auth::user();
+        // $smtpMailServers = DB::table('smtp_relay_server')
+        // ->join('smtp_relay_req_form', 'smtp_relay_server.form_id', '=', 'smtp_relay_req_form.form_id')
+        // ->where('smtp_relay_server.form_id', $id)
+        // ->select('smtp_relay_server.*','smtp_relay_req_form.smtp_port as smtp_port','smtp_relay_req_form.smtp_relay_auth_method as smtp_relay_auth_method','smtp_relay_req_form.smtp_relay_server as smtp_relay_server','smtp_relay_req_form.id as smtpid', 'smtp_relay_req_form.created_at as form_created_at', 'smtp_relay_req_form.types_req as types_req', 'smtp_relay_req_form.applicant_name as applicant_name','smtp_relay_req_form.mailbox_created as mailbox_created','smtp_relay_req_form.ticket_id as ticket_id')
+        // ->get();
+
         $smtpMailServers = DB::table('smtp_relay_server')
         ->join('smtp_relay_req_form', 'smtp_relay_server.form_id', '=', 'smtp_relay_req_form.form_id')
+        ->join('servers', 'servers.hostname', '=', 'smtp_relay_req_form.smtp_relay_server')
         ->where('smtp_relay_server.form_id', $id)
-        ->select('smtp_relay_server.*','smtp_relay_req_form.smtp_port as smtp_port','smtp_relay_req_form.smtp_relay_auth_method as smtp_relay_auth_method','smtp_relay_req_form.smtp_relay_server as smtp_relay_server','smtp_relay_req_form.id as smtpid', 'smtp_relay_req_form.created_at as form_created_at', 'smtp_relay_req_form.types_req as types_req', 'smtp_relay_req_form.applicant_name as applicant_name','smtp_relay_req_form.mailbox_created as mailbox_created','smtp_relay_req_form.ticket_id as ticket_id')
+        ->select(
+            'smtp_relay_server.*',
+            'smtp_relay_req_form.smtp_port as smtp_port',
+            'smtp_relay_req_form.smtp_relay_auth_method as smtp_relay_auth_method',
+            'smtp_relay_req_form.smtp_relay_server as smtp_relay_server',
+            'smtp_relay_req_form.id as smtpid',
+            'smtp_relay_req_form.created_at as form_created_at',
+            'smtp_relay_req_form.types_req as types_req',
+            'smtp_relay_req_form.applicant_name as applicant_name',
+            'smtp_relay_req_form.mailbox_created as mailbox_created',
+            'smtp_relay_req_form.ticket_id as ticket_id',
+            'servers.ipaddress as ipaddresshostname' // Retrieve hostname as ipaddresshostname
+        )
         ->get();
 
         return view('mailrelay.edit', compact('user','smtpMailServers'));
@@ -47,21 +66,21 @@ class MainRelayController extends Controller
 
     public function connect()
     {
-        $host = '10.0.0.5';
-        $port = 8000;
-        $username = 'pentadbir';
-        $privateKeyPath = storage_path('storage/postmaster_key.pem'); // Adjust the path to your key file
+        // $host = '10.0.0.5';
+        // $port = 8000;
+        // $username = 'pentadbir';
+        // $privateKeyPath = storage_path('storage/postmaster_key.pem'); // Adjust the path to your key file
 
-        $ssh = new SSH2($host, $port);
-        $key = file_get_contents($privateKeyPath);
+        // $ssh = new SSH2($host, $port);
+        // $key = file_get_contents($privateKeyPath);
 
-        if (!$ssh->login($username, $key)) {
-            return response()->json(['error' => 'SSH login failed']);
-        }
+        // if (!$ssh->login($username, $key)) {
+        //     return response()->json(['error' => 'SSH login failed']);
+        // }
 
-        $output = $ssh->exec('your_ssh_command');
+        // $output = $ssh->exec('your_ssh_command');
 
-        return response()->json(['output' => $output]);
+        // return response()->json(['output' => $output]);
     }
 
     public function updatestatus(){
