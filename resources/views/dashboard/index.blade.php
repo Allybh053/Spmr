@@ -370,47 +370,66 @@ $(document).ready(function() {
     }
 
     // mailq
-        // Extract data passed from the controller
-        var timestamps = @php echo json_encode($timestamps) @endphp;
+       // Extract data passed from the controller
+        // var timestamps = @php echo json_encode($timestamps) @endphp;
         var mailCounts = @php echo json_encode($mailCounts) @endphp;
+
+
         // Create a new Chart.js instance
         var ctx = document.getElementById('mailQueueChart').getContext('2d');
-        var mailQueueChart = new Chart(ctx, {
-          type: 'line',
-          data: {
-            labels: timestamps,
-            datasets: [{
-              label: 'Mail Queue',
-              data: mailCounts,
-              backgroundColor: 'rgba(255, 0, 0, 0.05)', // Fill color
-              borderColor: 'rgba(255, 0, 0, 1)', // Border color
-              borderWidth: 1
-            }]
-          },
-          options: {
-            scales: {
-              x: {
-                type: 'time', // Use time scale for x-axis
-                time: {
-                  unit: 'day' // Display unit as day
-                },
-                title: {
-                  display: true,
-                  text: 'Time'
-                }
-              },
-              y: {
-                title: {
-                  display: true,
-                  text: 'Mail Count'
-                },
-                beginAtZero: true
-              }
-            }
-          }
+        var labels = mailCounts.map(entry => new Date(entry.x)); // Assuming entry.x is already a date
+
+        var datasets = mailCounts.map(dataset => {
+            return {
+                label: dataset.label,
+                borderColor: dataset.borderColor,
+                borderWidth: dataset.borderWidth,
+                backgroundColor: dataset.backgroundColor,
+                data: dataset.data.map(entry => ({ x: new Date(entry.x), y: entry.y })) // Parse date strings in dataset.data
+            };
         });
 
-});
+        var mailQueueChart = new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: labels,
+                datasets: datasets // Pass the formatted datasets array
+            },
+            options: {
+                scales: {
+                    x: [{
+                        type: 'time',
+                        time: {
+                            unit: 'minute', // Display unit as minute
+                            displayFormats: {
+                                minute: 'H:mm' // Format for minute display
+                            }
+                        },
+                        title: {
+                            display: true,
+                            text: 'Time'
+                        }
+                    }],
+                    y: [{
+                        title: {
+                            display: true,
+                            text: 'Mail Count'
+                        },
+                        beginAtZero: true
+                    }]
+                },
+                plugins: {
+                    legend: {
+                        display: true,
+                        position: 'bottom', // Adjust legend position if needed
+                        onHover: function(event, legendItem) {
+                    event.target.style.cursor = 'pointer';
+                }
+                    }
+                }
+            }
+        });
+    });
 
       let sockets = [];
       let serverIpaddresses = [];
