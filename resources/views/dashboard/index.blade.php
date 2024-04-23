@@ -112,7 +112,9 @@
   </div>
   <!-- <div class="row mb-4"><div class="col-xxl-4"><div class="card"><div class="card-header text-center p-5"><h5>Graf serial apps vs day</h5></div><div class="card-body"><canvas id="appsChart"></canvas></div></div></div><div class="col-xxl-4"><div class="card"><div class="card-header text-center p-5"><h5>Graf serial domain vs day</h5></div><div class="card-body"><canvas id="domainChart"></canvas></div></div></div><div class="col-xxl-4"><div class="card"><div class="card-header text-center p-5"><h5>Graf serial sasl vs day</h5></div><div class="card-body"><canvas id="saslChart"></canvas></div></div></div></div> -->
   <div class="row">
-    <div class="col-xxl-12">
+    <div class="col-xxl-12"><div class="card"><div class="card-header text-center p-5"><h5>Graf serial Mail Queue vs Time</h5></div><div class="card-body"><canvas id="mailQueueChart"></canvas></div></div></div>
+
+    <div class="col-xxl-12 mt-5">
       <div class="card">
         <div class="card-header text-center p-5">
           <h5>View Current MailQueue Count</h5>
@@ -139,8 +141,7 @@
         </div>
       </div>
     </div>
-    <!-- <div class="col-xxl-6"><div class="card"><div class="card-header text-center p-5"><h5>Graf serial Mail Queue vs Time</h5></div><div class="card-body"><canvas id="mailQueueChart"></canvas></div></div></div> -->
-  </div>
+</div>
   <div class="row  mt-5">
     <div class="col-xxl-12">
       <div class="card">
@@ -367,6 +368,47 @@ $(document).ready(function() {
             }
         });
     }
+
+    // mailq
+        // Extract data passed from the controller
+        var timestamps = @php echo json_encode($timestamps) @endphp;
+        var mailCounts = @php echo json_encode($mailCounts) @endphp;
+        // Create a new Chart.js instance
+        var ctx = document.getElementById('mailQueueChart').getContext('2d');
+        var mailQueueChart = new Chart(ctx, {
+          type: 'line',
+          data: {
+            labels: timestamps,
+            datasets: [{
+              label: 'Mail Queue',
+              data: mailCounts,
+              backgroundColor: 'rgba(255, 0, 0, 0.05)', // Fill color
+              borderColor: 'rgba(255, 0, 0, 1)', // Border color
+              borderWidth: 1
+            }]
+          },
+          options: {
+            scales: {
+              x: {
+                type: 'time', // Use time scale for x-axis
+                time: {
+                  unit: 'day' // Display unit as day
+                },
+                title: {
+                  display: true,
+                  text: 'Time'
+                }
+              },
+              y: {
+                title: {
+                  display: true,
+                  text: 'Mail Count'
+                },
+                beginAtZero: true
+              }
+            }
+          }
+        });
 
 });
 
