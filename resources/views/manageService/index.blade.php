@@ -247,7 +247,7 @@
                       var postfixImageSrc = postfixStatus === 'Online' ? 'assets/img/demo/online.png' : 'assets/img/demo/offline.png';
                       $('#statusPostfixImage').attr('src', postfixImageSrc).attr('alt', postfixAlt);
 
-                      var Apache2Status = outputs[3];
+                      var Apache2Status = outputs[5];
                       var Apache2Alt;
                       if(Apache2Status == "Apache2 is running"){
                         Apache2Status = "Online";
@@ -259,7 +259,7 @@
                       var Apache2ImageSrc = Apache2Status === 'Online' ? 'assets/img/demo/online.png' : 'assets/img/demo/offline.png';
                       $('#statusApache2Image').attr('src', Apache2ImageSrc).attr('alt', Apache2Alt);
 
-                      var WebminStatus = outputs[5];
+                      var WebminStatus = outputs[3];
                       var WebminAlt;
                       if(WebminStatus == "Webmin is running"){
                         WebminStatus = "Online";
