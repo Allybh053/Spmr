@@ -41,7 +41,7 @@ class LoginController extends Controller
         ]);
        // Check if TOTP is enabled for the user
        if ($user->totp_enabled) {// Debugging statement
-  
+
         return redirect()->route('2fa.show');
         }
 
@@ -55,9 +55,9 @@ class LoginController extends Controller
 
         return redirect()->intended($this->redirectPath());
     }
-    
 
-    protected $redirectTo = '/main';
+
+    protected $redirectTo = '/home';
 
     public function __construct()
     {
@@ -73,7 +73,7 @@ class LoginController extends Controller
     public function show2faForm()
     {
         dd('Reached /2fa route'); // Add this line for debugging
- 
+
         return view('auth.totpLogin');
     }
 
@@ -91,7 +91,7 @@ class LoginController extends Controller
             return redirect()->back()->withErrors(['totp_code' => 'Invalid TOTP code']);
         }
 
-        return redirect('/main'); // Adjust this to your desired post-2FA verification page
+        return redirect('/home'); // Adjust this to your desired post-2FA verification page
     }
 
     public function logout(Request $request)

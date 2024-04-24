@@ -371,64 +371,111 @@ $(document).ready(function() {
 
     // mailq
        // Extract data passed from the controller
-        // var timestamps = @php echo json_encode($timestamps) @endphp;
-        var mailCounts = @php echo json_encode($mailCounts) @endphp;
+       // Generate random color function
+       function randomColor() {
+    return '#' + Math.floor(Math.random() * 16777215).toString(16);
+}
 
+        // Generate random data for a server
+        function generateServerData(serverName) {
+            var data = [];
+            var currentDate = new Date();
+            currentDate.setHours(0, 0, 0, 0); // Set time to midnight
 
-        // Create a new Chart.js instance
-        var ctx = document.getElementById('mailQueueChart').getContext('2d');
-        var labels = mailCounts.map(entry => new Date(entry.x)); // Assuming entry.x is already a date
+            // Generate data for each minute until current time
+            for (var i = 0; i <= 10; i++) {
+                    var timestamp = new Date(currentDate);
+                    timestamp.setMinutes(i);
+                    var formattedTimestamp = formatDate(timestamp); // Format timestamp
+                    data.push({
+                        x: formattedTimestamp,
+                        y: Math.floor(Math.random() * 10) // Random count value
+                    });
+            }
 
-        var datasets = mailCounts.map(dataset => {
             return {
-                label: dataset.label,
-                borderColor: dataset.borderColor,
-                borderWidth: dataset.borderWidth,
-                backgroundColor: dataset.backgroundColor,
-                data: dataset.data.map(entry => ({ x: new Date(entry.x), y: entry.y })) // Parse date strings in dataset.data
+                label: serverName,
+                borderColor: randomColor(),
+                backgroundColor: 'rgba(0, 0, 0, 0)', // Transparent background
+                borderWidth: 1,
+                data: data
             };
-        });
+        }
 
-        var mailQueueChart = new Chart(ctx, {
-            type: 'line',
-            data: {
-                labels: labels,
-                datasets: datasets // Pass the formatted datasets array
-            },
-            options: {
-                scales: {
-                    x: [{
-                        type: 'time',
-                        time: {
-                            unit: 'minute', // Display unit as minute
-                            displayFormats: {
-                                minute: 'H:mm' // Format for minute display
-                            }
-                        },
-                        title: {
-                            display: true,
-                            text: 'Time'
-                        }
-                    }],
-                    y: [{
-                        title: {
-                            display: true,
-                            text: 'Mail Count'
-                        },
-                        beginAtZero: true
-                    }]
+// Function to format timestamp as "dd/mm/yyyy HH:mm:ss"
+function formatDate(date) {
+    var day = ('0' + date.getDate()).slice(-2);
+    var month = ('0' + (date.getMonth() + 1)).slice(-2);
+    var year = date.getFullYear();
+    var hours = ('0' + date.getHours()).slice(-2);
+    var minutes = ('0' + date.getMinutes()).slice(-2);
+    var seconds = ('0' + date.getSeconds()).slice(-2);
+
+    return day + '/' + month + '/' + year + ' ' + hours + ':' + minutes + ':' + seconds;
+}
+
+// Generate random data for multiple servers
+var servers = {
+    server1: generateServerData('Server 1'),
+    server2: generateServerData('Server 2'),
+    // Add more servers if needed
+};
+
+// Prepare datasets for Chart.js
+var datasets = Object.values(servers);
+
+// Create a new Chart.js instance
+var ctx = document.getElementById('mailQueueChart').getContext('2d');
+var labels = Array.from(Array(60).keys()).map(minute => {
+    var timestamp = new Date();
+    timestamp.setHours(0, minute, 0, 0);
+    return formatDate(timestamp); // Format timestamp
+});
+
+var mailQueueChart = new Chart(ctx, {
+    type: 'line',
+    data: {
+        labels: labels,
+        datasets: datasets // Pass the formatted datasets array
+    },
+    options: {
+        scales: {
+            x: [{
+                type: 'time',
+                time: {
+                    parser: 'DD/MM/YYYY HH:mm:ss', // Custom parser for the format
+                    unit: 'minute', // Display unit as minute
+                    displayFormats: {
+                        minute: 'HH:mm' // Format for minute display
+                    }
                 },
-                plugins: {
-                    legend: {
-                        display: true,
-                        position: 'bottom', // Adjust legend position if needed
-                        onHover: function(event, legendItem) {
+                title: {
+                    display: true,
+                    text: 'Time'
+                }
+            }],
+            y: [{
+                title: {
+                    display: true,
+                    text: 'Mail Count'
+                },
+                beginAtZero: true
+            }]
+        },
+        plugins: {
+            legend: {
+                display: true,
+                position: 'bottom', // Adjust legend position if needed
+                onHover: function (event, legendItem) {
                     event.target.style.cursor = 'pointer';
                 }
-                    }
-                }
             }
-        });
+        }
+    }
+});
+
+
+
     });
 
       let sockets = [];
