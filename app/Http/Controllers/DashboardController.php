@@ -112,59 +112,11 @@ class DashboardController extends Controller
                 $p3Data[] = $faker->numberBetween(1, 100);
             }
 
-
-            $fakerMailCounts = [];
-            $timestamps = [];
-            $startOfDay = Carbon::today();
-            $now = Carbon::now();
-
-            foreach ($listServer as $server) {
-                // Generate fake mail queue counts and timestamps for each server
-                $fakerMailCounts[$server->hostname] = [];
-                for ($i = 0; $i < 10; $i++) { // Generate data for 50 entries per server
-                    $count = mt_rand(0, 100); // Generate random mail queue count
-
-                    // Generate timestamp randomly for each entry within the current day until the current time
-                    $random_time = Carbon::createFromTimestamp(mt_rand($now->startOfDay()->timestamp, $now->timestamp));
-
-                    // Add entry with timestamp and count
-                    $fakerMailCounts[$server->hostname][] = [
-                        'timestamp' => $random_time->format('Y-m-d H:i:s'),
-                        'count' => $count
-                    ];
-                }
-                }
-
-            // Now $fakerMailCounts contains simulated mail queue counts for each server
-            // $timestamps contains simulated timestamps for all data points
-
-            // You can use these data to build your Chart.js datasets and labels
-            $mailCounts = [];
-            foreach ($fakerMailCounts as $serverName => $entries) {
-                $color = '#' . dechex(mt_rand(0, 16777215)); // Generate random color code
-                $dataset = [
-                    'label' => $serverName,
-                    'data' => [], // Initialize an empty array to hold the data
-                    'borderColor' => $color,
-                    'backgroundColor' => 'transparent',
-                    'borderWidth' => 1
-                ];
-                foreach ($entries as $entry) {
-                    // Extract timestamp and count from the entry
-                    $timestamp = $entry['timestamp'];
-                    $count = $entry['count'];
-                    // Push an associative array containing the timestamp and count to the 'data' array
-                    $dataset['data'][] = ['x' => $timestamp, 'y' => $count];
-                }
-                // Push the dataset to the $mailCounts array
-                $mailCounts[] = $dataset;
-            }
-
             // Pass the data to the view
             return view('dashboard.index', compact(
                 'user', 'role', 'serverconfig', 'serverList', 'filteredMinistries',
                 'filteredDept', 'departmentCounts', 'departmentCounts2', 'limit', 'days', 'p1Data',
-                'p2Data', 'p3Data','timestamps', 'mailCounts','defaultServerId'));
+                'p2Data', 'p3Data','defaultServerId'));
         }
 
     public function api(Request $request, $limit=null)
