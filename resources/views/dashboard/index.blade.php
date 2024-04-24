@@ -112,7 +112,9 @@
   </div>
   <!-- <div class="row mb-4"><div class="col-xxl-4"><div class="card"><div class="card-header text-center p-5"><h5>Graf serial apps vs day</h5></div><div class="card-body"><canvas id="appsChart"></canvas></div></div></div><div class="col-xxl-4"><div class="card"><div class="card-header text-center p-5"><h5>Graf serial domain vs day</h5></div><div class="card-body"><canvas id="domainChart"></canvas></div></div></div><div class="col-xxl-4"><div class="card"><div class="card-header text-center p-5"><h5>Graf serial sasl vs day</h5></div><div class="card-body"><canvas id="saslChart"></canvas></div></div></div></div> -->
   <div class="row">
-    <div class="col-xxl-12">
+    <div class="col-xxl-12"><div class="card"><div class="card-header text-center p-5"><h5>Graf serial Mail Queue vs Time</h5></div><div class="card-body"><canvas id="mailQueueChart"></canvas></div></div></div>
+
+    <div class="col-xxl-12 mt-5">
       <div class="card">
         <div class="card-header text-center p-5">
           <h5>View Current MailQueue Count</h5>
@@ -139,8 +141,7 @@
         </div>
       </div>
     </div>
-    <!-- <div class="col-xxl-6"><div class="card"><div class="card-header text-center p-5"><h5>Graf serial Mail Queue vs Time</h5></div><div class="card-body"><canvas id="mailQueueChart"></canvas></div></div></div> -->
-  </div>
+</div>
   <div class="row  mt-5">
     <div class="col-xxl-12">
       <div class="card">
@@ -161,7 +162,7 @@
                                             <div class="me-3">
                                                 <h5>Postfix</h5>
                                             </div>
-                                            <img src="{{ isset($status) && $status === 'Online' ? asset('assets/img/demo/online.png') : asset('assets/img/demo/offline.png') }}" alt="{{ $status === 'Online' ? 'Online' : 'Offline' }}" style="width: 5rem">
+                                            <img id="statusPostfixImage" src="{{ asset('assets/img/demo/offline.png') }}" alt="Postfix is down" style="width: 5rem">
                                         </div>
                                         <p id="statusPostfix" style="display: inline-block; margin-left: 5px;">--</p>
                                     </div>
@@ -188,7 +189,7 @@
                                             <div class="me-3">
                                                 <h5>Apache</h5>
                                             </div>
-                                            <img src="{{ isset($status) && $status === 'Online' ? asset('assets/img/demo/online.png') : asset('assets/img/demo/offline.png') }}" alt="{{ $status === 'Online' ? 'Online' : 'Offline' }}" style="width: 5rem">
+                                            <img id="statusApache2Image" src="{{ asset('assets/img/demo/offline.png') }}" alt="Apache2 is down" style="width: 5rem">
                                         </div>
                                         <p id="statusApache2" style="display: inline-block; margin-left: 5px;">--</p>
                                     </div>
@@ -202,7 +203,7 @@
                                             <div class="me-3">
                                                 <h5>Webmin</h5>
                                             </div>
-                                            <img src="{{ isset($status) && $status === 'Online' ? asset('assets/img/demo/online.png') : asset('assets/img/demo/offline.png') }}" alt="{{ $status === 'Online' ? 'Online' : 'Offline' }}" style="width: 5rem">
+                                            <img id="statusWebminImage" src="{{ asset('assets/img/demo/offline.png') }}" alt="Webmin is down" style="width: 5rem">
                                         </div>
                                         <p id="statusWebmin" style="display: inline-block; margin-left: 5px;">--</p>
                                     </div>
@@ -368,7 +369,67 @@ $(document).ready(function() {
         });
     }
 
-});
+    // mailq
+       // Extract data passed from the controller
+        // var timestamps = @php echo json_encode($timestamps) @endphp;
+        var mailCounts = @php echo json_encode($mailCounts) @endphp;
+
+
+        // Create a new Chart.js instance
+        var ctx = document.getElementById('mailQueueChart').getContext('2d');
+        var labels = mailCounts.map(entry => new Date(entry.x)); // Assuming entry.x is already a date
+
+        var datasets = mailCounts.map(dataset => {
+            return {
+                label: dataset.label,
+                borderColor: dataset.borderColor,
+                borderWidth: dataset.borderWidth,
+                backgroundColor: dataset.backgroundColor,
+                data: dataset.data.map(entry => ({ x: new Date(entry.x), y: entry.y })) // Parse date strings in dataset.data
+            };
+        });
+
+        var mailQueueChart = new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: labels,
+                datasets: datasets // Pass the formatted datasets array
+            },
+            options: {
+                scales: {
+                    x: [{
+                        type: 'time',
+                        time: {
+                            unit: 'minute', // Display unit as minute
+                            displayFormats: {
+                                minute: 'H:mm' // Format for minute display
+                            }
+                        },
+                        title: {
+                            display: true,
+                            text: 'Time'
+                        }
+                    }],
+                    y: [{
+                        title: {
+                            display: true,
+                            text: 'Mail Count'
+                        },
+                        beginAtZero: true
+                    }]
+                },
+                plugins: {
+                    legend: {
+                        display: true,
+                        position: 'bottom', // Adjust legend position if needed
+                        onHover: function(event, legendItem) {
+                    event.target.style.cursor = 'pointer';
+                }
+                    }
+                }
+            }
+        });
+    });
 
       let sockets = [];
       let serverIpaddresses = [];
@@ -448,6 +509,42 @@ $(document).ready(function() {
                       $('#statusFail2ban').text(outputs[11]);
                       $('#statusWebmin').text(outputs[13]);
                       $('#statusApache2').text(outputs[15]);
+
+                      var postfixStatus = outputs[9];
+                      var postfixAlt;
+                      if(postfixStatus == "Postfix is running"){
+                        postfixStatus = "Online";
+                        postfixAlt = "Postfix is running";
+                      }else{
+                        postfixStatus = "Offline";
+                        postfixAlt = "Postfix is down";
+                      }
+                      var postfixImageSrc = postfixStatus === 'Online' ? 'assets/img/demo/online.png' : 'assets/img/demo/offline.png';
+                      $('#statusPostfixImage').attr('src', postfixImageSrc).attr('alt', postfixAlt);
+
+                      var Apache2Status = outputs[15];
+                      var Apache2Alt;
+                      if(Apache2Status == "Apache2 is running"){
+                        Apache2Status = "Online";
+                        Apache2Alt = "Apache2 is running";
+                      }else{
+                        Apache2Status = "Offline";
+                        Apache2Alt = "Apache2 is down";
+                      }
+                      var Apache2ImageSrc = Apache2Status === 'Online' ? 'assets/img/demo/online.png' : 'assets/img/demo/offline.png';
+                      $('#statusApache2Image').attr('src', Apache2ImageSrc).attr('alt', Apache2Alt);
+
+                      var WebminStatus = outputs[13];
+                      var WebminAlt;
+                      if(WebminStatus == "Webmin is running"){
+                        WebminStatus = "Online";
+                        WebminAlt = "Webmin is running";
+                      }else{
+                        WebminStatus = "Offline";
+                        WebminAlt = "Webmin is down";
+                      }
+                      var WebminImageSrc = WebminStatus === 'Online' ? 'assets/img/demo/online.png' : 'assets/img/demo/offline.png';
+                      $('#statusWebminImage').attr('src', WebminImageSrc).attr('alt', WebminAlt);
 
                   }
               }

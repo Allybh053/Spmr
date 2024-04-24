@@ -40,7 +40,7 @@
                                                   <div class="me-3">
                                                       <h5>Postfix</h5>
                                                   </div>
-                                                  <img src="{{ isset($status) && $status === 'Online' ? asset('assets/img/demo/online.png') : asset('assets/img/demo/offline.png') }}" alt="{{ $status === 'Online' ? 'Online' : 'Offline' }}" style="width: 5rem">
+                                                  <img id="statusPostfixImage" src="{{ asset('assets/img/demo/offline.png') }}" alt="Postfix is down" style="width: 5rem">
                                               </div>
                                               <p id="statusPostfix" style="display: inline-block; margin-left: 5px;">--</p>
                                           </div>
@@ -68,7 +68,7 @@
                                                   <div class="me-3">
                                                       <h5>Apache</h5>
                                                   </div>
-                                                  <img src="{{ isset($status) && $status === 'Online' ? asset('assets/img/demo/online.png') : asset('assets/img/demo/offline.png') }}" alt="{{ $status === 'Online' ? 'Online' : 'Offline' }}" style="width: 5rem">
+                                                  <img id="statusApache2Image" src="{{ asset('assets/img/demo/offline.png') }}" alt="Apache2 is down" style="width: 5rem">
                                               </div>
                                               <p id="statusApache2" style="display: inline-block; margin-left: 5px;">--</p>
                                           </div>
@@ -96,7 +96,7 @@
                                                   <div class="me-3">
                                                       <h5>Webmin</h5>
                                                   </div>
-                                                  <img src="{{ isset($status) && $status === 'Online' ? asset('assets/img/demo/online.png') : asset('assets/img/demo/offline.png') }}" alt="{{ $status === 'Online' ? 'Online' : 'Offline' }}" style="width: 5rem">
+                                                  <img id="statusWebminImage" src="{{ asset('assets/img/demo/offline.png') }}" alt="Webmin is down" style="width: 5rem">
                                               </div>
                                               <p id="statusWebmin" style="display: inline-block; margin-left: 5px;">--</p>
                                           </div>
@@ -234,6 +234,43 @@
                     $('#statusPostfix').text(outputs[1]);
                     $('#statusWebmin').text(outputs[3]);
                     $('#statusApache2').text(outputs[5]);
+
+                    var postfixStatus = outputs[1];
+                      var postfixAlt;
+                      if(postfixStatus == "Postfix is running"){
+                        postfixStatus = "Online";
+                        postfixAlt = "Postfix is running";
+                      }else{
+                        postfixStatus = "Offline";
+                        postfixAlt = "Postfix is down";
+                      }
+                      var postfixImageSrc = postfixStatus === 'Online' ? 'assets/img/demo/online.png' : 'assets/img/demo/offline.png';
+                      $('#statusPostfixImage').attr('src', postfixImageSrc).attr('alt', postfixAlt);
+
+                      var Apache2Status = outputs[5];
+                      var Apache2Alt;
+                      if(Apache2Status == "Apache2 is running"){
+                        Apache2Status = "Online";
+                        Apache2Alt = "Apache2 is running";
+                      }else{
+                        Apache2Status = "Offline";
+                        Apache2Alt = "Apache2 is down";
+                      }
+                      var Apache2ImageSrc = Apache2Status === 'Online' ? 'assets/img/demo/online.png' : 'assets/img/demo/offline.png';
+                      $('#statusApache2Image').attr('src', Apache2ImageSrc).attr('alt', Apache2Alt);
+
+                      var WebminStatus = outputs[3];
+                      var WebminAlt;
+                      if(WebminStatus == "Webmin is running"){
+                        WebminStatus = "Online";
+                        WebminAlt = "Webmin is running";
+                      }else{
+                        WebminStatus = "Offline";
+                        WebminAlt = "Webmin is down";
+                      }
+                      var WebminImageSrc = WebminStatus === 'Online' ? 'assets/img/demo/online.png' : 'assets/img/demo/offline.png';
+                      $('#statusWebminImage').attr('src', WebminImageSrc).attr('alt', WebminAlt);
+
 
                 }
             }

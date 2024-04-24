@@ -2,24 +2,25 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\SmtpRelayReqForm;
-use App\Models\smtp_relay_server;
-use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use App\Http\Requests;
+use App\Models\DomainMinistryAgencies;
+use App\Models\RoleServer;
+use App\Models\Server;
+use App\Models\smtp_relay_server;
+use App\Models\SmtpRelayReqForm;
+use Carbon\Carbon;
+use DateTime;
+use Faker\Factory as Faker;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\View;
+use Mail;
 use Spatie\Permission\Models\Permission;
 use Spatie\Permission\Models\Role;
-use Carbon\Carbon;
-use Illuminate\Support\Facades\DB;
-use App\Http\Requests;
-use Mail;
 use Validator;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\View;
-use App\Models\Server;
-use App\Models\RoleServer;
-use App\Models\DomainMinistryAgencies;
-use Illuminate\Http\JsonResponse;
-use Faker\Factory as Faker;
 
 class DashboardController extends Controller
 {
@@ -111,14 +112,53 @@ class DashboardController extends Controller
                 $p3Data[] = $faker->numberBetween(1, 100);
             }
 
-            $mailqData = $this->generateFakerMailQueue(50); // Generate data for 50 entries
 
-            // Extract timestamps and mail queue counts
-            $timestamps = collect($mailqData)->pluck('created_at')->map(function ($timestamp) {
-                return $timestamp->format('Y-m-d H:i:s'); // Format timestamp as needed
-            });
-            $mailCounts = collect($mailqData)->pluck('mail_count');
+            $fakerMailCounts = [];
+            $timestamps = [];
+            $startOfDay = Carbon::today();
+            $now = Carbon::now();
 
+            foreach ($listServer as $server) {
+                // Generate fake mail queue counts and timestamps for each server
+                $fakerMailCounts[$server->hostname] = [];
+                for ($i = 0; $i < 10; $i++) { // Generate data for 50 entries per server
+                    $count = mt_rand(0, 100); // Generate random mail queue count
+
+                    // Generate timestamp randomly for each entry within the current day until the current time
+                    $random_time = Carbon::createFromTimestamp(mt_rand($now->startOfDay()->timestamp, $now->timestamp));
+
+                    // Add entry with timestamp and count
+                    $fakerMailCounts[$server->hostname][] = [
+                        'timestamp' => $random_time->format('Y-m-d H:i:s'),
+                        'count' => $count
+                    ];
+                }
+                }
+
+            // Now $fakerMailCounts contains simulated mail queue counts for each server
+            // $timestamps contains simulated timestamps for all data points
+
+            // You can use these data to build your Chart.js datasets and labels
+            $mailCounts = [];
+            foreach ($fakerMailCounts as $serverName => $entries) {
+                $color = '#' . dechex(mt_rand(0, 16777215)); // Generate random color code
+                $dataset = [
+                    'label' => $serverName,
+                    'data' => [], // Initialize an empty array to hold the data
+                    'borderColor' => $color,
+                    'backgroundColor' => 'transparent',
+                    'borderWidth' => 1
+                ];
+                foreach ($entries as $entry) {
+                    // Extract timestamp and count from the entry
+                    $timestamp = $entry['timestamp'];
+                    $count = $entry['count'];
+                    // Push an associative array containing the timestamp and count to the 'data' array
+                    $dataset['data'][] = ['x' => $timestamp, 'y' => $count];
+                }
+                // Push the dataset to the $mailCounts array
+                $mailCounts[] = $dataset;
+            }
 
             // Pass the data to the view
             return view('dashboard.index', compact(
