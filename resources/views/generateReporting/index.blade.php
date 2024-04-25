@@ -90,30 +90,30 @@
               <div class="card">
                 <div class="card-body">
                   <div class="row">
-                    <div class="col-xl-4 mb-4">
+                    {{--<div class="col-xl-4 mb-4">
                       <a class="card lift h-100" href="#!">
                         <div class="card-body d-flex justify-content-center flex-column">
                           <div class="d-flex align-items-center justify-content-between">
                             <div class="me-3">
-                              {{--<i class="feather-xl text-primary mb-3" data-feather="activity"></i>--}}
+                              --}}{{--<i class="feather-xl text-primary mb-3" data-feather="activity"></i>--}}{{--
                               <h5>Total Applications</h5>
                               <div class="inline">
                                 <i class="feather-l text-primary" data-feather="corner-down-right"></i>
                                 <h2 id="totalApplications" style="display: inline-block; margin-left: 5px;">--</h2>
                               </div>
                             </div>
-                            {{--<img src="{{asset ('assets/img/illustrations/dash_app.svg')}}" alt="..." style="width: 8rem" />--}}
+                            --}}{{--<img src="{{asset ('assets/img/illustrations/dash_app.svg')}}" alt="..." style="width: 8rem" />--}}{{--
                           </div>
                         </div>
                       </a>
-                    </div>
-                    <div class="col-xl-4 mb-4">
+                    </div>--}}
+                    <div class="col-xl-6 mb-4">
                         <a class="card lift h-100" href="#!">
                             <div class="card-body d-flex justify-content-center flex-column">
                                 <div class="d-flex align-items-center justify-content-between">
                                     <div class="me-3">
                                         {{--<i class="feather-xl text-primary mb-3" data-feather="activity"></i>--}}
-                                        <h5>Total IP Address</h5>
+                                        <h5>Total IP Address Activated</h5>
                                         <div class="inline">
                                             <i class="feather-l text-primary" data-feather="corner-down-right"></i>
                                             <h2 id="totalIP" style="display: inline-block; margin-left: 5px;">--</h2>
@@ -124,23 +124,40 @@
                             </div>
                         </a>
                     </div>
-                    <div class="col-xl-4 mb-4">
+                    {{--<div class="col-xl-4 mb-4">
                       <a class="card lift h-100" href="#!">
                         <div class="card-body d-flex justify-content-center flex-column">
                           <div class="d-flex align-items-center justify-content-between">
                             <div class="me-3">
-                              {{--<i class="feather-xl text-secondary mb-3" data-feather="zap"></i>--}}
+                              --}}{{--<i class="feather-xl text-secondary mb-3" data-feather="zap"></i>--}}{{--
                               <h5>Total Deactivated</h5>
                               <div class="inline">
                                 <i class="feather-l text-primary" data-feather="corner-down-right"></i>
                                 <h2 id="totalDeactivated" style="display: inline-block; margin-left: 5px;">--</h2>
                               </div>
                             </div>
-                            {{--<img src="{{asset ('assets/img/illustrations/dash_domain.svg')}}" alt="..." style="width: 8rem" />--}}
+                            --}}{{--<img src="{{asset ('assets/img/illustrations/dash_domain.svg')}}" alt="..." style="width: 8rem" />--}}{{--
                           </div>
                         </div>
                       </a>
-                    </div>
+                    </div>--}}
+                      <div class="col-xl-6 mb-4">
+                          <a class="card lift h-100" href="#!">
+                              <div class="card-body d-flex justify-content-center flex-column">
+                                  <div class="d-flex align-items-center justify-content-between">
+                                      <div class="me-3">
+                                          {{--<i class="feather-xl text-secondary mb-3" data-feather="zap"></i>--}}
+                                          <h5>Total Domain</h5>
+                                          <div class="inline">
+                                              <i class="feather-l text-primary" data-feather="corner-down-right"></i>
+                                              <h2 id="totalDomain" style="display: inline-block; margin-left: 5px;">--</h2>
+                                          </div>
+                                      </div>
+                                      {{--<img src="{{asset ('assets/img/illustrations/dash_domain.svg')}}" alt="..." style="width: 8rem" />--}}
+                                  </div>
+                              </div>
+                          </a>
+                      </div>
                   </div>
 
 
@@ -163,7 +180,7 @@
                     </table>
                     </div>
                   </div>--}}
-                    <div class="card">
+                    {{--<div class="card">
                         <div class="card-header">List of Form Registered</div>
                         <div class="card-body">
                             <div class="table-responsive">
@@ -181,10 +198,10 @@
                                 </table>
                             </div>
                         </div>
-                    </div>
+                    </div>--}}
                     <br>
                     <div class="card">
-                        <div class="card-header">List of Agency Application and IP Address Registered</div>
+                        <div class="card-header">List of Agency Domain and IP Address Activated</div>
                         <div class="card-body">
                             <div class="table-responsive">
                                 <table id="listAgencyDomain"  class="display table table-striped table-bordered" cellspacing="0" width="100%">
@@ -197,6 +214,28 @@
                                         <th>FQDN Name</th>
                                         <th>Status Activated</th>
 
+                                    </tr>
+                                    </thead>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                    <br>
+                    <div class="card">
+                        <div class="card-header">List of SASL Registered</div>
+                        <div class="card-body">
+                            <div class="table-responsive">
+                                <table id="listFormRegistered"  class="display table table-striped table-bordered" cellspacing="0" width="100%">
+                                    <thead>
+                                    <tr>
+                                        <th>No.</th>
+                                        <th>Ticket No.</th>
+                                        <th>Types Request</th>
+                                        <th>Project Name</th>
+                                        <th>SMTP Relay Authentication Method</th>
+                                        <th>SMTP Port</th>
+                                        <th>SMTP Username</th>
+                                        <th>Date Approval</th>
                                     </tr>
                                     </thead>
                                 </table>
@@ -291,7 +330,7 @@
     });
 
         // Initialize DataTable
-        var table = $('#listFormRegistered').DataTable({
+        /*var table = $('#listFormRegistered').DataTable({
             ordering: true,
             columns: [
                 { data: 'DT_RowIndex', name: 'DT_RowIndex', orderable: false, searchable: false, class: 'text-center' },
@@ -332,7 +371,7 @@
                 },
             ],
             data: [] // Initialize with empty data
-        });
+        });*/
 
         var table2 = $('#listAgencyDomain').DataTable({
             ordering: true,
@@ -346,7 +385,50 @@
             ],
             data: [] // Initialize with empty data
         });
-
+        var table = $('#listFormRegistered').DataTable({
+            ordering: true,
+            columns: [
+                { data: 'DT_RowIndex', name: 'DT_RowIndex', orderable: false, searchable: false, class: 'text-center' },
+                { data: 'ticket_id', name: 'ticket_id', class: 'text-center' },
+                {
+                    data: 'types_req',
+                    name: 'types_req',
+                    class: 'text-center',
+                    render: function(data, type, row) {
+                        // Define options based on the integer value of types_req
+                        switch (data) {
+                            case 1:
+                                return 'New Application';
+                            case 2:
+                                return 'Service Termination';
+                            case 3:
+                                return 'Onboarding Agency';
+                            default:
+                                return 'Unknown';
+                        }
+                    }
+                },
+                { data: 'project_name', name: 'project_name', class: 'text-center' },
+                { data: 'smtp_relay_auth_method', name: 'smtp_relay_auth_method', class: 'text-center' },
+                { data: 'smtp_port', name: 'smtp_port', class: 'text-center' },
+                { data: 'smtp_username', name: 'smtp_username', class: 'text-center' },
+                {
+                    data: 'date_verification_3',
+                    name: 'date_verification_3',
+                    class: 'text-center',
+                    render: function(data, type, row) {
+                        if (type === 'display' || type === 'filter') {
+                            // Parse the timestamp and format it as YY/mm/dd
+                            var date = new Date(data);
+                            var formattedDate = ('0' + date.getDate()).slice(-2) + '/' + ('0' + (date.getMonth() + 1)).slice(-2) + '/' + date.getFullYear();
+                            return formattedDate;
+                        }
+                        return data;
+                    }
+                },
+            ],
+            data: [] // Initialize with empty data
+        });
 
         $('#searchForm').submit(function (e) {
             e.preventDefault();
@@ -358,17 +440,40 @@
                 url: "{{ route('generateReport.index.search') }}",
                 data: formData,
                 success: function (response) {
-                    $('#totalApplications').text(response.totalApplications);
+                    //$('#totalApplications').text(response.totalApplications);
                     $('#totalIP').text(response.totalIP);
-                    $('#totalDeactivated').text(response.totalDeactivated);
+                    //$('#totalDeactivated').text(response.totalDeactivated);
+                    $('#totalDomain').text(response.totalDomain);
 
                     // Add index to each row
                     $.each(response.data, function (index, row) {
                         row['DT_RowIndex'] = index + 1;
+                        switch (row['smtp_relay_auth_method']) {
+                            case 1:
+                                row['smtp_relay_auth_method'] = 'IP Based Authentication Relay';
+                                break;
+                            case 2:
+                                row['smtp_relay_auth_method'] = 'Username/Password Authentication Relay';
+                                break;
+                            default:
+                                // Handle unexpected values if necessary
+                                break;
+                        }
                     });
 
                     $.each(response.data2, function (index, row) {
                         row['DT_RowIndex2'] = index + 1;
+                        switch (row['deactivated']) {
+                            case 0:
+                                row['deactivated'] = 'Activated';
+                                break;
+                            case 1:
+                                row['deactivated'] = 'Deactivated';
+                                break;
+                            default:
+                                // Handle unexpected values if necessary
+                                break;
+                        }
                     });
 
 

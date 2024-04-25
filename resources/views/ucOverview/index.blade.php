@@ -28,7 +28,7 @@
                     <div class="card mb-4">
                         <div class="card-header">Uc Charts & Graphics</div>
 
-                        
+
                         <div class="card-body mt-1 mb-4">
                         <form id="report-form">
                         <div class="row gx-3 mb-3">
@@ -51,7 +51,7 @@
             </div>
         </div>
 
-        
+
     </main>
 
  @endsection
@@ -88,6 +88,10 @@
                         { data: 'date_updated', name: 'date_updated', class: 'text-center' },
                         { data: 'status', name: 'status', class: 'text-center' },
                     ],
+                    dom: 'Bfrtip', // Show buttons at the top
+                buttons: [
+                    'copy', 'csv', 'excel', 'pdf', 'print'
+                ],
             });
 
         })(jQuery);

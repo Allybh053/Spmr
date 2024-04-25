@@ -27,9 +27,6 @@
             <!-- Account page navigation-->
             <nav class="nav nav-borders">
                 <a class="nav-link active ms-0" href="{{ route("profile.index")}}">Profile</a>
-                <!--a class="nav-link" href="account-billing.html">Billing</a>
-                <a class="nav-link" href="account-security.html">Security</a>
-                <a class="nav-link" href="account-notifications.html">Notifications</a-->
             </nav>
             <hr class="mt-0 mb-4" />
             <div class="row">
@@ -52,49 +49,56 @@
                     <div class="card mb-4">
                         <div class="card-header">Account Details</div>
                         <div class="card-body">
-                            <form id="passwordForm1" method="POST" action="{{ route('profile.updatedetail', ['id' => $user->id]) }}">
+                            <form id="passwordForm1" method="POST" action="{{ route('profile.updatedetail', ['id' => $profile->id]) }}">
                                 @csrf
                                 @method('POST')
                                 <!-- Form Group (Name)-->
                                 <div class="mb-3">
                                     <label class="small mb-1" for="username">Username (how your username will appear to other users on the site)</label>
-                                    <input class="form-control" id="username" name="username" type="text" placeholder="Enter your Name" value="{{ old('username', $user->username) }}" />
+                                    <input class="form-control" id="username" name="username" type="text" placeholder="Enter your Name" value="{{ old('username', $profile->username) }}" />
                                 </div>
                                 <!-- Form Row-->
                                 <div class="row gx-3 mb-3">
                                     <!-- Form Group (first name)-->
                                     <div class="col-md-6">
                                         <label class="small mb-1" for="fname">First name</label>
-                                        <input class="form-control" id="fname" name="fname" type="text" placeholder="Enter your first name" value="{{ old('fname', $user->fname) }}" />
+                                        <input class="form-control" id="fname" name="fname" type="text" placeholder="Enter your first name" value="{{ old('fname', $profile->fname) }}" />
                                     </div>
                                     <!-- Form Group (last name)-->
                                     <div class="col-md-6">
                                         <label class="small mb-1" for="lname">Last name</label>
-                                        <input class="form-control" id="lname" name="lname" type="text" placeholder="Enter your last name" value="{{ old('lname', $user->lname) }}" />
+                                        <input class="form-control" id="lname" name="lname" type="text" placeholder="Enter your last name" value="{{ old('lname', $profile->lname) }}" />
                                     </div>
                                 </div>
                                 <!-- Form Row        -->
                                 <div class="row gx-3 mb-3">
                                     <!-- Form Group (organization name)-->
                                     <div class="col-md-6">
-                                        <label class="small mb-1" for="acct_types">Account Type</label>
-                                        <input class="form-control" id="acct_types" name="acct_types" type="text" placeholder="" value="{{ old('acct_types', $user->acct_types) }}" disabled/>
+                                        <label class="small mb-1" for="role_id">Account Role</label>
+                                        <input class="form-control" id="role_id" name="role_id" type="text" placeholder="" value="{{ old('role_id', optional($profile->role)->name) }}" disabled/>
                                     </div>
-                                    <!-- Form Group (location)-->
+                                </div>
+                                <!-- Form Row        -->
+                                <div class="row gx-3 mb-3">
+                                    <!-- Form Group (organization name)-->
                                     <div class="col-md-6">
-                                        <label class="small mb-1" for="role">Role Type</label>
-                                        <input class="form-control" id="role" name="role" type="text" placeholder="" value="{{ $user->role_id}}" disabled/>
+                                        <label class="small mb-1" for="position_id">Position</label>
+                                        <input class="form-control" id="position_id" name="position_id" type="text" placeholder="" value="{{ old('position_id', optional($profile->position)->name) }}" disabled/>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label class="small mb-1" for="department">Department</label>
+                                        <input class="form-control" id="department_id" name="department_id" type="text" placeholder="" value="{{ old('department_id', optional($profile->department)->name) }}" disabled/>
                                     </div>
                                 </div>
                                 <!-- Form Group (email address)-->
                                 <div class="mb-3">
                                     <label class="small mb-1" for="email">Email address</label>
-                                    <input class="form-control" id="email" name="email" type="email" placeholder="Enter your email address" value="{{ old('email', $user->email) }}" />
+                                    <input class="form-control" id="email" name="email" type="email" placeholder="Enter your email address" value="{{ old('email', $profile->email) }}" />
                                 </div>
                                 <!-- Form Group (phone number)-->
                                 <div class="col-md-6" @disabled(true)>
                                     <label class="small mb-1" for="phone">Phone No</label>
-                                    <input class="form-control" id="phone" name="phone" type="text" value="{{ old('phone', $user->phone) }}"/>
+                                    <input class="form-control" id="phone" name="phone" type="text" value="{{ old('phone', $profile->phone) }}"/>
                                 </div>
                                 <!-- Form Row-->
                                 <div class="row gx-3 mb-3">
@@ -102,8 +106,8 @@
                                     <div class="col-md-6">
                                         <label class="small mb-1" for="enabled">status</label>
                                         <select class="form-control" id="enabled" name="enabled" disabled>
-                                            <option value="1" {{ $user->enabled == 1 ? 'selected' : '' }}>Active</option>
-                                            <option value="0" {{ $user->enabled == 0 ? 'selected' : '' }}>No Active</option>
+                                            <option value="1" {{ $profile->enabled == 1 ? 'selected' : '' }}>Active</option>
+                                            <option value="0" {{ $profile->enabled == 0 ? 'selected' : '' }}>No Active</option>
                                         </select>
                                     </div>
                                 </div>
@@ -125,7 +129,7 @@
                     <div class="card mb-4">
                         <div class="card-header">Update Password</div>
                         <div class="card-body">
-                            <form id="passwordForm2" method="POST" action="{{ route('profile.updatepassword', ['id' => $user->id]) }}">
+                            <form id="passwordForm2" method="POST" action="{{ route('profile.updatepassword', ['id' => $profile->id]) }}">
                                 @csrf
                                 <!-- Form Group (inputPassword)-->
                                 <div class="mb-3">
@@ -144,6 +148,11 @@
                 </div>
             </div>
         </div>
+        <style>
+            label {
+                font-weight: bold;
+            }
+        </style>
         <script>
             function validatePassword() {
                 var password = document.getElementById("password").value;

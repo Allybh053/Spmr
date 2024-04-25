@@ -36,4 +36,27 @@ class LoopBackController extends Controller
         return view('validationVerification.loopback.index',compact( 'serverName'));
     }
 
-}
+    public function api(Request $request)
+    {
+        // Retrieve serverId from the request
+        $serverId = $request->serverId;
+
+        return $serverId;
+    }
+
+    public function smtpTest(Request $request) {
+        $serverIds = $request->input('serverName');
+        $mailForm = $request->input('mail_from');
+        $recTo = $request->input('rec_to');
+
+        $serverMailRelay = Server::find($serverIds);
+        $serverName = $serverMailRelay->hostname;
+
+        return response()->json([
+            'data' => $serverName,
+            'MailFrom' => $mailForm,
+            'RecepientTo' => $recTo
+        ]);
+
+    }
+ }

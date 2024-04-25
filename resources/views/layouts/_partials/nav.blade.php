@@ -37,7 +37,9 @@
                 </a> -->
 
                  <!-- Sidenav Menu Heading (Core)-->
+                 @if (Gate::check('smtp_mail_relay_view') || Gate::check('manage_mail_relay_view'))
                  <div class="sidenav-menu-heading">Mail Relay Management</div>
+                 @endif
                 <!-- Sidenav Link (Charts)-->
                 @can('smtp_mail_relay_view')
                 <a class="nav-link" href="{{ route('smtp_relay.smtp_relay_req') }}">
@@ -76,24 +78,29 @@
 
                 <!-- </div> --> --}}
 
+
+                @if (Gate::check('server_overview_view') || Gate::check('manage_service_view'))
+                    <div class="sidenav-menu-heading">Services Management</div>
+                @endif
+
                 @can('server_overview_view')
-                <div class="sidenav-menu-heading">Services Management</div>
                 <a class="nav-link" href="{{ route('log.index') }}">
                     <div class="nav-link-icon"><i data-feather="globe"></i></div>
                     Server Overview
                     <div class="sidenav-collapse-arrow"></div>
                 </a>
                 @endcan
-                {{-- @can('manage_service_view') --}}
+                @can('manage_service_view')
                 <a class="nav-link" href="{{ route('manageService.index') }}">
                     <div class="nav-link-icon"><i data-feather="target"></i></div>
                     Manage Services
                     <div class="sidenav-collapse-arrow"></div>
                 </a>
-                {{-- @endcan --}}
+                @endcan
 
-
+                @if (Gate::check('mail_log_view'))
                 <div class="sidenav-menu-heading">Review Management</div>
+                @endif
                 <!-- Sidenav Accordion (Dashboard)-->
                 {{--<a class="nav-link collapsed" href="javascript:void(0);" data-bs-toggle="collapse" data-bs-target="#collapseAppLog" aria-expanded="false" aria-controls="collapseAppLog">
                     <div class="nav-link-icon"><i data-feather="mail"></i></div>
@@ -128,6 +135,11 @@
                     </a>
                 @endcan
 
+                @php
+                    $canViewValidation = Gate::check('loopback_smtp_test_view') || Gate::check('replication_status_view') || Gate::check('print_list_ip_address_view');
+                @endphp
+
+                @if ($canViewValidation)
                 <a class="nav-link collapsed" href="javascript:void(0);" data-bs-toggle="collapse" data-bs-target="#collapseValidation" aria-expanded="false" aria-controls="collapseValidation">
                     <div class="nav-link-icon"><i data-feather="feather"></i></div>
                     Validation & Verification
@@ -146,9 +158,11 @@
                         @endcan--}}
                     </nav>
                 </div>
+                @endif
 
-
+                @if (Gate::check('generate_report_view'))
                 <div class="sidenav-menu-heading">Report Management</div>
+                @endif
                 {{--<a class="nav-link collapsed" href="javascript:void(0);" data-bs-toggle="collapse" data-bs-target="#collapseReport" aria-expanded="false" aria-controls="collapseReport">
                     <div class="nav-link-icon"><i data-feather="trello"></i></div>
                     Reporting
@@ -168,24 +182,32 @@
                     </nav>
                 </div>--}}
 
-                {{-- @can('generate_report_view') --}}
+                @can('generate_report_view')
                 <a class="nav-link" href="{{ route('generateReport.index') }}">
                     <div class="nav-link-icon"><i data-feather="trello"></i></div>
                     Generate Reporting
                     <div class="sidenav-collapse-arrow"></div>
                 </a>
-                {{-- @endcan --}}
+                @endcan
 
-                @can('server_view')
+
+                @if (Gate::check('server_view'))
                 <!-- Sidenav Heading (Config)-->
                 <div class="sidenav-menu-heading">System Management</div>
                 <!-- Sidenav Accordion (UC log file)-->
+                @endif
+                @can('server_view')
                 <a class="nav-link" href="{{ route('server.index')}}">
                     <div class="nav-link-icon"><i data-feather="server"></i></div>
                     Server Configuration
                     <div class="sidenav-collapse-arrow"></div>
                 </a>
                 @endcan
+
+                @php
+                $canViewSetting = Gate::check('user_view') || Gate::check('role_permission_view') || Gate::check('domain_name_view') || Gate::check('position_department_view') || Gate::check('version_view')  || Gate::check('spmr_activity_log_view') ;
+                @endphp
+                @if($canViewSetting)
                 <!-- Sidenav Accordion (Setting)-->
                 <a class="nav-link collapsed" href="javascript:void(0);" data-bs-toggle="collapse" data-bs-target="#collapseAppsetting" aria-expanded="false" aria-controls="collapseAppsetting">
                     <div class="nav-link-icon"><i data-feather="settings"></i></div>
@@ -254,6 +276,7 @@
                         @endcan
                     </nav>
                 </div>
+                @endif
 
             </div>
         </div>

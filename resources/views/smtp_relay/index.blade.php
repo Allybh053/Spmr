@@ -19,10 +19,10 @@
 
                         @can('smtp_mail_relay_add')
                             <div class="col-12 col-xl-auto mb-3">
-                                <a class="btn btn-sm btn-green" href="#">
+                               {{-- <a class="btn btn-sm btn-green" href="#">
                                     <i class="me-1" data-feather="plus"></i>
                                     Bulk Add
-                                </a>
+                                </a>--}}
                                 <a class="btn btn-sm btn-blue" href="{{ route('smtp_relay.daftar') }}">
                                     <i class="me-1" data-feather="plus"></i>
                                     Add New SMTP Relay Request
@@ -55,13 +55,13 @@
 
         <!-- Main page content-->
         <div class="container-fluid px-4">
-            @if(session('success'))
+            {{-- @if(session('success'))
                 <div class="alert alert-primary alert-dismissible fade show" role="alert">
                     <h5 class="alert-heading">Message</h5>
                     {{ session('success') }}
                     <button class="btn-close" type="button" data-bs-dismiss="alert" aria-label="Close"></button>
                 </div>
-            @endif
+            @endif --}}
             <div class="card">
                  <div class="card-header">List SMTP Relay Request MyGovUC3.0</div>
                 <div class="card-body">
@@ -77,6 +77,7 @@
                                 <th>Server Mail Relay</th>
                                 {{--<th>Total Ip Address</th>--}}
                                 <th>Ip Address</th>
+                                <th>Date Approval</th>
                                 <th>Date Created</th>
                                 <th>Status</th>
                                 <th>Action</th>
@@ -93,50 +94,48 @@
 
 @push('script')
     <script>
-        (function ($) {
-            var table = $('#spmrDatatable').DataTable({
-                processing: true,
-                serverSide: false,
-                ordering: true,
-                ajax:  {
-                    "url" :"{{ route('smtp_relay.datatable') }}",
-                    "method": 'POST',
-                    "headers": {
-                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-                    },
-                    "data": function (d) {
-                        // Add the agencies and calendar type to the request data
-                        d.agency = $('#agency').val(); // Assuming the select input for agencies has the ID 'agency'
-                        d.calendarType = $('#calendarType').val(); // Assuming the select input for calendar type has the ID 'calendarType'
-                        d.month = $('#month').val(); // Assuming the select input for agencies has the ID 'agency'
-                        d.year = $('#year').val();
-                        d.dateFrom = $('#input2_from').val(); // Assuming the select input for agencies has the ID 'agency'
-                        d.dateTo = $('#input2_to').val();
-                    },
-                    // error callback to handle error
-                    "error": function(xhr, error, thrown) {
-                        console.log("Error occurred!");
-                        console.log(xhr, error, thrown);
-                    }
+  $(document).ready(function() {
+        var table = $('#spmrDatatable').DataTable({
+            processing: true,
+            serverSide: false,
+            ordering: true,
+            ajax: {
+                "url": "{{ route('smtp_relay.datatable') }}",
+                "method": 'POST',
+                "headers": {
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
                 },
-                columns: [
-                        { data: 'DT_RowIndex', name: 'DT_RowIndex', orderable: false, searchable: false, class: 'text-center' },
-                        { data: 'form_id', name: 'form_id', class: 'text-center' },
-                        { data: 'ticket_id', name: 'ticket_number', class: 'text-center' },
-                        { data: 'types_req', name: 'types_req', class: 'text-center' },
-                        { data: 'project_name', name: 'project_name', class: 'text-center' },
-                        { data: 'smtp_relay_server', name: 'smtp_relay_server', class: 'text-center' },
-                        /*{ data: 'total_ip', name: 'total_ip', class: 'text-center' },*/
-                        { data: 'ip_addr_server', name: 'ip_addr_server', class: 'text-center' },
-                        { data: 'created_at', name: 'created_at', class: 'text-center' },
-                        { data: 'status', name: 'status', class: 'text-center' },
-                        { data: 'action', name: 'type', class: 'text-center', orderable: false, searchable: false },
-                    ],
-            });
-
-        })(jQuery);
-
-
-
+                "data": function (d) {
+                    d.agency = $('#agency').val();
+                    d.calendarType = $('#calendarType').val();
+                    d.month = $('#month').val();
+                    d.year = $('#year').val();
+                    d.dateFrom = $('#input2_from').val();
+                    d.dateTo = $('#input2_to').val();
+                },
+                "error": function (xhr, error, thrown) {
+                    console.log("Error occurred!");
+                    console.log(xhr, error, thrown);
+                }
+            },
+            columns: [
+                { data: 'DT_RowIndex', name: 'DT_RowIndex', orderable: false, searchable: false, class: 'text-center' },
+                { data: 'form_id', name: 'form_id', class: 'text-center' },
+                { data: 'ticket_id', name: 'ticket_number', class: 'text-center' },
+                { data: 'types_req', name: 'types_req', class: 'text-center' },
+                { data: 'project_name', name: 'project_name', class: 'text-center' },
+                { data: 'smtp_relay_server', name: 'smtp_relay_server', class: 'text-center' },
+                { data: 'ip_addr_server', name: 'ip_addr_server', class: 'text-center' },
+                { data: 'date_verification_3', name: 'date_verification_3', class: 'text-center' },
+                { data: 'created_at', name: 'created_at', class: 'text-center' },
+                { data: 'status', name: 'status', class: 'text-center' },
+                { data: 'action', name: 'type', class: 'text-center', orderable: false, searchable: false },
+            ],
+            dom: 'Bfrtip', // Show buttons at the top
+            buttons: [
+                'copy', 'csv', 'excel', 'pdf', 'print'
+            ]
+        });
+    });
     </script>
 @endpush

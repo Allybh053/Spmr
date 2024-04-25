@@ -155,7 +155,7 @@ Route::group(['middleware' => ['auth']], function () {
 
 
     Route::group(['prefix' => 'log_overview'], function () {
-        Route::get('/', [LogOverviewController::class, 'index'])->name('log.index')->middleware('auth.resource:spmr_activity_log_view');
+        Route::get('/', [LogOverviewController::class, 'index'])->name('log.index')->middleware('auth.resource:server_overview_view');
         Route::post('/api/getServerName', [LogOverviewController::class, 'getNewServerData'])->name('log.api.getServerName');
 
     });
@@ -230,6 +230,8 @@ Route::group(['middleware' => ['auth']], function () {
         Route::get('/loopback', [LoopBackController::class, 'index'])
                 ->name('loopback.index')
                 ->middleware('auth.resource:loopback_smtp_test_view');
+        Route::get('/getServer', [LoopBackController::class, 'api'])->name('loopback.api');
+        Route::get('/smtpTest', [LoopBackController::class, 'smtpTest'])->name('loopback.smtpTest');
         Route::get('/replication', [ReplicationController::class, 'index'])
                 ->name('replication.index')
                 ->middleware('auth.resource:replication_status_view');
@@ -241,20 +243,20 @@ Route::group(['middleware' => ['auth']], function () {
 
 
     Route::group(['prefix' => 'manage-service'], function () {
-        Route::get('/{server_id?}/{server_type?}', [ManageServiceController::class, 'index'])->name('manageService.index');
-        // ->middleware('auth.resource:manage_service_view');
+        Route::get('/{server_id?}/{server_type?}', [ManageServiceController::class, 'index'])->name('manageService.index')
+        ->middleware('auth.resource:manage_service_view');
     });
 
     Route::group(['prefix' => 'generate-report'], function () {
-        Route::get('/', [GenerateReportingController::class, 'index'])->name('generateReport.index');
-        // ->middleware('auth.resource:generate_report_view');
+        Route::get('/', [GenerateReportingController::class, 'index'])->name('generateReport.index')
+        ->middleware('auth.resource:generate_report_view');
         Route::get('/getServer', [GenerateReportingController::class, 'api'])->name('generateReport.api');
         Route::get('/index/searching', [GenerateReportingController::class, 'search'])->name('generateReport.index.search');
     });
 
 
-    Route::get('/activity-logs', [ActivityLogController::class,'showActivityLogs'])->name('activityLog.index');
-      // ->middleware('auth.resource:spmr_activity_log_view');
+    Route::get('/activity-logs', [ActivityLogController::class,'showActivityLogs'])->name('activityLog.index')
+      ->middleware('auth.resource:spmr_activity_log_view');
 
 });
 

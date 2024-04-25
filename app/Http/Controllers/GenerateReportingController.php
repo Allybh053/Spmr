@@ -79,10 +79,12 @@ class GenerateReportingController extends Controller
         }
 
         $arraySmtpForm = SmtpRelayReqForm::find($ids);
-        $totalApplications = '';
+        //$totalApplications = '';
         $totalIpAddr = '';
-        $totalDeactivated = '';
+        //$totalDeactivated = '';
+        $totalDomain = '';
         $valDataTables = '';
+        $valDataTables1 = '';
         $valDataTablesJoin = '';
 
         // Searching and filtering
@@ -135,44 +137,53 @@ class GenerateReportingController extends Controller
 
             if ($totalDataFormCount >= 1) {
                 // Initialize $totalIP to 0
-                $totalAppAdded = 0;
+                //$totalAppAdded = 0;
                 $totalIpAdded = 0;
-                $totalDeactivatedAdded = 0;
+                //$totalDeactivatedAdded = 0;
+                $totalDomainAdded = 0;
 
                 // Loop through each element of $totalDataForm
                 foreach ($totalDataForm as $dataForm) {
                     // Get the count of $totalApp, $totalIp and $totalDeactivated for the current $dataForm element
-                    $getTotalApp = smtp_relay_server::where('form_id', $dataForm['form_id'])->select('server_name')->count();
-                    $getTotalIp = smtp_relay_server::where('form_id', $dataForm['form_id'])->select('ip_addr_server')->count();
-                    $getTotalDeactivated = smtp_relay_server::where('form_id', $dataForm['form_id'])->where('deactivated', 1)->count();
+                    //$getTotalApp = smtp_relay_server::where('form_id', $dataForm['form_id'])->select('server_name')->count();
+                    $getTotalIp = smtp_relay_server::where('form_id', $dataForm['form_id'])->where('deactivated', 0)->select('ip_addr_server')->count();
+                    //$getTotalDeactivated = smtp_relay_server::where('form_id', $dataForm['form_id'])->where('deactivated', 1)->count();
+                    $getTotalDomain = smtp_relay_server::where('form_id', $dataForm['form_id'])->select('fqdn_server')->count();
+
 
                     // Add the count to $totalApp, $totalIp and $totalDeactivated
-                    $totalAppAdded += $getTotalApp;
+                    //$totalAppAdded += $getTotalApp;
                     $totalIpAdded += $getTotalIp;
-                    $totalDeactivatedAdded += $getTotalDeactivated;
+                    //$totalDeactivatedAdded += $getTotalDeactivated;
+                    $totalDomainAdded += $getTotalDomain;
 
                 }
-                $totalApplications = $totalAppAdded;
+                //$totalApplications = $totalAppAdded;
                 $totalIpAddr = $totalIpAdded;
-                $totalDeactivated = $totalDeactivatedAdded;
+                //$totalDeactivated = $totalDeactivatedAdded;
+                $totalDomain = $totalDomainAdded;
 
 
             } else {
-                $totalApplications = "Not Found";
+                //$totalApplications = "Not Found";
                 $totalIpAddr = "Not Found";
-                $totalDeactivated = "Not Found";
+                //$totalDeactivated = "Not Found";
+                $totalDomain = "Not Found";
             }
 
             $valDataTables = $totalDataForm;
+            $valDataTables1 = $query->where('smtp_relay_auth_method', 2)->get();
             $valDataTablesJoin = $totalDataJoin;
         }
 
         return response()->json([
-            'data' => $valDataTables,
+            //'data' => $valDataTables,
+            'data' => $valDataTables1,
             'data2' => $valDataTablesJoin,
-            'totalApplications' => $totalApplications,
+            //'totalApplications' => $totalApplications,
             'totalIP' => $totalIpAddr,
-            'totalDeactivated' => $totalDeactivated,
+            //'totalDeactivated' => $totalDeactivated,
+            'totalDomain' => $totalDomain,
         ]);
     }
 

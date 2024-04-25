@@ -112,10 +112,12 @@
   </div>
   <!-- <div class="row mb-4"><div class="col-xxl-4"><div class="card"><div class="card-header text-center p-5"><h5>Graf serial apps vs day</h5></div><div class="card-body"><canvas id="appsChart"></canvas></div></div></div><div class="col-xxl-4"><div class="card"><div class="card-header text-center p-5"><h5>Graf serial domain vs day</h5></div><div class="card-body"><canvas id="domainChart"></canvas></div></div></div><div class="col-xxl-4"><div class="card"><div class="card-header text-center p-5"><h5>Graf serial sasl vs day</h5></div><div class="card-body"><canvas id="saslChart"></canvas></div></div></div></div> -->
   <div class="row">
-    <div class="col-xxl-12">
+    <div class="col-xxl-12"><div class="card"><div class="card-header text-center p-5"><h5>Graf serial Mail Queue vs Time</h5></div><div class="card-body"><canvas id="mailQueueChart"></canvas></div></div></div>
+
+    <div class="col-xxl-12 mt-5">
       <div class="card">
         <div class="card-header text-center p-5">
-          <h5>View MailQueue Count (last 5 minutes)</h5>
+          <h5>View Current MailQueue Count</h5>
         </div>
         <div class="card-body">
           <div class="table-responsive">
@@ -139,8 +141,7 @@
         </div>
       </div>
     </div>
-    <!-- <div class="col-xxl-6"><div class="card"><div class="card-header text-center p-5"><h5>Graf serial Mail Queue vs Time</h5></div><div class="card-body"><canvas id="mailQueueChart"></canvas></div></div></div> -->
-  </div>
+</div>
   <div class="row  mt-5">
     <div class="col-xxl-12">
       <div class="card">
@@ -155,13 +156,13 @@
                     <div class="card-body">
                         <div class="row">
                             <div class="col-xl-4 mb-4">
-                                <a class="card lift h-100 mService" href="{{ route('manageService.index', ['server_id' => '1', 'server_type' => 'postfix']) }}">
+                                <a class="card lift h-100 mService" href="{{ route('manageService.index', ['server_id' => $server->id, 'server_type' => 'postfix']) }}">
                                     <div class="card-body cardService d-flex justify-content-center flex-column">
                                         <div class="d-flex align-items-center justify-content-between">
                                             <div class="me-3">
                                                 <h5>Postfix</h5>
                                             </div>
-                                            <img src="{{ isset($status) && $status === 'Online' ? asset('assets/img/demo/online.png') : asset('assets/img/demo/offline.png') }}" alt="{{ $status === 'Online' ? 'Online' : 'Offline' }}" style="width: 5rem">
+                                            <img id="statusPostfixImage" src="{{ asset('assets/img/demo/offline.png') }}" alt="Postfix is down" style="width: 5rem">
                                         </div>
                                         <p id="statusPostfix" style="display: inline-block; margin-left: 5px;">--</p>
                                     </div>
@@ -182,13 +183,13 @@
                               </a>
                             </div>--}}
                             <div class="col-xl-4 mb-4">
-                                <a class="card lift h-100 mService" href="{{ route('manageService.index', ['server_id' => '1', 'server_type' => 'apache']) }}">
+                                <a class="card lift h-100 mService" href="{{ route('manageService.index', ['server_id' => $server->id , 'server_type' => 'apache']) }}">
                                     <div class="card-body cardService d-flex justify-content-center flex-column">
                                         <div class="d-flex align-items-center justify-content-between">
                                             <div class="me-3">
                                                 <h5>Apache</h5>
                                             </div>
-                                            <img src="{{ isset($status) && $status === 'Online' ? asset('assets/img/demo/online.png') : asset('assets/img/demo/offline.png') }}" alt="{{ $status === 'Online' ? 'Online' : 'Offline' }}" style="width: 5rem">
+                                            <img id="statusApache2Image" src="{{ asset('assets/img/demo/offline.png') }}" alt="Apache2 is down" style="width: 5rem">
                                         </div>
                                         <p id="statusApache2" style="display: inline-block; margin-left: 5px;">--</p>
                                     </div>
@@ -196,13 +197,13 @@
                                 </a>
                             </div>
                             <div class="col-xl-4 mb-4">
-                                <a class="card lift h-100 mService" href="{{ route('manageService.index', ['server_id' => '1', 'server_type' => 'webmin']) }}">
+                                <a class="card lift h-100 mService" href="{{ route('manageService.index', ['server_id' => $server->id, 'server_type' => 'webmin']) }}">
                                     <div class="card-body cardService d-flex justify-content-center flex-column">
                                         <div class="d-flex align-items-center justify-content-between">
                                             <div class="me-3">
                                                 <h5>Webmin</h5>
                                             </div>
-                                            <img src="{{ isset($status) && $status === 'Online' ? asset('assets/img/demo/online.png') : asset('assets/img/demo/offline.png') }}" alt="{{ $status === 'Online' ? 'Online' : 'Offline' }}" style="width: 5rem">
+                                            <img id="statusWebminImage" src="{{ asset('assets/img/demo/offline.png') }}" alt="Webmin is down" style="width: 5rem">
                                         </div>
                                         <p id="statusWebmin" style="display: inline-block; margin-left: 5px;">--</p>
                                     </div>
@@ -368,7 +369,114 @@ $(document).ready(function() {
         });
     }
 
+    // mailq
+       // Extract data passed from the controller
+       // Generate random color function
+       function randomColor() {
+    return '#' + Math.floor(Math.random() * 16777215).toString(16);
+}
+
+        // Generate random data for a server
+        function generateServerData(serverName) {
+            var data = [];
+            var currentDate = new Date();
+            currentDate.setHours(0, 0, 0, 0); // Set time to midnight
+
+            // Generate data for each minute until current time
+            for (var i = 0; i <= 10; i++) {
+                    var timestamp = new Date(currentDate);
+                    timestamp.setMinutes(i);
+                    var formattedTimestamp = formatDate(timestamp); // Format timestamp
+                    data.push({
+                        x: formattedTimestamp,
+                        y: Math.floor(Math.random() * 10) // Random count value
+                    });
+            }
+
+            return {
+                label: serverName,
+                borderColor: randomColor(),
+                backgroundColor: 'rgba(0, 0, 0, 0)', // Transparent background
+                borderWidth: 1,
+                data: data
+            };
+        }
+
+// Function to format timestamp as "dd/mm/yyyy HH:mm:ss"
+function formatDate(date) {
+    var day = ('0' + date.getDate()).slice(-2);
+    var month = ('0' + (date.getMonth() + 1)).slice(-2);
+    var year = date.getFullYear();
+    var hours = ('0' + date.getHours()).slice(-2);
+    var minutes = ('0' + date.getMinutes()).slice(-2);
+    var seconds = ('0' + date.getSeconds()).slice(-2);
+
+    return day + '/' + month + '/' + year + ' ' + hours + ':' + minutes + ':' + seconds;
+}
+
+// Generate random data for multiple servers
+var servers = {
+    server1: generateServerData('Server 1'),
+    server2: generateServerData('Server 2'),
+    // Add more servers if needed
+};
+
+// Prepare datasets for Chart.js
+var datasets = Object.values(servers);
+
+// Create a new Chart.js instance
+var ctx = document.getElementById('mailQueueChart').getContext('2d');
+var labels = Array.from(Array(60).keys()).map(minute => {
+    var timestamp = new Date();
+    timestamp.setHours(0, minute, 0, 0);
+    return formatDate(timestamp); // Format timestamp
 });
+
+var mailQueueChart = new Chart(ctx, {
+    type: 'line',
+    data: {
+        labels: labels,
+        datasets: datasets // Pass the formatted datasets array
+    },
+    options: {
+        scales: {
+            x: [{
+                type: 'time',
+                time: {
+                    parser: 'DD/MM/YYYY HH:mm:ss', // Custom parser for the format
+                    unit: 'minute', // Display unit as minute
+                    displayFormats: {
+                        minute: 'HH:mm' // Format for minute display
+                    }
+                },
+                title: {
+                    display: true,
+                    text: 'Time'
+                }
+            }],
+            y: [{
+                title: {
+                    display: true,
+                    text: 'Mail Count'
+                },
+                beginAtZero: true
+            }]
+        },
+        plugins: {
+            legend: {
+                display: true,
+                position: 'bottom', // Adjust legend position if needed
+                onHover: function (event, legendItem) {
+                    event.target.style.cursor = 'pointer';
+                }
+            }
+        }
+    }
+});
+
+
+
+    });
 
       let sockets = [];
       let serverIpaddresses = [];
@@ -438,16 +546,52 @@ $(document).ready(function() {
 
                   outputs.push(output);
 
-                  if (outputs.length === commands.length) {
+                  if (outputs.length > commands.length) {
 
-                      $('#totalApplications').text(outputs[0]);
-                      $('#totalDomains').text(outputs[1]);
-                      $('#totalSASL').text(outputs[2]);
-                      $('#mailQueueCount').text(outputs[3]);
-                      $('#statusPostfix').text(outputs[4]);
-                      $('#statusFail2ban').text(outputs[5]);
-                      $('#statusWebmin').text(outputs[6]);
-                      $('#statusApache2').text(outputs[7]);
+                      $('#totalApplications').text(outputs[1]);
+                      $('#totalDomains').text(outputs[3]);
+                      $('#totalSASL').text(outputs[5]);
+                      $('#mailQueueCount').text(outputs[7]);
+                      $('#statusPostfix').text(outputs[9]);
+                      $('#statusFail2ban').text(outputs[11]);
+                      $('#statusWebmin').text(outputs[13]);
+                      $('#statusApache2').text(outputs[15]);
+
+                      var postfixStatus = outputs[9];
+                      var postfixAlt;
+                      if(postfixStatus == "Postfix is running"){
+                        postfixStatus = "Online";
+                        postfixAlt = "Postfix is running";
+                      }else{
+                        postfixStatus = "Offline";
+                        postfixAlt = "Postfix is down";
+                      }
+                      var postfixImageSrc = postfixStatus === 'Online' ? 'assets/img/demo/online.png' : 'assets/img/demo/offline.png';
+                      $('#statusPostfixImage').attr('src', postfixImageSrc).attr('alt', postfixAlt);
+
+                      var Apache2Status = outputs[15];
+                      var Apache2Alt;
+                      if(Apache2Status == "Apache2 is running"){
+                        Apache2Status = "Online";
+                        Apache2Alt = "Apache2 is running";
+                      }else{
+                        Apache2Status = "Offline";
+                        Apache2Alt = "Apache2 is down";
+                      }
+                      var Apache2ImageSrc = Apache2Status === 'Online' ? 'assets/img/demo/online.png' : 'assets/img/demo/offline.png';
+                      $('#statusApache2Image').attr('src', Apache2ImageSrc).attr('alt', Apache2Alt);
+
+                      var WebminStatus = outputs[13];
+                      var WebminAlt;
+                      if(WebminStatus == "Webmin is running"){
+                        WebminStatus = "Online";
+                        WebminAlt = "Webmin is running";
+                      }else{
+                        WebminStatus = "Offline";
+                        WebminAlt = "Webmin is down";
+                      }
+                      var WebminImageSrc = WebminStatus === 'Online' ? 'assets/img/demo/online.png' : 'assets/img/demo/offline.png';
+                      $('#statusWebminImage').attr('src', WebminImageSrc).attr('alt', WebminAlt);
 
                   }
               }
@@ -457,7 +601,8 @@ $(document).ready(function() {
 
               const cleanResponse = response.replace(/\[\d;?\d*m/g, '').trim();
 
-              const outputMatch = cleanResponse.match(/command: (.*)/);
+              //const outputMatch = cleanResponse.match(/command: (.*)/);
+              const outputMatch = cleanResponse.match(/\[.*?\]#\S (.*)/);
 
               const outputs = [];
 
