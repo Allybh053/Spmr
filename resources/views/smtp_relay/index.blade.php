@@ -99,6 +99,7 @@
             processing: true,
             serverSide: false,
             ordering: true,
+            lengthMenu: false,
             ajax: {
                 "url": "{{ route('smtp_relay.datatable') }}",
                 "method": 'POST',

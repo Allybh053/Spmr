@@ -87,6 +87,7 @@
                 processing: true,
                 serverSide: false,
                 ordering: true,
+                lengthMenu: false,
                 dom: 'Bfrtip', // Show buttons at the top
                 buttons: [
                     'copy', 'csv', 'excel', 'pdf', 'print'
