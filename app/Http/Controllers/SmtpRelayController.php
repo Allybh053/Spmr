@@ -517,4 +517,10 @@ class SmtpRelayController extends Controller
         return redirect()->route('smtp_relay.smtp_relay_req')->with('success', 'Form updated successfully!');
     }
 
+    // public function approve(Request $request, $id){
+    //     $datareq = SmtpRelayReqForm::find($id);
+    //     $details = smtp_relay_server::where('form_id', '=', $datareq->form_id)->get();
+    //     return view('smtp_relay.view',compact('datasmtp','details'));
+    // }
+
 }

@@ -121,9 +121,7 @@
                                 <th scope="col">No.</th>
                                 <th scope="col">System Name</th>
                                 <th scope="col">IP Address</th>
-                                <th scope="col">FQDN Sistem</th>
-                                <th scope="col">Username</th>
-                                <th scope="col">Password</th>
+                                <th scope="col">FQDN Sistem</th> 
                             </tr>
                         </thead>
                         <tbody id="dynamic-inputs-container">
@@ -133,32 +131,10 @@
                               <td><p>{{ $detail -> server_name}}</p></td>
                               <td><p>{{ $detail -> ip_addr_server}}</p></td>
                               <td><p>{{ $detail -> fqdn_server}}</p></td>
-                              <td><p>@if ($detail->first()->smtp_username === null)
-                                    <span class="badge bg-danger text-white rounded-pill">None</span>
-                                @else
-                                    {{ $detail->first()->smtp_username }}
-                                @endif</p>
-                              </td>
-                              <td><p>@if ($detail->first()->smtp_password === null)
-                                    <span class="badge bg-danger text-white rounded-pill">None</span>
-                                @else
-                                    {{ $detail->first()->smtp_password }}
-                                @endif</p>
-                              </td>
                             </tr>
                             @endforeach
                         </tbody>
                     </table>
-                </div>
-
-                <div class="row gx-3 mb-3">
-                    <div class="col-md-6">
-                        <label for="ports">SMTP Port Number</label>
-                        <p>{{ $datasmtp->smtp_port}} /tcp</p>
-                    </div>
-                    <div class="col-md-6">
-                        <label for=""></label>
-                    </div>
                 </div>
                 <div class="row gx-3 mb-3" id="authusername" style="display: none;">
                     <div class="col-md-6">
@@ -168,6 +144,15 @@
                     <div class="col-md-6" id="authpassword">
                         <label for="authpassword">SMTP Password</label>
                         <p>{{ $datasmtp->smtp_password}}</p>
+                    </div>
+                </div>
+                <div class="row gx-3 mb-3">
+                    <div class="col-md-6">
+                        <label for="ports">SMTP Port Number</label>
+                        <p>{{ $datasmtp->smtp_port}} /tcp</p>
+                    </div>
+                    <div class="col-md-6">
+                        <label for=""></label>
                     </div>
                 </div>
                 <div class="row gx-3 mb-3">
