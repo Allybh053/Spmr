@@ -244,7 +244,7 @@
                         postfixStatus = "Offline";
                         postfixAlt = "Postfix is down";
                       }
-                      var postfixImageSrc = postfixStatus === 'Online' ? 'assets/img/demo/online.png' : 'assets/img/demo/offline.png';
+                      var postfixImageSrc = postfixStatus === 'Online' ? '/assets/img/demo/online.png' : '/assets/img/demo/offline.png';
                       $('#statusPostfixImage').attr('src', postfixImageSrc).attr('alt', postfixAlt);
 
                       var Apache2Status = outputs[5];
@@ -256,7 +256,7 @@
                         Apache2Status = "Offline";
                         Apache2Alt = "Apache2 is down";
                       }
-                      var Apache2ImageSrc = Apache2Status === 'Online' ? 'assets/img/demo/online.png' : 'assets/img/demo/offline.png';
+                      var Apache2ImageSrc = Apache2Status === 'Online' ? '/assets/img/demo/online.png' : '/assets/img/demo/offline.png';
                       $('#statusApache2Image').attr('src', Apache2ImageSrc).attr('alt', Apache2Alt);
 
                       var WebminStatus = outputs[3];
@@ -268,7 +268,7 @@
                         WebminStatus = "Offline";
                         WebminAlt = "Webmin is down";
                       }
-                      var WebminImageSrc = WebminStatus === 'Online' ? 'assets/img/demo/online.png' : 'assets/img/demo/offline.png';
+                      var WebminImageSrc = WebminStatus === 'Online' ? '/assets/img/demo/online.png' : '/assets/img/demo/offline.png';
                       $('#statusWebminImage').attr('src', WebminImageSrc).attr('alt', WebminAlt);
 
 
