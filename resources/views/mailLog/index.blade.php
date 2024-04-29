@@ -44,7 +44,6 @@
                                 <div class="page-header-icon"></div>
                                 <nav aria-label="breadcrumb">
                                     <ol class="breadcrumb">
-                                        <li class="breadcrumb-item"><a href="{{ route('dashboard.index') }}">Dashboard</a></li>
                                         <li class="breadcrumb-item">Log</li>
                                     </ol>
                                 </nav>

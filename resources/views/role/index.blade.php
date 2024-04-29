@@ -9,8 +9,7 @@
                                 <div class="page-header-icon"></div>
                                 <nav aria-label="breadcrumb">
                                     <ol class="breadcrumb">
-                                        <li class="breadcrumb-item"><a href="{{ route('dashboard.index') }}">Dashboard</a></li>
-                                        <li class="breadcrumb-item">List of Role</li>
+                                       <li class="breadcrumb-item">List of Role</li>
                                     </ol>
                                 </nav>
                             </h1>
@@ -36,7 +35,7 @@
                             </div>
                         </div>
 
-                        
+
                         <div class="card-body mt-1 mb-4">
                         <div class="card card-collapsable mb-4">
                         @foreach ($roles as $role)
@@ -88,7 +87,7 @@
                                                                             <div class="card-body d-flex justify-content-center flex-column">
                                                                                 <div class="d-flex align-items-center justify-content-between">
                                                                                     <div class="me-3">
-                                                                                        
+
                                                                                         <div class="form-check">
                                                                                             {!! Form::checkbox("permissions[]", $m->id, $per_found, ['class' => 'form-check-input', 'id' => 'flexCheckDefault']) !!}
                                                                                             <label class="form-check-label" for="flexCheckDefault">{{ ucfirst(str_replace("_"," ",$m->name)) }}</label>
@@ -158,14 +157,14 @@
                                                 </div>
 
                                                 </br>
-                                                @endif  
-                           
-                                                @endforeach
-                                                
+                                                @endif
 
-                                               
+                                                @endforeach
+
+
+
                                             </div>
-                        
+
                                         </div>
 
                     </div>
@@ -184,7 +183,7 @@
                             <div class="modal-body">
                             <div class="row">
                                 {!! Form::hidden('roleId', null, ['id' => 'roleId']) !!}
-                                <div class="col-md-6 @if ($errors->has('name')) has-error @endif">   
+                                <div class="col-md-6 @if ($errors->has('name')) has-error @endif">
                                 <label class="small mb-1" for="name">Name</label>
                                     {!! Form::text('name', null, ['id' => 'name', 'class' => 'form-control']) !!}
                                     @if ($errors->has('name')) <p class="help-block">{{ $errors->first('name') }}</p> @endif

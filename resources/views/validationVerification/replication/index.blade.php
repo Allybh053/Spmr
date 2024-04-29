@@ -6,7 +6,7 @@
     border-bottom-width:0px !important;
     }
     .table > :not(:first-child), .dataTable-table > :not(:first-child) {
-     border-top: 0px !important; 
+     border-top: 0px !important;
 }
 thead, tbody, tfoot, tr, td, th {
     text-align: center;
@@ -24,7 +24,6 @@ thead, tbody, tfoot, tr, td, th {
                                 <div class="page-header-icon"></div>
                                 <nav aria-label="breadcrumb">
                                     <ol class="breadcrumb">
-                                        <li class="breadcrumb-item"><a href="{{ route('dashboard.index') }}">Dashboard</a></li>
                                         <li class="breadcrumb-item">Validation & Verification</li>
                                     </ol>
                                 </nav>
@@ -41,7 +40,7 @@ thead, tbody, tfoot, tr, td, th {
                     <div class="card mb-4">
                         <div class="card-header">Replication Status</div>
 
-                        
+
                         <div class="card-body mt-1 mb-4">
             <div class="row">
                   <div class="table-responsive">
@@ -65,7 +64,7 @@ thead, tbody, tfoot, tr, td, th {
                                 <td>
                                     <div class="card mb-4">
                                         <div class="card-header">{{ $name }}</div>
-                                        <div class="card-body mt-1 mb-4"> 
+                                        <div class="card-body mt-1 mb-4">
                                             <img src="{{ $fakeImages[$loop->index] }}" alt="Image {{ $loop->index + 1 }}">
                                         </div>
                                     </div>

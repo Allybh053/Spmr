@@ -10,8 +10,7 @@
                                 <div class="page-header-icon"></div>
                                 <nav aria-label="breadcrumb">
                                     <ol class="breadcrumb">
-                                        <li class="breadcrumb-item"><a href="{{ route('dashboard.index') }}">Dashboard</a></li>
-                                        <li class="breadcrumb-item">Fail-To-Ban Blacklist Firewall</li>
+                                       <li class="breadcrumb-item">Fail-To-Ban Blacklist Firewall</li>
                                     </ol>
                                 </nav>
                             </h1>
@@ -29,7 +28,7 @@
                     <div class="card mb-4">
                         <div class="card-header">Searching</div>
 
-                        
+
                         <div class="card-body mt-1 mb-4">
                             <form  id="searchForm"  class="ajax-form-search" novalidate action="{{ route('history.blacklist.search') }}" method="POST">
                                 <!-- Form Row-->
@@ -58,7 +57,7 @@
             <div class="card">
             <div class="card-header">List of Fail-To-Ban Blacklist Firewall</div>
                 <div class="card-body">
-                <div class="table-responsive"> 
+                <div class="table-responsive">
                     <table id="spmrDatatable"  class="display table table-striped table-bordered" cellspacing="0" width="100%">
                         <thead>
                             <tr>
@@ -138,7 +137,7 @@
                         processing: true,
                         serverSide: true, // Set to true for server-side processing
                         ordering: true,
-                        
+
                         ajax: {
                             "url": "{{ route('history.blacklist.datatable.search') }}", // Update the route for server-side processing
                             "method": 'POST',
