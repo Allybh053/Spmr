@@ -54,7 +54,7 @@
             <div class="card mb-4">
                 <div class="card-header">Domain</div>
                 <div class="card-body">
-                    <table id="datatablesSimple" class="table table-striped">
+                    <table id="datatablesSimple1" class="table table-striped">
                         <thead>
                             <tr>
                                 <th>No</th>
@@ -104,3 +104,58 @@
         </div>
     </main>
 @endsection
+@push('script')
+    <script>
+        (function ($) {
+    var table = $('#datatablesSimple1').DataTable({
+        processing: true,
+        serverSide: false,
+        ordering: true,
+        lengthMenu: [ [10, 25, 50, -1], [10, 25, 50, "All"] ],
+        dom: '<"top"fBl>rt<"bottom"ip>',
+        buttons: [
+            {
+                extend: 'copy',
+                text: 'Copy',
+                exportOptions: {
+                    columns: ':visible'
+                }
+            },
+            {
+                extend: 'csv',
+                text: 'CSV',
+                exportOptions: {
+                    columns: ':visible'
+                }
+            },
+            {
+                extend: 'excel',
+                text: 'Excel',
+                exportOptions: {
+                    columns: ':visible'
+                }
+            },
+            {
+                extend: 'pdf',
+                text: 'PDF',
+                exportOptions: {
+                    columns: ':visible'
+                }
+            },
+            {
+                extend: 'print',
+                text: 'Print',
+                exportOptions: {
+                    columns: ':visible'
+                }
+            }
+        ]
+    });
+
+    // Adjust positioning of search input and export buttons
+    $('.dataTables_filter').addClass('d-inline-block mr-2'); // Make search input inline
+    $('.dt-buttons').appendTo('.dataTables_filter'); // Append export buttons to search container
+})(jQuery);
+
+    </script>
+    @endpush

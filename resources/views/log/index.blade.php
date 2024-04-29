@@ -9,8 +9,7 @@
                                 <div class="page-header-icon"></div>
                                 <nav aria-label="breadcrumb">
                                     <ol class="breadcrumb">
-                                        <li class="breadcrumb-item"><a href="{{ route('dashboard.index') }}">Dashboard</a></li>
-                                        <li class="breadcrumb-item">Log Overview</li>
+                                       <li class="breadcrumb-item">Log Overview</li>
                                     </ol>
                                 </nav>
                             </h1>
@@ -26,7 +25,7 @@
                     <div class="card mb-4">
                         <div class="card-header">Log Overview Server</div>
 
-                        
+
                         <div class="card-body mt-1 mb-4">
                             <form  id="searchForm"  class="ajax-form-search" novalidate action="{{ route('log.api.getServerName') }}" method="POST">
                                 <!-- Form Row-->
@@ -51,7 +50,7 @@
         </div>
 
         @include('log.view')
-        
+
 
  @endsection
 
@@ -135,7 +134,7 @@
         $('#searching').click(function(e) {
             e.preventDefault();
             var formData = $('#searchForm').serialize();
-            
+
             $.ajax({
                 type: 'POST',
                 url: $('#searchForm').attr('action'),
