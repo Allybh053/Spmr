@@ -44,8 +44,7 @@
                                 <div class="page-header-icon"></div>
                                 <nav aria-label="breadcrumb">
                                     <ol class="breadcrumb">
-                                        <li class="breadcrumb-item"><a href="{{ route('dashboard.index') }}">Dashboard</a></li>
-                                        <li class="breadcrumb-item">Report</li>
+                                       <li class="breadcrumb-item">Report</li>
                                     </ol>
                                 </nav>
                             </h1>
@@ -61,7 +60,7 @@
                     <div class="card mb-4">
                         <div class="card-header">Query Log Report</div>
 
-                        
+
                         <div class="card-body mt-1 mb-4">
                         <form id="report-form">
                         <div class="row col-12 mb-1">
@@ -111,7 +110,7 @@
                 </div>
             </div>
         </div>
-        
+
         @include('reports.queryLog.report')
 
  @endsection
@@ -128,7 +127,7 @@
 				$(".form-group").removeClass("has-error");
 				$(".form-control").removeClass("was-validated invalid is-invalid custom-select.is-invalid valid is-valid custom-select.is-valid");
 				$(".form-group").children("span.help-block").remove();
-             
+
 				toggleLoader();
 
                 var senderEmailDatatable = $('#senderEmailDatatable').DataTable({
@@ -149,7 +148,7 @@
                             console.log($response);
                             $('#reportBox').fadeIn();
                             $('#searchingBox').fadeOut();
-                            
+
                             // Clear existing rows from DataTables
                             senderEmailDatatable.clear().draw();
 
@@ -168,7 +167,7 @@
                 });
 
                     toggleLoader();
-                
+
                 },
 		            error: function (xhr, status) {
 		                toggleLoader();
