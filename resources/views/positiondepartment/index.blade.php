@@ -106,7 +106,7 @@
                     </div>
                 </div>
                 <div class="card-body">
-                    <table id="datatablesSimple2" class="table">
+                    <table id="datatablesSimple3" class="table">
                         <thead>
                             <tr>
                                 <th>No</th>
@@ -211,7 +211,7 @@
 
 (function ($) {
     // DataTable 2
-    var table2 = $('#datatablesSimple2').DataTable({
+    var table2 = $('#datatablesSimple3').DataTable({
         processing: true,
         serverSide: false,
         ordering: true,
