@@ -124,40 +124,40 @@
                             </div>
                         </a>
                     </div>
-                    {{--<div class="col-xl-4 mb-4">
+                    <div class="col-xl-6 mb-4">
                       <a class="card lift h-100" href="#!">
                         <div class="card-body d-flex justify-content-center flex-column">
                           <div class="d-flex align-items-center justify-content-between">
                             <div class="me-3">
-                              --}}{{--<i class="feather-xl text-secondary mb-3" data-feather="zap"></i>--}}{{--
-                              <h5>Total Deactivated</h5>
+                              {{--<i class="feather-xl text-secondary mb-3" data-feather="zap"></i>--}}
+                              <h5>Total IP Address Deactivated</h5>
                               <div class="inline">
                                 <i class="feather-l text-primary" data-feather="corner-down-right"></i>
                                 <h2 id="totalDeactivated" style="display: inline-block; margin-left: 5px;">--</h2>
                               </div>
                             </div>
-                            --}}{{--<img src="{{asset ('assets/img/illustrations/dash_domain.svg')}}" alt="..." style="width: 8rem" />--}}{{--
+                            {{--<img src="{{asset ('assets/img/illustrations/dash_domain.svg')}}" alt="..." style="width: 8rem" />--}}
                           </div>
                         </div>
                       </a>
-                    </div>--}}
-                      <div class="col-xl-6 mb-4">
+                    </div>
+                      {{--<div class="col-xl-6 mb-4">
                           <a class="card lift h-100" href="#!">
                               <div class="card-body d-flex justify-content-center flex-column">
                                   <div class="d-flex align-items-center justify-content-between">
                                       <div class="me-3">
-                                          {{--<i class="feather-xl text-secondary mb-3" data-feather="zap"></i>--}}
+                                          --}}{{--<i class="feather-xl text-secondary mb-3" data-feather="zap"></i>--}}{{--
                                           <h5>Total Domain</h5>
                                           <div class="inline">
                                               <i class="feather-l text-primary" data-feather="corner-down-right"></i>
                                               <h2 id="totalDomain" style="display: inline-block; margin-left: 5px;">--</h2>
                                           </div>
                                       </div>
-                                      {{--<img src="{{asset ('assets/img/illustrations/dash_domain.svg')}}" alt="..." style="width: 8rem" />--}}
+                                      --}}{{--<img src="{{asset ('assets/img/illustrations/dash_domain.svg')}}" alt="..." style="width: 8rem" />--}}{{--
                                   </div>
                               </div>
                           </a>
-                      </div>
+                      </div>--}}
                   </div>
 
 
@@ -205,6 +205,27 @@
                         <div class="card-body">
                             <div class="table-responsive">
                                 <table id="listAgencyDomain"  class="display table table-striped table-bordered" cellspacing="0" width="100%">
+                                    <thead>
+                                    <tr>
+                                        <th>No.</th>
+                                        <th>Project Name</th>
+                                        <th>System Name</th>
+                                        <th>IP Address</th>
+                                        <th>FQDN Name</th>
+                                        <th>Status Activated</th>
+
+                                    </tr>
+                                    </thead>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                    <br>
+                    <div class="card">
+                        <div class="card-header">List of Agency Domain and IP Address Deactivated</div>
+                        <div class="card-body">
+                            <div class="table-responsive">
+                                <table id="listAgencyDeactivated"  class="display table table-striped table-bordered" cellspacing="0" width="100%">
                                     <thead>
                                     <tr>
                                         <th>No.</th>
@@ -385,6 +406,20 @@
             ],
             data: [] // Initialize with empty data
         });
+
+        var table3 = $('#listAgencyDeactivated').DataTable({
+            ordering: true,
+            columns: [
+                { data: 'DT_RowIndex2', name: 'DT_RowIndex2', orderable: false, searchable: false, class: 'text-center' },
+                { data: 'project_name', name: 'project_name', orderable: false, searchable: false, class: 'text-center' },
+                { data: 'server_name', name: 'server_name', orderable: false, searchable: false, class: 'text-center' },
+                { data: 'ip_addr_server', name: 'ip_addr_server', orderable: false, searchable: false, class: 'text-center' },
+                { data: 'fqdn_server', name: 'fqdn_server', orderable: false, searchable: false, class: 'text-center' },
+                { data: 'deactivated', name: 'deactivated', orderable: false, searchable: false, class: 'text-center' },
+            ],
+            data: [] // Initialize with empty data
+        });
+
         var table = $('#listFormRegistered').DataTable({
             ordering: true,
             columns: [
@@ -442,7 +477,7 @@
                 success: function (response) {
                     //$('#totalApplications').text(response.totalApplications);
                     $('#totalIP').text(response.totalIP);
-                    //$('#totalDeactivated').text(response.totalDeactivated);
+                    $('#totalDeactivated').text(response.totalDeactivated);
                     $('#totalDomain').text(response.totalDomain);
 
                     // Add index to each row
@@ -476,14 +511,32 @@
                         }
                     });
 
+                    $.each(response.data3, function (index, row) {
+                        row['DT_RowIndex2'] = index + 1;
+                        switch (row['deactivated']) {
+                            case 0:
+                                row['deactivated'] = 'Activated';
+                                break;
+                            case 1:
+                                row['deactivated'] = 'Deactivated';
+                                break;
+                            default:
+                                // Handle unexpected values if necessary
+                                break;
+                        }
+                    });
+
+
 
                     // Clear existing data and add new data to the DataTable
                     table.clear().rows.add(response.data).draw();
                     table2.clear().rows.add(response.data2).draw();
+                    table3.clear().rows.add(response.data3).draw();
+
 
                 },
                 error: function (error) {
-                    console.log(error);
+                    //console.log(error);
                 }
             });
         });
@@ -510,14 +563,14 @@
                 },
                 success: function(response) {
                     // Handle success response and update UI
-                    console.log(response);
+                    //console.log(response);
                     $('#searchBox').fadeIn();
                     $('.serverBox').fadeOut();
 
                 },
                 error: function(xhr, status, error) {
                     // Handle error
-                    console.error(xhr.responseText);
+                    //console.error(xhr.responseText);
                 }
             });
         });
