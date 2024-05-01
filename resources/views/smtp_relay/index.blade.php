@@ -168,7 +168,10 @@
                     columns: ':visible'
                 }
             }
-        ]
+        ],
+        columnDefs: [
+        { type: 'date-uk', targets: [/* index of your date column */] }
+    ]
         });
 
         $('.dataTables_filter').addClass('d-inline-block mr-2'); // Make search input inline

@@ -142,7 +142,10 @@
                     columns: ':visible'
                 }
             }
-        ]
+        ],
+        columnDefs: [
+        { type: 'date-uk', targets: [/* index of your date column */] }
+    ]
     });
 
     // Adjust positioning of search input and export buttons

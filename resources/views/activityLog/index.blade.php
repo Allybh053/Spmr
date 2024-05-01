@@ -64,7 +64,7 @@
                                         <td class="scrollable-column">
                                             <pre>{{ json_encode(json_decode($log->new_values), JSON_PRETTY_PRINT) }}</pre>
                                         </td>
-                                        <td><pre>{{ $log->created_at }}</pre></td>
+                                        <td><pre>{{ $log->created_at->format('d/m/Y h:i:s A')  }}</pre></td>
                                     </tr>
                                     @endforeach
                                 </tbody>
@@ -79,57 +79,31 @@
         </div>
 @endsection
 @push('script')
-    <script>
-        (function ($) {
-    var table = $('#spmrDatatable').DataTable({
-        processing: true,
-        serverSide: false,
-        ordering: true,
-        lengthMenu: [ [10, 25, 50, -1], [10, 25, 50, "All"] ],
-        dom: '<"top"fBl>rt<"bottom"ip>',
-        buttons: [
-            {
-                extend: 'copy',
-                text: 'Copy',
-                exportOptions: {
-                    columns: ':visible'
-                }
-            },
-            {
-                extend: 'csv',
-                text: 'CSV',
-                exportOptions: {
-                    columns: ':visible'
-                }
-            },
-            {
-                extend: 'excel',
-                text: 'Excel',
-                exportOptions: {
-                    columns: ':visible'
-                }
-            },
-            {
-                extend: 'pdf',
-                text: 'PDF',
-                exportOptions: {
-                    columns: ':visible'
-                }
-            },
-            {
-                extend: 'print',
-                text: 'Print',
-                exportOptions: {
-                    columns: ':visible'
-                }
-            }
-        ]
-    });
+<script>
 
-    // Adjust positioning of search input and export buttons
-    $('.dataTables_filter').addClass('d-inline-block mr-2'); // Make search input inline
-    $('.dt-buttons').appendTo('.dataTables_filter'); // Append export buttons to search container
-})(jQuery);
 
-    </script>
-    @endpush
+// Initialize DataTable with custom sorting for date column
+var table = $('#spmrDatatable').DataTable({
+    processing: true,
+    serverSide: false,
+    ordering: true,
+    lengthMenu: [[10, 25, 50, -1], [10, 25, 50, "All"]],
+    dom: '<"top"fBl>rt<"bottom"ip>',
+    buttons: [
+        { extend: 'copy', text: 'Copy', exportOptions: { columns: ':visible' } },
+        { extend: 'csv', text: 'CSV', exportOptions: { columns: ':visible' } },
+        { extend: 'excel', text: 'Excel', exportOptions: { columns: ':visible' } },
+        { extend: 'pdf', text: 'PDF', exportOptions: { columns: ':visible' } },
+        { extend: 'print', text: 'Print', exportOptions: { columns: ':visible' } }
+    ],
+    columnDefs: [
+        { type: 'date-uk', targets: ['dd/mm/yyyy'] }
+    ]
+});
+
+// Adjust positioning of search input and export buttons
+$('.dataTables_filter').addClass('d-inline-block mr-2'); // Make search input inline
+$('.dt-buttons').appendTo('.dataTables_filter'); // Append export buttons to search container
+</script>
+@endpush
+

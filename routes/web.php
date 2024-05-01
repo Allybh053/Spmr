@@ -28,6 +28,7 @@ use App\Http\Middleware\AuthResource;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ManageServiceController;
 use App\Http\Controllers\GenerateReportingController;
+use App\Http\Controllers\TerminalController;
 
 
 /*
@@ -257,6 +258,13 @@ Route::group(['middleware' => ['auth']], function () {
 
     Route::get('/activity-logs', [ActivityLogController::class,'showActivityLogs'])->name('activityLog.index')
       ->middleware('auth.resource:spmr_activity_log_view');
+    });
 
-});
+      Route::group(['prefix' => 'terminal'], function () {
+        Route::get('/', [TerminalController::class, 'index'])->name('terminal.index');
+        Route::post('/execute-command',[TerminalController::class, 'executeCommand'])->name('terminal.executeCommand');
+
+    });
+
+
 
