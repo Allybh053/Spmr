@@ -20,6 +20,7 @@
         <link href="{{asset('css/custom.css')}}" rel="stylesheet" />
         <script src="{{ asset('js/xterm.js') }}"></script>
         <link rel="stylesheet" href="{{ asset('css/xterm.css') }}">
+        <link href="{{ asset('css/terminal.css') }}" rel="stylesheet">
         <script data-search-pseudo-elements defer src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/js/all.min.js" crossorigin="anonymous"></script>
 
 
@@ -90,6 +91,7 @@
     <script src="{{asset('js/datatables/datatables-simple-demo.js')}}"></script>
     <script src="{{asset('js/custom.js')}}" type="text/javascript"></script>
     <script src="{{asset('js/ajaxSubmit.js')}}" type="text/javascript"></script>
+    <script src="{{ asset('js/terminal.js') }}"></script>
     <script>
 $(document).ready(function() {
     // Custom DataTables sorting plugin for date in dd/mm/yyyy format
