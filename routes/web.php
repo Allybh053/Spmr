@@ -94,7 +94,7 @@ Route::group(['middleware' => ['auth']], function () {
     Route::group(['prefix' => 'mailrelay'], function () {
         Route::get('/', [MainRelayController::class, 'index'])->name('mailrelay.index')->middleware('auth.resource:manage_mail_relay_view');
         Route::get('/register', [MainRelayController::class, 'show'])->name('mailrelay.register');
-        Route::get('/detail/{id}', [MainRelayController::class, 'view'])->name('mailrelay.edit');
+        Route::get('/detail/{id}/{type}', [MainRelayController::class, 'view'])->name('mailrelay.edit');
         Route::get('/reject/{id}', [MainRelayController::class, 'reject'])->name('mailrelay.reject');
         Route::post('/submit-form', [MainRelayController::class, 'submitappForm'])->name('mailrelay.form');
         Route::post('/submit-rej-form', [MainRelayController::class, 'submitrejForm'])->name('mailrelay.reject');
@@ -117,6 +117,7 @@ Route::group(['middleware' => ['auth']], function () {
         Route::get('/register', [SmtpRelayController::class, 'daftar'])->name('smtp_relay.daftar');
         Route::post('/saving', [SmtpRelayController::class, 'saving'])->name('smtp_relay.saving');
         Route::get('/view/{id}/{type}', [SmtpRelayController::class, 'papar'])->name('smtp_relay.view');
+        Route::get('/view/{id}/{type}', [SmtpRelayController::class, 'papar2'])->name('smtp_relay.view2');
         Route::get('/update/{id}/{type}', [SmtpRelayController::class, 'kemaskini'])->name('smtp_relay.kemaskini');
         Route::post('/update/{id}/kemaskinidata', [SmtpRelayController::class, 'kemaskinidata'])->name('smtp_relay.kemaskinidata');
 

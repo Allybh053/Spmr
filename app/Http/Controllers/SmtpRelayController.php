@@ -655,6 +655,13 @@ class SmtpRelayController extends Controller
                     ->get();
         return view('smtp_relay.view',compact('datasmtp','details'));
     }
+    public function papar2($id, $type){
+        $datasmtp = SmtpRelayReqForm::where('id', $id)->where('types_req', $type)->first();
+        $details = smtp_relay_server::where('form_id', $datasmtp->form_id)
+                    ->where('types_req', $datasmtp->types_req)
+                    ->get();
+        return view('smtp_relay.view',compact('datasmtp','details'));
+    }
 
     public function kemaskini(Request $request,$id, $type){
         $formsmtp = SmtpRelayReqForm::find($id);

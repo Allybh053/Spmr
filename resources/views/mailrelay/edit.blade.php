@@ -43,7 +43,7 @@
             <input type="hidden" id="smtp_relay_server" name="smtp_relay_server" value="{{ $smtpreq->smtp_relay_server }}"/>
             <input type="hidden" id="verifier_2_name" name="verifier_2_name" value="{{ $smtpreq->verifier_2_name }}"/>
 
-            <div class="card-body"><a href="{{ route('smtp_relay.view',['id' => $smtpreq->id]) }}" target="_blank" class="btn btn-outline-primary">View Detail</a><hr>
+            <div class="card-body"><a href="{{ route('smtp_relay.view2',['id' => $smtpreq->id,'type' => $smtpreq->types_req]) }}" target="_blank" class="btn btn-outline-primary">View Detail</a><hr>
                 <div class="row gx-3 mb-3">
                     <!-- Form Group (mail from)-->
                     <div class="col-md-4">
