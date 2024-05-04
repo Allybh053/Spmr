@@ -28,6 +28,8 @@ use App\Http\Middleware\AuthResource;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ManageServiceController;
 use App\Http\Controllers\GenerateReportingController;
+use App\Http\Controllers\MinistryController;
+use App\Http\Controllers\AgencyController;
 
 
 /*
@@ -93,7 +95,7 @@ Route::group(['middleware' => ['auth']], function () {
     Route::group(['prefix' => 'mailrelay'], function () {
         Route::get('/', [MainRelayController::class, 'index'])->name('mailrelay.index')->middleware('auth.resource:manage_mail_relay_view');
         Route::get('/register', [MainRelayController::class, 'show'])->name('mailrelay.register');
-        Route::get('/detail/{id}', [MainRelayController::class, 'view','connect'])->name('mailrelay.edit');
+        Route::get('/detail/{id}', [MainRelayController::class, 'view'])->name('mailrelay.edit');
         Route::get('/reject/{id}', [MainRelayController::class, 'reject'])->name('mailrelay.reject');
         Route::post('/submit-form', [MainRelayController::class, 'submitappForm'])->name('mailrelay.form');
         Route::post('/submit-rej-form', [MainRelayController::class, 'submitrejForm'])->name('mailrelay.reject');
@@ -109,14 +111,14 @@ Route::group(['middleware' => ['auth']], function () {
         Route::post('/form_application_smtp_relay/add', [SmtpRelayController::class, 'store'])->name('smtp_relay.store');
         Route::get('/form_application_smtp_relay/edit/{id}', [SmtpRelayController::class, 'edit'])->name('smtp_relay.edit');
         Route::post('/form_application_smtp_relay/update/{id}', [SmtpRelayController::class, 'update'])->name('smtp_relay.update');
-        Route::post('/form_application_smtp_relay/delete/{id}', [SmtpRelayController::class, 'delete'])->name('smtp_relay.delete');
+        Route::post('/form_application_smtp_relay/delete/{id}/{ip}/{idapp}', [SmtpRelayController::class, 'delete'])->name('smtp_relay.delete');
         Route::post('/form_application_smtp_relay/datatable', [SmtpRelayController::class, 'datatable'])->name('smtp_relay.datatable');
 
         //code sidi
         Route::get('/register', [SmtpRelayController::class, 'daftar'])->name('smtp_relay.daftar');
         Route::post('/saving', [SmtpRelayController::class, 'saving'])->name('smtp_relay.saving');
-        Route::get('/view/{id}', [SmtpRelayController::class, 'papar'])->name('smtp_relay.view');
-        Route::get('/update/{id}', [SmtpRelayController::class, 'kemaskini'])->name('smtp_relay.kemaskini');
+        Route::get('/view/{id}/{type}', [SmtpRelayController::class, 'papar'])->name('smtp_relay.view');
+        Route::get('/update/{id}/{type}', [SmtpRelayController::class, 'kemaskini'])->name('smtp_relay.kemaskini');
         Route::post('/update/{id}/kemaskinidata', [SmtpRelayController::class, 'kemaskinidata'])->name('smtp_relay.kemaskinidata');
 
 
@@ -257,6 +259,29 @@ Route::group(['middleware' => ['auth']], function () {
         Route::get('/index/searching', [GenerateReportingController::class, 'search'])->name('generateReport.index.search');
     });
 
+    Route::group(['prefix' => 'ministry'], function () {
+        Route::get('/', [MinistryController::class, 'index'])
+        ->name('ministry.index')
+        ->middleware('auth.resource:ministry_view');
+        Route::get('/addministry', [MinistryController::class, 'addministry'])->name('ministry.addministry');
+        Route::get('/updateministry/{id}', [MinistryController::class, 'updateministry'])->name('ministry.updateministry');
+        Route::put('/saveupdateministry/{id}', [MinistryController::class, 'saveupdateministry'])->name('ministry.saveupdateministry');
+        Route::post('/saveministry', [MinistryController::class, 'savingministry'])->name('ministry.saveministry');
+        Route::delete('/ministry/{id}/ministrydelete', [MinistryController::class, 'ministrydelete'])->name('ministry.ministrydelete');
+
+    });
+
+    Route::group(['prefix' => 'agency'], function () {
+        Route::get('/', [AgencyController::class, 'index'])
+        ->name('agency.index')
+        ->middleware('auth.resource:agencies_view');
+        Route::get('/addagency', [AgencyController::class, 'addagency'])->name('agency.addagency');
+        Route::get('/updateagency/{id}', [AgencyController::class, 'updateagency'])->name('agency.updateagency');
+        Route::put('/saveupdateagency/{id}', [AgencyController::class, 'saveupdateagency'])->name('agency.saveupdateagency');
+        Route::post('/saveagency', [AgencyController::class, 'savingagency'])->name('agency.saveagency');
+        Route::delete('/agency/{id}/agencydelete', [AgencyController::class, 'agencydelete'])->name('agency.agencydelete');
+
+    });
 
     Route::get('/activity-logs', [ActivityLogController::class,'showActivityLogs'])->name('activityLog.index')
       ->middleware('auth.resource:spmr_activity_log_view');

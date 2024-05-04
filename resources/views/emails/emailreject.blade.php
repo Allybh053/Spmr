@@ -14,7 +14,7 @@
 <body>
     <p>SPMR Notification Email,</p>
 
-    <p>A new mail relay request has been submitted. Below are the details:</p>
+    <p>The mail relay request has been rejected. Below are the details:</p>
 
     <table>
         <tr>
@@ -24,9 +24,9 @@
         <tr>
             <th>Type of Request</th>
             <td>
-                @if ($data->type_req == 1)
+                @if ($data->types_req == 1)
                     : New Application
-                @elseif ($data->type_req == 2)
+                @elseif ($data->types_req == 2)
                     : Termination
                 @else
                     : Ongoing
@@ -35,17 +35,21 @@
         </tr>
 
         <tr>
-            <th>Form ID</th>
+            <th>Serial Number</th>
             <td>: {{ $data->form_id }}</td>
         </tr>
         <tr>
             <th>Project Name</th>
-            <td>: {{ $data->projectname }}</td>
+            <td>: {{ $data->project_name }}</td>
         </tr>
 
         <tr>
             <th>Mail Relay server</th>
-            <td>: {{ $data->mailrelay }}</td>
+            <td>: {{ $data->smtp_relay_server }}</td>
+        </tr>
+        <tr>
+            <th>Remarks</th>
+            <td>: {{ $data->comment}}</td>
         </tr>
         <tr>
             <th>Request Status</th>
@@ -54,8 +58,7 @@
         <!-- Add more rows for other details -->
     </table>
 
-    <p>Administrator please review the request and take appropriate action. Login into SPMR System for more detail information on this request.</p>
-    <p>Best Regards,<br>{{ $data->officername }}<br>Helpdesk RedTone</p>
+    <p>Login into SPMR System for more detail information on this request.</p><br>
     <i style="color:red;">*** Please don't reply to this email address.***</i>
 </body>
 </html>

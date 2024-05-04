@@ -73,10 +73,10 @@
                 </div>
                 <div class="mb-3">
                     <label for="ministry">Ministry</label>
-                    <select class="form-control select2" name="ministry" id="ministry" aria-label="Default select">
+                    <select class="form-control select2" name="ministry" id="ministry" aria-label="Default select" required>
                         <option selected disabled>Select Ministry</option>
-                        @foreach ($domainsArray as $domain)
-                        <option value="{{ $domain['ministry_name'] }}">{{ $domain['ministry_name'] }}</option>
+                        @foreach ($ministriesArray as $ministry)
+                        <option value="{{ $ministry['name'] }}">{{ $ministry['name'] }}</option>
                         @endforeach
                     </select>
                 </div>
@@ -85,14 +85,14 @@
                         <label for="agency">Agency<span style="color: red"> *</span></label>
                         <select class="form-control select2" name="agency" id="agency" aria-label="Default select" required>
                             <option selected disabled>Select Agency</option>
-                            @foreach ($domainsArray as $domain)
-                            <option value="{{ $domain['agencies_name'] }}">{{ $domain['agencies_name'] }}</option>
+                            @foreach ($agenciesArray as $agency)
+                            <option value="{{ $agency['name'] }}">{{ $agency['name'] }}</option>
                             @endforeach
                         </select>
                     </div>
                     <div class="col-md-6">
                         <label for="departowner">Department/Division/Unit</label>
-                        <select class="form-control select2" name="departowner" id="departowner" aria-label="Default select">
+                        <select class="form-control select2" name="departowner" id="departowner" aria-label="Default select" required>
                             <option selected disabled>Select Department/Division/Unit</option>
                             @foreach ($departmentsArray as $department)
                             <option value="{{ $department['name'] }}">{{ $department['name'] }}</option>
@@ -221,7 +221,7 @@
                 <div class="row col-12">
                     <div class="mb-3 col-md-4">
                         <label class=" mb-1" for="applicantposition">Applicant's Position:</label>
-                        <select class="form-control select2" name="applicantposition" id="applicantposition" aria-label="Default select">
+                        <select class="form-control select2" name="applicantposition" id="applicantposition" aria-label="Default select" required>
                             <option selected disabled>Select Position</option>
                             @foreach ($positionsArray as $position)
                             <option value="{{ $position['name'] }}">{{ $position['name'] }}</option>
@@ -230,7 +230,7 @@
                     </div>
                     <div class="mb-3 col-md-4">
                         <label class=" mb-1" for="applicantdepart">Applicant's Department / Division:</label>
-                        <select class="form-control select2" name="applicantdepart" id="applicantdepart" aria-label="Default select">
+                        <select class="form-control select2" name="applicantdepart" id="applicantdepart" aria-label="Default select" required>
                             <option selected disabled>Select Department / Division</option>
                             @foreach ($departmentsArray as $department)
                             <option value="{{ $department['name'] }}">{{ $department['name'] }}</option>
@@ -251,7 +251,7 @@
                 <div class="row col-12">
                     <div class="mb-3 col-md-4">
                         <label class=" mb-1" for="verifierposition">Verifier Position:</label>
-                        <select class="form-control select2" name="verifierposition" id="verifierposition" aria-label="Default select">
+                        <select class="form-control select2" name="verifierposition" id="verifierposition" aria-label="Default select" required>
                             <option selected disabled>Select Position</option>
                             @foreach ($positionsArray as $position)
                             <option value="{{ $position['name'] }}">{{ $position['name'] }}</option>
@@ -260,7 +260,7 @@
                     </div>
                     <div class="mb-3 col-md-4">
                         <label class=" mb-1" for="verifierdepart">Verifier Department / Division:</label>
-                        <select class="form-control select2" name="verifierdepart" id="verifierdepart" aria-label="Default select">
+                        <select class="form-control select2" name="verifierdepart" id="verifierdepart" aria-label="Default select" required>
                             <option selected disabled>Select Department / Division</option>
                             @foreach ($departmentsArray as $department)
                             <option value="{{ $department['name'] }}">{{ $department['name'] }}</option>
@@ -293,7 +293,7 @@
                 <div class="row col-12">
                     <div class="mb-3 col-md-4">
                         <label class=" mb-1" for="approvalposition">Approval Position</label>
-                        <select class="form-control select2" name="approvalposition" id="approvalposition" aria-label="Default select">
+                        <select class="form-control select2" name="approvalposition" id="approvalposition" aria-label="Default select" required>
                             <option selected disabled>Select Position</option>
                             @foreach ($positionsArray as $position)
                             <option value="{{ $position['name'] }}">{{ $position['name'] }}</option>
@@ -302,7 +302,7 @@
                     </div>
                     <div class="mb-3 col-md-4">
                         <label class=" mb-1" for="approvaldepart">Approval Department / Division:</label>
-                        <select class="form-control select2" name="approvaldepart" id="approvaldepart" aria-label="Default select">
+                        <select class="form-control select2" name="approvaldepart" id="approvaldepart" aria-label="Default select" required>
                             <option selected disabled>Select Department / Division</option>
                             @foreach ($departmentsArray as $department)
                             <option value="{{ $department['name'] }}">{{ $department['name'] }}</option>

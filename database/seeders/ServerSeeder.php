@@ -22,7 +22,7 @@ class ServerSeeder extends Seeder
     public function run()
     {
         // Define the number of servers you want to create
-        $numberOfServers = 10; // Adjust as needed
+        $numberOfServers = 1; // Adjust as needed
 
         // Loop to create multiple servers with faker data
         for ($i = 0; $i < $numberOfServers; $i++) {
@@ -46,6 +46,6 @@ class ServerSeeder extends Seeder
         $hostname = 'postmaster' . $this->faker->regexify('[A-Za-z0-9]{5}') . '@gov.com.my';
         return $hostname;
     }
-    
+
 }
 

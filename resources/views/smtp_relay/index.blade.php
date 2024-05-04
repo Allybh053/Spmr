@@ -69,7 +69,7 @@
                         <thead>
                             <tr>
                                 <th>No.</th>
-                                <th>Form ID</th>
+                                <th>Serial No.</th>
                                 <th>Ticket No.</th>
                                 <th>Types Application</th>
                                 <th>Project Name</th>
@@ -105,7 +105,7 @@
                 "headers": {
                     'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
                 },
-                "data": function (d) {
+                "data": function (d) { 
                     d.agency = $('#agency').val();
                     d.calendarType = $('#calendarType').val();
                     d.month = $('#month').val();

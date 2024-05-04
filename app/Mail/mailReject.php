@@ -17,9 +17,9 @@ class mailReject extends Mailable
     /**
      * Create a new message instance.
      */
-    public function __construct()
+    public function __construct($request)
     {
-        //
+        $this->data = $request;
     }
 
     /**
@@ -37,9 +37,12 @@ class mailReject extends Mailable
      */
     public function content(): Content
     {
-        return new Content(
-            view: 'view.name',
+        $content = new Content(
+            view: 'emails.emailreject',
+            with: ['data' => $this->data]
         );
+
+        return $content;
     }
 
     /**

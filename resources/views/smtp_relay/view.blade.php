@@ -25,7 +25,7 @@
             <div class="card-body">
                 <div class="row gx-3 mb-3">
                     <div class="col-md-6">
-                        <label for="form_id">Form Number</label>
+                        <label for="form_id">Serial Number</label>
                         <p>{{ $datasmtp->form_id}}</p>
                     </div>
                     <div class="col-md-6">
@@ -121,7 +121,7 @@
                                 <th scope="col">No.</th>
                                 <th scope="col">System Name</th>
                                 <th scope="col">IP Address</th>
-                                <th scope="col">FQDN Sistem</th> 
+                                <th scope="col">FQDN Sistem</th>
                             </tr>
                         </thead>
                         <tbody id="dynamic-inputs-container">
@@ -136,7 +136,8 @@
                         </tbody>
                     </table>
                 </div>
-                <div class="row gx-3 mb-3" id="authusername" style="display: none;">
+                @if ($datasmtp->smtp_relay_auth_method == 2)
+                <div class="row gx-3 mb-3" id="authusername">
                     <div class="col-md-6">
                         <label for="authusername">SMTP Username</label>
                         <p>{{ $datasmtp->smtp_username}}</p>
@@ -146,6 +147,7 @@
                         <p>{{ $datasmtp->smtp_password}}</p>
                     </div>
                 </div>
+                @endif
                 <div class="row gx-3 mb-3">
                     <div class="col-md-6">
                         <label for="ports">SMTP Port Number</label>
