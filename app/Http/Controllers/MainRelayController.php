@@ -50,6 +50,14 @@ class MainRelayController extends Controller
         return view('mailrelay.edit', compact('user','smtpMailServers','smtpreq'));
     }
 
+    public function papar($id, $type){
+        $datasmtp = SmtpRelayReqForm::where('id', $id)->where('types_req', $type)->first();
+        $details = smtp_relay_server::where('form_id', $datasmtp->form_id)
+                    ->where('types_req', $datasmtp->types_req)
+                    ->get();
+        return view('smtp_relay.view',compact('datasmtp','details'));
+    }
+
     public function submitrejForm(Request $request){
 
         $comment = $request->input("comment");

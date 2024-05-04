@@ -99,6 +99,8 @@ Route::group(['middleware' => ['auth']], function () {
         Route::post('/submit-form', [MainRelayController::class, 'submitappForm'])->name('mailrelay.form');
         Route::post('/submit-rej-form', [MainRelayController::class, 'submitrejForm'])->name('mailrelay.reject');
 
+        Route::get('/view/{id}/{type}', [MainRelayController::class, 'papar'])->name('mailrelay.view');
+
 
         // Route::get('/detail/{id}', [MainRelayController::class, 'updatestatus']);
     });
@@ -117,7 +119,6 @@ Route::group(['middleware' => ['auth']], function () {
         Route::get('/register', [SmtpRelayController::class, 'daftar'])->name('smtp_relay.daftar');
         Route::post('/saving', [SmtpRelayController::class, 'saving'])->name('smtp_relay.saving');
         Route::get('/view/{id}/{type}', [SmtpRelayController::class, 'papar'])->name('smtp_relay.view');
-        Route::get('/view/{id}/{type}', [SmtpRelayController::class, 'papar2'])->name('smtp_relay.view2');
         Route::get('/update/{id}/{type}', [SmtpRelayController::class, 'kemaskini'])->name('smtp_relay.kemaskini');
         Route::post('/update/{id}/kemaskinidata', [SmtpRelayController::class, 'kemaskinidata'])->name('smtp_relay.kemaskinidata');
 
