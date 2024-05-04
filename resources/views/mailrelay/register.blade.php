@@ -67,7 +67,7 @@
                             </td>
                             <td> {{ \Carbon\Carbon::parse($smtpMailServer->created_at)->format('d-m-Y') }}</td>
                             <td>
-                                <a class="btn btn-datatable btn-icon me-2 text-blue" title="View Detail" href="{{ route('mailrelay.edit',['id' => $smtpMailServer->id])}}"><i data-feather="eye"></i></a>
+                                <a class="btn btn-datatable btn-icon me-2 text-blue" title="View Detail" href="{{ route('mailrelay.edit',['id' => $smtpMailServer->id,'type' => $smtpMailServer->types_req])}}"><i data-feather="eye"></i></a>
                                 <form class="btn btn-datatable btn-icon me-2 text-blue" action="" method="POST" onsubmit="return confirm('Are you sure you want to delete this user?')">
                                     @csrf
                                     @method('DELETE')

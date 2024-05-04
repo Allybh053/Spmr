@@ -37,18 +37,15 @@ class MainRelayController extends Controller
 
         return view('mailrelay.register', compact('user','smtpMailServers'));
     }
-    public function view(string $id)
+    public function view(string $id, $type)
     {
         $user = Auth::user();
 
-        $smtpreq = SmtpRelayReqForm::where('id',$id)
-                ->first();
+        $smtpreq = SmtpRelayReqForm::find($id);
 
         $smtpMailServers = smtp_relay_server::where('form_id',$smtpreq->form_id)
                 ->where('types_req',$smtpreq->types_req)
                 ->get();
-        
-        //romie here you have to add logic to query data for scenario ->new app register 5 ip address then user terminate each ip by separate time/period
 
         return view('mailrelay.edit', compact('user','smtpMailServers','smtpreq'));
     }
