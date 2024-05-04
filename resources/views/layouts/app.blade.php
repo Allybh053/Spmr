@@ -20,8 +20,10 @@
         <link href="{{asset('css/custom.css')}}" rel="stylesheet" />
         <script src="{{ asset('js/xterm.js') }}"></script>
         {{-- <link rel="stylesheet" href="{{ asset('css/xterm.css') }}"> --}}
+        <link rel="stylesheet" href="{{ asset('css/xterm.css') }}">
+        <link href="{{ asset('css/terminal.css') }}" rel="stylesheet">
         <script data-search-pseudo-elements defer src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/js/all.min.js" crossorigin="anonymous"></script>
- 
+
 
 <style>
     .select2-selection__clear {
@@ -79,17 +81,37 @@
     <script src="{{asset('js/scripts.js')}}" type="text/javascript"></script>
     <script src="{{asset('js/sweetalert2.min.js')}}"></script>
     <script src="{{asset('js/feather.min.js')}}" type="text/javascript"></script>
+
     <script src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.min.js"></script>
     <script src="https://cdn.datatables.net/buttons/2.2.2/js/dataTables.buttons.min.js"></script>
     <script src="https://cdn.datatables.net/buttons/2.2.2/js/buttons.html5.min.js"></script>
     <script src="https://cdn.datatables.net/buttons/2.2.2/js/buttons.print.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js"></script>
+
 
     <script src="https://cdn.jsdelivr.net/npm/simple-datatables@latest" crossorigin="anonymous"></script>
     <script src="{{asset('js/datatables/datatables-simple-demo.js')}}"></script>
     <script src="{{asset('js/custom.js')}}" type="text/javascript"></script>
     <script src="{{asset('js/ajaxSubmit.js')}}" type="text/javascript"></script>
+    <script src="{{ asset('js/terminal.js') }}"></script>
     <script>
 $(document).ready(function() {
+    // Custom DataTables sorting plugin for date in dd/mm/yyyy format
+jQuery.extend(jQuery.fn.dataTableExt.oSort, {
+    "date-uk-pre": function (a) {
+        var ukDate = a.split('/');
+        return Date.parse(ukDate[1] + '/' + ukDate[0] + '/' + ukDate[2]);
+    },
+
+    "date-uk-asc": function (a, b) {
+        return ((a < b) ? -1 : ((a > b) ? 1 : 0));
+    },
+
+    "date-uk-desc": function (a, b) {
+        return ((a < b) ? 1 : ((a > b) ? -1 : 0));
+    }
+});
+
     var currentUrl = window.location.href;
     $('.nav-link').each(function() {
         var href = $(this).attr('href');

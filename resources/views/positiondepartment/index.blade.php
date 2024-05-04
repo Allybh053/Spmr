@@ -200,7 +200,10 @@
                     columns: ':visible'
                 }
             }
-        ]
+        ],
+        columnDefs: [
+        { type: 'date-uk', targets: [/* index of your date column */] }
+    ]
     });
 
     // Append export buttons to DataTable 1's search container
@@ -253,7 +256,10 @@
                     columns: ':visible'
                 }
             }
-        ]
+        ],
+        columnDefs: [
+        { type: 'date-uk', targets: [/* index of your date column */] }
+    ]
     });
 
     // Append export buttons to DataTable 2's search container
