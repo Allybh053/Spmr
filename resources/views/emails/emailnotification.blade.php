@@ -35,7 +35,7 @@
         </tr>
 
         <tr>
-            <th>Form ID</th>
+            <th>Serial Number</th>
             <td>: {{ $data->form_id }}</td>
         </tr>
         <tr>
