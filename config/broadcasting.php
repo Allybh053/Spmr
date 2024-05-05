@@ -27,7 +27,7 @@ return [
     | each available type of connection are provided inside this array.
     |
     */
-    
+
     'connections' => [
 
         'pusher' => [
@@ -42,6 +42,9 @@ return [
                 'scheme' => env('PUSHER_SCHEME', 'https'),
                 'encrypted' => true,
                 'useTLS' => env('PUSHER_SCHEME', 'https') === 'https',
+                'host' => env('LWS_HOST', '127.0.0.1'),
+                'port' => env('LWS_PORT', 6001),
+                'scheme' => env('LWS_SCHEME', 'http')
             ],
             'client_options' => [
                 // Guzzle client options: https://docs.guzzlephp.org/en/stable/request-options.html
