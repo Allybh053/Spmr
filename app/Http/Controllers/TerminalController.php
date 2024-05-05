@@ -17,6 +17,7 @@ class TerminalController extends Controller {
 
             try {
                 // Simulate SSH command execution
+
                 $command = $request->input('command');
                 $output = shell_exec($command); // Execute command (replace with your SSH logic)
 
