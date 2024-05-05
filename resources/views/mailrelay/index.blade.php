@@ -23,13 +23,20 @@
     </header>
     <!-- Main page content-->
     <div class="container-fluid px-4">
-        @if(session('success'))
+        @if(isset($_GET['success']))
+        <div class="alert alert-primary alert-dismissible fade show" role="alert">
+            <h5 class="alert-heading">Message</h5>
+                {{ $_GET['success'] }}
+                <button class="btn-close" type="button" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        @endif
+        {{-- @if(session('success'))
             <div class="alert alert-primary alert-dismissible fade show" role="alert">
                 <h5 class="alert-heading">Message</h5>
                 {{ session('success') }}
                 <button class="btn-close" type="button" data-bs-dismiss="alert" aria-label="Close"></button>
             </div>
-        @endif
+        @endif --}}
         <div class="card">
             <div class="card-body">
                 <table id="datatablesSimple1" class="table">

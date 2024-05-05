@@ -57,7 +57,7 @@
                 </a>
                 <div class="collapse" id="collapseMailPages" data-bs-parent="#accordionSidenav">
                     <nav class="sidenav-menu-nested nav accordion" id="accordionSidenavPages">
-                        <a class="nav-link" href="{{ route('mailrelay.index')}}">View Mail Relay Server</a>
+                        <a hidden class="nav-link" href="{{ route('mailrelay.index')}}">View Mail Relay Server</a>
                         <a class="nav-link" href="{{ route('mailrelay.register')}}">Register Mail Relay</a>
                     </nav>
                 </div>
@@ -227,7 +227,7 @@
                                 <a class="nav-link" href="{{ route('usermanagements.create') }}">Add User</a>
                             </nav>
                         </div> -->
-                          @can('user_view')
+                        @can('user_view')
                         <a class="nav-link" href="{{ route('usermanagements.index') }}">
                             Appplication Users
                             <div class="sidenav-collapse-arrow"></div>
@@ -253,6 +253,18 @@
                         @can('domain_name_view')
                         <a class="nav-link" href="{{ route('domain.index') }}">
                             Domain Name Registration
+                            <div class="sidenav-collapse-arrow"></div>
+                        </a>
+                        @endcan
+                        @can('ministry_view')
+                        <a class="nav-link" href="{{ route('ministry.index') }}">
+                            Ministry
+                            <div class="sidenav-collapse-arrow"></div>
+                        </a>
+                        @endcan
+                        @can('agencies_view')
+                        <a class="nav-link" href="{{ route('agency.index') }}">
+                            Agency
                             <div class="sidenav-collapse-arrow"></div>
                         </a>
                         @endcan

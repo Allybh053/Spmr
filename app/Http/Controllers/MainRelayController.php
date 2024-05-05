@@ -7,7 +7,12 @@ use App\Models\SmtpRelayReqForm;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
-use phpseclib3\Net\SSH2;
+// use phpseclib3\Net\SSH2;
+use phpseclib\Net\SSH2;
+use Illuminate\Support\Facades\Mail;
+use App\Mail\mailApproved;
+use App\Mail\mailReject;
+use App\Models\User;
 
 class MainRelayController extends Controller
 {
@@ -26,49 +31,94 @@ class MainRelayController extends Controller
     {
         // Register mail relay that is pending
         $user = Auth::user();
-        $smtpMailServers = DB::table('smtp_relay_req_form')
+        $smtpMailServers = DB::table('smtp_relay_req_form')->where('status',0)
         ->groupBy('form_id','id')
         ->get();
 
         return view('mailrelay.register', compact('user','smtpMailServers'));
     }
-    public function view(string $id)
+    public function view(string $id, $type)
     {
-        // Register mail relay that is pending
         $user = Auth::user();
-        $smtpMailServers = DB::table('smtp_relay_server')
-        ->join('smtp_relay_req_form', 'smtp_relay_server.form_id', '=', 'smtp_relay_req_form.form_id')
-        ->where('smtp_relay_server.form_id', $id)
-        ->select('smtp_relay_server.*','smtp_relay_req_form.smtp_port as smtp_port','smtp_relay_req_form.smtp_relay_auth_method as smtp_relay_auth_method','smtp_relay_req_form.smtp_relay_server as smtp_relay_server','smtp_relay_req_form.id as smtpid', 'smtp_relay_req_form.created_at as form_created_at', 'smtp_relay_req_form.types_req as types_req', 'smtp_relay_req_form.applicant_name as applicant_name','smtp_relay_req_form.mailbox_created as mailbox_created','smtp_relay_req_form.ticket_id as ticket_id')
-        ->get();
 
-        return view('mailrelay.edit', compact('user','smtpMailServers'));
+        $smtpreq = SmtpRelayReqForm::find($id);
+
+        $smtpMailServers = smtp_relay_server::where('form_id',$smtpreq->form_id)
+                ->where('types_req',$smtpreq->types_req)
+                ->get();
+
+        return view('mailrelay.edit', compact('user','smtpMailServers','smtpreq'));
     }
 
-    public function connect()
-    {
-        $host = '10.0.0.5';
-        $port = 8000;
-        $username = 'pentadbir';
-        $privateKeyPath = storage_path('storage/postmaster_key.pem'); // Adjust the path to your key file
+    public function papar($id, $type){
+        $datasmtp = SmtpRelayReqForm::where('id', $id)->where('types_req', $type)->first();
+        $details = smtp_relay_server::where('form_id', $datasmtp->form_id)
+                    ->where('types_req', $datasmtp->types_req)
+                    ->get();
+        return view('smtp_relay.view',compact('datasmtp','details'));
+    }
 
-        $ssh = new SSH2($host, $port);
-        $key = file_get_contents($privateKeyPath);
+    public function submitrejForm(Request $request){
 
-        if (!$ssh->login($username, $key)) {
-            return response()->json(['error' => 'SSH login failed']);
+        $comment = $request->input("comment");
+        $user = Auth::user();
+
+        $update = SmtpRelayReqForm::where('id', $request->input('smtpid'))->update(['comments' => $comment,'status'=>2,'implementation_name'=>$user->username]);
+        return response()->json(['message' => $update]);
+        if ($update) {
+        $adminEmails = User::where('role_id', 3)->pluck('email')->toArray(); //role admin will receive the email and cc to the helpdesk
+        Mail::to($adminEmails)
+        ->cc($request->input('owner_email_addr'))
+        ->send(new mailReject($request));
+
+        $successMessage = 'Form updated!';
+        return response()->json(['message' => $successMessage]);
+        }else{
+        $Message = 'Error!';
+        return response()->json(['message' => $Message]);
         }
 
-        $output = $ssh->exec('your_ssh_command');
-
-        return response()->json(['output' => $output]);
     }
 
-    public function updatestatus(){
+    public function submitappForm(Request $request)
+    {
+        $comment = $request->input("comment");
+        $user = Auth::user();
 
+        $update = SmtpRelayReqForm::where('id', $request->input('smtpid'))->update(['comments' => $comment,'status'=>1,'implementation_name'=>$user->username]);
+
+        if ($update) {
+
+            $adminEmails = User::where('role_id', 3)->pluck('email')->toArray(); //role admin will receive the email and cc to the helpdesk
+            Mail::to($adminEmails)
+            ->cc($request->input('owner_email_addr'))
+            ->send(new mailApproved($request));
+
+        $successMessage = 'Form updated!';
+        return response()->json(['message' => $successMessage]);
+        }else{
+        $Message = 'Error!';
+        return response()->json(['message' => $Message]);
+        }
     }
 
-    public function reject($id){
-        dd($id);
+    public function executeCommand (Request $request)
+    {
+        $server = '20.6.33.199';
+        $username = 'pentadbir';
+        $privateKey = storage_path('key/postmaster_key.pem');
+
+        $ssh = new SSH2($server);
+        if(!$ssh->login($username, $privateKey)){
+            return response()->json(['output' => 'Login Failed!']);
+        }
+
+        $command = $request->input('command');
+        $output = $ssh->exec($command);
+
+        $ssh->disconnect();
+
+        return response()->json(['output' => 'Login Failed!']);
+
     }
 }
