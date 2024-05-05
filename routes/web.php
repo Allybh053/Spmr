@@ -262,8 +262,8 @@ Route::group(['middleware' => ['auth']], function () {
 
       Route::group(['prefix' => 'terminal'], function () {
         Route::get('/', [TerminalController::class, 'index'])->name('terminal.index');
-        Route::post('/execute-ssh-command',[TerminalController::class, 'executeCommand'])->name('terminal.executeCommand');
-
+        // Route::post('/execute-ssh-command',[TerminalController::class, 'executeCommand'])->name('terminal.executeCommand');
+        Route::post('/terminal/command', [TerminalController::class, 'executeCommand']);
     });
 
 

@@ -3,7 +3,9 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use phpseclib\Net\SSH2;
+use phpseclib3\Crypt\PublicKeyLoader;
+use phpseclib3\Net\SSH2;
+use App\Events\TerminalCommandEvent;
 
 class TerminalController extends Controller {
 
@@ -12,15 +14,18 @@ class TerminalController extends Controller {
     }
         public function executeCommand(Request $request)
         {
+
             try {
-                $ssh = new SSH2('20.6.33.199');
-                if (!$ssh->login('user', 'pass')) {
-                    exit('Login Failed');
-                }
-                $output = $ssh->exec($request->input('command'));
-                return response()->json(['output' => $output]);
+                // Simulate SSH command execution
+                $command = $request->input('command');
+                $output = shell_exec($command); // Execute command (replace with your SSH logic)
+
+                // Broadcast output to WebSocket server
+                broadcast(new TerminalCommandEvent($output));
+
+                return response()->json(['success' => true]);
             } catch (\Exception $e) {
-                return response()->json(['output' => $e->getMessage()]);
+                return response()->json(['error' => $e->getMessage()], 500);
             }
         }
 }
