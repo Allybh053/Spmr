@@ -376,10 +376,37 @@ $(document).ready(function() {
     return '#' + Math.floor(Math.random() * 16777215).toString(16);
 }
 
+    var data = [];
+    //console.log(data);
         // Generate random data for a server
-        function generateServerData(serverName) {
-            var data = [];
-            var currentDate = new Date();
+        function generateServerData(serverName, cleanResponse) {
+            if (cleanResponse) {
+                const cleanRes = cleanResponse.replace(/(\\.||\[.*?#\d+ )/g, '').trim();
+                const lines = cleanRes.split('\n');
+                // Filter out the lines that don't start with '[root@postmaster1a:/opt/cluster/postfix]#'
+                const filteredLines = lines.filter(line => !line.startsWith('[root@postmaster1a:/opt/cluster/postfix]#'));
+                // Filter out the lines containing numeric data
+                const numericLines = filteredLines.filter(line => /^\d/.test(line));
+                //console.log(numericLines);
+
+                numericLines.forEach((line, index) => {
+                    const [timestamp, value] = line.split(',');
+                    const formattedTimestamp = timestamp.replace(' ', ' ').replace(/-/g, '/');
+                    data.push({
+                        x: formattedTimestamp,
+                        y: parseInt(value)
+                    });
+                });
+                //console.log(data[0]);
+
+
+            } else {
+                //console.error("cleanResponse is undefined");
+            }
+
+            //var data = [];
+            // console.log(data);
+            /*var currentDate = new Date();
             currentDate.setHours(0, 0, 0, 0); // Set time to midnight
 
             // Generate data for each minute until current time
@@ -391,7 +418,7 @@ $(document).ready(function() {
                         x: formattedTimestamp,
                         y: Math.floor(Math.random() * 10) // Random count value
                     });
-            }
+            }*/
 
             return {
                 label: serverName,
@@ -415,64 +442,218 @@ function formatDate(date) {
 }
 
 // Generate random data for multiple servers
-var servers = {
-    server1: generateServerData('Server 1'),
-    server2: generateServerData('Server 2'),
-    // Add more servers if needed
-};
+    let serverIpaddresses1 = [];
+
+    @foreach ($serverconfig as $server)
+    let serverMailRelay1{{$loop->iteration}} = "{{ $server->hostname }}";
+    serverIpaddresses1.push(serverMailRelay1{{$loop->iteration}});
+    @endforeach
+
+    var servers = {};
+
+    // Iterate over the serverIpaddresses array and generate server data
+    serverIpaddresses1.forEach(function(hostname, index) {
+        servers['server' + (index + 1)] = generateServerData(hostname);
+    });
 
 // Prepare datasets for Chart.js
 var datasets = Object.values(servers);
 
-// Create a new Chart.js instance
-var ctx = document.getElementById('mailQueueChart').getContext('2d');
-var labels = Array.from(Array(60).keys()).map(minute => {
-    var timestamp = new Date();
-    timestamp.setHours(0, minute, 0, 0);
-    return formatDate(timestamp); // Format timestamp
-});
 
-var mailQueueChart = new Chart(ctx, {
-    type: 'line',
-    data: {
-        labels: labels,
-        datasets: datasets // Pass the formatted datasets array
-    },
-    options: {
-        scales: {
-            x: [{
-                type: 'time',
-                time: {
-                    parser: 'DD/MM/YYYY HH:mm:ss', // Custom parser for the format
-                    unit: 'minute', // Display unit as minute
-                    displayFormats: {
-                        minute: 'HH:mm' // Format for minute display
+// // Create a new Chart.js instance
+// var ctx = document.getElementById('mailQueueChart').getContext('2d');
+// var labels = Array.from(Array(5).keys()).map(minute => {
+//     var timestamp = new Date();
+//     timestamp.setHours(0, minute, 0, 0);
+//     return formatDate(timestamp); // Format timestamp
+// });
+// //console.log(labels);
+
+// var mailQueueChart = new Chart(ctx, {
+//     type: 'line',
+//     data: {
+//         labels: labels,
+//         datasets: datasets // Pass the formatted datasets array
+//     },
+//     options: {
+//         scales: {
+//             x: [{
+//                 type: 'time',
+//                 time: {
+//                     parser: 'DD/MM/YYYY HH:mm:ss', // Custom parser for the format
+//                     unit: 'minute', // Display unit as minute
+//                     displayFormats: {
+//                         minute: 'HH:mm' // Format for minute display
+//                     }
+//                 },
+//                 title: {
+//                     display: true,
+//                     text: 'Time'
+//                 }
+//             }],
+//             y: [{
+//                 title: {
+//                     display: true,
+//                     text: 'Mail Count'
+//                 },
+//                 beginAtZero: true
+//             }]
+//         },
+//         plugins: {
+//             legend: {
+//                 display: true,
+//                 position: 'bottom', // Adjust legend position if needed
+//                 onHover: function (event, legendItem) {
+//                     event.target.style.cursor = 'pointer';
+//                 }
+//             }
+//         }
+//     }
+// });
+
+    let sockets = [];
+    let serverIpaddresses = [];
+
+    @foreach ($serverconfig as $server)
+    //let serverMailRelay{{$loop->iteration}} = "{{ $server->ipaddress }}";
+    let serverMailRelay{{$loop->iteration}} = "{{ $server->hostname }}";
+    serverIpaddresses.push(serverMailRelay{{$loop->iteration}});
+    @endforeach
+
+    serverIpaddresses.forEach(hostname => {
+        //const serverAddress = 'ws://' + ip + ':8000/';
+        const serverAddress = 'wss://' + hostname + '/wss/';
+
+        const socket = new WebSocket(serverAddress);
+        sockets.push(socket);
+    });
+
+    sockets.forEach((socket, index) => {
+        getDataMailServer1(socket);
+        socket.addEventListener('open', (event) => {
+
+        });
+
+        socket.addEventListener('close', (event) => {
+
+        });
+
+        socket.addEventListener('error', (event) => {
+
+        });
+
+        socket.addEventListener('message', (event) => {
+
+        });
+    });
+
+    function getDataMailServer1(socket) {
+
+        const commands = [
+            'wc -l /opt/cluster/postfix/access_list | cut -d " " -f1',
+            'wc -l /opt/cluster/postfix/sender_relay_maps | cut -d " " -f1',
+            '/usr/sbin/sasldblistusers2 | wc -l',
+            'mailq | grep -c "^[A-F0-9]"',
+            'status=$(systemctl --no-pager status postfix | grep Active:); if echo "$status" | grep -q "active (exited) since"; then echo "Postfix is running"; elif echo "$status" | grep -q "inactive (dead) since"; then echo "Postfix is down"; else echo "Something is wrong"; fi',
+            'status=$(systemctl --no-pager status fail2ban | grep Active:); if echo "$status" | grep -q "active (running) since"; then echo "Fail2ban is running"; elif echo "$status" | grep -q "inactive (dead) since"; then echo "Fail2ban is down"; else echo "Something is wrong"; fi',
+            'status=$(systemctl --no-pager status webmin | grep Active:); if echo "$status" | grep -q "active (running) since"; then echo "Webmin is running"; elif echo "$status" | grep -q "inactive (dead) since"; then echo "Webmin is down"; else echo "Something is wrong"; fi',
+            'status=$(systemctl --no-pager status apache2 | grep Active:); if echo "$status" | grep -q "active (running) since"; then echo "Apache2 is running"; elif echo "$status" | grep -q "inactive (dead) since"; then echo "Apache2 is down"; else echo "Something is wrong"; fi',
+            '/usr/bin/tail -6 /data/collections/spmr/count_mailq.txt',
+
+        ];
+
+        const outputs = [];
+
+        socket.addEventListener('open', (event) => {
+
+            commands.forEach(command => {
+                socket.send(command);
+            });
+        });
+
+        socket.addEventListener('message', (event) => {
+
+            const response = event.data;
+
+            const output = extractOutput(response);
+            if (output !== null) {
+
+                outputs.push(output);
+
+                if (outputs.length > commands.length) {
+
+                    $('#totalApplications').text(outputs[1]);
+                    $('#totalDomains').text(outputs[3]);
+                    $('#totalSASL').text(outputs[5]);
+                    $('#mailQueueCount').text(outputs[7]);
+                    $('#statusPostfix').text(outputs[9]);
+                    $('#statusFail2ban').text(outputs[11]);
+                    $('#statusWebmin').text(outputs[13]);
+                    $('#statusApache2').text(outputs[15]);
+
+                    var postfixStatus = outputs[9];
+                    var postfixAlt;
+                    if(postfixStatus == "Postfix is running"){
+                        postfixStatus = "Online";
+                        postfixAlt = "Postfix is running";
+                    }else{
+                        postfixStatus = "Offline";
+                        postfixAlt = "Postfix is down";
                     }
-                },
-                title: {
-                    display: true,
-                    text: 'Time'
-                }
-            }],
-            y: [{
-                title: {
-                    display: true,
-                    text: 'Mail Count'
-                },
-                beginAtZero: true
-            }]
-        },
-        plugins: {
-            legend: {
-                display: true,
-                position: 'bottom', // Adjust legend position if needed
-                onHover: function (event, legendItem) {
-                    event.target.style.cursor = 'pointer';
+                    var postfixImageSrc = postfixStatus === 'Online' ? 'assets/img/demo/online.png' : 'assets/img/demo/offline.png';
+                    $('#statusPostfixImage').attr('src', postfixImageSrc).attr('alt', postfixAlt);
+
+                    var Apache2Status = outputs[15];
+                    var Apache2Alt;
+                    if(Apache2Status == "Apache2 is running"){
+                        Apache2Status = "Online";
+                        Apache2Alt = "Apache2 is running";
+                    }else{
+                        Apache2Status = "Offline";
+                        Apache2Alt = "Apache2 is down";
+                    }
+                    var Apache2ImageSrc = Apache2Status === 'Online' ? 'assets/img/demo/online.png' : 'assets/img/demo/offline.png';
+                    $('#statusApache2Image').attr('src', Apache2ImageSrc).attr('alt', Apache2Alt);
+
+                    var WebminStatus = outputs[13];
+                    var WebminAlt;
+                    if(WebminStatus == "Webmin is running"){
+                        WebminStatus = "Online";
+                        WebminAlt = "Webmin is running";
+                    }else{
+                        WebminStatus = "Offline";
+                        WebminAlt = "Webmin is down";
+                    }
+                    var WebminImageSrc = WebminStatus === 'Online' ? 'assets/img/demo/online.png' : 'assets/img/demo/offline.png';
+                    $('#statusWebminImage').attr('src', WebminImageSrc).attr('alt', WebminAlt);
+
                 }
             }
+        });
+
+        function extractOutput(response) {
+
+            const cleanResponse = response.replace(/\[\d;?\d*m/g, '').trim();
+            generateServerData('Mailq Server', cleanResponse);
+
+            //const outputMatch = cleanResponse.match(/command: (.*)/);
+            const outputMatch = cleanResponse.match(/\[.*?\]#\S (.*)/);
+
+            const outputs = [];
+
+            if (outputMatch && outputMatch.length > 1) {
+
+                outputs.push(outputMatch[1]);
+
+                return outputs;
+            } else {
+                return null;
+            }
         }
+
+
     }
-});
+
 
 
 
