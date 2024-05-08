@@ -2,7 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Agency;
 use App\Models\DomainMinistryAgencies;
+use App\Models\Ministry;
 use App\Models\RoleServer;
 use App\Models\Server;
 use App\Models\smtp_relay_server;
@@ -31,10 +33,15 @@ class GenerateReportingController extends Controller
         ->where('status', 1)->orderBy('id', 'asc')
         ->pluck('hostname', 'id');
 
-        $agency = [];
+
+        $ministries = Ministry::where('status', 1)->pluck('name')->toArray();
+        $agencies = Agency::where('status', 1)->pluck('name')->toArray();
+        $allMinistryAgency = array_merge($ministries, $agencies);
+        //dd($allMinistryAgency);
+
         $domainsArray = DomainMinistryAgencies::where('enabled', 1)->get()->toArray();
 
-        return view('generateReporting.index',compact('defaultServerId','serverconfig','domainsArray'));
+        return view('generateReporting.index',compact('defaultServerId','serverconfig','domainsArray', 'allMinistryAgency'));
     }
 
 /*    public function search(Request $request)
@@ -102,11 +109,28 @@ class GenerateReportingController extends Controller
                 ->leftJoin('smtp_relay_server', 'smtp_relay_req_form.form_id', '=', 'smtp_relay_server.form_id');
 
             // Apply filter based on $input1
-            if ($input1 !== null) {
+            /*if ($input1 !== null) {
                 $query->where('agencies', $input1);
                 $queryJoin->where('agencies', $input1);
                 $queryJoin2->where('agencies', $input1);
+            }*/
+            if ($input1 !== null) {
+                $query->where(function($query) use ($input1) {
+                    $query->where('agencies', $input1)
+                        ->orWhere('ministry', $input1);
+                });
+
+                $queryJoin->where(function($query) use ($input1) {
+                    $query->where('agencies', $input1)
+                        ->orWhere('ministry', $input1);
+                });
+
+                $queryJoin2->where(function($query) use ($input1) {
+                    $query->where('agencies', $input1)
+                        ->orWhere('ministry', $input1);
+                });
             }
+
 
             // Apply filter based on $input2Type
             if ($input2Type !== null) {

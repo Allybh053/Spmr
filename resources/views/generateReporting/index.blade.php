@@ -42,8 +42,11 @@
                                 {{--{!! Form::select('agency', $agency, isset($applicantInfo) ? $applicantInfo->agencies : null,  ['id'=>'agency', 'name'=>'agency', 'class'=>'form-control select2', 'placeholder'=>config('params.dropdown_default')]) !!}--}}
                                 <select class="form-control select2" name="ministry" id="ministry" aria-label="Default select">
                                     <option selected disabled>Select Ministry/Agency/SUK</option>
-                                    @foreach ($domainsArray as $domain)
+                                    {{--@foreach ($domainsArray as $domain)
                                         <option value="{{ $domain['agencies_name'] }}">{{ $domain['agencies_name'] }}</option>
+                                    @endforeach--}}
+                                    @foreach ($allMinistryAgency as $ministryAgency)
+                                        <option value="{{ $ministryAgency }}">{{ $ministryAgency }}</option>
                                     @endforeach
                                 </select>
                             </div>
