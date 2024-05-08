@@ -10,8 +10,7 @@
                                 <div class="page-header-icon"></div>
                                 <nav aria-label="breadcrumb">
                                     <ol class="breadcrumb">
-                                        <li class="breadcrumb-item"><a href="{{ route('dashboard.index') }}">Dashboard</a></li>
-                                        <li class="breadcrumb-item">SMTP Relay Request MyGovUC3.0</li>
+                                         <li class="breadcrumb-item">SMTP Relay Request MyGovUC3.0</li>
                                     </ol>
                                 </nav>
                             </h1>
@@ -70,7 +69,7 @@
                         <thead>
                             <tr>
                                 <th>No.</th>
-                                <th>Form ID</th>
+                                <th>Serial No.</th>
                                 <th>Ticket No.</th>
                                 <th>Types Application</th>
                                 <th>Project Name</th>
@@ -99,13 +98,14 @@
             processing: true,
             serverSide: false,
             ordering: true,
+            lengthMenu: [ [10, 25, 50, -1], [10, 25, 50, "All"] ], // Customize the length menu options
             ajax: {
                 "url": "{{ route('smtp_relay.datatable') }}",
                 "method": 'POST',
                 "headers": {
                     'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
                 },
-                "data": function (d) {
+                "data": function (d) { 
                     d.agency = $('#agency').val();
                     d.calendarType = $('#calendarType').val();
                     d.month = $('#month').val();
@@ -131,11 +131,51 @@
                 { data: 'status', name: 'status', class: 'text-center' },
                 { data: 'action', name: 'type', class: 'text-center', orderable: false, searchable: false },
             ],
-            dom: 'Bfrtip', // Show buttons at the top
-            buttons: [
-                'copy', 'csv', 'excel', 'pdf', 'print'
-            ]
+            dom: '<"top"fBl>rt<"bottom"ip>',
+        buttons: [
+            {
+                extend: 'copy',
+                text: 'Copy',
+                exportOptions: {
+                    columns: ':visible'
+                }
+            },
+            {
+                extend: 'csv',
+                text: 'CSV',
+                exportOptions: {
+                    columns: ':visible'
+                }
+            },
+            {
+                extend: 'excel',
+                text: 'Excel',
+                exportOptions: {
+                    columns: ':visible'
+                }
+            },
+            {
+                extend: 'pdf',
+                text: 'PDF',
+                exportOptions: {
+                    columns: ':visible'
+                }
+            },
+            {
+                extend: 'print',
+                text: 'Print',
+                exportOptions: {
+                    columns: ':visible'
+                }
+            }
+        ],
+        columnDefs: [
+        { type: 'date-uk', targets: [/* index of your date column */] }
+    ]
         });
+
+        $('.dataTables_filter').addClass('d-inline-block mr-2'); // Make search input inline
+    $('.dt-buttons').appendTo('.dataTables_filter'); // Append export buttons to search container
     });
     </script>
 @endpush

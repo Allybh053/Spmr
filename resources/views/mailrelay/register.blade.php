@@ -29,17 +29,17 @@
         @endif
         <div class="card">
             <div class="card-body">
-                <table id="datatablesSimple" class="table table-striped">
+                <table id="datatablesSimple1" class="table table-striped">
                     <thead>
                         <tr>
                             <th>No</th>
-                            <th>Form ID</th>
+                            <th>Serial No</th>
                             <th>Ticket No</th>
                             <th>Mail Relay Server</th>
                             <th>Type Application</th>
                             <th>Requestor</th>
                             <th>Status</th>
-                            <th>Date</th>
+                            <th>Date Request</th>
                             <th>Actions</th>
                         </tr>
                     </thead>
@@ -67,7 +67,7 @@
                             </td>
                             <td> {{ \Carbon\Carbon::parse($smtpMailServer->created_at)->format('d-m-Y') }}</td>
                             <td>
-                                <a class="btn btn-datatable btn-icon me-2 text-blue" title="View Detail" href="{{ route('mailrelay.edit',['id' => $smtpMailServer->form_id])}}"><i data-feather="eye"></i></a>
+                                <a class="btn btn-datatable btn-icon me-2 text-blue" title="View Detail" href="{{ route('mailrelay.edit',['id' => $smtpMailServer->id,'type' => $smtpMailServer->types_req])}}"><i data-feather="eye"></i></a>
                                 <form class="btn btn-datatable btn-icon me-2 text-blue" action="" method="POST" onsubmit="return confirm('Are you sure you want to delete this user?')">
                                     @csrf
                                     @method('DELETE')
@@ -89,3 +89,58 @@
 </main>
 
 @endsection
+@push('script')
+    <script>
+        (function ($) {
+    var table = $('#datatablesSimple1').DataTable({
+        processing: true,
+        serverSide: false,
+        ordering: true,
+        lengthMenu: [ [10, 25, 50, -1], [10, 25, 50, "All"] ],
+        dom: '<"top"fBl>rt<"bottom"ip>',
+        buttons: [
+            {
+                extend: 'copy',
+                text: 'Copy',
+                exportOptions: {
+                    columns: ':visible'
+                }
+            },
+            {
+                extend: 'csv',
+                text: 'CSV',
+                exportOptions: {
+                    columns: ':visible'
+                }
+            },
+            {
+                extend: 'excel',
+                text: 'Excel',
+                exportOptions: {
+                    columns: ':visible'
+                }
+            },
+            {
+                extend: 'pdf',
+                text: 'PDF',
+                exportOptions: {
+                    columns: ':visible'
+                }
+            },
+            {
+                extend: 'print',
+                text: 'Print',
+                exportOptions: {
+                    columns: ':visible'
+                }
+            }
+        ]
+    });
+
+    // Adjust positioning of search input and export buttons
+    $('.dataTables_filter').addClass('d-inline-block mr-2'); // Make search input inline
+    $('.dt-buttons').appendTo('.dataTables_filter'); // Append export buttons to search container
+})(jQuery);
+
+    </script>
+    @endpush

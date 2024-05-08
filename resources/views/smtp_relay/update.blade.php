@@ -26,7 +26,7 @@
                 <form id="formserver" action="{{ route('smtp_relay.kemaskinidata', ['id' => $formsmtp->form_id]) }}" method="post" enctype="multipart/form-data">
                 @csrf
                 <div class="col-md-6">
-                    <label for="form_id">Form ID</label><br>
+                    <label for="form_id">Serial Number</label><br>
                     <p style="color: #0061f2 !important;">{{ $formsmtp->form_id }}</p>
                     <input class="form-control" id="form_id" name="form_id" type="hidden" value="{{ $formsmtp->form_id }}" disabled/>
                 </div>
@@ -34,11 +34,11 @@
                     <div class="col-md-6">
                         <label for="ticket_id">Ticket Number</label><br>
                         {{--<p style="color: #0061f2 !important;">{{ $formsmtp->ticket_id }}</p>--}}
-                        <input class="form-control" id="ticket_id" name="ticket_id" type="text" value="{{ old('ticket_id', $formsmtp->ticket_id) }}" disabled>
+                        <input class="form-control" id="ticket_id" name="ticket_id" type="text" value="{{ old('ticket_id', $formsmtp->ticket_id) }}">
                     </div>
                     <div class="col-md-6">
                         <label for="types_req">Type Of Request</label>
-                        <select class="form-control select2" name="types_req" id="types_req" aria-label="Default select">
+                        <select @readonly(true) class="form-control select" name="types_req" id="types_req">
                             <option value="{{ old('types_req', $formsmtp->types_req) }}">
                             @if ($formsmtp->types_req == 1)
                                 New Application
@@ -48,9 +48,9 @@
                                 Onboarding Agency
                             @endif
                             </option>
-                            <option value="1">New Application</option>
+                            {{-- <option value="1">New Application</option>
                             <option value="2">Service Termination</option>
-                            <option value="3">Onboarding Agency</option>
+                            <option value="3">Onboarding Agency</option> --}}
                         </select>
                     </div>
                 </div>
@@ -77,8 +77,8 @@
                     <select class="form-control select2" name="ministry" id="ministry" aria-label="Default select">
                         {{--<option selected disabled>Select Department/Division/Unit</option>--}}
                         <option value="{{ old('ministry', $formsmtp->ministry) }}">{{ old('ministry', $formsmtp->ministry) }}</option>
-                        @foreach ($domainsArray as $domain)
-                        <option value="{{ $domain['ministry_name'] }}">{{ $domain['ministry_name'] }}</option>
+                        @foreach ($ministriesArray as $ministry)
+                        <option value="{{ $ministry['name'] }}">{{ $ministry['name'] }}</option>
                         @endforeach
                     </select>
                 </div>
@@ -87,8 +87,8 @@
                         <label for="agencies">Agency</label>
                         <select class="form-control select2" name="agencies" id="agencies" aria-label="Default select">
                             <option value="{{ old('agencies', $formsmtp->agencies) }}">{{ old('agencies', $formsmtp->agencies) }}</option>
-                            @foreach ($domainsArray as $domain)
-                            <option value="{{ $domain['agencies_name'] }}">{{ $domain['agencies_name'] }}</option>
+                            @foreach ($agenciesArray as $agency)
+                            <option value="{{ $agency['name'] }}">{{ $agency['name'] }}</option>
                             @endforeach
                         </select>
                     </div>
@@ -96,8 +96,8 @@
                         <label for="dept_div_unit">Department/Division/Unit</label>
                         <select class="form-control select2" name="dept_div_unit" id="dept_div_unit" aria-label="Default select">
                             <option value="{{ old('dept_div_unit', $formsmtp->dept_div_unit) }}">{{ old('dept_div_unit', $formsmtp->dept_div_unit) }}</option>
-                            @foreach ($domainsArray as $domain)
-                            <option value="{{ $domain['ministry_name'] }}">{{ $domain['ministry_name'] }}</option>
+                            @foreach ($departmentsArray as $department)
+                            <option value="{{ $department['name'] }}">{{ $department['name'] }}</option>
                             @endforeach
                         </select>
                     </div>
@@ -144,6 +144,7 @@
                         <tbody id="dynamic-inputs-container">
                             @foreach ($details as $detail)
                                 <tr class="dynamic-input-row">
+                                    <td hidden><input type="text" name="tableSpmr[{{ $loop->index }}][form_id]" id="form_id" value="{{ old('tableSpmr.' . $loop->index . '.form_id', $formsmtp->form_id) }}" class="form-control" /></td>
                                     <td hidden><input type="text" name="tableSpmr[{{ $loop->index }}][id]" id="id" value="{{ old('tableSpmr.' . $loop->index . '.id', $detail->id) }}" class="form-control" /></td>
                                     <td>
                                         <input type="text" name="tableSpmr[{{ $loop->index }}][server_name]" id="server_name" value="{{ old('tableSpmr.' . $loop->index . '.server_name', $detail->server_name) }}" class="form-control" required />
@@ -346,7 +347,7 @@
                     </a>
                 </div>
                 <div class="mb-3">
-                    <label for="upload_copy_attachment">Upload Attachement</label>
+                    <label for="upload_copy_attachment">Replace current Attachement (Optional)</label>
                     <input class="form-control btn-outline-primary" type="file" name="upload_copy_attachment" id="upload_copy_attachment" accept=".pdf"/>
                     <span class="text-xs text-danger">Upload File format .pdf</span>
                 </div><hr>

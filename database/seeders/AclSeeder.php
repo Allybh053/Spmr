@@ -104,6 +104,18 @@ class AclSeeder extends Seeder
 					'position_department_update',
 					'position_department_delete',
 				],
+				"ministry" => [
+					'ministry_view',
+					'ministry_add',
+					'ministry_update',
+					'ministry_delete',
+				],
+				"agencies" => [
+					'agencies_view',
+					'agencies_add',
+					'agencies_update',
+					'agencies_delete',
+				],
 				"version" => [
 					'version_view'
 				],

@@ -23,16 +23,23 @@
     </header>
     <!-- Main page content-->
     <div class="container-fluid px-4">
-        @if(session('success'))
+        @if(isset($_GET['success']))
+        <div class="alert alert-primary alert-dismissible fade show" role="alert">
+            <h5 class="alert-heading">Message</h5>
+                {{ $_GET['success'] }}
+                <button class="btn-close" type="button" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        @endif
+        {{-- @if(session('success'))
             <div class="alert alert-primary alert-dismissible fade show" role="alert">
                 <h5 class="alert-heading">Message</h5>
                 {{ session('success') }}
                 <button class="btn-close" type="button" data-bs-dismiss="alert" aria-label="Close"></button>
             </div>
-        @endif
+        @endif --}}
         <div class="card">
             <div class="card-body">
-                <table id="datatablesSimple" class="table">
+                <table id="datatablesSimple1" class="table">
                     <thead>
                         <tr>
                             <th>No</th>
@@ -97,3 +104,61 @@
 </main>
 
 @endsection
+@push('script')
+    <script>
+        (function ($) {
+    var table = $('#datatablesSimple1').DataTable({
+        processing: true,
+        serverSide: false,
+        ordering: true,
+        lengthMenu: [ [10, 25, 50, -1], [10, 25, 50, "All"] ],
+        dom: '<"top"fBl>rt<"bottom"ip>',
+        buttons: [
+            {
+                extend: 'copy',
+                text: 'Copy',
+                exportOptions: {
+                    columns: ':visible'
+                }
+            },
+            {
+                extend: 'csv',
+                text: 'CSV',
+                exportOptions: {
+                    columns: ':visible'
+                }
+            },
+            {
+                extend: 'excel',
+                text: 'Excel',
+                exportOptions: {
+                    columns: ':visible'
+                }
+            },
+            {
+                extend: 'pdf',
+                text: 'PDF',
+                exportOptions: {
+                    columns: ':visible'
+                }
+            },
+            {
+                extend: 'print',
+                text: 'Print',
+                exportOptions: {
+                    columns: ':visible'
+                }
+            }
+        ],
+        columnDefs: [
+        { type: 'date-uk', targets: [/* index of your date column */] }
+    ]
+    });
+
+    // Adjust positioning of search input and export buttons
+    $('.dataTables_filter').addClass('d-inline-block mr-2'); // Make search input inline
+    $('.dt-buttons').appendTo('.dataTables_filter'); // Append export buttons to search container
+})(jQuery);
+
+    </script>
+    @endpush

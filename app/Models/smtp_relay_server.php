@@ -22,8 +22,9 @@ class smtp_relay_server extends Model  implements Auditable
         'deactivated',
         'smtp_relay_server',
         'smtp_port',
-        'smtp_username',
-        'smtp_password',
+        // 'smtp_username',
+        'smtpid',
+        'types_req',
     ];
 
     // If your table has timestamps (created_at and updated_at columns)

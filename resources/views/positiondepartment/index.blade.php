@@ -45,7 +45,7 @@
                     </div>
                 </div>
                 <div class="card-body">
-                    <table id="datatablesSimple" class="table">
+                    <table id="datatablesSimple1" class="table">
                         <thead>
                             <tr>
                                 <th>No</th>
@@ -106,7 +106,7 @@
                     </div>
                 </div>
                 <div class="card-body">
-                    <table id="datatablesSimple2" class="table">
+                    <table id="datatablesSimple3" class="table">
                         <thead>
                             <tr>
                                 <th>No</th>
@@ -154,3 +154,118 @@
         </div>
     </main>
 @endsection
+@push('script')
+    <script>
+        (function ($) {
+    // DataTable 1
+    var table1 = $('#datatablesSimple1').DataTable({
+        processing: true,
+        serverSide: false,
+        ordering: true,
+        lengthMenu: [ [10, 25, 50, -1], [10, 25, 50, "All"] ],
+        dom: '<"top"fBl>rt<"bottom"ip>',
+        buttons: [
+            {
+                extend: 'copy',
+                text: 'Copy',
+                exportOptions: {
+                    columns: ':visible'
+                }
+            },
+            {
+                extend: 'csv',
+                text: 'CSV',
+                exportOptions: {
+                    columns: ':visible'
+                }
+            },
+            {
+                extend: 'excel',
+                text: 'Excel',
+                exportOptions: {
+                    columns: ':visible'
+                }
+            },
+            {
+                extend: 'pdf',
+                text: 'PDF',
+                exportOptions: {
+                    columns: ':visible'
+                }
+            },
+            {
+                extend: 'print',
+                text: 'Print',
+                exportOptions: {
+                    columns: ':visible'
+                }
+            }
+        ],
+        columnDefs: [
+        { type: 'date-uk', targets: [/* index of your date column */] }
+    ]
+    });
+
+    // Append export buttons to DataTable 1's search container
+    $('.dataTables_filter', table1.table().container()).addClass('d-inline-block mr-2').append($('.dt-buttons', table1.table().container()));
+
+})(jQuery);
+
+
+(function ($) {
+    // DataTable 2
+    var table2 = $('#datatablesSimple3').DataTable({
+        processing: true,
+        serverSide: false,
+        ordering: true,
+        lengthMenu: [ [10, 25, 50, -1], [10, 25, 50, "All"] ],
+        dom: '<"top"fBl>rt<"bottom"ip>',
+        buttons: [
+            {
+                extend: 'copy',
+                text: 'Copy',
+                exportOptions: {
+                    columns: ':visible'
+                }
+            },
+            {
+                extend: 'csv',
+                text: 'CSV',
+                exportOptions: {
+                    columns: ':visible'
+                }
+            },
+            {
+                extend: 'excel',
+                text: 'Excel',
+                exportOptions: {
+                    columns: ':visible'
+                }
+            },
+            {
+                extend: 'pdf',
+                text: 'PDF',
+                exportOptions: {
+                    columns: ':visible'
+                }
+            },
+            {
+                extend: 'print',
+                text: 'Print',
+                exportOptions: {
+                    columns: ':visible'
+                }
+            }
+        ],
+        columnDefs: [
+        { type: 'date-uk', targets: [/* index of your date column */] }
+    ]
+    });
+
+    // Append export buttons to DataTable 2's search container
+    $('.dataTables_filter', table2.table().container()).addClass('d-inline-block mr-2').append($('.dt-buttons', table2.table().container()));
+
+})(jQuery);
+
+    </script>
+    @endpush
