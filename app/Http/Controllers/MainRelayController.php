@@ -13,6 +13,9 @@ use Illuminate\Support\Facades\Mail;
 use App\Mail\mailApproved;
 use App\Mail\mailReject;
 use App\Models\User;
+use App\Models\Server;
+use App\Models\DomainServer;
+use App\Models\RoleServer;
 
 class MainRelayController extends Controller
 {
@@ -36,6 +39,24 @@ class MainRelayController extends Controller
         ->get();
 
         return view('mailrelay.register', compact('user','smtpMailServers'));
+    }
+    public function mailupstream(Request $request)
+    {
+        $ff = $request->serverconfig;
+
+        $user = Auth::user();
+        $role = $user->roles->isNotEmpty() ? $user->roles->pluck('name')->first() : null;
+        $serverIds = RoleServer::whereIn('role_id', $user->roles->pluck('id')->all())
+        ->pluck('server_id');
+
+        $serverconfig = Server::where('status', 1)
+        ->get();
+
+        $serverdetail = DomainServer::where('server_id', $ff)->get();
+
+         
+
+        return view('mailrelay.mailupstream', compact('user','serverconfig','serverdetail'));
     }
     public function view(string $id, $type)
     {
@@ -102,23 +123,23 @@ class MainRelayController extends Controller
         }
     }
 
-    public function executeCommand (Request $request)
-    {
-        $server = '20.6.33.199';
-        $username = 'pentadbir';
-        $privateKey = storage_path('key/postmaster_key.pem');
+    // public function executeCommand (Request $request)
+    // {
+    //     $server = '20.6.33.199';
+    //     $username = 'pentadbir';
+    //     $privateKey = storage_path('key/postmaster_key.pem');
 
-        $ssh = new SSH2($server);
-        if(!$ssh->login($username, $privateKey)){
-            return response()->json(['output' => 'Login Failed!']);
-        }
+    //     $ssh = new SSH2($server);
+    //     if(!$ssh->login($username, $privateKey)){
+    //         return response()->json(['output' => 'Login Failed!']);
+    //     }
 
-        $command = $request->input('command');
-        $output = $ssh->exec($command);
+    //     $command = $request->input('command');
+    //     $output = $ssh->exec($command);
 
-        $ssh->disconnect();
+    //     $ssh->disconnect();
 
-        return response()->json(['output' => 'Login Failed!']);
+    //     return response()->json(['output' => 'Login Failed!']);
 
-    }
+    // }
 }

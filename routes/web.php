@@ -94,13 +94,14 @@ Route::group(['middleware' => ['auth']], function () {
     Route::group(['prefix' => 'mailrelay'], function () {
         Route::get('/', [MainRelayController::class, 'index'])->name('mailrelay.index')->middleware('auth.resource:manage_mail_relay_view');
         Route::get('/register', [MainRelayController::class, 'show'])->name('mailrelay.register');
+        Route::get('/mailupstream', [MainRelayController::class, 'mailupstream'])->name('mailrelay.mailupstream');
         Route::get('/detail/{id}/{type}', [MainRelayController::class, 'view'])->name('mailrelay.edit');
         Route::get('/reject/{id}', [MainRelayController::class, 'reject'])->name('mailrelay.reject');
         Route::post('/submit-form', [MainRelayController::class, 'submitappForm'])->name('mailrelay.form');
         Route::post('/submit-rej-form', [MainRelayController::class, 'submitrejForm'])->name('mailrelay.reject');
 
         Route::get('/view/{id}/{type}', [MainRelayController::class, 'papar'])->name('mailrelay.view');
-
+        // Route::post('/mailupstream/{serverconfig}', [MainRelayController::class, 'getNewServerData'])->name('mailrelay.getNewServerData');
 
         // Route::get('/detail/{id}', [MainRelayController::class, 'updatestatus']);
     });
@@ -289,8 +290,12 @@ Route::group(['middleware' => ['auth']], function () {
     });
 
       Route::group(['prefix' => 'terminal'], function () {
-        Route::get('/', [TerminalController::class, 'index'])->name('terminal.index');
+        // Route::get('/', [TerminalController::class, 'index'])->name('terminal.index');
         Route::post('/execute-ssh-command',[TerminalController::class, 'executeCommand'])->name('terminal.executeCommand');
+        // Route::get('/internal-cli', [TerminalController::class, 'show'])->name('internal.cli');
+        Route::get('/shell-in-a-box', [TerminalController::class, 'terminal'])->name('shell-in-a-box');
+
+
 
     });
 

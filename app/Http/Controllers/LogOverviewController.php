@@ -115,9 +115,9 @@ class LogOverviewController extends Controller
     {
         $serverName = $request->serverName;
         $dummyData = $this->dummyData($serverName);
-        
+
         return response()->json($dummyData);
-        
+
     }
 
     private function dummyData($serverName)
@@ -269,7 +269,7 @@ class LogOverviewController extends Controller
                         [
                             "message" => "bounced",
                             "data1" => "6",
-                            "data2" => "12.00%",                           
+                            "data2" => "12.00%",
                             "data3" => "2.33%",
                         ],
                         [

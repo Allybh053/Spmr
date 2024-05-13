@@ -112,7 +112,16 @@
   </div>
   <!-- <div class="row mb-4"><div class="col-xxl-4"><div class="card"><div class="card-header text-center p-5"><h5>Graf serial apps vs day</h5></div><div class="card-body"><canvas id="appsChart"></canvas></div></div></div><div class="col-xxl-4"><div class="card"><div class="card-header text-center p-5"><h5>Graf serial domain vs day</h5></div><div class="card-body"><canvas id="domainChart"></canvas></div></div></div><div class="col-xxl-4"><div class="card"><div class="card-header text-center p-5"><h5>Graf serial sasl vs day</h5></div><div class="card-body"><canvas id="saslChart"></canvas></div></div></div></div> -->
   <div class="row">
-    <div class="col-xxl-12"><div class="card"><div class="card-header text-center p-5"><h5>Graf serial Mail Queue vs Time</h5></div><div class="card-body"><canvas id="mailQueueChart"></canvas></div></div></div>
+    <div class="col-xxl-12">
+        <div class="card">
+            <div class="card-header text-center p-5">
+                <h5>Graf serial Mail Queue vs Time</h5>
+            </div>
+            <div class="card-body">
+                <canvas id="mailQueueChart"></canvas>
+            </div>
+        </div>
+    </div>
 
     <div class="col-xxl-12 mt-5">
       <div class="card">
@@ -258,176 +267,157 @@
 @push('script')
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.4/Chart.min.js" crossorigin="anonymous"></script>
 <script>
-
     (Chart.defaults.global.defaultFontFamily = "Metropolis"),
     '-apple-system,system-ui,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif';
     Chart.defaults.global.defaultFontColor = "#858796";
-    </script>
-    <script>
+</script>
+<script>
 
+let data = [];
+let sockets = [];
+let serverIpaddresses = [];
+let serverIpaddresses1 = [];
 $(document).ready(function() {
 
-    $('a.mService').click(function(e) {
-        e.preventDefault();
-        var href = $(this).attr('href');
+$('a.mService').click(function(e) {
+    e.preventDefault();
+    var href = $(this).attr('href');
 
-        $('body').fadeOut(300, function() {
-
-            window.location.href = href;
-        });
+    $('body').fadeOut(300, function() {
+        window.location.href = href;
     });
+});
 
-    function getRandomColor() {
+function getRandomColor() {
     var red = Math.floor(Math.random() * 128) + 128; // Range: 128-255
     var green = Math.floor(Math.random() * 128) + 128; // Range: 128-255
     var blue = Math.floor(Math.random() * 128) + 128; // Range: 128-255
     return 'rgb(' + red + ',' + green + ',' + blue + ')';
-    }
+}
 
+renderChartKementerian();
+function renderChartKementerian() {
+    var ctx = document.getElementById('kementerianChart').getContext('2d');
+    window.kementerianChart = new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: <?php echo json_encode($filteredMinistries); ?>,
+            datasets: <?php
+                      $datasets = [];
+                      foreach ($serverList as $server) {
+                          $serverHostname = $server['hostname'];
+                          $color = sprintf('#%06X', mt_rand(0, 0xFFFFFF));
+                          $data = collect($departmentCounts)->map(function ($data) use ($serverHostname) {
+                              return $data['postmasters'] === $serverHostname ? $data['count'] : 0;
+                          })->values()->toArray(); // Convert to array
+                          $datasets[] = [
+                              'label' => $serverHostname,
+                              'data' => $data,
+                              'backgroundColor' => $color, // Corrected syntax
+                              'borderColor' => '#4e73df',
+                              'borderWidth' => 1
+                          ];
+                  }
+                      echo json_encode($datasets);
+                      ?>
+        },
+        options: {
+            scales: {
+                y: {
+                    beginAtZero: true
+                }
+            },
+            plugins: {
+                legend: {
+                    display: true,
+                    position: 'bottom',
+                }
+            }
+        }
+    });
+}
 
-    renderChartKementerian();
-    function renderChartKementerian() {
-        var ctx = document.getElementById('kementerianChart').getContext('2d');
-        window.kementerianChart = new Chart(ctx, {
-            type: 'bar',
-            data: {
-                labels: <?php echo json_encode($filteredMinistries); ?>,
-                datasets: <?php
-                          $datasets = [];
-                          foreach ($serverList as $server) {
-                              $serverHostname = $server['hostname'];
-                              $color = sprintf('#%06X', mt_rand(0, 0xFFFFFF));
-                              $data = collect($departmentCounts)->map(function ($data) use ($serverHostname) {
-                                  return $data['postmasters'] === $serverHostname ? $data['count'] : 0;
-                              })->values()->toArray(); // Convert to array
-                              $datasets[] = [
-                                  'label' => $serverHostname,
-                                  'data' => $data,
-                                  'backgroundColor' => $color, // Corrected syntax
-                                  'borderColor' => '#4e73df',
-                                  'borderWidth' => 1
-                              ];
+renderChart();
+function renderChart() {
+    var departmentChart = document.getElementById('departmentChart').getContext('2d');
+    window.chart = new Chart(departmentChart, {
+        type: 'bar',
+        data: {
+            labels: <?php echo json_encode($filteredDept); ?>,
+            datasets: <?php
+                      $datasets = [];
+                      foreach ($serverList as $server) {
+                          $serverHostname = $server['hostname'];
+                          $color = sprintf('#%06X', mt_rand(0, 0xFFFFFF));
+                          $data = collect($departmentCounts2)->map(function ($data) use ($serverHostname) {
+                              return $data['postmasters'] === $serverHostname ? $data['count'] : 0;
+                          })->values()->toArray(); // Convert to array
+                          $datasets[] = [
+                              'label' => $serverHostname,
+                              'data' => $data,
+                              'backgroundColor' => $color, // Corrected syntax
+                              'borderColor' => '#4e73df',
+                              'borderWidth' => 1
+                          ];
                       }
-                          echo json_encode($datasets);
-                          ?>
+                      echo json_encode($datasets);
+                      ?>
+        },
+        options: {
+            scales: {
+                y: {
+                    beginAtZero: true
+                }
             },
-            options: {
-                scales: {
-                    y: {
-                        beginAtZero: true
-                    }
-                },
-                plugins: {
-                    legend: {
-                        display: true,
-                        position: 'bottom',
-                    }
+            plugins: {
+                legend: {
+                    display: true,
+                    position: 'bottom',
                 }
             }
-        });
-    }
+        }
+    });
+}
 
-    renderChart();
-    function renderChart() {
-        var departmentChart = document.getElementById('departmentChart').getContext('2d');
-        window.chart = new Chart(departmentChart, {
-            type: 'bar',
-            data: {
-                labels: <?php echo json_encode($filteredDept); ?>,
-                datasets: <?php
-                          $datasets = [];
-                          foreach ($serverList as $server) {
-                              $serverHostname = $server['hostname'];
-                              $color = sprintf('#%06X', mt_rand(0, 0xFFFFFF));
-                              $data = collect($departmentCounts2)->map(function ($data) use ($serverHostname) {
-                                  return $data['postmasters'] === $serverHostname ? $data['count'] : 0;
-                              })->values()->toArray(); // Convert to array
-                              $datasets[] = [
-                                  'label' => $serverHostname,
-                                  'data' => $data,
-                                  'backgroundColor' => $color, // Corrected syntax
-                                  'borderColor' => '#4e73df',
-                                  'borderWidth' => 1
-                              ];
-                          }
-                          echo json_encode($datasets);
-                          ?>
-            },
-            options: {
-                scales: {
-                    y: {
-                        beginAtZero: true
-                    }
-                },
-                plugins: {
-                    legend: {
-                        display: true,
-                        position: 'bottom',
-                    }
-                }
-            }
-        });
-    }
-
-    // mailq
-       // Extract data passed from the controller
-       // Generate random color function
-       function randomColor() {
+function randomColor() {
     return '#' + Math.floor(Math.random() * 16777215).toString(16);
 }
 
-    var data = [];
-    //console.log(data);
-        // Generate random data for a server
-        function generateServerData(serverName, cleanResponse) {
-            if (cleanResponse) {
-                const cleanRes = cleanResponse.replace(/(\\.||\[.*?#\d+ )/g, '').trim();
-                const lines = cleanRes.split('\n');
-                // Filter out the lines that don't start with '[root@postmaster1a:/opt/cluster/postfix]#'
-                const filteredLines = lines.filter(line => !line.startsWith('[root@postmaster1a:/opt/cluster/postfix]#'));
-                // Filter out the lines containing numeric data
-                const numericLines = filteredLines.filter(line => /^\d/.test(line));
-                //console.log(numericLines);
+// var data = [];
 
-                numericLines.forEach((line, index) => {
-                    const [timestamp, value] = line.split(',');
-                    const formattedTimestamp = timestamp.replace(' ', ' ').replace(/-/g, '/');
-                    data.push({
-                        x: formattedTimestamp,
-                        y: parseInt(value)
-                    });
-                });
-                //console.log(data[0]);
+function generateServerData(serverName, cleanResponse) {
 
+    if (cleanResponse) {
+        const cleanRes = cleanResponse.replace(/(\\.||\[.*?#\d+ )/g, '').trim();
+        const lines = cleanRes.split('\n');
+        const filteredLines = lines.filter(line => !line.startsWith('[root@postmaster1a:/opt/cluster/postfix]#'));
+        const numericLines = filteredLines.filter(line => /^\d/.test(line));
 
-            } else {
-                //console.error("cleanResponse is undefined");
-            }
+        numericLines.forEach((line, index) => {
+            const [timestamp, value] = line.split(',');
+            const formattedTimestamp = timestamp.replace(' ', ' ').replace(/-/g, '/');
+            data.push({
+                x: formattedTimestamp,
+                y: parseInt(value)
+            });
+        });
 
-            //var data = [];
-            // console.log(data);
-            /*var currentDate = new Date();
-            currentDate.setHours(0, 0, 0, 0); // Set time to midnight
+    } else {
+        //console.error("cleanResponse is undefined");
+    }
 
-            // Generate data for each minute until current time
-            for (var i = 0; i <= 10; i++) {
-                    var timestamp = new Date(currentDate);
-                    timestamp.setMinutes(i);
-                    var formattedTimestamp = formatDate(timestamp); // Format timestamp
-                    data.push({
-                        x: formattedTimestamp,
-                        y: Math.floor(Math.random() * 10) // Random count value
-                    });
-            }*/
+    var currentDate = new Date();
+    currentDate.setHours(0, 0, 0, 0); // Set time to midnight
 
-            return {
-                label: serverName,
-                borderColor: randomColor(),
-                backgroundColor: 'rgba(0, 0, 0, 0)', // Transparent background
-                borderWidth: 1,
-                data: data
-            };
-        }
+    return {
+        label: serverName,
+        borderColor: randomColor(),
+        backgroundColor: 'rgba(0, 0, 0, 0)', // Transparent background
+        borderWidth: 1,
+        data: data
+    };
+
+}
 
 // Function to format timestamp as "dd/mm/yyyy HH:mm:ss"
 function formatDate(date) {
@@ -442,361 +432,227 @@ function formatDate(date) {
 }
 
 // Generate random data for multiple servers
-    let serverIpaddresses1 = [];
 
-    @foreach ($serverconfig as $server)
-    let serverMailRelay1{{$loop->iteration}} = "{{ $server->hostname }}";
-    serverIpaddresses1.push(serverMailRelay1{{$loop->iteration}});
-    @endforeach
 
-    var servers = {};
+@foreach ($serverconfig as $server)
+let serverMailRelay1{{$loop->iteration}} = "{{ $server->hostname }}";
+serverIpaddresses1.push(serverMailRelay1{{$loop->iteration}});
+@endforeach
 
-    // Iterate over the serverIpaddresses array and generate server data
-    serverIpaddresses1.forEach(function(hostname, index) {
-        servers['server' + (index + 1)] = generateServerData(hostname);
-    });
+var servers = {};
+
+// Iterate over the serverIpaddresses array and generate server data
+serverIpaddresses1.forEach(function(hostname, index) {
+    servers['server' + (index + 1)] = generateServerData(hostname);
+});
 
 // Prepare datasets for Chart.js
 var datasets = Object.values(servers);
+var xValues = datasets[0].data.map(function(dataPoint) {
+    return dataPoint.x;
+});
+
+function mailQueueChart() {
+
+// Create a new Chart.js instance
+var ctx = document.getElementById('mailQueueChart').getContext('2d');
 
 
-// // Create a new Chart.js instance
-// var ctx = document.getElementById('mailQueueChart').getContext('2d');
-// var labels = Array.from(Array(5).keys()).map(minute => {
-//     var timestamp = new Date();
-//     timestamp.setHours(0, minute, 0, 0);
-//     return formatDate(timestamp); // Format timestamp
-// });
-// //console.log(labels);
+var labels = datasets[0].data.map(function(dataPoint) {
+    return dataPoint.x;
+});
 
-// var mailQueueChart = new Chart(ctx, {
-//     type: 'line',
-//     data: {
-//         labels: labels,
-//         datasets: datasets // Pass the formatted datasets array
-//     },
-//     options: {
-//         scales: {
-//             x: [{
-//                 type: 'time',
-//                 time: {
-//                     parser: 'DD/MM/YYYY HH:mm:ss', // Custom parser for the format
-//                     unit: 'minute', // Display unit as minute
-//                     displayFormats: {
-//                         minute: 'HH:mm' // Format for minute display
-//                     }
-//                 },
-//                 title: {
-//                     display: true,
-//                     text: 'Time'
-//                 }
-//             }],
-//             y: [{
-//                 title: {
-//                     display: true,
-//                     text: 'Mail Count'
-//                 },
-//                 beginAtZero: true
-//             }]
-//         },
-//         plugins: {
-//             legend: {
-//                 display: true,
-//                 position: 'bottom', // Adjust legend position if needed
-//                 onHover: function (event, legendItem) {
-//                     event.target.style.cursor = 'pointer';
-//                 }
-//             }
-//         }
-//     }
-// });
+var mailQueueChart = new Chart(ctx, {
+    type: 'line',
+    data: {
+        labels: labels,
+        datasets: datasets  
+    },
+    options: {
+        scales: {
+            x: [{
+                type: 'time',
+                time: {
+                    parser: 'DD/MM/YYYY HH:mm:ss', // Custom parser for the format
+                    unit: 'minute', // Display unit as minute
+                    displayFormats: {
+                        minute: 'HH:mm' // Format for minute display
+                    }
+                },
+                title: {
+                    display: false,
+                    text: 'Time'
+                }
+            }],
+            y: [{
+                title: {
+                    display: true,
+                    text: 'Mail Count'
+                },
+                beginAtZero: true
+            }]
+        },
+        plugins: {
+            legend: {
+                display: true,
+                position: 'bottom', // Adjust legend position if needed
+                onHover: function (event, legendItem) {
+                    event.target.style.cursor = 'pointer';
+                }
+            }
+        }
+    }
+});
+}
+window.onload = function() {
+    mailQueueChart();
+};
 
-    let sockets = [];
-    let serverIpaddresses = [];
+@foreach ($serverconfig as $server)
+let serverMailRelay{{$loop->iteration}} = "{{ $server->hostname }}";
+serverIpaddresses.push(serverMailRelay{{$loop->iteration}});
+@endforeach
 
-    @foreach ($serverconfig as $server)
-    //let serverMailRelay{{$loop->iteration}} = "{{ $server->ipaddress }}";
-    let serverMailRelay{{$loop->iteration}} = "{{ $server->hostname }}";
-    serverIpaddresses.push(serverMailRelay{{$loop->iteration}});
-    @endforeach
+serverIpaddresses.forEach(hostname => {
+    const serverAddress = 'wss://' + hostname + '/wss/';
 
-    serverIpaddresses.forEach(hostname => {
-        //const serverAddress = 'ws://' + ip + ':8000/';
-        const serverAddress = 'wss://' + hostname + '/wss/';
+    const socket = new WebSocket(serverAddress);
+    sockets.push(socket);
+});
 
-        const socket = new WebSocket(serverAddress);
-        sockets.push(socket);
+sockets.forEach((socket, index) => {
+    getDataMailServer1(socket);
+    socket.addEventListener('open', (event) => {
+
     });
 
-    sockets.forEach((socket, index) => {
-        getDataMailServer1(socket);
-        socket.addEventListener('open', (event) => {
+    socket.addEventListener('close', (event) => {
 
-        });
+    });
 
-        socket.addEventListener('close', (event) => {
+    socket.addEventListener('error', (event) => {
 
-        });
+    });
 
-        socket.addEventListener('error', (event) => {
+    socket.addEventListener('message', (event) => {
 
-        });
+    });
+});
 
-        socket.addEventListener('message', (event) => {
+// function updateChart() {
+//     mailQueueChart.update();
+// }
 
+function getDataMailServer1(socket) {
+
+    const commands = [
+        'wc -l /opt/cluster/postfix/access_list | cut -d " " -f1',
+        'wc -l /opt/cluster/postfix/sender_relay_maps | cut -d " " -f1',
+        '/usr/sbin/sasldblistusers2 | wc -l',
+        'mailq | grep -c "^[A-F0-9]"',
+        'status=$(systemctl --no-pager status postfix | grep Active:); if echo "$status" | grep -q "active (exited) since"; then echo "Postfix is running"; elif echo "$status" | grep -q "inactive (dead) since"; then echo "Postfix is down"; else echo "Something is wrong"; fi',
+        'status=$(systemctl --no-pager status fail2ban | grep Active:); if echo "$status" | grep -q "active (running) since"; then echo "Fail2ban is running"; elif echo "$status" | grep -q "inactive (dead) since"; then echo "Fail2ban is down"; else echo "Something is wrong"; fi',
+        'status=$(systemctl --no-pager status webmin | grep Active:); if echo "$status" | grep -q "active (running) since"; then echo "Webmin is running"; elif echo "$status" | grep -q "inactive (dead) since"; then echo "Webmin is down"; else echo "Something is wrong"; fi',
+        'status=$(systemctl --no-pager status apache2 | grep Active:); if echo "$status" | grep -q "active (running) since"; then echo "Apache2 is running"; elif echo "$status" | grep -q "inactive (dead) since"; then echo "Apache2 is down"; else echo "Something is wrong"; fi',
+        '/usr/bin/tail -120 /data/collections/spmr/count_mailq.txt',
+
+    ];
+
+    const outputs = [];
+
+    socket.addEventListener('open', (event) => {
+
+        commands.forEach(command => {
+            socket.send(command);
         });
     });
 
-    function getDataMailServer1(socket) {
+    socket.addEventListener('message', (event) => {
 
-        const commands = [
-            'wc -l /opt/cluster/postfix/access_list | cut -d " " -f1',
-            'wc -l /opt/cluster/postfix/sender_relay_maps | cut -d " " -f1',
-            '/usr/sbin/sasldblistusers2 | wc -l',
-            'mailq | grep -c "^[A-F0-9]"',
-            'status=$(systemctl --no-pager status postfix | grep Active:); if echo "$status" | grep -q "active (exited) since"; then echo "Postfix is running"; elif echo "$status" | grep -q "inactive (dead) since"; then echo "Postfix is down"; else echo "Something is wrong"; fi',
-            'status=$(systemctl --no-pager status fail2ban | grep Active:); if echo "$status" | grep -q "active (running) since"; then echo "Fail2ban is running"; elif echo "$status" | grep -q "inactive (dead) since"; then echo "Fail2ban is down"; else echo "Something is wrong"; fi',
-            'status=$(systemctl --no-pager status webmin | grep Active:); if echo "$status" | grep -q "active (running) since"; then echo "Webmin is running"; elif echo "$status" | grep -q "inactive (dead) since"; then echo "Webmin is down"; else echo "Something is wrong"; fi',
-            'status=$(systemctl --no-pager status apache2 | grep Active:); if echo "$status" | grep -q "active (running) since"; then echo "Apache2 is running"; elif echo "$status" | grep -q "inactive (dead) since"; then echo "Apache2 is down"; else echo "Something is wrong"; fi',
-            '/usr/bin/tail -6 /data/collections/spmr/count_mailq.txt',
+        const response = event.data;
+        // console.log(event.data);
 
-        ];
+        const output = extractOutput(response);
+        if (output !== null) {
+
+
+            outputs.push(output);
+
+            if (outputs.length > commands.length) {
+
+                $('#totalApplications').text(outputs[1]);
+                $('#totalDomains').text(outputs[3]);
+                $('#totalSASL').text(outputs[5]);
+                $('#mailQueueCount').text(outputs[7]);
+                $('#statusPostfix').text(outputs[9]);
+                $('#statusFail2ban').text(outputs[11]);
+                $('#statusWebmin').text(outputs[13]);
+                $('#statusApache2').text(outputs[15]);
+
+                var postfixStatus = outputs[9];
+                var postfixAlt;
+                if(postfixStatus == "Postfix is running"){
+                    postfixStatus = "Online";
+                    postfixAlt = "Postfix is running";
+                }else{
+                    postfixStatus = "Offline";
+                    postfixAlt = "Postfix is down";
+                }
+                var postfixImageSrc = postfixStatus === 'Online' ? 'assets/img/demo/online.png' : 'assets/img/demo/offline.png';
+                $('#statusPostfixImage').attr('src', postfixImageSrc).attr('alt', postfixAlt);
+
+                var Apache2Status = outputs[15];
+                var Apache2Alt;
+                if(Apache2Status == "Apache2 is running"){
+                    Apache2Status = "Online";
+                    Apache2Alt = "Apache2 is running";
+                }else{
+                    Apache2Status = "Offline";
+                    Apache2Alt = "Apache2 is down";
+                }
+                var Apache2ImageSrc = Apache2Status === 'Online' ? 'assets/img/demo/online.png' : 'assets/img/demo/offline.png';
+                $('#statusApache2Image').attr('src', Apache2ImageSrc).attr('alt', Apache2Alt);
+
+                var WebminStatus = outputs[13];
+                var WebminAlt;
+                if(WebminStatus == "Webmin is running"){
+                    WebminStatus = "Online";
+                    WebminAlt = "Webmin is running";
+                }else{
+                    WebminStatus = "Offline";
+                    WebminAlt = "Webmin is down";
+                }
+                var WebminImageSrc = WebminStatus === 'Online' ? 'assets/img/demo/online.png' : 'assets/img/demo/offline.png';
+                $('#statusWebminImage').attr('src', WebminImageSrc).attr('alt', WebminAlt);
+
+
+
+            }
+        }
+    });
+
+    function extractOutput(response) {
+
+        const cleanResponse = response.replace(/\[\d;?\d*m/g, '').trim();
+        generateServerData('Mailq Server', cleanResponse);
+
+        const outputMatch = cleanResponse.match(/\[.*?\]#\S (.*)/);
 
         const outputs = [];
 
-        socket.addEventListener('open', (event) => {
+        if (outputMatch && outputMatch.length > 1) {
 
-            commands.forEach(command => {
-                socket.send(command);
-            });
-        });
+            outputs.push(outputMatch[1]);
 
-        socket.addEventListener('message', (event) => {
-
-            const response = event.data;
-
-            const output = extractOutput(response);
-            if (output !== null) {
-
-                outputs.push(output);
-
-                if (outputs.length > commands.length) {
-
-                    $('#totalApplications').text(outputs[1]);
-                    $('#totalDomains').text(outputs[3]);
-                    $('#totalSASL').text(outputs[5]);
-                    $('#mailQueueCount').text(outputs[7]);
-                    $('#statusPostfix').text(outputs[9]);
-                    $('#statusFail2ban').text(outputs[11]);
-                    $('#statusWebmin').text(outputs[13]);
-                    $('#statusApache2').text(outputs[15]);
-
-                    var postfixStatus = outputs[9];
-                    var postfixAlt;
-                    if(postfixStatus == "Postfix is running"){
-                        postfixStatus = "Online";
-                        postfixAlt = "Postfix is running";
-                    }else{
-                        postfixStatus = "Offline";
-                        postfixAlt = "Postfix is down";
-                    }
-                    var postfixImageSrc = postfixStatus === 'Online' ? 'assets/img/demo/online.png' : 'assets/img/demo/offline.png';
-                    $('#statusPostfixImage').attr('src', postfixImageSrc).attr('alt', postfixAlt);
-
-                    var Apache2Status = outputs[15];
-                    var Apache2Alt;
-                    if(Apache2Status == "Apache2 is running"){
-                        Apache2Status = "Online";
-                        Apache2Alt = "Apache2 is running";
-                    }else{
-                        Apache2Status = "Offline";
-                        Apache2Alt = "Apache2 is down";
-                    }
-                    var Apache2ImageSrc = Apache2Status === 'Online' ? 'assets/img/demo/online.png' : 'assets/img/demo/offline.png';
-                    $('#statusApache2Image').attr('src', Apache2ImageSrc).attr('alt', Apache2Alt);
-
-                    var WebminStatus = outputs[13];
-                    var WebminAlt;
-                    if(WebminStatus == "Webmin is running"){
-                        WebminStatus = "Online";
-                        WebminAlt = "Webmin is running";
-                    }else{
-                        WebminStatus = "Offline";
-                        WebminAlt = "Webmin is down";
-                    }
-                    var WebminImageSrc = WebminStatus === 'Online' ? 'assets/img/demo/online.png' : 'assets/img/demo/offline.png';
-                    $('#statusWebminImage').attr('src', WebminImageSrc).attr('alt', WebminAlt);
-
-                }
-            }
-        });
-
-        function extractOutput(response) {
-
-            const cleanResponse = response.replace(/\[\d;?\d*m/g, '').trim();
-            generateServerData('Mailq Server', cleanResponse);
-
-            //const outputMatch = cleanResponse.match(/command: (.*)/);
-            const outputMatch = cleanResponse.match(/\[.*?\]#\S (.*)/);
-
-            const outputs = [];
-
-            if (outputMatch && outputMatch.length > 1) {
-
-                outputs.push(outputMatch[1]);
-
-                return outputs;
-            } else {
-                return null;
-            }
+            return outputs;
+        } else {
+            return null;
         }
-
-
     }
 
+}
 
+});
 
-
-    });
-
-      let sockets = [];
-      let serverIpaddresses = [];
-
-      @foreach ($serverconfig as $server)
-      //let serverMailRelay{{$loop->iteration}} = "{{ $server->ipaddress }}";
-      let serverMailRelay{{$loop->iteration}} = "{{ $server->hostname }}";
-      serverIpaddresses.push(serverMailRelay{{$loop->iteration}});
-      @endforeach
-
-      serverIpaddresses.forEach(hostname => {
-          //const serverAddress = 'ws://' + ip + ':8000/';
-          const serverAddress = 'wss://' + hostname + '/wss/';
-
-          const socket = new WebSocket(serverAddress);
-          sockets.push(socket);
-      });
-
-      sockets.forEach((socket, index) => {
-          getDataMailServer1(socket);
-          socket.addEventListener('open', (event) => {
-            // console.log('WebSocket connection closed.'+event);
-          });
-
-          socket.addEventListener('close', (event) => {
-            // console.log('WebSocket connection closed.'+event);
-          });
-
-          socket.addEventListener('error', (event) => {
-            console.clear(); // Clear the console
-          });
-
-          socket.addEventListener('message', (event) => {
-            // console.log('WebSocket connection closed.'+event);
-          });
-      });
-
-      function getDataMailServer1(socket) {
-
-          const commands = [
-              'wc -l /opt/cluster/postfix/access_list | cut -d " " -f1',
-              'wc -l /opt/cluster/postfix/sender_relay_maps | cut -d " " -f1',
-              '/usr/sbin/sasldblistusers2 | wc -l',
-              'mailq | grep -c "^[A-F0-9]"',
-              'status=$(systemctl --no-pager status postfix | grep Active:); if echo "$status" | grep -q "active (exited) since"; then echo "Postfix is running"; elif echo "$status" | grep -q "inactive (dead) since"; then echo "Postfix is down"; else echo "Something is wrong"; fi',
-              'status=$(systemctl --no-pager status fail2ban | grep Active:); if echo "$status" | grep -q "active (running) since"; then echo "Fail2ban is running"; elif echo "$status" | grep -q "inactive (dead) since"; then echo "Fail2ban is down"; else echo "Something is wrong"; fi',
-              'status=$(systemctl --no-pager status webmin | grep Active:); if echo "$status" | grep -q "active (running) since"; then echo "Webmin is running"; elif echo "$status" | grep -q "inactive (dead) since"; then echo "Webmin is down"; else echo "Something is wrong"; fi',
-              'status=$(systemctl --no-pager status apache2 | grep Active:); if echo "$status" | grep -q "active (running) since"; then echo "Apache2 is running"; elif echo "$status" | grep -q "inactive (dead) since"; then echo "Apache2 is down"; else echo "Something is wrong"; fi',
-
-          ];
-
-          const outputs = [];
-
-          socket.addEventListener('open', (event) => {
-
-              commands.forEach(command => {
-                  socket.send(command);
-              });
-          });
-
-          socket.addEventListener('message', (event) => {
-
-              const response = event.data;
-
-              const output = extractOutput(response);
-              if (output !== null) {
-
-                  outputs.push(output);
-
-                  if (outputs.length > commands.length) {
-
-                      $('#totalApplications').text(outputs[1]);
-                      $('#totalDomains').text(outputs[3]);
-                      $('#totalSASL').text(outputs[5]);
-                      $('#mailQueueCount').text(outputs[7]);
-                      $('#statusPostfix').text(outputs[9]);
-                      $('#statusFail2ban').text(outputs[11]);
-                      $('#statusWebmin').text(outputs[13]);
-                      $('#statusApache2').text(outputs[15]);
-
-                      var postfixStatus = outputs[9];
-                      var postfixAlt;
-                      if(postfixStatus == "Postfix is running"){
-                        postfixStatus = "Online";
-                        postfixAlt = "Postfix is running";
-                      }else{
-                        postfixStatus = "Offline";
-                        postfixAlt = "Postfix is down";
-                      }
-                      var postfixImageSrc = postfixStatus === 'Online' ? 'assets/img/demo/online.png' : 'assets/img/demo/offline.png';
-                      $('#statusPostfixImage').attr('src', postfixImageSrc).attr('alt', postfixAlt);
-
-                      var Apache2Status = outputs[15];
-                      var Apache2Alt;
-                      if(Apache2Status == "Apache2 is running"){
-                        Apache2Status = "Online";
-                        Apache2Alt = "Apache2 is running";
-                      }else{
-                        Apache2Status = "Offline";
-                        Apache2Alt = "Apache2 is down";
-                      }
-                      var Apache2ImageSrc = Apache2Status === 'Online' ? 'assets/img/demo/online.png' : 'assets/img/demo/offline.png';
-                      $('#statusApache2Image').attr('src', Apache2ImageSrc).attr('alt', Apache2Alt);
-
-                      var WebminStatus = outputs[13];
-                      var WebminAlt;
-                      if(WebminStatus == "Webmin is running"){
-                        WebminStatus = "Online";
-                        WebminAlt = "Webmin is running";
-                      }else{
-                        WebminStatus = "Offline";
-                        WebminAlt = "Webmin is down";
-                      }
-                      var WebminImageSrc = WebminStatus === 'Online' ? 'assets/img/demo/online.png' : 'assets/img/demo/offline.png';
-                      $('#statusWebminImage').attr('src', WebminImageSrc).attr('alt', WebminAlt);
-
-                  }
-              }
-          });
-
-          function extractOutput(response) {
-
-              const cleanResponse = response.replace(/\[\d;?\d*m/g, '').trim();
-
-              //const outputMatch = cleanResponse.match(/command: (.*)/);
-              const outputMatch = cleanResponse.match(/\[.*?\]#\S (.*)/);
-
-              const outputs = [];
-
-              if (outputMatch && outputMatch.length > 1) {
-
-                  outputs.push(outputMatch[1]);
-
-                  return outputs;
-              } else {
-                  return null;
-              }
-          }
-      }
-
-    </script>
+</script>
 @endpush

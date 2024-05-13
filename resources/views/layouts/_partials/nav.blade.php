@@ -59,6 +59,7 @@
                     <nav class="sidenav-menu-nested nav accordion" id="accordionSidenavPages">
                         <a hidden class="nav-link" href="{{ route('mailrelay.index')}}">View Mail Relay Server</a>
                         <a class="nav-link" href="{{ route('mailrelay.register')}}">Register Mail Relay</a>
+                        <a class="nav-link" href="{{ route('mailrelay.mailupstream')}}">Mail Upstream</a>
                     </nav>
                 </div>
                 @endcan
