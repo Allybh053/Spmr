@@ -198,10 +198,14 @@ class TerminalController extends Controller {
             // $response = Http::get('https://localhost:4200/');
             $response = $client->get('https://localhost:4200/');
 
+            $statusCode = $response->getStatusCode();
+
             // Check if the response was successful
-            if ($response->successful()) {
+            // if ($response->successful()) {
+                if ($statusCode >= 200 && $statusCode < 300) {
                 // Return the response body
-                $responseBody = $response->body();
+                // $responseBody = $response->body();
+                $responseBody = $response->getBody()->getContents();
 
                 // Load the private key
                 $privateKeyContents = file_get_contents(base_path('keys/postmaster_key.pem'));
@@ -221,7 +225,7 @@ class TerminalController extends Controller {
                 // Return an error message
                 $Error = "Unable to fetch content from the terminal!";
                 echo "<script>alert('$Error');</script>";
-                return $Error;
+                return $statusCode;
             }
         } catch (RequestException $e) {
 
