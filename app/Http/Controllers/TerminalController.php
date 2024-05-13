@@ -251,7 +251,7 @@ class TerminalController extends Controller {
                 $key = PublicKeyLoader::load($privateKeyContents, '88__rGnuGlsmeWAmXdd7');
 
                 // Construct the SSH command
-                $sshCommand = "ssh -i $key pentadbir@13.12.21.02 'cd /opt/cluster/postfix && ls -lha'";
+                $sshCommand = "ssh -i $key pentadbir@13.12.21.02 'cd /opt/cluster/postfix/'";
 
                 // Execute SSH command
                 $process = Process::fromShellCommandline($sshCommand);
