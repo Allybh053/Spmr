@@ -17,7 +17,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\DB;
-use Faker\Factory as Faker;
+//use Faker\Factory as Faker;
 use App\Models\RoleServer;
 use Illuminate\Support\Facades\Mail;
 use App\Mail\mailForm;
@@ -44,7 +44,7 @@ class SmtpRelayController extends Controller
         return view('smtp_relay.index', compact('user', 'role','agency','serverIds','defaultServerId','serverconfig','domainsArray'));
     }
 
-    public function search(Request $request)
+    /*public function search(Request $request)
     {
         $input1 = $request->input('agency'); // Assuming 'agency' is the name of the select input for Kementerian/Agensi/SUK
         $input2Type = $request->input('calendarType');
@@ -62,7 +62,7 @@ class SmtpRelayController extends Controller
             'totalIP' => $totalIP,
             'totalDeactivated' => $totalDeactivated
         ]);
-    }
+    }*/
 
     public function datatable(Request $request)
     {
