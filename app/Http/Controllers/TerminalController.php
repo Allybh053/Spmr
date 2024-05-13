@@ -10,6 +10,8 @@ use App\Events\TerminalCommandEvent;
 
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\RequestException;
+use Illuminate\Support\Facades\Artisan;
+
 
 class TerminalController extends Controller {
 
