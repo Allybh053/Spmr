@@ -4,7 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
-use Faker\Factory as Faker;
+//use Faker\Factory as Faker;
 
 use Illuminate\Support\Facades\Storage;
 use Maatwebsite\Excel\Facades\Excel;
@@ -29,10 +29,10 @@ class ReportDetailSenderController extends Controller
         return view('reports.detailSender.index',compact( 'serverName'));
     }
 
-    public function validation(Request $request)
+    /*public function validation(Request $request)
     {
         $serverName = $request->serverName;
-    
+
         // Generate dummy data based on server name
         switch ($serverName) {
             case 'Server A':
@@ -48,13 +48,13 @@ class ReportDetailSenderController extends Controller
                 $receiverRange = [500, 2000];
                 break;
         }
-    
+
         // Create a Faker instance
         $faker = Faker::create();
-    
+
         // Initialize an empty array to store data
         $dataReports = [];
-    
+
         // Generate 20 or more sets of dummy data
         for ($i = 0; $i < 20; $i++) {
             $dataReport = [
@@ -76,12 +76,12 @@ class ReportDetailSenderController extends Controller
                     "lastDate" => $faker->date('d-m-Y'),
                 ]
             ];
-    
+
             // Add the generated data to the array
             $dataReports[] = $dataReport;
         }
-    
+
         // Return the data as a JSON response
         return new JsonResponse(["data" => $dataReports]);
-    }
+    }*/
 }

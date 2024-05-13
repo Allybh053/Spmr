@@ -13,7 +13,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\JsonResponse;
-use Faker\Factory as Faker;
+//use Faker\Factory as Faker;
 use Illuminate\Support\Facades\File;
 use function Laravel\Prompts\search;
 
