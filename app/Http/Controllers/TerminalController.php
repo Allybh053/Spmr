@@ -8,6 +8,9 @@ use phpseclib3\Crypt\PublicKeyLoader;
 use Illuminate\Support\Facades\Http;
 use App\Events\TerminalCommandEvent;
 
+use GuzzleHttp\Client;
+use GuzzleHttp\Exception\RequestException;
+
 class TerminalController extends Controller {
 
     protected $ssh;
@@ -187,8 +190,13 @@ class TerminalController extends Controller {
 
     public function terminal()
     {
+        $client = new Client([
+            'verify' => false, // Disable SSL certificate verification
+        ]);
+
         try {
-            $response = Http::get('https://localhost:4200/');
+            // $response = Http::get('https://localhost:4200/');
+            $response = $client->get('https://localhost:4200/');
 
             // Check if the response was successful
             if ($response->successful()) {
