@@ -11,6 +11,8 @@ use App\Events\TerminalCommandEvent;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\RequestException;
 use Illuminate\Support\Facades\Artisan;
+use Symfony\Component\Process\Process;
+use Symfony\Component\Process\Exception\ProcessFailedException;
 
 
 class TerminalController extends Controller {
@@ -196,17 +198,52 @@ class TerminalController extends Controller {
             'verify' => false, // Disable SSL certificate verification
         ]);
 
-        try {
-            // $response = Http::get('https://localhost:4200/');
-            $response = $client->get('https://localhost:4200/');
+        // try {
+        //     // $response = Http::get('https://localhost:4200/');
+        //     $response = $client->get('https://localhost:4200/');
 
+        //     $statusCode = $response->getStatusCode();
+
+        //     // Check if the response was successful
+        //     // if ($response->successful()) {
+        //         if ($statusCode >= 200 && $statusCode < 300) {
+        //         // Return the response body
+        //         // $responseBody = $response->body();
+        //         $responseBody = $response->getBody()->getContents();
+
+        //         // Load the private key
+        //         $privateKeyContents = file_get_contents(base_path('keys/postmaster_key.pem'));
+        //         $key = PublicKeyLoader::load($privateKeyContents, '88__rGnuGlsmeWAmXdd7');
+
+        //         // Construct the SSH command
+        //         $sshCommand = "ssh -i $key pentadbir@13.12.21.02";
+
+        //         // Execute SSH command in the terminal
+        //         Artisan::call('shell:exec', ['command' => $sshCommand]);
+
+        //         Artisan::call('cd', ['/opt/cluster/postfix']);
+
+        //         return $responseBody;
+
+        //     } else {
+        //         // Return an error message
+        //         $Error = "Unable to fetch content from the terminal!";
+        //         echo "<script>alert('$Error');</script>";
+        //         return $statusCode;
+        //     }
+        // } catch (RequestException $e) {
+        //     // An error occurred during the HTTP request
+        //     return "Error: " . $e->getMessage();
+        // }
+        try {
+            $client = new Client([
+                'verify' => false, // Disable SSL certificate verification
+            ]);
+
+            $response = $client->get('https://localhost:4200/');
             $statusCode = $response->getStatusCode();
 
-            // Check if the response was successful
-            // if ($response->successful()) {
-                if ($statusCode >= 200 && $statusCode < 300) {
-                // Return the response body
-                // $responseBody = $response->body();
+            if ($statusCode >= 200 && $statusCode < 300) {
                 $responseBody = $response->getBody()->getContents();
 
                 // Load the private key
@@ -214,25 +251,29 @@ class TerminalController extends Controller {
                 $key = PublicKeyLoader::load($privateKeyContents, '88__rGnuGlsmeWAmXdd7');
 
                 // Construct the SSH command
-                $sshCommand = "ssh -i $key pentadbir@13.12.21.02";
+                $sshCommand = "ssh -i $key pentadbir@13.12.21.02 'cd /opt/cluster/postfix && ls -lha'";
 
-                // Execute SSH command in the terminal
-                Artisan::call('shell:exec', ['command' => $sshCommand]);
+                // Execute SSH command
+                $process = Process::fromShellCommandline($sshCommand);
+                $process->run();
 
-                Artisan::call('cd', ['/opt/cluster/postfix']);
+                if (!$process->isSuccessful()) {
+                    throw new ProcessFailedException($process);
+                }
 
                 return $responseBody;
-
             } else {
                 // Return an error message
-                $Error = "Unable to fetch content from the terminal!";
-                echo "<script>alert('$Error');</script>";
+                $error = "Unable to fetch content from the terminal!";
+                echo "<script>alert('$error');</script>";
                 return $statusCode;
             }
         } catch (RequestException $e) {
-
             // An error occurred during the HTTP request
             return "Error: " . $e->getMessage();
+        } catch (ProcessFailedException $e) {
+            // An error occurred during the execution of the SSH command
+            return "Error executing SSH command: " . $e->getMessage();
         }
     }
 }
