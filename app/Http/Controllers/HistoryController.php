@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use Faker\Factory as Faker;
+//use Faker\Factory as Faker;
 
 class HistoryController extends Controller
 {
@@ -15,7 +15,7 @@ class HistoryController extends Controller
      */
     public function indexBlacklist()
     {
-        
+
         $serverName = [
             "serverLocal" => "Server Local",
             "serverFirst" => "Server First",
@@ -25,16 +25,16 @@ class HistoryController extends Controller
         return view('history.blacklist.index',compact('serverName'));
     }
 
-    public function datatableBlacklist()
+    /*public function datatableBlacklist()
     {
         $faker = Faker::create();
-    
+
         // Dummy data array
         $application = [];
-    
+
         // Define the number of rows you want to generate
         $rowCount = 10;
-    
+
         for ($i = 0; $i < $rowCount; $i++) {
             $application[] = [
                 'id' => $i + 1,
@@ -50,7 +50,7 @@ class HistoryController extends Controller
             ];
         }
 
-    
+
                 return datatables()->of($application)
                 ->addIndexColumn()
                 ->addColumn('ticket_number', function ($row) {
@@ -81,28 +81,28 @@ class HistoryController extends Controller
                     return $row['status'];
                 })
                 ->make(true);
-    }
+    }*/
     public function searching(Request $request)
     {
         $serverName = $request->serverName;
-    
+
         return response()->json($serverName);
     }
 
-    public function datatableSearching(Request $request)
+    /*public function datatableSearching(Request $request)
     {
-      
+
         $serverName = $request->serverName;
         $titleCaseString = ucwords(preg_replace('/(?<!\ )[A-Z]/', ' $0', $serverName));
         // Initialize Faker
         $faker = Faker::create();
-    
+
         // Dummy data array
         $application = [];
-    
+
         // Define the number of rows you want to generate
         $rowCount = 10;
-    
+
         for ($i = 0; $i < $rowCount; $i++) {
             $application[] = [
                 'id' => $i + 1,
@@ -118,7 +118,7 @@ class HistoryController extends Controller
             ];
         }
 
-       
+
         return datatables()->of($application)
         ->addIndexColumn()
         ->addColumn('ticket_number', function ($row) {
@@ -149,13 +149,13 @@ class HistoryController extends Controller
             return $row['status'];
         })
         ->make(true);
-    }
+    }*/
 
 
 
     public function indexWhitelist()
     {
-        
+
         $serverName = [
             "serverLocal" => "Server Local",
             "serverFirst" => "Server First",
@@ -183,7 +183,7 @@ class HistoryController extends Controller
                     ],
                     // Add more rows as needed
                 ];
-    
+
                 return datatables()->of($application)
                 ->addIndexColumn()
                 ->addColumn('ticket_number', function ($row) {
@@ -246,7 +246,7 @@ class HistoryController extends Controller
                     ],
                     // Add more rows as needed
                 ];
-    
+
                 return datatables()->of($application)
                 ->addIndexColumn()
                 ->addColumn('ticket_number', function ($row) {
