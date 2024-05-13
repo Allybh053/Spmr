@@ -11,7 +11,7 @@ use App\Models\smtp_relay_server;
 use App\Models\SmtpRelayReqForm;
 use Carbon\Carbon;
 use DateTime;
-use Faker\Factory as Faker;
+//use Faker\Factory as Faker;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -85,7 +85,7 @@ class DashboardController extends Controller
             return in_array($department2['postmasters'], array_column($serverList, 'hostname'));
         })->pluck('department_name')->toArray();
 
-            $faker = Faker::create();
+            //$faker = Faker::create();
             $days = range(1, 10);
 
 
@@ -107,9 +107,9 @@ class DashboardController extends Controller
             $p2Data = [];
             $p3Data = [];
             for ($i = 0; $i < 10; $i++) { // Assuming 10 data points for each P1, P2, P3 for example
-                $p1Data[] = $faker->numberBetween(1, 100);
-                $p2Data[] = $faker->numberBetween(1, 100);
-                $p3Data[] = $faker->numberBetween(1, 100);
+                //$p1Data[] = $faker->numberBetween(1, 100);
+                //$p2Data[] = $faker->numberBetween(1, 100);
+                //$p3Data[] = $faker->numberBetween(1, 100);
             }
 
             // Pass the data to the view
@@ -119,16 +119,16 @@ class DashboardController extends Controller
                 'p2Data', 'p3Data','defaultServerId'));
         }
 
-    public function api(Request $request, $limit=null)
+    /*public function api(Request $request, $limit=null)
     {
-        $faker = Faker::create();
+        //$faker = Faker::create();
 
         $serverId = $request->serverId;
-        $ipAddress = $faker->ipv4;
+        //$ipAddress = $faker->ipv4;
         // Generate fake data for total applications, domains, and SASL
-        $totalApplications = $faker->numberBetween(100, 1000);
-        $totalDomains = $faker->numberBetween(50, 500);
-        $totalSASL = $faker->numberBetween(20, 200);
+        //$totalApplications = $faker->numberBetween(100, 1000);
+        //$totalDomains = $faker->numberBetween(50, 500);
+        //$totalSASL = $faker->numberBetween(20, 200);
 
         // Generate fake data for the table
         $tableData = [];
@@ -164,16 +164,16 @@ class DashboardController extends Controller
         });
         $mailCounts = collect($mailqData)->pluck('mail_count');
 
-        $faker = Faker::create();
+        //$faker = Faker::create();
         $days = range(1, 10);
 
         $p1Data = [];
         $p2Data = [];
         $p3Data = [];
         for ($i = 0; $i < 10; $i++) { // Assuming 10 data points for each P1, P2, P3 for example
-            $p1Data[] = $faker->numberBetween(1, 100);
-            $p2Data[] = $faker->numberBetween(1, 100);
-            $p3Data[] = $faker->numberBetween(1, 100);
+            //$p1Data[] = $faker->numberBetween(1, 100);
+            //$p2Data[] = $faker->numberBetween(1, 100);
+            //$p3Data[] = $faker->numberBetween(1, 100);
         }
 
         return new JsonResponse([
@@ -181,7 +181,7 @@ class DashboardController extends Controller
             'totalDomains' => $totalDomains,
             'totalSASL' => $totalSASL,
             'data' => $tableData,
-            'status' => $faker->randomElement(['Online', 'Offline']),
+            //'status' => $faker->randomElement(['Online', 'Offline']),
             'services' => $services,
             'ipAddress' => $ipAddress,
             'departmentCounts' => $departmentCounts,
@@ -193,7 +193,7 @@ class DashboardController extends Controller
             'p2Data'=> $p2Data,
             'p3Data'=> $p3Data,
         ]);
-    }
+    }*/
 
 
     private function generateDataMinistry($limit = null)
@@ -381,7 +381,7 @@ class DashboardController extends Controller
         return $limitedCollection2;
     }
 
-    private function generateFakerMailQueue($numEntries)
+    /*private function generateFakerMailQueue($numEntries)
     {
         $faker = Faker::create();
         $mailQueueData = [];
@@ -398,7 +398,7 @@ class DashboardController extends Controller
         }
 
         return $mailQueueData;
-    }
+    }*/
 
 
 }

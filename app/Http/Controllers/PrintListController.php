@@ -10,7 +10,7 @@ use Illuminate\Support\Facades\Storage;
 use Maatwebsite\Excel\Facades\Excel;
 use App\Excel\ExportStatisticData;
 use Illuminate\Support\Facades\Auth;
-use Faker\Factory as Faker;
+//use Faker\Factory as Faker;
 
 class PrintListController extends Controller
 {
@@ -40,9 +40,9 @@ class PrintListController extends Controller
     public function validation(Request $request)
     {
         $serverName = $request->serverName;
-    
+
         // Create a Faker instance
-        $faker = Faker::create();
+        //$faker = Faker::create();
 
         // Initialize an empty array to store data
         $dataReports = [];
@@ -51,7 +51,7 @@ class PrintListController extends Controller
         for ($i = 0; $i < 20; $i++) {
             $dataReport = [
                 "No" => $i + 1,
-                "IpAddress" => $faker->ipv4,
+                //"IpAddress" => $faker->ipv4,
                 "Action" => '<button class="btn btn-primary">Manage</button>',
             ];
 
