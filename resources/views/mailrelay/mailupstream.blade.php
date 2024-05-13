@@ -52,7 +52,7 @@
                     </div>
                 </form>
             </div>
-        </div>
+        </div><hr>
         <div class="card">
             <div class="card-body">
                 <table id="datatablesSimple1" class="table">
@@ -85,6 +85,11 @@
                     </tbody>
                 </table>
             </div>
+            <hr>
+            <div class="card-body">
+                <label class="small mb-1" for="serverconfig">Terminal</label>
+                <div id="shell-in-a-box"></div>
+            </div>
         </div>
     </div>
     <style>
@@ -97,6 +102,20 @@
 @endsection
 @push('script')
 <script>
+
+    $(document).ready(function() {
+        // Make AJAX request to fetch Shell In A Box session
+        fetch('{{ route('shell-in-a-box') }}')
+        .then(response => response.text())
+        .then(data => {
+            // console.log(data);
+            // Update the content on your page
+            document.getElementById('shell-in-a-box').innerHTML = data;
+        })
+        .catch(error => {
+            console.error('Error fetching Shell In A Box session:', error);
+        });
+    });
     // $(document).ready(function() {
     //     $('#searching').click(function(e) {
     //         e.preventDefault();
