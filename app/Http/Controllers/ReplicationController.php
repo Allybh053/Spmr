@@ -10,7 +10,7 @@ use Illuminate\Support\Facades\Storage;
 use Maatwebsite\Excel\Facades\Excel;
 use App\Excel\ExportStatisticData;
 use Illuminate\Support\Facades\Auth;
-use Faker\Factory as Faker;
+//use Faker\Factory as Faker;
 
 class ReplicationController extends Controller
 {
@@ -35,7 +35,7 @@ class ReplicationController extends Controller
         ->pluck('hostname', 'id');
 
         // Initialize Faker
-        $faker = Faker::create();
+        //$faker = Faker::create();
 
         // Generate fake server names based on the count of $serverNames
         $fakeImages = [];

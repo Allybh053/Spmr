@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use phpseclib3\Net\SSH2;
 use phpseclib3\Crypt\PublicKeyLoader;
 use Illuminate\Support\Facades\Http;
+use App\Events\TerminalCommandEvent;
 
 class TerminalController extends Controller {
 
