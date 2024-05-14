@@ -90,7 +90,8 @@
                     </div>
                     <div class="col-md-4">
                         <label for="mailbox">SMTP Port</label>
-                        <p class="text-primary">{{ $smtpreq->smtp_port }}/tcp</p>
+                        {{--<p class="text-primary">{{ $smtpreq->smtp_port }}/tcp</p>--}}
+                        <p id="smtpPortDescription"></p>
                     </div>
                 </div>
             </div>
@@ -218,6 +219,27 @@
                     }
                 });
 
+
+            // The smtpPort value passed from PHP to JavaScript
+            var smtpPort = @json($smtpreq->smtp_port);
+
+            // Define the mapping from port value to description
+            var portDescriptions = {
+                0: 'Not Answered',
+                1: '25/tcp',
+                2: '465/tcp',
+                3: '587/tcp',
+                4: '25/tcp & 465/tcp',
+                5: '25/tcp & 587/tcp',
+                6: '465/tcp & 587/tcp',
+                7: 'All'
+            };
+
+            // Get the paragraph element
+            var descriptionElement = document.getElementById('smtpPortDescription');
+
+            // Set the description based on the smtpPort value
+            descriptionElement.textContent = portDescriptions[smtpPort] || 'Unknown';
 
 
             // Initialize terminal

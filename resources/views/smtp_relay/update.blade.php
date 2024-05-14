@@ -177,12 +177,15 @@
                 <div class="row gx-3 mb-3">
                     <div class="col-md-6">
                         <label for="smtp_port">SMTP Port Number</label>
-                        <select class="form-control select2" name="smtp_port" id="smtp_port" aria-label="Default select" required>
+                        {{--<select class="form-control select2" name="smtp_port" id="smtp_port" aria-label="Default select" required>
                             <option value="{{ old('smtp_port', $formsmtp->smtp_port) }}">{{ old('smtp_port', $formsmtp->smtp_port) }} /tcp</option>
                             <option value="0">Not Answered</option>
                             <option value="25">25/tcp</option>
                             <option value="465">465/tcp</option>
                             <option value="587">587/tcp</option>
+                        </select>--}}
+                        <select class="form-control select2" name="smtp_port" id="smtp_port" aria-label="Default select" required>
+                            <!-- The default option will be updated via JavaScript -->
                         </select>
                     </div>
                     <div class="col-md-6">
@@ -373,6 +376,46 @@
 @endsection
 @push('script')
 <script>
+
+    document.addEventListener('DOMContentLoaded', function() {
+        // The smtpPort value passed from PHP to JavaScript
+        var smtpPort = @json($formsmtp->smtp_port);
+
+        // Define the mapping from port value to description
+        var portDescriptions = {
+            0: 'Not Answered',
+            1: '25/tcp',
+            2: '465/tcp',
+            3: '587/tcp',
+            4: '25/tcp & 465/tcp',
+            5: '25/tcp & 587/tcp',
+            6: '465/tcp & 587/tcp',
+            7: 'All'
+        };
+
+        // Get the select element
+        var selectElement = document.getElementById('smtp_port');
+
+        // Create the default option
+        var defaultOption = document.createElement('option');
+        defaultOption.value = smtpPort;
+        defaultOption.textContent = portDescriptions[smtpPort] || 'Unknown';
+        //selectElement.appendChild(defaultOption);
+
+        // Add the other options
+        for (var value in portDescriptions) {
+            if (portDescriptions.hasOwnProperty(value)) {
+                var option = document.createElement('option');
+                option.value = value;
+                option.textContent = portDescriptions[value];
+                selectElement.appendChild(option);
+            }
+        }
+
+        // Set the default selected value
+        selectElement.value = smtpPort;
+    });
+
     // Add row button click handler
 $('#add-row-table').click(function () {
     addRow('#dynamic-inputs-container');
