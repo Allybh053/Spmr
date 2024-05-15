@@ -109,7 +109,7 @@
 
         });
 
-        function sendTestCmd() { 
+        function sendTestCmd() {
 
             const serverAddress = 'wss://postmaster1a-dev.mygovuc.gov.my/wss/';
             const socket = new WebSocket(serverAddress);
@@ -132,16 +132,16 @@
         }
 
         // Make AJAX request to fetch Shell In A Box session
-        // fetch('{{ route('shell-in-a-box') }}')
-        // .then(response => response.text())
-        // .then(data => {
-        //     // console.log(data);
-        //     // Update the content on your page
-        //     document.getElementById('shell-in-a-box').innerHTML = data;
-        // })
-        // .catch(error => {
-        //     console.error('Error fetching Shell In A Box session:', error);
-        // });
+        fetch('{{ route('shell-in-a-box') }}')
+        .then(response => response.text())
+        .then(data => {
+            // console.log(data);
+            // Update the content on your page
+            document.getElementById('shell-in-a-box').innerHTML = data;
+        })
+        .catch(error => {
+            console.error('Error fetching Shell In A Box session:', error);
+        });
 
     });
 

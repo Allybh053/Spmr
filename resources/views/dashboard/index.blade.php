@@ -448,7 +448,7 @@ serverIpaddresses1.forEach(function(hostname, index) {
 
 // Prepare datasets for Chart.js
 var datasets = Object.values(servers);
-console.log(datasets);
+ 
 var xValues = datasets[0].data.map(function(dataPoint) {
     return dataPoint.x;
 });
