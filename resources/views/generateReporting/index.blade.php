@@ -210,6 +210,7 @@
                                     <thead>
                                     <tr>
                                         <th>No.</th>
+                                        <th>Agency Name</th>
                                         <th>Project Name</th>
                                         <th>System Name</th>
                                         <th>IP Address</th>
@@ -231,6 +232,7 @@
                                     <thead>
                                     <tr>
                                         <th>No.</th>
+                                        <th>Agency Name</th>
                                         <th>Project Name</th>
                                         <th>System Name</th>
                                         <th>IP Address</th>
@@ -254,6 +256,7 @@
                                         <th>No.</th>
                                         <th>Ticket No.</th>
                                         <th>Types Request</th>
+                                        <th>Agency Name</th>
                                         <th>Project Name</th>
                                         <th>SMTP Relay Authentication Method</th>
                                         <th>SMTP Port</th>
@@ -399,12 +402,23 @@
         var table2 = $('#listAgencyDomain').DataTable({
             ordering: true,
             columns: [
-                { data: 'DT_RowIndex2', name: 'DT_RowIndex2', orderable: false, searchable: false, class: 'text-center' },
-                { data: 'project_name', name: 'project_name', orderable: false, searchable: false, class: 'text-center' },
-                { data: 'server_name', name: 'server_name', orderable: false, searchable: false, class: 'text-center' },
-                { data: 'ip_addr_server', name: 'ip_addr_server', orderable: false, searchable: false, class: 'text-center' },
-                { data: 'fqdn_server', name: 'fqdn_server', orderable: false, searchable: false, class: 'text-center' },
-                { data: 'deactivated', name: 'deactivated', orderable: false, searchable: false, class: 'text-center' },
+                /*{ data: 'DT_RowIndex2', name: 'DT_RowIndex2', orderable: false, searchable: false, class: 'text-center' },*/
+                {
+                    data: null,
+                    name: 'DT_RowIndex2',
+                    orderable: false,
+                    searchable: false,
+                    class: 'text-center',
+                    render: function (data, type, row, meta) {
+                        return meta.row + 1; // This will render the index starting from 1
+                    }
+                },
+                { data: 'agencies', name: 'agencies', class: 'text-center' },
+                { data: 'project_name', name: 'project_name', class: 'text-center' },
+                { data: 'server_name', name: 'server_name', class: 'text-center' },
+                { data: 'ip_addr_server', name: 'ip_addr_server', class: 'text-center' },
+                { data: 'fqdn_server', name: 'fqdn_server', class: 'text-center' },
+                { data: 'deactivated', name: 'deactivated', class: 'text-center' },
             ],
             dom: '<"top"fBl>rt<"bottom"ip>',
             buttons: [
@@ -449,18 +463,35 @@
                     }
                 }
             ],
-            data: [] // Initialize with empty data
+            data: [], // Initialize with empty data
+            drawCallback: function(settings) {
+                var api = this.api();
+                api.column(0, {search:'applied', order:'applied'}).nodes().each(function(cell, i) {
+                    cell.innerHTML = i + 1;
+                });
+            }
         });
 
         var table3 = $('#listAgencyDeactivated').DataTable({
             ordering: true,
             columns: [
-                { data: 'DT_RowIndex2', name: 'DT_RowIndex2', orderable: false, searchable: false, class: 'text-center' },
-                { data: 'project_name', name: 'project_name', orderable: false, searchable: false, class: 'text-center' },
-                { data: 'server_name', name: 'server_name', orderable: false, searchable: false, class: 'text-center' },
-                { data: 'ip_addr_server', name: 'ip_addr_server', orderable: false, searchable: false, class: 'text-center' },
-                { data: 'fqdn_server', name: 'fqdn_server', orderable: false, searchable: false, class: 'text-center' },
-                { data: 'deactivated', name: 'deactivated', orderable: false, searchable: false, class: 'text-center' },
+                /*{ data: 'DT_RowIndex2', name: 'DT_RowIndex2', orderable: false, searchable: false, class: 'text-center' },*/
+                {
+                    data: null,
+                    name: 'DT_RowIndex2',
+                    orderable: false,
+                    searchable: false,
+                    class: 'text-center',
+                    render: function (data, type, row, meta) {
+                        return meta.row + 1; // This will render the index starting from 1
+                    }
+                },
+                { data: 'agencies', name: 'agencies', class: 'text-center' },
+                { data: 'project_name', name: 'project_name', class: 'text-center' },
+                { data: 'server_name', name: 'server_name', class: 'text-center' },
+                { data: 'ip_addr_server', name: 'ip_addr_server', class: 'text-center' },
+                { data: 'fqdn_server', name: 'fqdn_server', class: 'text-center' },
+                { data: 'deactivated', name: 'deactivated', class: 'text-center' },
             ],
             dom: '<"top"fBl>rt<"bottom"ip>',
             buttons: [
@@ -505,13 +536,29 @@
                     }
                 }
             ],
-            data: [] // Initialize with empty data
+            data: [], // Initialize with empty data
+            drawCallback: function(settings) {
+                var api = this.api();
+                api.column(0, {search:'applied', order:'applied'}).nodes().each(function(cell, i) {
+                    cell.innerHTML = i + 1;
+                });
+            }
         });
 
         var table = $('#listFormRegistered').DataTable({
             ordering: true,
             columns: [
-                { data: 'DT_RowIndex', name: 'DT_RowIndex', orderable: false, searchable: false, class: 'text-center' },
+                /*{ data: 'DT_RowIndex', name: 'DT_RowIndex', orderable: false, searchable: false, class: 'text-center' },*/
+                {
+                    data: null,
+                    name: 'DT_RowIndex2',
+                    orderable: false,
+                    searchable: false,
+                    class: 'text-center',
+                    render: function (data, type, row, meta) {
+                        return meta.row + 1; // This will render the index starting from 1
+                    }
+                },
                 { data: 'ticket_id', name: 'ticket_id', class: 'text-center' },
                 {
                     data: 'types_req',
@@ -531,6 +578,7 @@
                         }
                     }
                 },
+                { data: 'agencies', name: 'agencies', class: 'text-center' },
                 { data: 'project_name', name: 'project_name', class: 'text-center' },
                 { data: 'smtp_relay_auth_method', name: 'smtp_relay_auth_method', class: 'text-center' },
                 { data: 'smtp_port', name: 'smtp_port', class: 'text-center' },
@@ -593,7 +641,13 @@
                     }
                 }
             ],
-            data: [] // Initialize with empty data
+            data: [], // Initialize with empty data
+            drawCallback: function(settings) {
+                var api = this.api();
+                api.column(0, {search:'applied', order:'applied'}).nodes().each(function(cell, i) {
+                    cell.innerHTML = i + 1;
+                });
+            }
         });
 
         $('.dataTables_filter', table2.table().container()).addClass('d-inline-block mr-2').append($('.dt-buttons', table2.table().container()));
