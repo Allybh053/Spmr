@@ -11,6 +11,7 @@
         <title>SPMR</title>
         <link href="https://cdn.jsdelivr.net/npm/simple-datatables@latest/dist/style.css" rel="stylesheet" />
         <link href="{{asset('css/styles.css')}}" rel="stylesheet" />
+        <link href="{{asset('assets/styles.css')}}" rel="stylesheet" />
         <link rel="icon" type="image/x-icon" href="{{asset('assets/img/favicon.png')}}" />
         <link href="{{asset('css/select2.css')}}" rel="stylesheet" />
         <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
@@ -97,7 +98,7 @@
     <script src="{{asset('js/ajaxSubmit.js')}}" type="text/javascript"></script>
     <script src="https://unpkg.com/xterm-addon-search@1.10.0/lib/xterm-addon-search.js"></script>
     <script src="https://unpkg.com/xterm-addon-copy-mode@1.10.0/lib/xterm-addon-copy-mode.js"></script>
-    
+
     {{-- <script src="{{ asset('js/terminal.js') }}"></script> --}}
     {{-- <script src="https://cdnjs.cloudflare.com/ajax/libs/xterm/4.7.0/xterm.min.js"></script> --}}
     <script>
