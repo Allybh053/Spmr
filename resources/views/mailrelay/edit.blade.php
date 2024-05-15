@@ -219,6 +219,7 @@
                 });
 
 
+
             // Initialize terminal
             // const term = new Terminal({
             //     scrollback: 9999999 // Set the maximum number of lines in the buffer
