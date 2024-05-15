@@ -29,6 +29,8 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ManageServiceController;
 use App\Http\Controllers\GenerateReportingController;
 use App\Http\Controllers\TerminalController;
+use App\Http\Controllers\AgencyController;
+use App\Http\Controllers\MinistryController;
 
 
 /*
@@ -191,15 +193,15 @@ Route::group(['middleware' => ['auth']], function () {
         });
     });
 
-    		//role
-		Route::group(['prefix' => 'role'], function () {
-			Route::get('/',[RoleController::class,'index'])
-            ->name('setup.role.index')
-            ->middleware('auth.resource:role_permission_view');
-			Route::post('/add',[RoleController::class,'create'])->name('setup.role.create');
-			Route::post('/delete',[RoleController::class,'delete'])->name('setup.role.delete');
-			Route::post('/storePermission',[RoleController::class,'storePermission'])->name('setup.role.storePermission');
-		});
+    //role
+    Route::group(['prefix' => 'role'], function () {
+        Route::get('/',[RoleController::class,'index'])
+        ->name('setup.role.index')
+        ->middleware('auth.resource:role_permission_view');
+        Route::post('/add',[RoleController::class,'create'])->name('setup.role.create');
+        Route::post('/delete',[RoleController::class,'delete'])->name('setup.role.delete');
+        Route::post('/storePermission',[RoleController::class,'storePermission'])->name('setup.role.storePermission');
+    });
 
     Route::group(['prefix' => 'domain'], function () {
         Route::get('/', [DomainMinistryAgenciesListController::class, 'index'])
@@ -285,19 +287,20 @@ Route::group(['middleware' => ['auth']], function () {
 
     });
 
-    Route::get('/activity-logs', [ActivityLogController::class,'showActivityLogs'])->name('activityLog.index')
-      ->middleware('auth.resource:spmr_activity_log_view');
-    });
-
-      Route::group(['prefix' => 'terminal'], function () {
+    Route::group(['prefix' => 'terminal'], function () {
         // Route::get('/', [TerminalController::class, 'index'])->name('terminal.index');
         Route::post('/execute-ssh-command',[TerminalController::class, 'executeCommand'])->name('terminal.executeCommand');
         // Route::get('/internal-cli', [TerminalController::class, 'show'])->name('internal.cli');
         Route::get('/shell-in-a-box', [TerminalController::class, 'terminal'])->name('shell-in-a-box');
 
-
-
     });
+
+    Route::get('/activity-logs', [ActivityLogController::class,'showActivityLogs'])->name('activityLog.index')
+      ->middleware('auth.resource:spmr_activity_log_view');
+    });
+
+
+
 
 
 

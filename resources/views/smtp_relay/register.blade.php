@@ -167,9 +167,13 @@
                         <select class="form-control select2" name="ports" id="ports" aria-label="Default select" required>
                             <option selected disabled></option>
                             <option value="0">Not Answered</option>
-                            <option value="25">25/tcp</option>
-                            <option value="465">465/tcp</option>
-                            <option value="587">587/tcp</option>
+                            <option value="1">25/tcp</option>
+                            <option value="2">465/tcp</option>
+                            <option value="3">587/tcp</option>
+                            <option value="4">25/tcp & 465/tcp</option>
+                            <option value="5">25/tcp & 587/tcp</option>
+                            <option value="6">465/tcp & 587/tcp</option>
+                            <option value="7">All</option>
                         </select>
                     </div>
                     <div class="col-md-6">
