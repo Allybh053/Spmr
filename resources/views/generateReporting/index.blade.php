@@ -24,14 +24,14 @@
                 <div class="card-header">Filter</div>
                 <div class="card-body">
                     <form id="searchForm">
-                <div class="serverBox col-md-6">
-                    <div class="mb-3">
-                        <label class="small mb-1" for="inputAgencies">Choose Server:</label>
-                        {!! Form::select('server', $serverconfig,  null,  ['id'=>'server', 'name'=>'server', 'class'=>'form-control select2', 'placeholder'=>config('params.dropdown_default')]) !!}
-                        <p class="card-text mt-1 mb-1" id="ipAddress"></p>
-                        <div class="small text-muted"></div>
-                    </div>
-                </div>
+                        <div class="serverBox col-md-6">
+                            <div class="mb-3">
+                                <label class="small mb-1" for="inputAgencies">Choose Server:</label>
+                                {!! Form::select('server', $serverconfig,  null,  ['id'=>'server', 'name'=>'server', 'class'=>'form-control select2', 'placeholder'=>config('params.dropdown_default')]) !!}
+                                <p class="card-text mt-1 mb-1" id="ipAddress"></p>
+                                <div class="small text-muted"></div>
+                            </div>
+                        </div>
 
                     <div  id="searchBox">
                     {{--<form id="searchForm">--}}
@@ -53,7 +53,7 @@
                         </div>
                         <div class="col-md-6">
                             <div class="mb-3" id="calendarSelect">
-                                <label class="small mb-1" for="calendarType">Select Calendar:</label>
+                                <label class="small mb-1" for="calendarType">Filter Type:</label>
                                 <select class="form-control select2" id="calendarType" name="calendarType">
                                     <option selected disabled></option>
                                     <option value="date">Date</option>
@@ -63,15 +63,14 @@
                                 </select>
                             </div>
                         </div>
-
-                        </div>
+                    </div>
                         <div class="row gx-3 mb-3">
                             <div class="mb-3" id="calendarInputs">
                                 <!-- Inputs for date, month, year, and date range will be dynamically appended here -->
                             </div>
                         </div>
                             <div class="text-end"> <!-- Align the button to the right -->
-                                <button type="button" class="btn btn-secondary" id="back">Back</button>
+                                <button type="button" class="btn btn-secondary" id="reset">Reset</button>
                                 <button type="submit" class="btn btn-primary">Search</button>
                             </div>
                     </form>
@@ -246,7 +245,7 @@
                     </div>
                     <br>
                     <div class="card">
-                        <div class="card-header">List of SASL Registered</div>
+                        <div class="card-header" id="titleTable3">List of SASL Registered</div>
                         <div class="card-body">
                             <div class="table-responsive">
                                 <table id="listFormRegistered"  class="display table table-striped table-bordered" cellspacing="0" width="100%">
@@ -407,6 +406,49 @@
                 { data: 'fqdn_server', name: 'fqdn_server', orderable: false, searchable: false, class: 'text-center' },
                 { data: 'deactivated', name: 'deactivated', orderable: false, searchable: false, class: 'text-center' },
             ],
+            dom: '<"top"fBl>rt<"bottom"ip>',
+            buttons: [
+                {
+                    extend: 'copy',
+                    text: 'Copy',
+                    title: 'List of Agency Domain and IP Address Activated',
+                    exportOptions: {
+                        columns: ':visible'
+                    }
+                },
+                {
+                    extend: 'csv',
+                    text: 'CSV',
+                    title: 'List of Agency Domain and IP Address Activated',
+                    exportOptions: {
+                        columns: ':visible'
+                    }
+                },
+                {
+                    extend: 'excel',
+                    text: 'Excel',
+                    title: 'List of Agency Domain and IP Address Activated',
+                    exportOptions: {
+                        columns: ':visible'
+                    }
+                },
+                {
+                    extend: 'pdf',
+                    text: 'PDF',
+                    title: 'List of Agency Domain and IP Address Activated',
+                    exportOptions: {
+                        columns: ':visible'
+                    }
+                },
+                {
+                    extend: 'print',
+                    text: 'Print',
+                    title: 'List of Agency Domain and IP Address Activated',
+                    exportOptions: {
+                        columns: ':visible'
+                    }
+                }
+            ],
             data: [] // Initialize with empty data
         });
 
@@ -419,6 +461,49 @@
                 { data: 'ip_addr_server', name: 'ip_addr_server', orderable: false, searchable: false, class: 'text-center' },
                 { data: 'fqdn_server', name: 'fqdn_server', orderable: false, searchable: false, class: 'text-center' },
                 { data: 'deactivated', name: 'deactivated', orderable: false, searchable: false, class: 'text-center' },
+            ],
+            dom: '<"top"fBl>rt<"bottom"ip>',
+            buttons: [
+                {
+                    extend: 'copy',
+                    text: 'Copy',
+                    title: 'List of Agency Domain and IP Address Deactivated',
+                    exportOptions: {
+                        columns: ':visible'
+                    }
+                },
+                {
+                    extend: 'csv',
+                    text: 'CSV',
+                    title: 'List of Agency Domain and IP Address Deactivated',
+                    exportOptions: {
+                        columns: ':visible'
+                    }
+                },
+                {
+                    extend: 'excel',
+                    text: 'Excel',
+                    title: 'List of Agency Domain and IP Address Deactivated',
+                    exportOptions: {
+                        columns: ':visible'
+                    }
+                },
+                {
+                    extend: 'pdf',
+                    text: 'PDF',
+                    title: 'List of Agency Domain and IP Address Deactivated',
+                    exportOptions: {
+                        columns: ':visible'
+                    }
+                },
+                {
+                    extend: 'print',
+                    text: 'Print',
+                    title: 'List of Agency Domain and IP Address Deactivatedd',
+                    exportOptions: {
+                        columns: ':visible'
+                    }
+                }
             ],
             data: [] // Initialize with empty data
         });
@@ -465,23 +550,90 @@
                     }
                 },
             ],
+            dom: '<"top"fBl>rt<"bottom"ip>',
+            buttons: [
+                {
+                    extend: 'copy',
+                    text: 'Copy',
+                    title: 'List of SASL Registered',
+                    exportOptions: {
+                        columns: ':visible'
+                    }
+                },
+                {
+                    extend: 'csv',
+                    text: 'CSV',
+                    title: 'List of SASL Registered',
+                    exportOptions: {
+                        columns: ':visible'
+                    }
+                },
+                {
+                    extend: 'excel',
+                    text: 'Excel',
+                    title: 'List of SASL Registered',
+                    exportOptions: {
+                        columns: ':visible'
+                    }
+                },
+                {
+                    extend: 'pdf',
+                    text: 'PDF',
+                    title: 'List of SASL Registered',
+                    exportOptions: {
+                        columns: ':visible'
+                    }
+                },
+                {
+                    extend: 'print',
+                    text: 'Print',
+                    title: 'List of SASL Registered',
+                    exportOptions: {
+                        columns: ':visible'
+                    }
+                }
+            ],
             data: [] // Initialize with empty data
         });
 
-        $('#searchForm').submit(function (e) {
+        $('.dataTables_filter', table2.table().container()).addClass('d-inline-block mr-2').append($('.dt-buttons', table2.table().container()));
+        $('.dataTables_filter', table3.table().container()).addClass('d-inline-block mr-2').append($('.dt-buttons', table3.table().container()));
+        $('.dataTables_filter', table.table().container()).addClass('d-inline-block mr-2').append($('.dt-buttons', table.table().container()));
+
+        /*$('#searchForm').submit(function (e) {
             e.preventDefault();
 
             var formData = $(this).serialize();
-
+            if (formData === 'server=') {
+                alert("Please Choose Server in options field.");
+            }
             $.ajax({
                 type: 'GET',
                 url: "{{ route('generateReport.index.search') }}",
                 data: formData,
                 success: function (response) {
                     //$('#totalApplications').text(response.totalApplications);
-                    $('#totalIP').text(response.totalIP);
-                    $('#totalDeactivated').text(response.totalDeactivated);
-                    $('#totalDomain').text(response.totalDomain);
+                    //$('#totalIP').text(response.totalIP);
+                    //$('#totalDeactivated').text(response.totalDeactivated);
+                    //$('#totalDomain').text(response.totalDomain);
+
+                    if (response.totalIP !== "") {
+                        $('#totalIP').text(response.totalIP);
+                    } else {
+                        $('#totalIP').text("Not Found");
+                    }
+
+                    if (response.totalDeactivated !== "") {
+                        $('#totalDeactivated').text(response.totalDeactivated);
+                    } else {
+                        $('#totalDeactivated').text("Not Found");
+                    }
+
+                    if (response.totalDomain !== "") {
+                        $('#totalDomain').text(response.totalDomain);
+                    } else {
+                        $('#totalDomain').text("Not Found");
+                    }
 
                     // Add index to each row
                     $.each(response.data, function (index, row) {
@@ -542,12 +694,120 @@
                     //console.log(error);
                 }
             });
+        });*/
+
+        $('#searchForm').submit(function (e) {
+            e.preventDefault();
+
+            var formData = $(this).serialize();
+            if (formData === 'server=') {
+                alert("Please Choose Server in options field.");
+            } else {
+                let timerInterval;
+
+                Swal.fire({
+                    title: "Please wait...",
+                    //html: "Please wait...",
+                    timerProgressBar: true,
+                    didOpen: () => {
+                        Swal.showLoading();
+                        const timer = Swal.getPopup().querySelector("b");
+                        timerInterval = setInterval(() => {
+                            if (timer) {
+                                timer.textContent = `${Swal.getTimerLeft()}`;
+                            }
+                        }, 100);
+                    },
+                    willClose: () => {
+                        clearInterval(timerInterval);
+                    }
+                });
+
+                $.ajax({
+                    type: 'GET',
+                    url: "{{ route('generateReport.index.search') }}",
+                    data: formData,
+                    success: function (response) {
+                        // Hide the SweetAlert timer
+                        Swal.close();
+
+                        // Update UI with the response data
+                        $('#totalIP').text(response.totalIP || "Not Found");
+                        $('#totalDeactivated').text(response.totalDeactivated || "Not Found");
+                        $('#totalDomain').text(response.totalDomain || "Not Found");
+
+                        // Add index to each row
+                        $.each(response.data, function (index, row) {
+                            row['DT_RowIndex'] = index + 1;
+                            switch (row['smtp_relay_auth_method']) {
+                                case 1:
+                                    row['smtp_relay_auth_method'] = 'IP Based Authentication Relay';
+                                    break;
+                                case 2:
+                                    row['smtp_relay_auth_method'] = 'Username/Password Authentication Relay';
+                                    break;
+                            }
+                            switch (row['smtp_port']) {
+                                case 0:
+                                    row['smtp_port'] = 'Not Answered';
+                                    break;
+                                case 1:
+                                    row['smtp_port'] = '25/tcp';
+                                    break;
+                                case 2:
+                                    row['smtp_port'] = '465/tcp';
+                                    break;
+                                case 3:
+                                    row['smtp_port'] = '587/tcp';
+                                    break;
+                                case 4:
+                                    row['smtp_port'] = '25/tcp & 465/tcp';
+                                    break;
+                                case 5:
+                                    row['smtp_port'] = '25/tcp & 587/tcp';
+                                    break;
+                                case 6:
+                                    row['smtp_port'] = '465/tcp & 587/tcp';
+                                    break;
+                                case 7:
+                                    row['smtp_port'] = 'All';
+                                    break;
+                            }
+                        });
+
+                        $.each(response.data2, function (index, row) {
+                            row['DT_RowIndex2'] = index + 1;
+                            row['deactivated'] = row['deactivated'] === 1 ? 'Deactivated' : 'Activated';
+                        });
+
+                        $.each(response.data3, function (index, row) {
+                            row['DT_RowIndex2'] = index + 1;
+                            row['deactivated'] = row['deactivated'] === 1 ? 'Deactivated' : 'Activated';
+                        });
+
+                        // Clear existing data and add new data to the DataTable
+                        table.clear().rows.add(response.data).draw();
+                        table2.clear().rows.add(response.data2).draw();
+                        table3.clear().rows.add(response.data3).draw();
+
+                    },
+                    error: function (error) {
+                        // Hide the SweetAlert timer
+                        Swal.close();
+
+                        // Handle the error
+                        console.log(error);
+                    }
+                });
+            }
+
+
         });
 
-        $('#searchBox').fadeOut();
-        $('.serverBox').fadeIn();
+        //$('#searchBox').fadeOut();
+        //$('.serverBox').fadeIn();
 
-        $('#back').on('click', function() {
+        $('#reset').on('click', function() {
             location.reload();
             //$('#searchBox').fadeOut();
             //$('.serverBox').fadeIn();
@@ -567,8 +827,8 @@
                 success: function(response) {
                     // Handle success response and update UI
                     //console.log(response);
-                    $('#searchBox').fadeIn();
-                    $('.serverBox').fadeOut();
+                    //$('#searchBox').fadeIn();
+                    //$('.serverBox').fadeOut();
 
                 },
                 error: function(xhr, status, error) {
