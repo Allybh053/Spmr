@@ -151,7 +151,8 @@
                 <div class="row gx-3 mb-3">
                     <div class="col-md-6">
                         <label for="ports">SMTP Port Number</label>
-                        <p>{{ $datasmtp->smtp_port}} /tcp</p>
+                        {{--<p>{{ $datasmtp->smtp_port}} /tcp</p>--}}
+                        <p id="smtpPortDescription"></p>
                     </div>
                     <div class="col-md-6">
                         <label for=""></label>
@@ -273,6 +274,32 @@
             </div>
         </div>
     </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // The smtpPort value passed from PHP to JavaScript
+            var smtpPort = @json($datasmtp->smtp_port);
+
+            // Define the mapping from port value to description
+            var portDescriptions = {
+                0: 'Not Answered',
+                1: '25/tcp',
+                2: '465/tcp',
+                3: '587/tcp',
+                4: '25/tcp & 465/tcp',
+                5: '25/tcp & 587/tcp',
+                6: '465/tcp & 587/tcp',
+                7: 'All'
+            };
+
+            // Get the paragraph element
+            var descriptionElement = document.getElementById('smtpPortDescription');
+
+            // Set the description based on the smtpPort value
+            descriptionElement.textContent = portDescriptions[smtpPort] || 'Unknown';
+        });
+    </script>
+
     <style>
         label {
             font-weight: bold;
