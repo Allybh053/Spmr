@@ -199,8 +199,8 @@ class TerminalController extends Controller {
         // ]);
 
         try {
-            // $response = Http::get('https://localhost:4200/');
-            $response = $client->get('https://localhost:4200/');
+            $response = Http::get('https://localhost:4200/');
+            // $response = $client->get('https://localhost:4200/');
 
             $statusCode = $response->getStatusCode();
 
