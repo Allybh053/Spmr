@@ -77,7 +77,7 @@
                                     <div class="col-md-4">
                                         <!-- Save and Back button-->
                                         <div style="padding: 25px; text-align: left;">
-                                            <button class="btn btn-success" id="viewer">View</button>
+                                            <button class="btn btn-success" id="viewer">Connect</button>
                                         </div>
                                     </div>
                                 </div>
@@ -102,7 +102,8 @@
 
              // Check if a value is selected
              if (mailRelaySelected) {
-                 location.href = "https://" + mailRelaySelected + ":8443";
+                 /*location.href = "https://" + mailRelaySelected + ":8443";*/
+                 window.open("https://" + mailRelaySelected + ":8443", "_blank");
              } else {
                  alert("Please select a mail relay.");
              }
