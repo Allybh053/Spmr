@@ -199,7 +199,7 @@ class TerminalController extends Controller {
         // ]);
 
         try {
-            $response = Http::get('https://spmr.mygovuc.gov.my:4200/');
+            $response = Http::get('https://127.0.0.1:4200/');
             // $response = $client->get('https://localhost:4200/');
 
             $statusCode = $response->getStatusCode();
@@ -227,8 +227,6 @@ class TerminalController extends Controller {
 
             } else {
                 // Return an error message
-                $Error = "Unable to fetch content from the terminal!";
-                echo "<script>alert('$Error');</script>";
                 return $statusCode;
             }
         } catch (RequestException $e) {
