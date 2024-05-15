@@ -54,7 +54,7 @@ class MainRelayController extends Controller
 
         $serverdetail = DomainServer::where('server_id', $ff)->get();
 
-         
+
 
         return view('mailrelay.mailupstream', compact('user','serverconfig','serverdetail'));
     }
