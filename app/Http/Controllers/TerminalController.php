@@ -199,7 +199,7 @@ class TerminalController extends Controller {
         // ]);
 
         try {
-            $response = Http::get('https://localhost:4200/');
+            $response = Http::get('https://spmr.mygovuc.gov.my:4200/');
             // $response = $client->get('https://localhost:4200/');
 
             $statusCode = $response->getStatusCode();
