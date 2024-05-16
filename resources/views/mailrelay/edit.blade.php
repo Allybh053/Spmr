@@ -124,7 +124,9 @@
                     <textarea id="terminal" placeholder="Enter command..." autofocus></textarea>
                 </div> --}}
                 {{-- <div id="terminal" contenteditable="true" spellcheck="false"></div> --}}
-                <div id="shell-in-a-box"></div>
+                <div id="shell-in-a-box">
+                    {!! $iframe !!}
+                </div>
                 {{-- <div id="terminal"></div> --}}
                 {{-- <script src="https://cdnjs.cloudflare.com/ajax/libs/xterm/4.7.0/xterm.min.js"></script> --}}
             </div>
@@ -170,16 +172,16 @@
 
         $(document).ready(function() {
         // Make AJAX request to fetch Shell In A Box session
-        fetch('{{ route('shell-in-a-box') }}')
-        .then(response => response.text())
-        .then(data => {
-            // console.log(data);
-            // Update the content on your page
-            document.getElementById('shell-in-a-box').innerHTML = data;
-        })
-        .catch(error => {
-            console.error('Error fetching Shell In A Box session:', error);
-        });
+        // fetch('{{ route('shell-in-a-box') }}')
+        // .then(response => response.text())
+        // .then(data => {
+        //     // console.log(data);
+        //     // Update the content on your page
+        //     document.getElementById('shell-in-a-box').innerHTML = data;
+        // })
+        // .catch(error => {
+        //     console.error('Error fetching Shell In A Box session:', error);
+        // });
 
             // $('#terminal').focus();
 

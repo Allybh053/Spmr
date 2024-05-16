@@ -68,7 +68,12 @@ class MainRelayController extends Controller
                 ->where('types_req',$smtpreq->types_req)
                 ->get();
 
-        return view('mailrelay.edit', compact('user','smtpMailServers','smtpreq'));
+
+                $shellinaboxUrl = 'https://127.0.0.1:4200'; // Replace with your actual server IP and private port
+
+                $iframe = '<iframe src="' . $shellinaboxUrl . '" width="100%" height="600px"></iframe>';
+
+        return view('mailrelay.edit', compact('user','smtpMailServers','smtpreq','iframe'));
     }
 
     public function papar($id, $type){

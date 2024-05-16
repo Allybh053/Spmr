@@ -187,10 +187,10 @@ class TerminalController extends Controller {
         }
 
     }
-    // public function show()
-    // {
-    //     return view('internal.cli');
-    // }
+    public function show()
+    {
+        
+    }
 
     public function terminal()
     {
