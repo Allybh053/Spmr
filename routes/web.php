@@ -300,10 +300,7 @@ Route::group(['middleware' => ['auth']], function () {
     Route::get('/activity-logs', [ActivityLogController::class,'showActivityLogs'])->name('activityLog.index')
       ->middleware('auth.resource:spmr_activity_log_view');
     });
-
-    Route::get('/shell-in-a-box', function () {
-        return response()->view('terminal', [], 200)->header('X-Frame-Options', 'ALLOW-FROM https://20.198.217.221'); // Replace with your server IP
-    });
+    
     Route::group(['prefix' => 'monthly-report'], function () {
         Route::get('/', [MonthlyReportingController::class, 'index'])->name('monthlyReport.index')
         ->middleware('auth.resource:monthly_report_view');
