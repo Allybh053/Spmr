@@ -29,8 +29,9 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ManageServiceController;
 use App\Http\Controllers\GenerateReportingController;
 use App\Http\Controllers\TerminalController;
-use App\Http\Controllers\MinistryController;
 use App\Http\Controllers\AgencyController;
+use App\Http\Controllers\MinistryController;
+use APP\Http\Controllers\MonthlyReportingController;
 
 
 /*
@@ -297,6 +298,11 @@ Route::group(['middleware' => ['auth']], function () {
 
     Route::get('/activity-logs', [ActivityLogController::class,'showActivityLogs'])->name('activityLog.index')
       ->middleware('auth.resource:spmr_activity_log_view');
+    });
+
+    Route::group(['prefix' => 'monthly-report'], function () {
+        Route::get('/', [MonthlyReportingController::class, 'index'])->name('monthlyReport.index')
+        ->middleware('auth.resource:monthly_report_view');
     });
 
 
