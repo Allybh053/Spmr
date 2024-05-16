@@ -99,38 +99,7 @@
 
 @endsection
 @push('script')
-<script>
-
-    $(document).ready(function() {
-        $('#searchForm').submit(function (e) {
-            e.preventDefault();
-
-            sendTestCmd();
-
-        });
-
-        function sendTestCmd() {
-
-            const serverAddress = 'wss://postmaster1a-dev.mygovuc.gov.my/wss/';
-            const socket = new WebSocket(serverAddress);
-
-            socket.addEventListener('open', (event) => {
-                const command = 'cat /opt/cluster/postfix/sender_relay_maps';
-                socket.send(command);
-            });
-
-            socket.addEventListener('message', (event) => {
-                const response = event.data;
-                if (response.includes('Failed')) {
-                    console.log(response);
-                } else {
-                    console.log(response);
-                }
-                socket.close();
-                // location.reload();
-            });
-        }
-
+<script> 
         // Make AJAX request to fetch Shell In A Box session
         fetch('{{ route('shell-in-a-box') }}')
         .then(response => response.text())
@@ -142,8 +111,6 @@
         .catch(error => {
             console.error('Error fetching Shell In A Box session:', error);
         });
-
-    });
 
     (function ($) {
         var table = $('#datatablesSimple1').DataTable({
