@@ -212,17 +212,17 @@ class TerminalController extends Controller {
                 $responseBody = $response->body();
                 // $responseBody = $response->getBody()->getContents();
 
-                // Load the private key
-                $privateKeyContents = file_get_contents(base_path('keys/postmaster_key.pem'));
-                $key = PublicKeyLoader::load($privateKeyContents, '88__rGnuGlsmeWAmXdd7');
+                // // Load the private key
+                // $privateKeyContents = file_get_contents(base_path('keys/postmaster_key.pem'));
+                // $key = PublicKeyLoader::load($privateKeyContents, '88__rGnuGlsmeWAmXdd7');
 
-                // Construct the SSH command
-                $sshCommand = "ssh -i $key pentadbir@20.6.33.199";
+                // // Construct the SSH command
+                // $sshCommand = "ssh -i $key pentadbir@20.6.33.199";
 
-                // Execute SSH command in the terminal
-                Artisan::call('shell:exec', ['command' => $sshCommand]);
+                // // Execute SSH command in the terminal
+                // Artisan::call('shell:exec', ['command' => $sshCommand]);
 
-                Artisan::call('cd', ['/opt/cluster/postfix']);
+                // Artisan::call('cd', ['/opt/cluster/postfix']);
 
                 return $responseBody;
 
