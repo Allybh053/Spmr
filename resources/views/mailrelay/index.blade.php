@@ -152,7 +152,16 @@
         ],
         columnDefs: [
         { type: 'date-uk', targets: [/* index of your date column */] }
-    ]
+    ],
+    drawCallback: function(settings) {
+            // Reinitialize Feather icons
+            if (typeof feather !== 'undefined') {
+                feather.replace();
+            }
+
+            // Reinitialize any other JavaScript functionality as needed
+            // For example, tooltips, modals, etc.
+        }
     });
 
     // Adjust positioning of search input and export buttons

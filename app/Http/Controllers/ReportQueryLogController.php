@@ -33,7 +33,7 @@ class ReportQueryLogController extends Controller
     public function validation(Request $request)
     {
         $serverName = $request->serverName;
-    
+
         // Define ranges based on server names
         switch ($serverName) {
             case 'Server A':
@@ -49,13 +49,13 @@ class ReportQueryLogController extends Controller
                 $receiverRange = [500, 2000];
                 break;
         }
-    
+
         // Create a Faker instance
         $faker = FakerFactory::create();
-    
+
         // Initialize an empty array to store data
         $dataReports = [];
-    
+
         // Generate 20 or more sets of dummy data
         for ($i = 0; $i < 20; $i++) {
             $dataReport = [
@@ -67,11 +67,11 @@ class ReportQueryLogController extends Controller
                 "MTA Outbound ID/IP" => $faker->ipv4,
                 "Status" => $faker->randomElement(['Delivered', 'Failed', 'Pending']),
             ];
-    
+
             // Add the generated data to the array
             $dataReports[] = $dataReport;
         }
-    
+
         // Return the data as a JSON response
         return new JsonResponse(["data" => $dataReports]);
     }

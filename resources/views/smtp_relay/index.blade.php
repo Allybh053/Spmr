@@ -105,7 +105,7 @@
                 "headers": {
                     'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
                 },
-                "data": function (d) { 
+                "data": function (d) {
                     d.agency = $('#agency').val();
                     d.calendarType = $('#calendarType').val();
                     d.month = $('#month').val();
@@ -171,7 +171,16 @@
         ],
         columnDefs: [
         { type: 'date-uk', targets: [/* index of your date column */] }
-    ]
+    ],
+    drawCallback: function(settings) {
+            // Reinitialize Feather icons
+            if (typeof feather !== 'undefined') {
+                feather.replace();
+            }
+
+            // Reinitialize any other JavaScript functionality as needed
+            // For example, tooltips, modals, etc.
+        }
         });
 
         $('.dataTables_filter').addClass('d-inline-block mr-2'); // Make search input inline
