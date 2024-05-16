@@ -448,10 +448,12 @@ serverIpaddresses1.forEach(function(hostname, index) {
 
 // Prepare datasets for Chart.js
 var datasets = Object.values(servers);
+ 
 var xValues = datasets[0].data.map(function(dataPoint) {
     return dataPoint.x;
 });
 
+mailQueueChart();
 function mailQueueChart() {
 
 // Create a new Chart.js instance
@@ -466,7 +468,7 @@ var mailQueueChart = new Chart(ctx, {
     type: 'line',
     data: {
         labels: labels,
-        datasets: datasets  
+        datasets: datasets
     },
     options: {
         scales: {

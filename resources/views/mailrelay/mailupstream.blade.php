@@ -8,7 +8,7 @@
                     <div class="col-auto mb-3">
                         <h1 class="page-header-title">
                             <div class="page-header-icon"><i data-feather="mail"></i></div>
-                            Mail Upstream
+                            Mail Upstream (Domain)
                         </h1>
                     </div>
                     <div class="col-12 col-xl-auto mb-3">
@@ -30,21 +30,19 @@
 
         <div class="card">
             <div class="card-body">
-                <form  id="searchForm"  class="ajax-form-search" novalidate action="{{ route('mailrelay.mailupstream') }}" method="GET">
+                <form  id="searchForm" class="ajax-form-search" novalidate action="{{ route('mailrelay.mailupstream') }}" method="GET">
                     <!-- Form Row-->
                     <div class="row gx-3 mb-3">
                         <div class="col-md-6">
                             <label class="small mb-1" for="serverconfig">Server Name:</label>
                             <select id="serverconfig" name="serverconfig" class="form-control select2">
                                 <option value="">Select an option</option>
-                                <!-- Loop through $serverconfig array to generate options -->
                                 @foreach ($serverconfig as $server)
                                     <option value="{{ $server->id }}">{{ $server->hostname }}</option>
                                 @endforeach
                             </select>
                         </div>
                         <div class="col-md-4">
-                            <!-- Save and Back button-->
                             <div style="padding: 25px; text-align: left;">
                                 <button class="btn btn-success" id="searching">Search</button>
                             </div>
@@ -101,9 +99,7 @@
 
 @endsection
 @push('script')
-<script>
-
-    $(document).ready(function() {
+<script> 
         // Make AJAX request to fetch Shell In A Box session
         fetch('{{ route('shell-in-a-box') }}')
         .then(response => response.text())
@@ -115,44 +111,6 @@
         .catch(error => {
             console.error('Error fetching Shell In A Box session:', error);
         });
-    });
-    // $(document).ready(function() {
-    //     $('#searching').click(function(e) {
-    //         e.preventDefault();
-    //         var formData = $('#searchForm').serialize();
-
-    //         $.ajax({
-    //             type: 'POST',
-    //             url: $('#searchForm').attr('action'),
-    //             data: formData,
-    //             success: function(response) {
-    //                 // $('#datatablesSimple1').empty();
-    //                 // if (response.success) {
-    //                 //     // Loop through the data and generate table rows
-    //                 //     $.each(response.data, function(index, detail) {
-    //                 //         var row = '<tr>' +
-    //                 //                     '<td><p>' + (index + 1) + '.</p></td>' +
-    //                 //                     '<td><p>' + detail.name + '</p></td>' +
-    //                 //                     '<td><p>' + detail.smtp + '</p></td>' +
-    //                 //                 '</tr>';
-    //                 //         $('#datatablesSimple1').append(row);
-    //                 //     });
-    //                 // } else {
-    //                 //     // Handle error or display a message
-    //                 //     console.error('Error retrieving data');
-    //                 // }
-    //                 },
-    //                 error: function(xhr, status, error) {
-    //                     console.error(xhr.responseText);
-    //                 },
-    //             error: function(xhr, status, error) {
-    //                 // Handle errors
-    //                 console.error(xhr.responseText);
-    //             }
-    //             });
-
-    //     });
-    //     });
 
     (function ($) {
         var table = $('#datatablesSimple1').DataTable({

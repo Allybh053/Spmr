@@ -59,11 +59,15 @@
                     <nav class="sidenav-menu-nested nav accordion" id="accordionSidenavPages">
                         <a hidden class="nav-link" href="{{ route('mailrelay.index')}}">View Mail Relay Server</a>
                         <a class="nav-link" href="{{ route('mailrelay.register')}}">Register Mail Relay</a>
-                        <a class="nav-link" href="{{ route('mailrelay.mailupstream')}}">Mail Upstream</a>
                     </nav>
                 </div>
                 @endcan
 
+                <a class="nav-link" href="{{ route('mailrelay.mailupstream') }}">
+                    <div class="nav-link-icon"><i data-feather="grid"></i></div>
+                    SMTP Mail Upstream
+                    <div class="sidenav-collapse-arrow"></div>
+                </a>
 
                 {{-- <!-- <a class="nav-link collapsed" href="javascript:void(0);" data-bs-toggle="collapse" data-bs-target="#collapseHistory" aria-expanded="false" aria-controls="collapseHistory">
                     <div class="nav-link-icon"><i data-feather="link"></i></div>
@@ -252,7 +256,7 @@
                             </nav>
                         </div> -->
                         @can('domain_name_view')
-                        <a class="nav-link" href="{{ route('domain.index') }}">
+                        <a class="nav-link" href="{{ route('domain.index') }}" hidden>
                             Domain Name Registration
                             <div class="sidenav-collapse-arrow"></div>
                         </a>

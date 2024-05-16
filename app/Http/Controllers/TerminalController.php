@@ -10,6 +10,10 @@ use App\Events\TerminalCommandEvent;
 
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\RequestException;
+use Illuminate\Support\Facades\Artisan;
+use Symfony\Component\Process\Process;
+use Symfony\Component\Process\Exception\ProcessFailedException;
+
 
 class TerminalController extends Controller {
 
@@ -190,25 +194,29 @@ class TerminalController extends Controller {
 
     public function terminal()
     {
-        $client = new Client([
-            'verify' => false, // Disable SSL certificate verification
-        ]);
+        // $client = new Client([
+        //     'verify' => false, // Disable SSL certificate verification
+        // ]);
 
         try {
-            // $response = Http::get('https://localhost:4200/');
-            $response = $client->get('https://localhost:4200/');
+            $response = Http::get('https://127.0.0.1:4200/');
+            // $response = $client->get('https://localhost:4200/');
+
+            $statusCode = $response->getStatusCode();
 
             // Check if the response was successful
             if ($response->successful()) {
+                // if ($statusCode >= 200 && $statusCode < 300) {
                 // Return the response body
                 $responseBody = $response->body();
+                // $responseBody = $response->getBody()->getContents();
 
                 // Load the private key
                 $privateKeyContents = file_get_contents(base_path('keys/postmaster_key.pem'));
                 $key = PublicKeyLoader::load($privateKeyContents, '88__rGnuGlsmeWAmXdd7');
 
                 // Construct the SSH command
-                $sshCommand = "ssh -i $key pentadbir@13.12.21.02";
+                $sshCommand = "ssh -i $key pentadbir@20.6.33.199";
 
                 // Execute SSH command in the terminal
                 Artisan::call('shell:exec', ['command' => $sshCommand]);
@@ -219,15 +227,52 @@ class TerminalController extends Controller {
 
             } else {
                 // Return an error message
-                $Error = "Unable to fetch content from the terminal!";
-                echo "<script>alert('$Error');</script>";
-                return $Error;
+                return $statusCode;
             }
         } catch (RequestException $e) {
-
             // An error occurred during the HTTP request
             return "Error: " . $e->getMessage();
         }
+        // try {
+        //     $client = new Client([
+        //         'verify' => false, // Disable SSL certificate verification
+        //     ]);
+
+        //     $response = $client->get('https://localhost:4200/');
+        //     $statusCode = $response->getStatusCode();
+
+        //     if ($statusCode >= 200 && $statusCode < 300) {
+        //         $responseBody = $response->getBody()->getContents();
+
+        //         // Load the private key
+        //         $privateKeyContents = file_get_contents(base_path('keys/postmaster_key.pem'));
+        //         $key = PublicKeyLoader::load($privateKeyContents, '88__rGnuGlsmeWAmXdd7');
+
+        //         // Construct the SSH command
+        //         $sshCommand = "ls -lha";
+
+        //         // Execute SSH command
+        //         $process = Process::fromShellCommandline($sshCommand);
+        //         $process->run();
+
+        //         if (!$process->isSuccessful()) {
+        //             throw new ProcessFailedException($process);
+        //         }
+
+        //         return $responseBody;
+        //     } else {
+        //         // Return an error message
+        //         $error = "Unable to fetch content from the terminal!";
+        //         echo "<script>alert('$error');</script>";
+        //         return $statusCode;
+        //     }
+        // } catch (RequestException $e) {
+        //     // An error occurred during the HTTP request
+        //     return "Error: " . $e->getMessage();
+        // } catch (ProcessFailedException $e) {
+        //     // An error occurred during the execution of the SSH command
+        //     return "Error executing SSH command: " . $e->getMessage();
+        // }
     }
 }
 
