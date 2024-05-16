@@ -72,6 +72,9 @@ class AclSeeder extends Seeder
                 "generate_report" => [
 					'generate_report_view',
 				],
+                "monthly_report"=>[
+                    'monthly_report_view',
+                ]
 			],
 			"configuration" => [
 				"server" => [
