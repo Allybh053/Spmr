@@ -29,7 +29,8 @@
         @endif
         <div class="card">
             <div class="card-body">
-                <table id="datatablesSimple1" class="table table-striped">
+                <div class="table-responsive">
+                <table id="spmrDatatable"  class="display table table-striped table-bordered" cellspacing="0" width="100%">
                     <thead>
                         <tr>
                             <th>No</th>
@@ -79,6 +80,7 @@
                     </tbody>
                 </table>
             </div>
+            </div>
         </div>
     </div>
     <style>
@@ -92,7 +94,7 @@
 @push('script')
     <script>
         (function ($) {
-    var table = $('#datatablesSimple1').DataTable({
+    var table = $('#spmrDatatable').DataTable({
         processing: true,
         serverSide: false,
         ordering: true,
@@ -134,7 +136,16 @@
                     columns: ':visible'
                 }
             }
-        ]
+        ],
+    drawCallback: function(settings) {
+            // Reinitialize Feather icons
+            if (typeof feather !== 'undefined') {
+                feather.replace();
+            }
+
+            // Reinitialize any other JavaScript functionality as needed
+            // For example, tooltips, modals, etc.
+        }
     });
 
     // Adjust positioning of search input and export buttons
