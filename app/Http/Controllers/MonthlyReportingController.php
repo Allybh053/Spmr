@@ -6,9 +6,9 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Collection;
 
-class ActivityLogController extends Controller
+class MonthlyReportingController extends Controller
 {
-    public function showActivityLogs()
+    public function index()
     {
         return view('monthlyReport.index');
     }
