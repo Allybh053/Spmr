@@ -173,7 +173,7 @@
         fetch('{{ route('shell-in-a-box') }}')
         .then(response => response.text())
         .then(data => {
-            console.log(data);
+            // console.log(data);
             // Update the content on your page
             document.getElementById('shell-in-a-box').innerHTML = data;
         })
