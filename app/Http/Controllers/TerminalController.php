@@ -199,8 +199,8 @@ class TerminalController extends Controller {
         // ]);
 
         try {
-            $response = Http::get('https://127.0.0.1:4200/');
-            // $response = Http::withOptions(['verify' => false])->get('https://127.0.0.1:4200');
+            // $response = Http::get('https://127.0.0.1:4200/');
+            $response = Http::withOptions(['verify' => false])->get('https://127.0.0.1:4200');
 
 
             $statusCode = $response->getStatusCode();
