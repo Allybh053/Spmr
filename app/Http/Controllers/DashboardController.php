@@ -11,7 +11,6 @@ use App\Models\smtp_relay_server;
 use App\Models\SmtpRelayReqForm;
 use Carbon\Carbon;
 use DateTime;
-//use Faker\Factory as Faker;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -27,8 +26,6 @@ class DashboardController extends Controller
     public function index(Request $request,$limit = null)
     {
         $user = Auth::user();
-
-
         $role = $user->roles->isNotEmpty() ? $user->roles->pluck('name')->first() : null;
        // Fetch server IDs associated with the user's roles
         $serverIds = RoleServer::whereIn('role_id', $user->roles->pluck('id')->all())
@@ -36,10 +33,6 @@ class DashboardController extends Controller
 
         $defaultServerId = 1;
 
-        // Filter servers based on the fetched IDs
-        /*$serverconfig = Server::whereIn('id', $serverIds)
-        ->where('status', 1)->orderBy('id', 'asc')
-        ->pluck('hostname', 'id');*/
         $serverconfig =  Server::whereIn('id', $serverIds)
             ->where('status', 1)->orderBy('id', 'asc')
             ->select('id', 'hostname', 'ipaddress')
@@ -66,14 +59,10 @@ class DashboardController extends Controller
         });
 
         if ($limit === 'all') {
-            //$departmentCounts = $this->generateDataMinistry(); // No limit specified for "All"
             $departmentCounts = $filteredDataMinistry; // No limit specified for "All"
-            //$departmentCounts2 = $this->generateDataDept();
             $departmentCounts2 = $filteredDataDept;
         } else {
-            //$departmentCounts = $this->generateDataMinistry($limit);
             $departmentCounts = $filteredDataMinistry;
-            //$departmentCounts2 = $this->generateDataDept($limit);
             $departmentCounts2 = $filteredDataDept;
         }
 
@@ -85,13 +74,8 @@ class DashboardController extends Controller
             return in_array($department2['postmasters'], array_column($serverList, 'hostname'));
         })->pluck('department_name')->toArray();
 
-            //$faker = Faker::create();
             $days = range(1, 10);
 
-
-            /*if ($request->expectsJson()) {
-                return response()->json(['departmentCounts' => $departmentCounts, 'days' => $days]);
-            }*/
 
         if ($request->expectsJson()) {
             $responseData = [
@@ -103,98 +87,11 @@ class DashboardController extends Controller
             return response()->json($responseData);
         }
 
-            $p1Data = [];
-            $p2Data = [];
-            $p3Data = [];
-            for ($i = 0; $i < 10; $i++) { // Assuming 10 data points for each P1, P2, P3 for example
-                //$p1Data[] = $faker->numberBetween(1, 100);
-                //$p2Data[] = $faker->numberBetween(1, 100);
-                //$p3Data[] = $faker->numberBetween(1, 100);
-            }
-
             // Pass the data to the view
             return view('dashboard.index', compact(
                 'user', 'role', 'serverconfig', 'serverList', 'filteredMinistries',
-                'filteredDept', 'departmentCounts', 'departmentCounts2', 'limit', 'days', 'p1Data',
-                'p2Data', 'p3Data','defaultServerId'));
+                'filteredDept', 'departmentCounts', 'departmentCounts2', 'limit', 'days','defaultServerId'));
         }
-
-    /*public function api(Request $request, $limit=null)
-    {
-        //$faker = Faker::create();
-
-        $serverId = $request->serverId;
-        //$ipAddress = $faker->ipv4;
-        // Generate fake data for total applications, domains, and SASL
-        //$totalApplications = $faker->numberBetween(100, 1000);
-        //$totalDomains = $faker->numberBetween(50, 500);
-        //$totalSASL = $faker->numberBetween(20, 200);
-
-        // Generate fake data for the table
-        $tableData = [];
-        for ($i = 0; $i < 5; $i++) {
-            $tableData[] = [
-                'columnA' => $faker->word,
-                'columnB' => $faker->word,
-                'columnC' => $faker->word,
-                'columnD' => $faker->word,
-            ];
-        }
-
-        // Generate fake status for each service
-        $services = [
-            'Postfix' => $faker->randomElement(['Online', 'Offline']),
-            'Fail-To-Ban' => $faker->randomElement(['Online', 'Offline']),
-            'Apache' => $faker->randomElement(['Online', 'Offline']),
-            'Webmin' => $faker->randomElement(['Online', 'Offline']),
-            'Replicate Mail Relay' => $faker->randomElement(['Online', 'Offline']),
-            'Policy Server' => $faker->randomElement(['Online', 'Offline']),
-            'Keep Alive' => $faker->randomElement(['Online', 'Offline']),
-        ];
-
-        $departmentCounts = $this->generateDataMinistry($limit);
-        $departmentCounts2 = $this->generateDataDept($limit);
-
-
-        $mailqData = $this->generateFakerMailQueue(50); // Generate data for 50 entries
-
-        // Extract timestamps and mail queue counts
-        $timestamps = collect($mailqData)->pluck('created_at')->map(function ($timestamp) {
-            return $timestamp->format('Y-m-d H:i:s'); // Format timestamp as needed
-        });
-        $mailCounts = collect($mailqData)->pluck('mail_count');
-
-        //$faker = Faker::create();
-        $days = range(1, 10);
-
-        $p1Data = [];
-        $p2Data = [];
-        $p3Data = [];
-        for ($i = 0; $i < 10; $i++) { // Assuming 10 data points for each P1, P2, P3 for example
-            //$p1Data[] = $faker->numberBetween(1, 100);
-            //$p2Data[] = $faker->numberBetween(1, 100);
-            //$p3Data[] = $faker->numberBetween(1, 100);
-        }
-
-        return new JsonResponse([
-            'totalApplications' => $totalApplications,
-            'totalDomains' => $totalDomains,
-            'totalSASL' => $totalSASL,
-            'data' => $tableData,
-            //'status' => $faker->randomElement(['Online', 'Offline']),
-            'services' => $services,
-            'ipAddress' => $ipAddress,
-            'departmentCounts' => $departmentCounts,
-            'departmentCounts2' => $departmentCounts2,
-            'timestamps' => $timestamps,
-            'mailCounts' => $mailCounts,
-            'days' => $days,
-            'p1Data'=> $p1Data,
-            'p2Data'=> $p2Data,
-            'p3Data'=> $p3Data,
-        ]);
-    }*/
-
 
     private function generateDataMinistry($limit = null)
     {
@@ -380,25 +277,4 @@ class DashboardController extends Controller
 
         return $limitedCollection2;
     }
-
-    /*private function generateFakerMailQueue($numEntries)
-    {
-        $faker = Faker::create();
-        $mailQueueData = [];
-
-        // Generate Faker data for mail queue
-        for ($i = 0; $i < $numEntries; $i++) {
-            $timestamp = $faker->dateTimeBetween('-30 days', 'now'); // Random timestamp within the last 30 days
-            $mailCount = $faker->numberBetween(0, 100); // Random number of emails in the queue
-
-            $mailQueueData[] = [
-                'created_at' => $timestamp,
-                'mail_count' => $mailCount
-            ];
-        }
-
-        return $mailQueueData;
-    }*/
-
-
 }

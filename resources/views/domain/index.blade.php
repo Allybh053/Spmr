@@ -54,7 +54,7 @@
             <div class="card mb-4">
                 <div class="card-header">Domain</div>
                 <div class="card-body">
-                    <table id="datatablesSimple1" class="table table-striped">
+                    <table id="datatablesSimple1"  class="display table table-striped table-bordered" cellspacing="0" width="100%">
                         <thead>
                             <tr>
                                 <th>No</th>
@@ -152,7 +152,16 @@
         ],
         columnDefs: [
         { type: 'date-uk', targets: [/* index of your date column */] }
-    ]
+    ],
+    drawCallback: function(settings) {
+            // Reinitialize Feather icons
+            if (typeof feather !== 'undefined') {
+                feather.replace();
+            }
+
+            // Reinitialize any other JavaScript functionality as needed
+            // For example, tooltips, modals, etc.
+        }
     });
 
     // Adjust positioning of search input and export buttons

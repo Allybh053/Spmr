@@ -29,6 +29,8 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ManageServiceController;
 use App\Http\Controllers\GenerateReportingController;
 use App\Http\Controllers\TerminalController;
+use App\Http\Controllers\MinistryController;
+use App\Http\Controllers\AgencyController;
 
 
 /*
