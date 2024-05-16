@@ -13,7 +13,6 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\JsonResponse;
-//use Faker\Factory as Faker;
 use Illuminate\Support\Facades\File;
 use function Laravel\Prompts\search;
 
@@ -37,32 +36,12 @@ class GenerateReportingController extends Controller
         $ministries = Ministry::where('status', 1)->pluck('name')->toArray();
         $agencies = Agency::where('status', 1)->pluck('name')->toArray();
         $allMinistryAgency = array_merge($ministries, $agencies);
-        //dd($allMinistryAgency);
+
 
         $domainsArray = DomainMinistryAgencies::where('enabled', 1)->get()->toArray();
 
         return view('generateReporting.index',compact('defaultServerId','serverconfig','domainsArray', 'allMinistryAgency'));
     }
-
-/*    public function search(Request $request)
-    {
-        $input1 = $request->input('agency'); // Assuming 'agency' is the name of the select input for Kementerian/Agensi/SUK
-        $input2Type = $request->input('calendarType');
-
-        // Generate Faker data based on the selected calendar type and agency
-        $faker = Faker::create();
-        $totalApplications = $faker->numberBetween(100, 500);
-        $totalIP = $faker->numberBetween(200, 1000);
-        $totalDeactivated = $faker->numberBetween(5, 50);
-
-        // You can adjust the search logic based on the selected calendar type and agency here
-
-        return response()->json([
-            'totalApplications' => $totalApplications,
-            'totalIP' => $totalIP,
-            'totalDeactivated' => $totalDeactivated
-        ]);
-    }*/
 
     public function search(Request $request)
     {
