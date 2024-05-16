@@ -1,4 +1,4 @@
-<IfModule mod_rewrite.c>
+<ifModule mod_rewrite.c>
     <IfModule mod_negotiation.c>
         Options -MultiViews -Indexes
     </IfModule>
@@ -19,3 +19,11 @@
     RewriteCond %{REQUEST_FILENAME} !-f
     RewriteRule ^ index.php [L]
 </IfModule>
+
+#<Directory /opt/source/spmr/public>
+#   Options Indexes FollowSymLinks
+   # AllowOverride All
+   # Require all granted
+
+#</Directory>
+

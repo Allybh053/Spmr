@@ -29,8 +29,9 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ManageServiceController;
 use App\Http\Controllers\GenerateReportingController;
 use App\Http\Controllers\TerminalController;
-use App\Http\Controllers\MinistryController;
 use App\Http\Controllers\AgencyController;
+use App\Http\Controllers\MinistryController;
+use APP\Http\Controllers\MonthlyReportingController;
 
 
 /*
@@ -303,6 +304,12 @@ Route::group(['middleware' => ['auth']], function () {
     Route::get('/shell-in-a-box', function () {
         return response()->view('terminal', [], 200)->header('X-Frame-Options', 'ALLOW-FROM https://20.198.217.221'); // Replace with your server IP
     });
+    Route::group(['prefix' => 'monthly-report'], function () {
+        Route::get('/', [MonthlyReportingController::class, 'index'])->name('monthlyReport.index')
+        ->middleware('auth.resource:monthly_report_view');
+    });
+
+
 
 
 

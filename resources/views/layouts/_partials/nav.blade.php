@@ -164,10 +164,12 @@
                     </nav>
                 </div>
                 @endif
-
-                @if (Gate::check('generate_report_view'))
+                @php
+                $canViewReport = Gate::check('generate_report_view') || Gate::check('monthly_report_view');
+                @endphp
+                @if ($canViewReport)
                 <div class="sidenav-menu-heading">Report Management</div>
-                @endif
+
                 {{--<a class="nav-link collapsed" href="javascript:void(0);" data-bs-toggle="collapse" data-bs-target="#collapseReport" aria-expanded="false" aria-controls="collapseReport">
                     <div class="nav-link-icon"><i data-feather="trello"></i></div>
                     Reporting
@@ -194,7 +196,14 @@
                     <div class="sidenav-collapse-arrow"></div>
                 </a>
                 @endcan
-
+                @can('monthly_report_view')
+                <a class="nav-link" href="{{ route('monthlyReport.index') }}">
+                    <div class="nav-link-icon"><i data-feather="trello"></i></div>
+                    Monthly Report
+                    <div class="sidenav-collapse-arrow"></div>
+                </a>
+                @endcan
+                @endif
 
                 @if (Gate::check('server_view'))
                 <!-- Sidenav Heading (Config)-->
