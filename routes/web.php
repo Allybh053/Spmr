@@ -288,7 +288,7 @@ Route::group(['middleware' => ['auth']], function () {
     });
 
     Route::group(['prefix' => 'terminal'], function () {
-        Route::get('/', [TerminalController::class, 'index'])->name('terminal.index');
+        // Route::get('/', [TerminalController::class, 'index'])->name('terminal.index');
         Route::post('/execute-ssh-command',[TerminalController::class, 'executeCommand'])->name('terminal.executeCommand');
         // Route::get('/internal-cli', [TerminalController::class, 'show'])->name('internal.cli');
         Route::get('/shell-in-a-box', [TerminalController::class, 'terminal'])->name('shell-in-a-box');

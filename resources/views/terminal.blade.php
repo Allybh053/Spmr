@@ -7,7 +7,7 @@
 </div> --}}
 
 <div id="terminal">
-    <pre>{{ $output }}</pre>
+    {{-- <pre>{{ $output }}</pre> --}}
 </div>
 @endsection
 {{-- @push('script')
