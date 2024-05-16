@@ -293,11 +293,14 @@ Route::group(['middleware' => ['auth']], function () {
         // Route::get('/internal-cli', [TerminalController::class, 'show'])->name('internal.cli');
         Route::get('/shell-in-a-box', [TerminalController::class, 'terminal'])->name('shell-in-a-box');
 
-
     });
 
     Route::get('/activity-logs', [ActivityLogController::class,'showActivityLogs'])->name('activityLog.index')
       ->middleware('auth.resource:spmr_activity_log_view');
+    });
+
+    Route::get('/shell-in-a-box', function () {
+        return response()->view('terminal', [], 200)->header('X-Frame-Options', 'ALLOW-FROM https://20.198.217.221'); // Replace with your server IP
     });
 
 

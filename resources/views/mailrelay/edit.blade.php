@@ -125,7 +125,7 @@
                 </div> --}}
                 {{-- <div id="terminal" contenteditable="true" spellcheck="false"></div> --}}
                 <div id="shell-in-a-box">
-                    {!! $iframe !!}
+                    @include('terminal')
                 </div>
                 {{-- <div id="terminal"></div> --}}
                 {{-- <script src="https://cdnjs.cloudflare.com/ajax/libs/xterm/4.7.0/xterm.min.js"></script> --}}
