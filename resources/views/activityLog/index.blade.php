@@ -98,7 +98,16 @@ var table = $('#spmrDatatable').DataTable({
     ],
     columnDefs: [
         { type: 'date-uk', targets: ['dd/mm/yyyy'] }
-    ]
+    ],
+    drawCallback: function(settings) {
+            // Reinitialize Feather icons
+            if (typeof feather !== 'undefined') {
+                feather.replace();
+            }
+
+            // Reinitialize any other JavaScript functionality as needed
+            // For example, tooltips, modals, etc.
+        }
 });
 
 // Adjust positioning of search input and export buttons
