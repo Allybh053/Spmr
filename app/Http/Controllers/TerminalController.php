@@ -86,9 +86,7 @@ class TerminalController extends Controller {
     }
 
     public function index(){
-        $output = shell_exec('gnome-terminal');
-        // return view('terminal');
-        return view('terminal', ['output' => $output]);
+        return view('terminal');
     }
 
 
@@ -201,39 +199,37 @@ class TerminalController extends Controller {
         // ]);
 
         try {
-            $output = shell_exec('gnome-terminal');
-            // $response = Http::get('https://127.0.0.1:4200/');
+            $response = Http::get('https://127.0.0.1:4200/');
             // $response = Http::withOptions(['verify' => false])->get('https://127.0.0.1:4200');
 
 
-            // $statusCode = $response->getStatusCode();
+            $statusCode = $response->getStatusCode();
 
-            // // Check if the response was successful
-            // if ($response->successful()) {
-            //     // if ($statusCode >= 200 && $statusCode < 300) {
-            //     // Return the response body
-            //     $responseBody = $response->body();
-            //     // $responseBody = $response->getBody()->getContents();
+            // Check if the response was successful
+            if ($response->successful()) {
+                // if ($statusCode >= 200 && $statusCode < 300) {
+                // Return the response body
+                $responseBody = $response->body();
+                // $responseBody = $response->getBody()->getContents();
 
-            //     // // Load the private key
-            //     // $privateKeyContents = file_get_contents(base_path('keys/postmaster_key.pem'));
-            //     // $key = PublicKeyLoader::load($privateKeyContents, '88__rGnuGlsmeWAmXdd7');
+                // // Load the private key
+                // $privateKeyContents = file_get_contents(base_path('keys/postmaster_key.pem'));
+                // $key = PublicKeyLoader::load($privateKeyContents, '88__rGnuGlsmeWAmXdd7');
 
-            //     // // Construct the SSH command
-            //     // $sshCommand = "ssh -i $key pentadbir@20.6.33.199";
+                // // Construct the SSH command
+                // $sshCommand = "ssh -i $key pentadbir@20.6.33.199";
 
-            //     // // Execute SSH command in the terminal
-            //     // Artisan::call('shell:exec', ['command' => $sshCommand]);
+                // // Execute SSH command in the terminal
+                // Artisan::call('shell:exec', ['command' => $sshCommand]);
 
-            //     // Artisan::call('cd', ['/opt/cluster/postfix']);
+                // Artisan::call('cd', ['/opt/cluster/postfix']);
 
-            //     return $responseBody;
-            return view('shell-in-a-box');
+                return $responseBody;
 
-            // } else {
-            //     // Return an error message
-            //     return $statusCode;
-            // }
+            } else {
+                // Return an error message
+                return $statusCode;
+            }
         } catch (RequestException $e) {
             // An error occurred during the HTTP request
             return "Error: " . $e->getMessage();
