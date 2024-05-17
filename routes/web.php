@@ -31,7 +31,7 @@ use App\Http\Controllers\GenerateReportingController;
 use App\Http\Controllers\TerminalController;
 use App\Http\Controllers\AgencyController;
 use App\Http\Controllers\MinistryController;
-use APP\Http\Controllers\MonthlyReportingController;
+use App\Http\Controllers\MonthlyReportingController;
 
 
 /*
@@ -126,6 +126,7 @@ Route::group(['middleware' => ['auth']], function () {
         Route::get('/update/{id}/{type}', [SmtpRelayController::class, 'kemaskini'])->name('smtp_relay.kemaskini');
         Route::post('/update/{id}/kemaskinidata', [SmtpRelayController::class, 'kemaskinidata'])->name('smtp_relay.kemaskinidata');
 
+        Route::post('/import', [SmtpRelayController::class, 'import'])->name('smtp_relay.import');
 
         Route::get('/index/searching', [SmtpRelayController::class, 'search'])->name('smtp_relay.index.search');
 
@@ -300,7 +301,7 @@ Route::group(['middleware' => ['auth']], function () {
     Route::get('/activity-logs', [ActivityLogController::class,'showActivityLogs'])->name('activityLog.index')
       ->middleware('auth.resource:spmr_activity_log_view');
     });
-    
+
     Route::group(['prefix' => 'monthly-report'], function () {
         Route::get('/', [MonthlyReportingController::class, 'index'])->name('monthlyReport.index')
         ->middleware('auth.resource:monthly_report_view');
