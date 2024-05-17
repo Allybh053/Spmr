@@ -26,7 +26,7 @@
         <script data-search-pseudo-elements defer src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/js/all.min.js" crossorigin="anonymous"></script>
         {{-- <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/xterm/4.7.0/xterm.min.css"> --}}
 
-
+        <script src="{{ asset('assets/ShellInABox.js') }}"></script>
 
 <style>
     .select2-selection__clear {
