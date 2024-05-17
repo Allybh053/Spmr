@@ -305,6 +305,8 @@ Route::group(['middleware' => ['auth']], function () {
     Route::group(['prefix' => 'monthly-report'], function () {
         Route::get('/', [MonthlyReportingController::class, 'index'])->name('monthlyReport.index')
         ->middleware('auth.resource:monthly_report_view');
+        Route::get('/getServer', [MonthlyReportingController::class, 'api'])->name('monthlyReport.api');
+        Route::get('/index/searching', [MonthlyReportingController::class, 'search'])->name('monthlyReport.index.search');
     });
 
 
