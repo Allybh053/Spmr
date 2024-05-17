@@ -7,9 +7,17 @@
         <div class="row align-items-center justify-content-between pt-3">
           <div class="col-auto mb-3">
             <h1 class="page-header-title">
-              <div class="page-header-icon">
+              {{--<div class="page-header-icon">
                 <i data-feather="trello"></i>
-              </div> Generate Report
+              </div> Agencies Report--}}
+                <nav aria-label="breadcrumb">
+                    <ol class="breadcrumb">
+                        <div class="page-header-icon">
+                            <i data-feather="trello"></i>
+                        </div>
+                        <li class="breadcrumb-item">Agencies Report</li>
+                    </ol>
+                </nav>
             </h1>
           </div>
         </div>
