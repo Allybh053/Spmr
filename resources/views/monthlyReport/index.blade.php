@@ -70,11 +70,20 @@
                         </div>
 
                         <div  id="searchBox">
-                            {{--<form id="searchForm">--}}
                             <div class="row gx-3 mb-3">
-                                <div class="mb-3" id="calendarInputs">
-                                    <!-- Inputs for date, month, year, and date range will be dynamically appended here -->
+                                <div class="col-md-6">
+                                    <div class="mb-3" id="calendarSelect">
+                                        <label class="small mb-1" for="calendarType">Filter Type:</label>
+                                        <select class="form-control select2" id="calendarType" name="calendarType">
+                                            <option selected disabled></option>
+                                            <option value="month">Month</option>
+                                            <option value="year">Year</option>
+                                        </select>
+                                    </div>
                                 </div>
+                            </div>
+                            <div class="mb-3" id="calendarInputs">
+                                <!-- Inputs for date, month, year, and date range will be dynamically appended here -->
                             </div>
                             <div class="text-end"> <!-- Align the button to the right -->
                                 <button type="button" class="btn btn-secondary" id="reset">Reset</button>
@@ -83,8 +92,100 @@
                         </div>
                     </form>
                 </div>
+            </div>
+        </div>
+        <div class="row mb-4 mt-4">
+            <div class="col-xxl-12">
+                <div class="card">
+                    <div class="card-body">
+
+                        {{-- Table List Jadual2 Start --}}
+                        <br>
+                        <div class="card">
+                            <div class="card-header">Table of Total Daily Email</div>
+                            <div class="card-body">
+                                <div class="table-responsive">
+                                    <table id="listJad2"  class="display table table-striped table-bordered" cellspacing="0" width="100%">
+                                        <thead>
+                                        <tr>
+                                            <th>No.</th>
+                                            <th>Date</th>
+                                            <th>Received</th>
+                                            <th>Delivered</th>
+                                            <th>Deferred</th>
+                                            <th>Bounced</th>
+                                            <th>Rejected</th>
+                                        </tr>
+                                        </thead>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+
+                        {{-- Table List Jadual6 Start --}}
+                        <br>
+                        <div class="card">
+                            <div class="card-header">Table of Per-Hour Traffic Summary</div>
+                            <div class="card-body">
+                                <div class="table-responsive">
+                                    <table id="listJad6"  class="display table table-striped table-bordered" cellspacing="0" width="100%">
+                                        <thead>
+                                        <tr>
+                                            <th>No.</th>
+                                            <th>Time</th>
+                                            <th>Received</th>
+                                            <th>Delivered</th>
+                                            <th>Deferred</th>
+                                            <th>Bounced</th>
+                                            <th>Rejected</th>
+                                        </tr>
+                                        </thead>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+
+                        {{-- Table List Jadual10 Start --}}
+                        <br>
+                        <div class="card">
+                            <div class="card-header">Table of Top 20 Email Recipients</div>
+                            <div class="card-body">
+                                <div class="table-responsive">
+                                    <table id="listJad10"  class="display table table-striped table-bordered" cellspacing="0" width="100%">
+                                        <thead>
+                                        <tr>
+                                            <th>No.</th>
+                                            <th>Email</th>
+                                            <th>Total Email</th>
+                                        </tr>
+                                        </thead>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+
+                        {{-- Table List Jadual14 Start --}}
+                        <br>
+                        <div class="card">
+                            <div class="card-header">Table of Top 20 Email Senders</div>
+                            <div class="card-body">
+                                <div class="table-responsive">
+                                    <table id="listJad14"  class="display table table-striped table-bordered" cellspacing="0" width="100%">
+                                        <thead>
+                                        <tr>
+                                            <th>No.</th>
+                                            <th>Email</th>
+                                            <th>Total Email</th>
+                                        </tr>
+                                        </thead>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
 
 
+                    </div>
+                </div>
             </div>
         </div>
     </div>
@@ -92,42 +193,430 @@
 
 
 
+
+
 @endsection
 @push('script')
 <script>
 
+    $(document).ready(function () {
 
-// Initialize DataTable with custom sorting for date column
-var table = $('#spmrDatatable').DataTable({
-    processing: true,
-    serverSide: false,
-    ordering: true,
-    lengthMenu: [[10, 25, 50, -1], [10, 25, 50, "All"]],
-    dom: '<"top"fBl>rt<"bottom"ip>',
-    buttons: [
-        { extend: 'copy', text: 'Copy', exportOptions: { columns: ':visible' } },
-        { extend: 'csv', text: 'CSV', exportOptions: { columns: ':visible' } },
-        { extend: 'excel', text: 'Excel', exportOptions: { columns: ':visible' } },
-        { extend: 'pdf', text: 'PDF', exportOptions: { columns: ':visible' } },
-        { extend: 'print', text: 'Print', exportOptions: { columns: ':visible' } }
-    ],
-    columnDefs: [
-        { type: 'date-uk', targets: ['dd/mm/yyyy'] }
-    ],
-    drawCallback: function(settings) {
-            // Reinitialize Feather icons
-            if (typeof feather !== 'undefined') {
-                feather.replace();
+        $('#calendarType').change(function () {
+            var selectedType = $(this).val();
+            $('#calendarInputs').empty(); // Clear previous inputs
+
+            if (selectedType === 'month') {
+                var currentYear = new Date().getFullYear();
+                var selectMonthHtml = '<div class="col-md-6"><label for="input2_month">Month:</label><select class="form-control" name="input2_month" id="month">';
+                var monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+                for (var month = 0; month < 12; month++) {
+                    selectMonthHtml += '<option value="' + (month + 1) + '">' + monthNames[month] + ' ' + currentYear + '</option>';
+                }
+                selectMonthHtml += '</select></div>';
+                $('#calendarInputs').append(selectMonthHtml);
+            } else if (selectedType === 'year') {
+                var currentYear = new Date().getFullYear();
+                var selectYearHtml = '<div class="col-md-6"><label for="input2_year">Year:</label><select class="form-control" name="input2_year" id="year">';
+                for (var year = currentYear; year >= currentYear - 10; year--) {
+                    selectYearHtml += '<option value="' + year + '">' + year + '</option>';
+                }
+                selectYearHtml += '</select></div>';
+                $('#calendarInputs').append(selectYearHtml);
+            }  else {
+                // to do
             }
+        });
 
-            // Reinitialize any other JavaScript functionality as needed
-            // For example, tooltips, modals, etc.
-        }
-});
+        var tableJad2 = $('#listJad2').DataTable({
+            ordering: true,
+            columns: [
+                {
+                    data: null,
+                    name: 'DT_RowIndex2',
+                    orderable: false,
+                    searchable: false,
+                    class: 'text-center',
+                    render: function (data, type, row, meta) {
+                        return meta.row + 1; // This will render the index starting from 1
+                    }
+                },
+                { data: 'date', name: 'date', class: 'text-center' },
+                { data: 'received', name: 'received', class: 'text-center' },
+                { data: 'delivered', name: 'delivered', class: 'text-center' },
+                { data: 'deferred', name: 'deferred', class: 'text-center' },
+                { data: 'bounced', name: 'bounced', class: 'text-center' },
+                { data: 'rejected', name: 'rejected', class: 'text-center' },
+            ],
+            dom: '<"top"fBl>rt<"bottom"ip>',
+            buttons: [
+                {
+                    extend: 'copy',
+                    text: 'Copy',
+                    title: 'Table of Total Daily Email',
+                    exportOptions: {
+                        columns: ':visible'
+                    }
+                },
+                {
+                    extend: 'csv',
+                    text: 'CSV',
+                    title: 'Table of Total Daily Email',
+                    exportOptions: {
+                        columns: ':visible'
+                    }
+                },
+                {
+                    extend: 'excel',
+                    text: 'Excel',
+                    title: 'Table of Total Daily Email',
+                    exportOptions: {
+                        columns: ':visible'
+                    }
+                },
+                {
+                    extend: 'pdf',
+                    text: 'PDF',
+                    title: 'Table of Total Daily Email',
+                    exportOptions: {
+                        columns: ':visible'
+                    }
+                },
+                {
+                    extend: 'print',
+                    text: 'Print',
+                    title: 'Table of Total Daily Email',
+                    exportOptions: {
+                        columns: ':visible'
+                    }
+                }
+            ],
+            data: [], // Initialize with empty data
+            drawCallback: function(settings) {
+                var api = this.api();
+                api.column(0, {search:'applied', order:'applied'}).nodes().each(function(cell, i) {
+                    cell.innerHTML = i + 1;
+                });
+            }
+        });
+        $('.dataTables_filter', tableJad2.table().container()).addClass('d-inline-block mr-2').append($('.dt-buttons', tableJad2.table().container()));
 
-// Adjust positioning of search input and export buttons
-$('.dataTables_filter').addClass('d-inline-block mr-2'); // Make search input inline
-$('.dt-buttons').appendTo('.dataTables_filter'); // Append export buttons to search container
+        var tableJad6 = $('#listJad6').DataTable({
+            ordering: true,
+            columns: [
+                {
+                    data: null,
+                    name: 'DT_RowIndex2',
+                    orderable: false,
+                    searchable: false,
+                    class: 'text-center',
+                    render: function (data, type, row, meta) {
+                        return meta.row + 1; // This will render the index starting from 1
+                    }
+                },
+                { data: 'time', name: 'time', class: 'text-center' },
+                { data: 'received', name: 'received', class: 'text-center' },
+                { data: 'delivered', name: 'delivered', class: 'text-center' },
+                { data: 'deferred', name: 'deferred', class: 'text-center' },
+                { data: 'bounced', name: 'bounced', class: 'text-center' },
+                { data: 'rejected', name: 'rejected', class: 'text-center' },
+            ],
+            dom: '<"top"fBl>rt<"bottom"ip>',
+            buttons: [
+                {
+                    extend: 'copy',
+                    text: 'Copy',
+                    title: 'Table of Per-Hour Traffic Summary',
+                    exportOptions: {
+                        columns: ':visible'
+                    }
+                },
+                {
+                    extend: 'csv',
+                    text: 'CSV',
+                    title: 'Table of Per-Hour Traffic Summary',
+                    exportOptions: {
+                        columns: ':visible'
+                    }
+                },
+                {
+                    extend: 'excel',
+                    text: 'Excel',
+                    title: 'Table of Per-Hour Traffic Summary',
+                    exportOptions: {
+                        columns: ':visible'
+                    }
+                },
+                {
+                    extend: 'pdf',
+                    text: 'PDF',
+                    title: 'Table of Per-Hour Traffic Summary',
+                    exportOptions: {
+                        columns: ':visible'
+                    }
+                },
+                {
+                    extend: 'print',
+                    text: 'Print',
+                    title: 'Table of Per-Hour Traffic Summary',
+                    exportOptions: {
+                        columns: ':visible'
+                    }
+                }
+            ],
+            data: [], // Initialize with empty data
+            drawCallback: function(settings) {
+                var api = this.api();
+                api.column(0, {search:'applied', order:'applied'}).nodes().each(function(cell, i) {
+                    cell.innerHTML = i + 1;
+                });
+            }
+        });
+        $('.dataTables_filter', tableJad6.table().container()).addClass('d-inline-block mr-2').append($('.dt-buttons', tableJad6.table().container()));
+
+        var tableJad10 = $('#listJad10').DataTable({
+            ordering: true,
+            columns: [
+                {
+                    data: null,
+                    name: 'DT_RowIndex2',
+                    orderable: false,
+                    searchable: false,
+                    class: 'text-center',
+                    render: function (data, type, row, meta) {
+                        return meta.row + 1; // This will render the index starting from 1
+                    }
+                },
+                { data: 'email', name: 'email', class: 'text-center' },
+                { data: 'total_email', name: 'total_email', class: 'text-center' },
+            ],
+            dom: '<"top"fBl>rt<"bottom"ip>',
+            buttons: [
+                {
+                    extend: 'copy',
+                    text: 'Copy',
+                    title: 'Table of Top 20 Email Recipients',
+                    exportOptions: {
+                        columns: ':visible'
+                    }
+                },
+                {
+                    extend: 'csv',
+                    text: 'CSV',
+                    title: 'Table of Top 20 Email Recipients',
+                    exportOptions: {
+                        columns: ':visible'
+                    }
+                },
+                {
+                    extend: 'excel',
+                    text: 'Excel',
+                    title: 'Table of Top 20 Email Recipients',
+                    exportOptions: {
+                        columns: ':visible'
+                    }
+                },
+                {
+                    extend: 'pdf',
+                    text: 'PDF',
+                    title: 'Table of Top 20 Email Recipients',
+                    exportOptions: {
+                        columns: ':visible'
+                    }
+                },
+                {
+                    extend: 'print',
+                    text: 'Print',
+                    title: 'Table of Top 20 Email Recipients',
+                    exportOptions: {
+                        columns: ':visible'
+                    }
+                }
+            ],
+            data: [], // Initialize with empty data
+            drawCallback: function(settings) {
+                var api = this.api();
+                api.column(0, {search:'applied', order:'applied'}).nodes().each(function(cell, i) {
+                    cell.innerHTML = i + 1;
+                });
+            }
+        });
+        $('.dataTables_filter', tableJad10.table().container()).addClass('d-inline-block mr-2').append($('.dt-buttons', tableJad10.table().container()));
+
+        var tableJad14 = $('#listJad14').DataTable({
+            ordering: true,
+            columns: [
+                {
+                    data: null,
+                    name: 'DT_RowIndex2',
+                    orderable: false,
+                    searchable: false,
+                    class: 'text-center',
+                    render: function (data, type, row, meta) {
+                        return meta.row + 1; // This will render the index starting from 1
+                    }
+                },
+                { data: 'email', name: 'email', class: 'text-center' },
+                { data: 'total_email', name: 'total_email', class: 'text-center' },
+            ],
+            dom: '<"top"fBl>rt<"bottom"ip>',
+            buttons: [
+                {
+                    extend: 'copy',
+                    text: 'Copy',
+                    title: 'Table of Top 20 Email Senders',
+                    exportOptions: {
+                        columns: ':visible'
+                    }
+                },
+                {
+                    extend: 'csv',
+                    text: 'CSV',
+                    title: 'Table of Top 20 Email Senders',
+                    exportOptions: {
+                        columns: ':visible'
+                    }
+                },
+                {
+                    extend: 'excel',
+                    text: 'Excel',
+                    title: 'Table of Top 20 Email Senders',
+                    exportOptions: {
+                        columns: ':visible'
+                    }
+                },
+                {
+                    extend: 'pdf',
+                    text: 'PDF',
+                    title: 'Table of Top 20 Email Senders',
+                    exportOptions: {
+                        columns: ':visible'
+                    }
+                },
+                {
+                    extend: 'print',
+                    text: 'Print',
+                    title: 'Table of Top 20 Email Senders',
+                    exportOptions: {
+                        columns: ':visible'
+                    }
+                }
+            ],
+            data: [], // Initialize with empty data
+            drawCallback: function(settings) {
+                var api = this.api();
+                api.column(0, {search:'applied', order:'applied'}).nodes().each(function(cell, i) {
+                    cell.innerHTML = i + 1;
+                });
+            }
+        });
+        $('.dataTables_filter', tableJad14.table().container()).addClass('d-inline-block mr-2').append($('.dt-buttons', tableJad14.table().container()));
+
+
+        $('#searchForm').submit(function (e) {
+            e.preventDefault();
+
+            var formData = $(this).serialize();
+            if (formData === 'server=') {
+                alert("Please Choose Server in options field.");
+            } else {
+                let timerInterval;
+
+                Swal.fire({
+                    title: "Please wait...",
+                    //html: "Please wait...",
+                    timerProgressBar: true,
+                    didOpen: () => {
+                        Swal.showLoading();
+                        const timer = Swal.getPopup().querySelector("b");
+                        timerInterval = setInterval(() => {
+                            if (timer) {
+                                timer.textContent = `${Swal.getTimerLeft()}`;
+                            }
+                        }, 100);
+                    },
+                    willClose: () => {
+                        clearInterval(timerInterval);
+                    }
+                });
+
+                $.ajax({
+                    type: 'GET',
+                    url: "{{ route('monthlyReport.index.search') }}",
+                    data: formData,
+                    success: function (response) {
+                        // Hide the SweetAlert timer
+                        Swal.close();
+
+                        // Add index to each row for jadual2
+                        $.each(response.dataTbl2, function (index, row) {
+                            row['DT_RowIndex'] = index + 1;
+                        });
+                        // Clear existing data and add new data to the DataTable
+                        tableJad2.clear().rows.add(response.dataTbl2).draw();
+
+
+                        // Add index to each row for jadual6
+                        $.each(response.dataTbl6, function (index, row) {
+                            row['DT_RowIndex'] = index + 1;
+                        });
+                        // Clear existing data and add new data to the DataTable
+                        tableJad6.clear().rows.add(response.dataTbl6).draw();
+
+                        // Add index to each row for jadual10
+                        $.each(response.dataTbl10, function (index, row) {
+                            row['DT_RowIndex'] = index + 1;
+                        });
+                        // Clear existing data and add new data to the DataTable
+                        tableJad10.clear().rows.add(response.dataTbl10).draw();
+
+                        // Add index to each row for jadual14
+                        $.each(response.dataTbl14, function (index, row) {
+                            row['DT_RowIndex'] = index + 1;
+                        });
+                        // Clear existing data and add new data to the DataTable
+                        tableJad14.clear().rows.add(response.dataTbl14).draw();
+
+                    },
+                    error: function (error) {
+                        // Hide the SweetAlert timer
+                        Swal.close();
+
+                        // Handle the error
+                        console.log(error);
+                    }
+                });
+            }
+        });
+
+
+        $('#reset').on('click', function() {
+            location.reload();
+        });
+
+        // Event listener for select change
+        $('#server').on('change', function() {
+            var selectedServerId = $(this).val();
+
+            // AJAX request to fetch data based on the selected server ID
+            $.ajax({
+                url: "{!! route('monthlyReport.api') !!}",
+                method: 'GET',
+                data: {
+                    serverId: selectedServerId
+                },
+                success: function(response) {
+                    // Handle success response and update UI
+                    //console.log(response);
+                },
+                error: function(xhr, status, error) {
+                    // Handle error
+                    //console.error(xhr.responseText);
+                }
+            });
+        });
+    });
+
+
 </script>
 @endpush
 
