@@ -58,7 +58,7 @@ class GenerateReportingController extends Controller
         // You can adjust the search logic based on the selected calendar type and agency here
         $serverMailRelay = Server::find($serverIds);
         $serverName = $serverMailRelay->hostname;
-        $dataSmtpForm = SmtpRelayReqForm::where('status', 0)->where('smtp_relay_server', $serverName)->get()->toArray();
+        $dataSmtpForm = SmtpRelayReqForm::where('status', 1)->where('smtp_relay_server', $serverName)->get()->toArray();
         $ids = [];
         foreach ($dataSmtpForm as $item) {
             $ids[] = $item['id'];
@@ -141,7 +141,7 @@ class GenerateReportingController extends Controller
             }
 
             // Execute the query
-            $totalDataForm = $query->get();
+            $totalDataForm = $query->where('status', 1)->get();
             $totalDataJoin = $queryJoin->where('deactivated', 0)->get();
             $totalDataJoin2 = $queryJoin2->where('deactivated', 1)->get();
 

@@ -13,7 +13,10 @@
                                 <div class="page-header-icon"></div>
                                 <nav aria-label="breadcrumb">
                                     <ol class="breadcrumb">
-                                        <li class="breadcrumb-item">Reporting</li>
+                                        <div class="page-header-icon">
+                                            <i data-feather="trello"></i>
+                                        </div>
+                                        <li class="breadcrumb-item">Monthly Report</li>
                                     </ol>
                                 </nav>
                             </h1>
@@ -22,7 +25,8 @@
                 </div>
             </div>
         </header>
-        <div class="container-xl px-4 mt-4">
+
+        {{--<div class="container-xl px-4 mt-4">
             <div class="row">
                 <div class="col-xl-12">
                     <!-- Account details card-->
@@ -40,14 +44,54 @@
                                 <tbody>
                                 </tbody>
                             </table>
-                            {{-- {{ $logsPaginated->links() }} --}}
+                            --}}{{-- {{ $logsPaginated->links() }} --}}{{--
                             </div>
                         </div>
 
                     </div>
                 </div>
             </div>
+        </div>--}}
+
+<div class="container-xl px-4 mt-4" id="searchingBox">
+    <div class="row">
+        <div class="col-xl-12">
+            <div class="card">
+                <div class="card-header">Filter</div>
+                <div class="card-body">
+                    <form id="searchForm">
+                        <div class="serverBox col-md-6">
+                            <div class="mb-3">
+                                <label class="small mb-1" for="inputAgencies">Choose Server:</label>
+                                {!! Form::select('server', $serverconfig,  null,  ['id'=>'server', 'name'=>'server', 'class'=>'form-control select2', 'placeholder'=>config('params.dropdown_default')]) !!}
+                                <p class="card-text mt-1 mb-1" id="ipAddress"></p>
+                                <div class="small text-muted"></div>
+                            </div>
+                        </div>
+
+                        <div  id="searchBox">
+                            {{--<form id="searchForm">--}}
+                            <div class="row gx-3 mb-3">
+                                <div class="mb-3" id="calendarInputs">
+                                    <!-- Inputs for date, month, year, and date range will be dynamically appended here -->
+                                </div>
+                            </div>
+                            <div class="text-end"> <!-- Align the button to the right -->
+                                <button type="button" class="btn btn-secondary" id="reset">Reset</button>
+                                <button type="submit" class="btn btn-primary">Search</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+
+
+            </div>
         </div>
+    </div>
+</div>
+
+
+
 @endsection
 @push('script')
 <script>

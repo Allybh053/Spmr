@@ -192,7 +192,7 @@
                 @can('generate_report_view')
                 <a class="nav-link" href="{{ route('generateReport.index') }}">
                     <div class="nav-link-icon"><i data-feather="trello"></i></div>
-                    Generate Reporting
+                    Agencies Report
                     <div class="sidenav-collapse-arrow"></div>
                 </a>
                 @endcan
