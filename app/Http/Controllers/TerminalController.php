@@ -209,8 +209,14 @@ class TerminalController extends Controller {
             if ($response->successful()) {
                 // if ($statusCode >= 200 && $statusCode < 300) {
                 // Return the response body
-                $responseBody = $response->body();
-                // $responseBody = $response->getBody()->getContents();
+                // $responseBody = $response->body();
+                $htmlContent = $response->body();
+                $crawler = new Crawler($htmlContent);
+                $crawler->filter('script[src="ShellInABox.js"]')->each(function (Crawler $node, $i) {
+                    // Replace the src attribute with the path to your JavaScript file in the Laravel project
+                    $node->getNode(0)->setAttribute('src', '/public/assets/ShellInABox.js');
+                });
+                $modifiedHtmlContent = $crawler->html();
 
                 // // Load the private key
                 // $privateKeyContents = file_get_contents(base_path('keys/postmaster_key.pem'));
@@ -224,7 +230,7 @@ class TerminalController extends Controller {
 
                 // Artisan::call('cd', ['/opt/cluster/postfix']);
 
-                return $responseBody;
+                return $modifiedHtmlContent;
 
             } else {
                 // Return an error message
