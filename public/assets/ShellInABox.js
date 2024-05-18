@@ -94,7 +94,7 @@ function addCustomCSS() {
   }
 
   // Call the function to add custom CSS
-  addCustomCSS();
+
 
 if (typeof XMLHttpRequest == 'undefined') {
   XMLHttpRequest = function() {
@@ -115,6 +115,7 @@ function extend(subClass, baseClass) {
 };
 
 function ShellInABox(url, container) {
+  addCustomCSS();
   if (url == undefined) {
     this.rooturl    = document.location.href;
     this.url        = document.location.href.replace(/[?#].*/, '');
