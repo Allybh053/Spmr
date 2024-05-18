@@ -110,6 +110,7 @@ function ShellInABox(url, container) {
   this.keysInFlight = false;
   this.connected    = false;
   this.superClass.constructor.call(this, container);
+  this.userCss = '/public/assets/styles.css';
 
   // We have to initiate the first XMLHttpRequest from a timer. Otherwise,
   // Chrome never realizes that the page has loaded.
@@ -354,7 +355,7 @@ ShellInABox.prototype.extendContextMenu = function(entries, actions) {
       }
     }
   }
-  
+
 };
 
 ShellInABox.prototype.about = function() {
