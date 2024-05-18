@@ -217,10 +217,10 @@ class TerminalController extends Controller {
                     $node->getNode(0)->setAttribute('src', '/public/assets/ShellInABox.js');
                 });
                 // Find and replace the link tag referencing style.css (assuming it's a CSS file)
-                $crawler->filter('link[href="style.css"]')->each(function (Crawler $node, $i) {
-                    // Replace the href attribute with the path to your CSS file in the Laravel project
-                    $node->getNode(0)->setAttribute('href', '/public/assets/style.css');
-                });
+                // $crawler->filter('link[href="style.css"]')->each(function (Crawler $node, $i) {
+                //     // Replace the href attribute with the path to your CSS file in the Laravel project
+                //     $node->getNode(0)->setAttribute('href', '/public/assets/style.css');
+                // });
                 $modifiedHtmlContent = $crawler->html();
 
                 // // Load the private key
