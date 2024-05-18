@@ -71,6 +71,31 @@
 
 // IE does not define XMLHttpRequest by default, so we provide a suitable
 // wrapper.
+
+function addCustomCSS() {
+    // Create a <style> element
+    var style = document.createElement('style');
+    style.type = 'text/css';
+
+    // Define your custom CSS rules
+    var css = `/public/assets/styles.css`;
+
+    // Add the CSS rules to the <style> element
+    if (style.styleSheet) {
+      // For IE
+      style.styleSheet.cssText = css;
+    } else {
+      // For other browsers
+      style.appendChild(document.createTextNode(css));
+    }
+
+    // Append the <style> element to the document's <head>
+    document.head.appendChild(style);
+  }
+
+  // Call the function to add custom CSS
+  addCustomCSS();
+
 if (typeof XMLHttpRequest == 'undefined') {
   XMLHttpRequest = function() {
     try { return new ActiveXObject('Msxml2.XMLHTTP.6.0');} catch (e) { }
@@ -110,7 +135,6 @@ function ShellInABox(url, container) {
   this.keysInFlight = false;
   this.connected    = false;
   this.superClass.constructor.call(this, container);
-  this.userCss = '/public/assets/styles.css';
 
   // We have to initiate the first XMLHttpRequest from a timer. Otherwise,
   // Chrome never realizes that the page has loaded.
