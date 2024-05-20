@@ -426,7 +426,7 @@
                 { data: 'server_name', name: 'server_name', class: 'text-center' },
                 { data: 'ip_addr_server', name: 'ip_addr_server', class: 'text-center' },
                 { data: 'fqdn_server', name: 'fqdn_server', class: 'text-center' },
-                { data: 'deactivated', name: 'deactivated', class: 'text-center' },
+                { data: 'types_req', name: 'types_req', class: 'text-center' },
             ],
             dom: '<"top"fBl>rt<"bottom"ip>',
             buttons: [
@@ -499,7 +499,7 @@
                 { data: 'server_name', name: 'server_name', class: 'text-center' },
                 { data: 'ip_addr_server', name: 'ip_addr_server', class: 'text-center' },
                 { data: 'fqdn_server', name: 'fqdn_server', class: 'text-center' },
-                { data: 'deactivated', name: 'deactivated', class: 'text-center' },
+                { data: 'types_req', name: 'types_req', class: 'text-center' },
             ],
             dom: '<"top"fBl>rt<"bottom"ip>',
             buttons: [
@@ -839,12 +839,12 @@
 
                         $.each(response.data2, function (index, row) {
                             row['DT_RowIndex2'] = index + 1;
-                            row['deactivated'] = row['deactivated'] === 1 ? 'Deactivated' : 'Activated';
+                            row['types_req'] = row['types_req'] === 2 ? 'Deactivated' : 'Activated';
                         });
 
                         $.each(response.data3, function (index, row) {
                             row['DT_RowIndex2'] = index + 1;
-                            row['deactivated'] = row['deactivated'] === 1 ? 'Deactivated' : 'Activated';
+                            row['types_req'] = row['types_req'] === 2 ? 'Activated' : 'Deactivated';
                         });
 
                         // Clear existing data and add new data to the DataTable
