@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Mailrouting;
 use App\Models\smtp_relay_server;
 use App\Models\SmtpRelayReqForm;
 use Illuminate\Http\Request;
@@ -40,24 +41,7 @@ class MainRelayController extends Controller
 
         return view('mailrelay.register', compact('user','smtpMailServers'));
     }
-    public function mailupstream(Request $request)
-    {
-        $ff = $request->serverconfig;
 
-        $user = Auth::user();
-        $role = $user->roles->isNotEmpty() ? $user->roles->pluck('name')->first() : null;
-        $serverIds = RoleServer::whereIn('role_id', $user->roles->pluck('id')->all())
-        ->pluck('server_id');
-
-        $serverconfig = Server::where('status', 1)
-        ->get();
-
-        $serverdetail = DomainServer::where('server_id', $ff)->get();
-
-
-
-        return view('mailrelay.mailupstream', compact('user','serverconfig','serverdetail'));
-    }
     public function view(string $id, $type)
     {
         $user = Auth::user();
@@ -143,4 +127,65 @@ class MainRelayController extends Controller
     //     return response()->json(['output' => 'Login Failed!']);
 
     // }
+
+
+    public function mailupstream(Request $request)
+    {
+        $ff = $request->serverconfig;
+
+        $user = Auth::user();
+        $role = $user->roles->isNotEmpty() ? $user->roles->pluck('name')->first() : null;
+        $serverIds = RoleServer::whereIn('role_id', $user->roles->pluck('id')->all())
+            ->pluck('server_id');
+
+        //$serverconfig = Server::where('status', 1)->get();
+
+        //$serverdetail = DomainServer::where('server_id', $ff)->get();
+
+        $defaultServerId = 1;
+
+        // Filter servers based on the fetched IDs
+        $serverconfig = Server::whereIn('id', $serverIds)
+            ->where('status', 1)->orderBy('id', 'asc')
+            ->pluck('hostname', 'id');
+
+
+
+        return view('mailrelay.mailupstream', compact('user','serverconfig', 'defaultServerId'));
+    }
+
+    public function api(Request $request)
+    {
+        // Retrieve serverId from the request
+        $serverId = $request->serverId;
+
+        return $serverId;
+    }
+
+    public function search(Request $request)
+    {
+        // Retrieve other inputs from the request
+        $serverIds = $request->input('server');
+
+        // You can adjust the search logic based on the selected calendar type and agency here
+        $serverMailRelay = Server::find($serverIds);
+        $serverName = $serverMailRelay->hostname;
+
+        $queryMailRoute = Mailrouting::where('server', $serverName);
+
+        // Execute the query
+        $valDataMailRoute = $queryMailRoute->get();
+        $totalDomActive = Mailrouting::where('server', $serverName)->where('status', true)->count();
+        $totalDomDeactive = Mailrouting::where('server', $serverName)->where('status', false)->count();
+        $totalDomAll = Mailrouting::where('server', $serverName)->count();
+
+
+        return response()->json([
+            'totalDomainActivated' => $totalDomActive,
+            'totalDomainDeactivated' => $totalDomDeactive,
+            'totalDomainRegistered' => $totalDomAll,
+            'dataMailRoute' => $valDataMailRoute,
+        ]);
+    }
+
 }
