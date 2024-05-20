@@ -142,8 +142,10 @@ class GenerateReportingController extends Controller
 
             // Execute the query
             $totalDataForm = $query->where('status', 1)->get();
-            $totalDataJoin = $queryJoin->where('deactivated', 0)->get();
-            $totalDataJoin2 = $queryJoin2->where('deactivated', 1)->get();
+            /*$totalDataJoin = $queryJoin->where('deactivated', 0)->get();
+            $totalDataJoin2 = $queryJoin2->where('deactivated', 1)->get();*/
+            $totalDataJoin = $queryJoin->where('smtp_relay_server.types_req', 1)->get();
+            $totalDataJoin2 = $queryJoin2->where('smtp_relay_server.types_req', 2)->get();
 
             // Count the number of elements in $totalDataForm
             $totalDataFormCount = count($totalDataForm);
@@ -159,8 +161,8 @@ class GenerateReportingController extends Controller
                 foreach ($totalDataForm as $dataForm) {
                     // Get the count of $totalApp, $totalIp and $totalDeactivated for the current $dataForm element
                     //$getTotalApp = smtp_relay_server::where('form_id', $dataForm['form_id'])->select('server_name')->count();
-                    $getTotalIp = smtp_relay_server::where('form_id', $dataForm['form_id'])->where('deactivated', 0)->select('ip_addr_server')->count();
-                    $getTotalDeactivated = smtp_relay_server::where('form_id', $dataForm['form_id'])->where('deactivated', 1)->count();
+                    $getTotalIp = smtp_relay_server::where('form_id', $dataForm['form_id'])->where('types_req', 1)->select('ip_addr_server')->count();
+                    $getTotalDeactivated = smtp_relay_server::where('form_id', $dataForm['form_id'])->where('types_req', 2)->count();
                     $getTotalDomain = smtp_relay_server::where('form_id', $dataForm['form_id'])->select('fqdn_server')->count();
 
 
