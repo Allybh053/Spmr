@@ -194,57 +194,7 @@ class TerminalController extends Controller {
 
     public function terminal()
     {
-        // $client = new Client([
-        //     'verify' => false, // Disable SSL certificate verification
-        // ]);
 
-        try {
-            // $response = Http::get('https://127.0.0.1:4200/');
-            $response = Http::withOptions(['verify' => false])->get('https://127.0.0.1:4200');
-
-
-            $statusCode = $response->getStatusCode();
-
-            // Check if the response was successful
-            if ($response->successful()) {
-                // if ($statusCode >= 200 && $statusCode < 300) {
-                // Return the response body
-                // $responseBody = $response->body();
-                $htmlContent = $response->body();
-                $crawler = new Crawler($htmlContent);
-                $crawler->filter('script[src="ShellInABox.js"]')->each(function (Crawler $node, $i) {
-                    // Replace the src attribute with the path to your JavaScript file in the Laravel project
-                    $node->getNode(0)->setAttribute('src', '/public/assets/ShellInABox.js');
-                });
-                // Find and replace the link tag referencing style.css (assuming it's a CSS file)
-                // $crawler->filter('link[href="style.css"]')->each(function (Crawler $node, $i) {
-                //     // Replace the href attribute with the path to your CSS file in the Laravel project
-                //     $node->getNode(0)->setAttribute('href', '/public/assets/style.css');
-                // });
-                $modifiedHtmlContent = $crawler->html();
-
-                // // Load the private key
-                // $privateKeyContents = file_get_contents(base_path('keys/postmaster_key.pem'));
-                // $key = PublicKeyLoader::load($privateKeyContents, '88__rGnuGlsmeWAmXdd7');
-
-                // // Construct the SSH command
-                // $sshCommand = "ssh -i $key pentadbir@20.6.33.199";
-
-                // // Execute SSH command in the terminal
-                // Artisan::call('shell:exec', ['command' => $sshCommand]);
-
-                // Artisan::call('cd', ['/opt/cluster/postfix']);
-
-                return $modifiedHtmlContent;
-
-            } else {
-                // Return an error message
-                return $statusCode;
-            }
-        } catch (RequestException $e) {
-            // An error occurred during the HTTP request
-            return "Error: " . $e->getMessage();
-        }
 
     }
 }

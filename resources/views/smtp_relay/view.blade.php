@@ -165,7 +165,10 @@
                     </div>
                     <div class="col-md-6">
                         <label for="mailbox">MailBox</label>
-                        <p>@if($datasmtp->mailbox_created ==1 )
+                        <p>
+                        @if($datasmtp->mailbox_created == 0 )
+                            None
+                        @elseif($datasmtp->mailbox_created == 1)
                             No
                         @else
                             Yes

@@ -138,7 +138,7 @@
                                 <th scope="col">System Name</th>
                                 <th scope="col">IP Address</th>
                                 <th scope="col">FQDN System</th>
-                                <th scope="col">Action</th>
+                                <th scope="col">Actions</th>
                             </tr>
                         </thead>
                         <tbody id="dynamic-inputs-container">
@@ -150,14 +150,6 @@
                                         <input type="text" name="tableSpmr[{{ $loop->index }}][server_name]" id="server_name" value="{{ old('tableSpmr.' . $loop->index . '.server_name', $detail->server_name) }}" class="form-control" required />
                                     </td>
                                     <td><input type="text" name="tableSpmr[{{ $loop->index }}][ip_addr_server]" id="ip_addr_server" value="{{ old('tableSpmr.' . $loop->index . '.ip_addr_server', $detail->ip_addr_server) }}" class="form-control" required /></td>
-                                    {{--<td>
-                                        <select class="form-control select2" name="tableSpmr[{{ $loop->index }}][fqdn_server]" id="fqdn_server" required>
-                                            <option value="{{ old('tableSpmr.' . $loop->index . '.fqdn_server', $detail->fqdn_server) }}">{{ old('tableSpmr.' . $loop->index . '.fqdn_server', $detail->fqdn_server) }}</option>
-                                            @foreach ($domainsArray as $domain)
-                                            <option value="{{ $domain['domain_name'] }}">{{ $domain['domain_name'] }}</option>
-                                            @endforeach
-                                        </select>
-                                    </td>--}}
                                         <td><input type="text" name="tableSpmr[{{ $loop->index }}][fqdn_server]" id="fqdn_server" value="{{ old('tableSpmr.' . $loop->index . '.fqdn_server', $detail->fqdn_server) }}" class="form-control" required /></td>
                                         <td hidden><input type="text" name="tableSpmr[{{ $loop->index }}][deactivated]" id="deactivated" value="{{ old('tableSpmr.' . $loop->index . '.deactivated', $detail->deactivated) }}" class="form-control" /></td>
                                     <td><button class="btn btn-danger remove-row"><i class="me-1" data-feather="minus"></i>Remove</button></td>
@@ -171,19 +163,13 @@
                                 </th>
                             </tr>
                         </tfoot>
+                        <p id="resultContainer"></p>
                     </table>
                 </div>
 
                 <div class="row gx-3 mb-3">
                     <div class="col-md-6">
                         <label for="smtp_port">SMTP Port Number</label>
-                        {{--<select class="form-control select2" name="smtp_port" id="smtp_port" aria-label="Default select" required>
-                            <option value="{{ old('smtp_port', $formsmtp->smtp_port) }}">{{ old('smtp_port', $formsmtp->smtp_port) }} /tcp</option>
-                            <option value="0">Not Answered</option>
-                            <option value="25">25/tcp</option>
-                            <option value="465">465/tcp</option>
-                            <option value="587">587/tcp</option>
-                        </select>--}}
                         <select class="form-control select2" name="smtp_port" id="smtp_port" aria-label="Default select" required>
                             <!-- The default option will be updated via JavaScript -->
                         </select>
@@ -344,8 +330,7 @@
                 <hr>
                 <div class="mb-3">
                     <label for="attachement">Current Attachement</label><br>
-                    {{--<a href="" target="_blank">test</a>--}}
-                    <a href="{{ asset('storage/' . old('upload_copy_attachment', $formsmtp->upload_copy_attachment)) }}" target="_blank">
+                    <a href="{{ asset('attachments/' . old('upload_copy_attachment', $formsmtp->upload_copy_attachment)) }}" target="_blank">
                         {{ old('upload_copy_attachment', $formsmtp->upload_copy_attachment) }}
                     </a>
                 </div>
@@ -376,6 +361,43 @@
 @endsection
 @push('script')
 <script>
+    $('#dynamic-inputs-container').on('input', '#ip_addr_server', function() {
+
+        var type_req = document.getElementById("types_req");
+        var selectBox = document.getElementById("smtp_relay_server");
+        var selectedValue = selectBox.options[selectBox.selectedIndex].value;
+        var selectedValuetype_req = type_req.options[type_req.selectedIndex].value;
+        var ipAddress = $(this).val();
+
+        if (/^(?:[0-9]{1,3}\.){3}[0-9]{1,3}$/.test(ipAddress)) {
+            // Send AJAX request
+            $.ajax({
+                type: 'POST',
+                url: '{{ route("check.ip.address") }}', // Replace with your route name
+                data: {
+                    '_token': '{{ csrf_token() }}',
+                    'tableSpmr': [{
+                        'ipaddress': ipAddress
+                    }],
+                    'selectedValue': selectedValue,
+                    'selectedValuetype_req': selectedValuetype_req
+                },
+                success: function(response) {
+                    console.log(response);
+                    $('#resultContainer').html(response);
+
+                },
+                error: function(xhr, status, error) {
+                    console.error(xhr.responseText);
+                }
+            });
+
+        }else {
+            // Clear result container if input is invalid
+            $('#resultContainer').empty();
+        }
+
+    });
 
     document.addEventListener('DOMContentLoaded', function() {
         // The smtpPort value passed from PHP to JavaScript

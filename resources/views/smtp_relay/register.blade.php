@@ -118,8 +118,8 @@
                 </div>
                 <div class="mb-3">
                     <label for="mailrelay">Server Mail Relay<span style="color: red"> *</span></label>
-                    <select class="form-control select2" name="mailrelay" id="mailrelay" aria-label="Default select" required>
-                        <option selected disabled>Select Server</option>
+                    <select class="form-control select2" name="mailrelay" id="mailrelay" aria-label="Default select" required onchange="toggleInputs()">
+                        <option disabled selected>Select Server</option>
                         @foreach ($serversArray as $server)
                         <option value="{{ $server['hostname'] }}">{{ $server['hostname'] }}</option>
                         @endforeach
@@ -135,20 +135,12 @@
                                 <th scope="col">Action</th>
                             </tr>
                         </thead>
-                        <tbody id="dynamic-inputs-container">
+                        <tbody id="dynamic-inputs-container" name="dynamic-inputs-container">
                             <tr class="dynamic-input-row">
-                              <td><input type="text" name="tableSpmr[0][server_name]" id="server_name" value="" class="form-control" required /></td>
-                              <td><input type="text" name="tableSpmr[0][ipaddress]" id="ipaddress" value="" class="form-control" required /></td>
-                              {{--<td>
-                                <select class="form-control select2" name="tableSpmr[0][domain]" id="domain" aria-label="Default select2" required>
-                                    <option selected disabled></option>
-                                    @foreach ($domainsArray as $domain)
-                                    <option value="{{ $domain['domain_name'] }}">{{ $domain['domain_name'] }}</option>
-                                    @endforeach
-                                </select>
-                              </td>--}}
-                                <td><input type="text" name="tableSpmr[0][domain]" id="domain" value="" class="form-control" required /></td>
-                              <td><button class="btn btn-danger remove-row"><i class="me-1" data-feather="minus"></i>Remove</button></td>
+                                <td><input type="text" name="tableSpmr[0][server_name]" id="server_name" value="" class="form-control" required disabled/></td>
+                                <td><input type="text" name="tableSpmr[0][ipaddress]" id="ipaddress" value="" class="form-control" required disabled/></td>
+                                <td><input type="text" name="tableSpmr[0][domain]" id="domain" value="" class="form-control" required disabled/></td>
+                                <td><button class="btn btn-danger remove-row"><i class="me-1" data-feather="minus"></i>Remove</button></td>
                             </tr>
                         </tbody>
                         <tfoot>
@@ -158,6 +150,7 @@
                                 </th>
                             </tr>
                         </tfoot>
+                        <p id="resultContainer"></p>
                     </table>
                 </div>
 
@@ -325,14 +318,8 @@
                     <input class="form-control btn-outline-primary" type="file" name="attachment" accept=".pdf"/>
                     <span class="text-xs text-danger">Upload File format .pdf</span>
                 </div>
-                {{-- <div class="mb-3">
-                    <label for="attachement">Upload Attachement</label>
-                    <input class="form-control btn-outline-primary" type="file" name="attachement" id="attachement" accept=".pdf"/>
-                    <span class="text-xs text-danger">Upload File format .pdf</span>
-                </div> --}}
-
                 <hr>
-                <button class="btn btn-primary me-2 my-1" type="submit">Submit</button>
+                <button class="btn btn-primary me-2 my-1" name="submit" type="submit">Submit</button>
                 <a class="btn btn-danger me-2 my-1" type="button" href="{{ route('smtp_relay.smtp_relay_req')}}">Cancel</a>
                 </form>
             </div>
@@ -352,6 +339,84 @@
 @endsection
 @push('script')
 <script>
+
+    document.addEventListener('DOMContentLoaded', function() {
+        const submitButton = document.querySelector('button[name="submit"]');
+        const resultContainer = document.getElementById('resultContainer');
+
+        // Function to check if resultContainer is empty and disable/enable the button
+        function checkResultContainer() {
+            if (resultContainer.innerHTML.trim() !== "") {
+                submitButton.disabled = true;
+            } else {
+                submitButton.disabled = false;
+            }
+        }
+
+        // Initial check on page load
+        checkResultContainer();
+    });
+    $('#dynamic-inputs-container').on('input', '#ipaddress', function() {
+
+        var type_req = document.getElementById("type_req");
+        var selectBox = document.getElementById("mailrelay");
+        var selectedValue = selectBox.options[selectBox.selectedIndex].value;
+        var selectedValuetype_req = type_req.options[type_req.selectedIndex].value;
+        var ipAddress = $(this).val();
+
+        if (/^(?:[0-9]{1,3}\.){3}[0-9]{1,3}$/.test(ipAddress)) {
+            // Send AJAX request
+            $.ajax({
+                type: 'POST',
+                url: '{{ route("check.ip.address") }}', // Replace with your route name
+                data: {
+                    '_token': '{{ csrf_token() }}',
+                    'tableSpmr': [{
+                        'ipaddress': ipAddress
+                    }],
+                    'selectedValue': selectedValue,
+                    'selectedValuetype_req': selectedValuetype_req
+                },
+                success: function(response) {
+                    console.log(response);
+                    $('#resultContainer').html(response);
+
+                },
+                error: function(xhr, status, error) {
+                    console.error(xhr.responseText);
+                }
+            });
+
+        }else {
+            // Clear result container if input is invalid
+            $('#resultContainer').empty();
+        }
+
+    });
+
+    function toggleInputs() {
+        var selectBox = document.getElementById("mailrelay");
+        var selectedValue = selectBox.options[selectBox.selectedIndex].value;
+
+        var tbody = document.getElementById("dynamic-inputs-container"); // Select the tbody by name
+
+        // Check if the selected option is the "Select Server" option
+        if (selectedValue === "") {
+            // Disable all input fields inside the tbody
+            var inputs = tbody.querySelectorAll("input");
+            inputs.forEach(function(input) {
+                input.disabled = true;
+            });
+        } else {
+            // Enable all input fields inside the tbody
+            var inputs = tbody.querySelectorAll("input");
+            inputs.forEach(function(input) {
+                input.disabled = false;
+            });
+        }
+    }
+
+
     // Add row button click handler
 $('#add-row-table').click(function () {
     addRow('#dynamic-inputs-container');
@@ -390,9 +455,6 @@ function updateNameAttribute(nameAttr, newIndex) {
     var regex = /\[(\d+)\]/;
     var matches = regex.exec(nameAttr);
     var currentIndex = matches ? parseInt(matches[1]) : 0;
-
-    // Increment the index for the next row
-    //var newIndex = currentIndex + 1;
 
     // Replace the index in the name attribute
     return nameAttr.replace('[' + currentIndex + ']', '[' + newIndex + ']');
