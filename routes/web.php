@@ -97,7 +97,6 @@ Route::group(['middleware' => ['auth']], function () {
     Route::group(['prefix' => 'mailrelay'], function () {
         Route::get('/', [MainRelayController::class, 'index'])->name('mailrelay.index')->middleware('auth.resource:manage_mail_relay_view');
         Route::get('/register', [MainRelayController::class, 'show'])->name('mailrelay.register');
-        Route::get('/mailupstream', [MainRelayController::class, 'mailupstream'])->name('mailrelay.mailupstream');
         Route::get('/detail/{id}/{type}', [MainRelayController::class, 'view'])->name('mailrelay.edit');
         Route::get('/reject/{id}', [MainRelayController::class, 'reject'])->name('mailrelay.reject');
         Route::post('/submit-form', [MainRelayController::class, 'submitappForm'])->name('mailrelay.form');
@@ -107,6 +106,10 @@ Route::group(['middleware' => ['auth']], function () {
         // Route::post('/mailupstream/{serverconfig}', [MainRelayController::class, 'getNewServerData'])->name('mailrelay.getNewServerData');
 
         // Route::get('/detail/{id}', [MainRelayController::class, 'updatestatus']);
+
+        Route::get('/mailupstream', [MainRelayController::class, 'mailupstream'])->name('mailrelay.mailupstream');
+        Route::get('/getServer', [MainRelayController::class, 'api'])->name('mailrelay.api');
+        Route::get('/index/searching', [MainRelayController::class, 'search'])->name('mailrelay.index.search');
     });
 
     //SMTP Relay Request
