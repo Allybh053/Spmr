@@ -11,6 +11,7 @@ use App\Models\Server;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Collection;
+use Carbon\Carbon;
 
 class MonthlyReportingController extends Controller
 {
@@ -50,7 +51,6 @@ class MonthlyReportingController extends Controller
         $serverMailRelay = Server::find($serverIds);
         $serverName = $serverMailRelay->hostname;
 
-
         $queryJad2 = Jadual2::where('server', $serverName);
         $queryJad6 = Jadual6::where('server', $serverName);
         $queryJad10 = Jadual10::where('server', $serverName);
@@ -80,12 +80,69 @@ class MonthlyReportingController extends Controller
         $valDataJad14 = $queryJad14->get();
 
 
+        $chartJadual2 = Jadual2::when(isset($serverName) && $serverName != null, function ($query) use ($serverName) {
+            $query->where('server', $serverName);
+        })
+        ->when(isset($request->input2_month) && $request->input('input2_month') != null, function ($query) use ($request) {
+            $query->where('month', $request->input('input2_month'));
+        })
+        ->when(isset($request->input2_year) && $request->input('input2_year') != null, function ($query) use ($request) {
+            $query->where('year', $request->input('input2_year'));
+        })
+        // by day
+        // ->whereDate('date', Carbon::now())
+        // by week
+        ->whereBetween('date', [Carbon::now()->startOfWeek(), Carbon::now()->endOfWeek()])
+        ->get();
+
+
+        $chartJadual6 = Jadual6::when(isset($serverName) && $serverName != null, function ($query) use ($serverName) {
+            $query->where('server', $serverName);
+        })
+        ->when(isset($request->input2_month) && $request->input('input2_month') != null, function ($query) use ($request) {
+            $query->where('month', $request->input('input2_month'));
+        })
+        ->when(isset($request->input2_year) && $request->input('input2_year') != null, function ($query) use ($request) {
+            $query->where('year', $request->input('input2_year'));
+        })
+        ->get();
+
+        $chartJadual10 = Jadual10::when(isset($serverName) && $serverName != null, function ($query) use ($serverName) {
+            $query->where('server', $serverName);
+        })
+        ->when(isset($request->input2_month) && $request->input('input2_month') != null, function ($query) use ($request) {
+            $query->where('month', $request->input('input2_month'));
+        })
+        ->when(isset($request->input2_year) && $request->input('input2_year') != null, function ($query) use ($request) {
+            $query->where('year', $request->input('input2_year'));
+        })
+        ->orderBy('total_email', 'desc')
+        ->limit(20)
+        ->get();
+
+        $chartJadual14 = Jadual14::when(isset($serverName) && $serverName != null, function ($query) use ($serverName) {
+            $query->where('server', $serverName);
+        })
+        ->when(isset($request->input2_month) && $request->input('input2_month') != null, function ($query) use ($request) {
+            $query->where('month', $request->input('input2_month'));
+        })
+        ->when(isset($request->input2_year) && $request->input('input2_year') != null, function ($query) use ($request) {
+            $query->where('year', $request->input('input2_year'));
+        })
+        ->orderBy('total_email', 'desc')
+        ->limit(20)
+        ->get();
 
         return response()->json([
             'dataTbl2' => $valDataJad2,
             'dataTbl6' => $valDataJad6,
             'dataTbl10' => $valDataJad10,
             'dataTbl14' => $valDataJad14,
+            'chartJadual2' => $chartJadual2,
+            'chartJadual6' => $chartJadual6,
+            'chartJadual10' => $chartJadual10,
+            'chartJadual14' => $chartJadual14,
+            'serverName' =>$serverName,
         ]);
     }
 

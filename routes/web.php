@@ -108,6 +108,10 @@ Route::group(['middleware' => ['auth']], function () {
         // Route::post('/mailupstream/{serverconfig}', [MainRelayController::class, 'getNewServerData'])->name('mailrelay.getNewServerData');
 
         // Route::get('/detail/{id}', [MainRelayController::class, 'updatestatus']);
+
+        Route::get('/mailupstream', [MainRelayController::class, 'mailupstream'])->name('mailrelay.mailupstream');
+        Route::get('/getServer', [MainRelayController::class, 'api'])->name('mailrelay.api');
+        Route::get('/index/searching', [MainRelayController::class, 'search'])->name('mailrelay.index.search');
     });
 
     //SMTP Relay Request
@@ -307,7 +311,7 @@ Route::group(['middleware' => ['auth']], function () {
         Route::get('/', [MonthlyReportingController::class, 'index'])->name('monthlyReport.index')
         ->middleware('auth.resource:monthly_report_view');
         Route::get('/getServer', [MonthlyReportingController::class, 'api'])->name('monthlyReport.api');
-        Route::get('/index/searching', [MonthlyReportingController::class, 'search'])->name('monthlyReport.index.search');
+        Route::post('/index/searching', [MonthlyReportingController::class, 'search'])->name('monthlyReport.index.search');
     });
 
 

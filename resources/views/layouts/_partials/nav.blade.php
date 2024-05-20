@@ -65,7 +65,7 @@
 
                 <a class="nav-link" href="{{ route('mailrelay.mailupstream') }}">
                     <div class="nav-link-icon"><i data-feather="grid"></i></div>
-                    SMTP Mail Upstream
+                    Mail Upstream Routing
                     <div class="sidenav-collapse-arrow"></div>
                 </a>
 
