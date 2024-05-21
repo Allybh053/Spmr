@@ -71,15 +71,14 @@ class GenerateReportingController extends Controller
         $totalDomain = '';
         $valDataTables = '';
         $valDataTables1 = '';
+        $valDataTables2 = '';
         $valDataTablesJoin = '';
         $valDataTablesJoin2 ='';
 
         // Searching and filtering
-        /*$queryJoin = SmtpRelayReqForm::select('smtp_relay_req_form.*', 'smtp_relay_server.ip_addr_server')
-            ->leftJoin('smtp_relay_server', 'smtp_relay_req_form.form_id', '=', 'smtp_relay_server.form_id');*/
-
         foreach ($arraySmtpForm as $val) {
             $query = SmtpRelayReqForm::where('smtp_relay_server', $val['smtp_relay_server']);
+            $query2 = SmtpRelayReqForm::where('smtp_relay_server', $val['smtp_relay_server']);
             $queryJoin = SmtpRelayReqForm::where('smtp_relay_server', $val['smtp_relay_server'])
                 ->select('smtp_relay_req_form.*', 'smtp_relay_server.*')
                 ->leftJoin('smtp_relay_server', 'smtp_relay_req_form.form_id', '=', 'smtp_relay_server.form_id');
@@ -88,14 +87,14 @@ class GenerateReportingController extends Controller
                 ->leftJoin('smtp_relay_server', 'smtp_relay_req_form.form_id', '=', 'smtp_relay_server.form_id');
 
             // Apply filter based on $input1
-            /*if ($input1 !== null) {
-                $query->where('agencies', $input1);
-                $queryJoin->where('agencies', $input1);
-                $queryJoin2->where('agencies', $input1);
-            }*/
             if ($input1 !== null) {
                 $query->where(function($query) use ($input1) {
                     $query->where('agencies', $input1)
+                        ->orWhere('ministry', $input1);
+                });
+
+                $query2->where(function($query2) use ($input1) {
+                    $query2->where('agencies', $input1)
                         ->orWhere('ministry', $input1);
                 });
 
@@ -117,24 +116,28 @@ class GenerateReportingController extends Controller
                     $timestamp = strtotime($dateType);
                     $formattedDate = date("Y-m-d H:i:s", $timestamp);
                     $query->whereDate('date_verification_3', $formattedDate);
+                    $query2->whereDate('date_verification_3', $formattedDate);
                     $queryJoin->whereDate('date_verification_3', $formattedDate);
                     $queryJoin2->whereDate('date_verification_3', $formattedDate);
                 } elseif ($input2Type === "month") {
                     $startDate = date("Y-m-01 00:00:00", strtotime($monthType));
                     $endDate = date("Y-m-t 23:59:59", strtotime($monthType));
                     $query->whereBetween('date_verification_3', [$startDate, $endDate]);
+                    $query2->whereBetween('date_verification_3', [$startDate, $endDate]);
                     $queryJoin->whereBetween('date_verification_3', [$startDate, $endDate]);
                     $queryJoin2->whereBetween('date_verification_3', [$startDate, $endDate]);
                 } elseif ($input2Type === "year") {
                     $startDate = date("Y-01-01 00:00:00", strtotime($yearType));
                     $endDate = date("Y-12-t 23:59:59", strtotime($yearType));
                     $query->whereBetween('date_verification_3', [$startDate, $endDate]);
+                    $query2->whereBetween('date_verification_3', [$startDate, $endDate]);
                     $queryJoin->whereBetween('date_verification_3', [$startDate, $endDate]);
                     $queryJoin2->whereBetween('date_verification_3', [$startDate, $endDate]);
                 } elseif ($input2Type === "dateRange") {
                     $startDate = date("Y-m-d 00:00:00", strtotime($dateFromType));
                     $endDate = date("Y-m-t 23:59:59", strtotime($dateToType));
                     $query->whereBetween('date_verification_3', [$startDate, $endDate]);
+                    $query2->whereBetween('date_verification_3', [$startDate, $endDate]);
                     $queryJoin->whereBetween('date_verification_3', [$startDate, $endDate]);
                     $queryJoin2->whereBetween('date_verification_3', [$startDate, $endDate]);
                 }
@@ -188,13 +191,15 @@ class GenerateReportingController extends Controller
 
             $valDataTables = $totalDataForm;
             $valDataTables1 = $query->where('smtp_relay_auth_method', 2)->get();
+            $valDataTables2 = $query2->where('status', 1)->where('smtp_relay_auth_method', 1)->get();
             $valDataTablesJoin = $totalDataJoin;
             $valDataTablesJoin2 = $totalDataJoin2;
         }
 
         return response()->json([
             //'data' => $valDataTables,
-            'data' => $valDataTables1,
+            'dataTbl1' => $valDataTables1,
+            'dataTbl2' => $valDataTables2,
             'data2' => $valDataTablesJoin,
             'data3' => $valDataTablesJoin2,
             //'totalApplications' => $totalApplications,
