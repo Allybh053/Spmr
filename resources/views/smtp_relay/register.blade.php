@@ -63,7 +63,7 @@
                     </div>
                 </div>
                 <div class="mb-3">
-                    <label for="ministry">Ministry</label>
+                    <label for="ministry">Ministry<span style="color: red"> *</span></label>
                     <select class="form-control select2" name="ministry" id="ministry" aria-label="Default select" required>
                         <option disabled selected>Select Ministry</option>
                         @foreach ($ministriesArray as $ministry)

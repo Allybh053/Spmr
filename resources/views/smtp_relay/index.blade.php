@@ -18,7 +18,7 @@
 
                         @can('smtp_mail_relay_add')
                             <div class="col-12 col-xl-auto mb-3">
-                               {{-- <a class="btn btn-sm btn-green" href="#">
+                                {{--<a class="btn btn-sm btn-green" href="#" data-bs-toggle="modal" data-bs-target="#importModal">
                                     <i class="me-1" data-feather="plus"></i>
                                     Bulk Add
                                 </a>--}}
@@ -46,6 +46,7 @@
                 });
             </script>
             @endif
+        </div>
 
 
             <!-- add choose by server then show this searchong by server -->
@@ -72,6 +73,7 @@
                                 <th>Serial No.</th>
                                 <th>Ticket No.</th>
                                 <th>Types Application</th>
+                                <th>Agency Name</th>
                                 <th>Project Name</th>
                                 <th>Server Mail Relay</th>
                                 {{--<th>Total Ip Address</th>--}}
@@ -88,6 +90,29 @@
             </div>
         </div>
     </main>
+
+     <div class="modal fade" id="importModal" tabindex="-1" role="dialog" aria-labelledby="importModal" aria-hidden="true">
+         <div class="modal-dialog modal-lg" role="document">
+             <div class="modal-content">
+                 <div class="modal-header">
+                     <h5 class="modal-title">Bulk Add</h5>
+                     <button class="btn-close" type="button" data-bs-dismiss="modal" aria-label="Close"></button>
+                 </div>
+
+                 <form method="post" action="{{ route('smtp_relay.import') }}" enctype="multipart/form-data">
+                     @csrf
+                     <div class="modal-body">
+                         <input class="form-control" type="file" name="file">
+                     </div>
+                     <div class="modal-footer">
+                         <button class="btn btn-primary" type="button" data-bs-dismiss="modal">Close</button>
+                         <button type="submit" class="btn btn-success">Import</button>
+                     </div>
+                 </form>
+
+             </div>
+         </div>
+     </div>
 
  @endsection
 
@@ -123,6 +148,7 @@
                 { data: 'form_id', name: 'form_id', class: 'text-center' },
                 { data: 'ticket_id', name: 'ticket_number', class: 'text-center' },
                 { data: 'types_req', name: 'types_req', class: 'text-center' },
+                { data: 'agencies', name: 'agencies', class: 'text-center' },
                 { data: 'project_name', name: 'project_name', class: 'text-center' },
                 { data: 'smtp_relay_server', name: 'smtp_relay_server', class: 'text-center' },
                 { data: 'ip_addr_server', name: 'ip_addr_server', class: 'text-center' },
@@ -132,10 +158,11 @@
                 { data: 'action', name: 'type', class: 'text-center', orderable: false, searchable: false },
             ],
             dom: '<"top"fBl>rt<"bottom"ip>',
-        buttons: [
+            buttons: [
             {
                 extend: 'copy',
                 text: 'Copy',
+                title: 'List SMTP Relay Request MyGovUC3.0',
                 exportOptions: {
                     columns: ':visible'
                 }
@@ -143,6 +170,7 @@
             {
                 extend: 'csv',
                 text: 'CSV',
+                title: 'List SMTP Relay Request MyGovUC3.0',
                 exportOptions: {
                     columns: ':visible'
                 }
@@ -150,6 +178,7 @@
             {
                 extend: 'excel',
                 text: 'Excel',
+                title: 'List SMTP Relay Request MyGovUC3.0',
                 exportOptions: {
                     columns: ':visible'
                 }
@@ -157,6 +186,7 @@
             {
                 extend: 'pdf',
                 text: 'PDF',
+                title: 'List SMTP Relay Request MyGovUC3.0',
                 exportOptions: {
                     columns: ':visible'
                 }
@@ -164,23 +194,21 @@
             {
                 extend: 'print',
                 text: 'Print',
+                title: 'List SMTP Relay Request MyGovUC3.0',
                 exportOptions: {
                     columns: ':visible'
                 }
             }
         ],
-        columnDefs: [
+            columnDefs: [
         { type: 'date-uk', targets: [/* index of your date column */] }
     ],
-    drawCallback: function(settings) {
-            // Reinitialize Feather icons
-            if (typeof feather !== 'undefined') {
-                feather.replace();
+            drawCallback: function(settings) {
+                var api = this.api();
+                api.column(0, {search:'applied', order:'applied'}).nodes().each(function(cell, i) {
+                    cell.innerHTML = i + 1;
+                });
             }
-
-            // Reinitialize any other JavaScript functionality as needed
-            // For example, tooltips, modals, etc.
-        }
         });
 
         $('.dataTables_filter').addClass('d-inline-block mr-2'); // Make search input inline
