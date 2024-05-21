@@ -41,7 +41,7 @@ class MainRelayController extends Controller
         $selectedValue = $request->input('selectedValue');
         //think how to add identify
         if ($selectedValue == 'postmaster1a-dev.mygovuc.gov.my'){
-            $filePath = storage_path('data/postmaster1/postfix/access_list');
+            $filePath = storage_path('postmaster.mygovuc.gov.my/postfix/access_list');
         }
 
         try {
@@ -164,7 +164,7 @@ class MainRelayController extends Controller
             }
             $access_list = implode("\n", $lines);
 
-            $filePath = storage_path('data/postmaster1/postfix/access_list');
+            $filePath = storage_path('postmaster.mygovuc.gov.my/postfix/access_list');
 
             $file = fopen($filePath, 'a');
 
@@ -172,7 +172,7 @@ class MainRelayController extends Controller
 
             fclose($file);
         } else if ($types_req == 2){
-            $filePath = storage_path('data/postmaster1/postfix/access_list');
+            $filePath = storage_path('postmaster.mygovuc.gov.my/postfix/access_list');
 
             $fileContent = file_get_contents($filePath);
             $lines = explode("\n", $fileContent);
@@ -243,28 +243,7 @@ class MainRelayController extends Controller
 
         $successMessage = 'Form updated';
 
-        $commandupdate = '';
-
-        $webSocketUrl = 'wss://'.$smtp_relay_server.'/wss';
-
-            // try {
-            //     // Create WebSocket client
-            //     $client = new WebSocketClient($webSocketUrl);
-
-            //     // Connect to WebSocket server
-            //     $client->connect();
-
-            //     // Send command
-            //     $client->send($commandupdate);
-
-            //     // Close WebSocket connection
-            //     $client->close();
-
-            //     return response()->json(['message' => 'Command sent successfully']);
-            // } catch (\Exception $e) {
-            //     return response()->json(['error' => $e->getMessage()], 500);
-            // }
-        return response()->json(['message' => $successMessage]);
+        return response()->json(['message' => $successMessage, 'serverhost'=> $smtp_relay_server]);
         }else{
         $Message = 'Error!';
         return response()->json(['message' => $Message]);

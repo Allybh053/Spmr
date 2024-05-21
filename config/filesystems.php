@@ -47,7 +47,7 @@ return [
             'driver' => 'local',
             'root' => storage_path('app/storage/attachments'),
             'url' => env('APP_URL') . '/storage/attachments',
-            'visibility' => 'public',
+            'visibility' => 'private',
         ],
 
         's3' => [

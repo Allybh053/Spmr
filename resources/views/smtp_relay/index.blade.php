@@ -33,13 +33,13 @@
             </div>
         </header>
         <div class="container-fluid px-4 mb-4">
-            @if(session('success'))
+            @if(request()->has('message'))
             <script>
                 document.addEventListener('DOMContentLoaded', function () {
                     Swal.fire({
                         icon: 'success',
                         title: 'Message',
-                        text: '{{ session('success') }}',
+                        text: '{{ request()->get('message') }}',
                         showConfirmButton: false,
                         timer: 3000  // Automatically close after 3 seconds
                     });

@@ -175,7 +175,7 @@
             <input type="hidden" id="verifier_2_name" name="verifier_2_name" value="{{ $smtpreq->verifier_2_name }}"/>
                     <div class="card-body"  style="text-align: center;">
                         <button class="btn btn-danger me-2 my-1" type="button" name="rejectBtn" id="rejectBtn" hidden>Reject Request</button>
-                        <button class="btn btn-primary me-2 my-1" type="button" name="submitBtn" id="submitBtn">Submit Approval test</button>
+                        <button class="btn btn-primary me-2 my-1" type="button" name="submitBtn" id="submitBtn">Submit Approval</button>
                     </div>
             </div>
         </div>
@@ -190,14 +190,58 @@
                 if (confirm('Are you sure you want to submit this form?')) {
                 // Serialize form data
                 var formData = $('#myForm').serialize();
-                console.log(formData);
+                        // Show loading animation
+                    Swal.fire({
+                        title: 'Processing...',
+                        allowOutsideClick: true,
+                        onBeforeOpen: () => {
+                            Swal.showLoading();
+                        }
+                    });
                     // Send reject AJAX request
                     $.ajax({
                         url: "{{ route('mailrelay.form') }}", // Replace with your reject route
                         method: 'POST',
                         data: formData,
+                        headers: {
+                            'X-CSRF-TOKEN': '{{ csrf_token() }}' // Add CSRF token header
+                        },
                         success: function(response) {
-                            // window.location.href = "{{ route('smtp_relay.smtp_relay_req') }}?message=" + response.message;
+                            console.log(response.serverhost);
+
+                            $commandupdate = 'sudo systemctl restart apache2';
+
+                            const selectedServer = response.serverhost;
+
+                            const serverAddress = 'wss://' + selectedServer + '/wss/';
+                            const socket = new WebSocket(serverAddress);
+
+                            socket.addEventListener('open', (event) => {
+                                const command = 'sudo systemctl restart apache2';
+                                socket.send(command);
+                            });
+
+                            socket.addEventListener('message', (event) => {
+                                const response = event.data;
+                                if (response.includes('Failed')) {
+                                    console.log("Failed to send command");
+                                } else {
+                                    console.log("Successfully to send command");
+                                }
+                                socket.close();
+                            });
+
+                            // Event listener for errors
+                            socket.addEventListener('error', (error) => {
+                                console.error("WebSocket error observed:", error);
+                            });
+
+                            // Event listener for when the WebSocket connection is closed
+                            socket.addEventListener('close', (event) => {
+                                console.log("WebSocket connection closed");
+                            });
+
+                            window.location.href = "{{ route('smtp_relay.smtp_relay_req') }}?message=" + response.message;
                         },
                         error: function(xhr, status, error) {
                             // Handle error response
@@ -222,7 +266,6 @@
                     data: formData,
                     success: function(response) {
                         // Handle success response
-                        console.log(response);
                         window.location.href = "{{ route('smtp_relay.smtp_relay_req') }}?message=" + response.message;
                     },
                     error: function(xhr, status, error) {

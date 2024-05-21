@@ -23,7 +23,7 @@
         <div class="card mb-4">
             <div class="card-header text-center"><h3 class=" text-primary">SMTP Relay Request MyGovUC3.0</h3></div>
             <div class="card-body">
-                <form id="formserver" action="{{ route('smtp_relay.saving')}}" method="post" enctype="multipart/form-data">
+                <form id="formserver" name="formserver" action="{{ route('smtp_relay.saving')}}" method="post" enctype="multipart/form-data">
                 @csrf
                 <div class="row gx-3 mb-3">
                     <div class="col-md-6">
@@ -37,22 +37,13 @@
                     <div class="col-md-6">
                         <label for="type_req">Type Of Request<span style="color: red"> *</span></label>
                         <select class="form-control select2" name="type_req" id="type_req" aria-label="Default select" required>
-                            <option selected disabled value="">Select Type Of Request:</option>
+                            <option disabled selected value="">Select Type Of Request:</option>
                             <option value="1">New Application</option>
                             <option value="2">Service Termination</option>
                             <option value="3">Onboarding Agency</option>
                         </select>
                     </div>
                 </div>
-                {{--<div class="mb-3" hidden @disabled(true)>
-                    <label for="fqdn">System Fully Qualified Domain Name (FQDN)</label>
-                    <select class="form-control select2" name="fqdn" id="fqdn">
-                        <option selected disabled>Select Domain Name</option>
-                        @foreach ($domainsArray as $domain)
-                        <option value="{{ $domain['domain_name'] }}">{{ $domain['domain_name'] }}</option>
-                        @endforeach
-                    </select>
-                </div>--}}
                 <div class="mb-3">
                     <label for="projectname">Project Name</label>
                     <input class="form-control" id="projectname" name="projectname" type="text" placeholder="" value=""/>
@@ -74,7 +65,7 @@
                 <div class="mb-3">
                     <label for="ministry">Ministry</label>
                     <select class="form-control select2" name="ministry" id="ministry" aria-label="Default select" required>
-                        <option selected disabled>Select Ministry</option>
+                        <option disabled selected>Select Ministry</option>
                         @foreach ($ministriesArray as $ministry)
                         <option value="{{ $ministry['name'] }}">{{ $ministry['name'] }}</option>
                         @endforeach
@@ -84,7 +75,7 @@
                     <div class="col-md-6">
                         <label for="agency">Agency<span style="color: red"> *</span></label>
                         <select class="form-control select2" name="agency" id="agency" aria-label="Default select" required>
-                            <option selected disabled>Select Agency</option>
+                            <option disabled selected>Select Agency</option>
                             @foreach ($agenciesArray as $agency)
                             <option value="{{ $agency['name'] }}">{{ $agency['name'] }}</option>
                             @endforeach
@@ -93,7 +84,7 @@
                     <div class="col-md-6">
                         <label for="departowner">Department/Division/Unit</label>
                         <select class="form-control select2" name="departowner" id="departowner" aria-label="Default select" required>
-                            <option selected disabled>Select Department/Division/Unit</option>
+                            <option disabled selected>Select Department/Division/Unit</option>
                             @foreach ($departmentsArray as $department)
                             <option value="{{ $department['name'] }}">{{ $department['name'] }}</option>
                             @endforeach
@@ -111,7 +102,7 @@
                 <div class="mb-3">
                     <label for="authmethod">Mail Relay Authentication Method<span style="color: red"> *</span></label>
                     <select class="form-control select2" name="authmethod" id="authmethod" required>
-                        <option selected disabled>Select Authentication</option>
+                        <option disabled selected>Select Authentication</option>
                         <option value="1">IP Based Authentication Relay</option>
                         <option value="2">Username/Password Authentication Relay</option>
                     </select>
@@ -158,7 +149,7 @@
                     <div class="col-md-6">
                         <label for="ports">SMTP Port Number<span style="color: red"> *</span></label>
                         <select class="form-control select2" name="ports" id="ports" aria-label="Default select" required>
-                            <option selected disabled></option>
+                            <option disabled selected></option>
                             <option value="0">Not Answered</option>
                             <option value="1">25/tcp</option>
                             <option value="2">465/tcp</option>
@@ -191,7 +182,7 @@
                     <div class="col-md-6">
                         <label for="mailbox">MailBox<span style="color: red"> *</span></label>
                         <select class="form-control select2" name="mailbox" id="mailbox" aria-label="Default select" required>
-                            <option selected disabled>Select Mailbox</option>
+                            <option disabled selected>Select Mailbox</option>
                             <option value="0">Not Answered</option>
                             <option value="1">No</option>
                             <option value="2">Yes</option>
@@ -219,7 +210,7 @@
                     <div class="mb-3 col-md-4">
                         <label class=" mb-1" for="applicantposition">Applicant's Position:</label>
                         <select class="form-control select2" name="applicantposition" id="applicantposition" aria-label="Default select" required>
-                            <option selected disabled>Select Position</option>
+                            <option disabled selected>Select Position</option>
                             @foreach ($positionsArray as $position)
                             <option value="{{ $position['name'] }}">{{ $position['name'] }}</option>
                             @endforeach
@@ -228,7 +219,7 @@
                     <div class="mb-3 col-md-4">
                         <label class=" mb-1" for="applicantdepart">Applicant's Department / Division:</label>
                         <select class="form-control select2" name="applicantdepart" id="applicantdepart" aria-label="Default select" required>
-                            <option selected disabled>Select Department / Division</option>
+                            <option disabled selected>Select Department / Division</option>
                             @foreach ($departmentsArray as $department)
                             <option value="{{ $department['name'] }}">{{ $department['name'] }}</option>
                             @endforeach
@@ -249,7 +240,7 @@
                     <div class="mb-3 col-md-4">
                         <label class=" mb-1" for="verifierposition">Verifier Position:</label>
                         <select class="form-control select2" name="verifierposition" id="verifierposition" aria-label="Default select" required>
-                            <option selected disabled>Select Position</option>
+                            <option disabled selected>Select Position</option>
                             @foreach ($positionsArray as $position)
                             <option value="{{ $position['name'] }}">{{ $position['name'] }}</option>
                             @endforeach
@@ -258,7 +249,7 @@
                     <div class="mb-3 col-md-4">
                         <label class=" mb-1" for="verifierdepart">Verifier Department / Division:</label>
                         <select class="form-control select2" name="verifierdepart" id="verifierdepart" aria-label="Default select" required>
-                            <option selected disabled>Select Department / Division</option>
+                            <option disabled selected>Select Department / Division</option>
                             @foreach ($departmentsArray as $department)
                             <option value="{{ $department['name'] }}">{{ $department['name'] }}</option>
                             @endforeach
@@ -291,7 +282,7 @@
                     <div class="mb-3 col-md-4">
                         <label class=" mb-1" for="approvalposition">Approval Position</label>
                         <select class="form-control select2" name="approvalposition" id="approvalposition" aria-label="Default select" required>
-                            <option selected disabled>Select Position</option>
+                            <option disabled selected>Select Position</option>
                             @foreach ($positionsArray as $position)
                             <option value="{{ $position['name'] }}">{{ $position['name'] }}</option>
                             @endforeach
@@ -300,7 +291,7 @@
                     <div class="mb-3 col-md-4">
                         <label class=" mb-1" for="approvaldepart">Approval Department / Division:</label>
                         <select class="form-control select2" name="approvaldepart" id="approvaldepart" aria-label="Default select" required>
-                            <option selected disabled>Select Department / Division</option>
+                            <option disabled selected>Select Department / Division</option>
                             @foreach ($departmentsArray as $department)
                             <option value="{{ $department['name'] }}">{{ $department['name'] }}</option>
                             @endforeach
@@ -338,7 +329,55 @@
 
 @endsection
 @push('script')
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+<link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-beta.1/dist/css/select2.min.css" rel="stylesheet" />
+<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-beta.1/dist/js/select2.min.js"></script>
+<script src="https://ajax.aspnetcdn.com/ajax/jquery.validate/1.11.1/jquery.validate.min.js"></script>
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+
 <script>
+var mySelect2 = $('#type_req');
+
+mySelect2.select2();
+
+$("#formserver").validate({
+
+rules: {
+  systemtype: {
+    required: true
+  }
+},
+messages: {
+  systemtype: {
+    required: "Please choose the system type",
+  },
+
+},
+errorPlacement: function(label, element) {
+  if (element.hasClass('select2')) {
+    label.insertAfter(element.next('.select2-container')).addClass('mt-2 text-danger');
+    select2label = label
+  } else {
+    label.addClass('mt-2 text-danger');
+    label.insertAfter(element);
+  }
+},
+highlight: function(element) {
+  $(element).parent().addClass('is-invalid')
+  $(element).addClass('form-control-danger')
+},
+success: function(label, element) {
+  $(element).parent().removeClass('is-invalid')
+  $(element).removeClass('form-control-danger')
+  label.remove();
+}
+});
+
+mySelect2.on("change", function(e) {
+  select2label.remove(); //remove label
+});
+
+
 
     document.addEventListener('DOMContentLoaded', function() {
         const submitButton = document.querySelector('button[name="submit"]');
@@ -378,7 +417,7 @@
                     'selectedValuetype_req': selectedValuetype_req
                 },
                 success: function(response) {
-                    console.log(response);
+                    //console.log(response);
                     $('#resultContainer').html(response);
 
                 },

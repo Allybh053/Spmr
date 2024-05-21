@@ -92,7 +92,7 @@ class MonthlyReportingController extends Controller
         // by day
         // ->whereDate('date', Carbon::now())
         // by week
-        ->whereBetween('date', [Carbon::now()->startOfWeek(), Carbon::now()->endOfWeek()])
+        // ->whereBetween('date', [Carbon::now()->startOfWeek(), Carbon::now()->endOfWeek()])
         ->get();
 
 
