@@ -72,13 +72,8 @@
                             <td>{{ $user->username }}</td>
                             <td>{{ $user->email }}</td>
                             <td>
-                                @if ($user->roles->isNotEmpty())
-                                    @foreach ($user->roles as $role)
-                                        {{ $role->name }}
-                                        @if (!$loop->last)
-                                            , <!-- Add comma separator if it's not the last role -->
-                                        @endif
-                                    @endforeach
+                                @if ($user->role)
+                                    {{ $user->role->name }}
                                 @else
                                     No roles assigned
                                 @endif
@@ -89,12 +84,6 @@
                             @else
                                 <span class="badge bg-red-soft text-red">Inactive</span>
                             @endif
-
-                                <!-- span class="badge bg-green-soft text-green">Sales</span>
-                                <span class="badge bg-blue-soft text-blue">Developers</span>
-                                <span class="badge bg-red-soft text-red">Marketing</span>
-                                <span class="badge bg-purple-soft text-purple">Managers</span>
-                                <span class="badge bg-yellow-soft text-yellow">Customer</span -->
                             </td>
                             <td>{{ $user->created_at->format('d/m/Y') }}</td>
                             <td>

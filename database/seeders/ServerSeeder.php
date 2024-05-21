@@ -11,7 +11,7 @@ class ServerSeeder extends Seeder
 
     public function __construct()
     {
-        $this->faker = Faker::create();
+        // $this->faker = Faker::create();
     }
 
     /**
@@ -22,18 +22,18 @@ class ServerSeeder extends Seeder
     public function run()
     {
         // Define the number of servers you want to create
-        $numberOfServers = 1; // Adjust as needed
+        // $numberOfServers = 1; // Adjust as needed
 
         // Loop to create multiple servers with faker data
-        for ($i = 0; $i < $numberOfServers; $i++) {
-            Server::create([
-                'hostname' => $this->generateHostname(),
-                'ipaddress' => $this->faker->ipv4,
-                'sshusername' => $this->faker->userName,
-                'sshkey' => $this->faker->password,
-                'status' => $this->faker->numberBetween(0, 1), // Assuming status is either 0 or 1
-            ]);
-        }
+        // for ($i = 0; $i < $numberOfServers; $i++) {
+        //     Server::create([
+        //         'hostname' => $this->generateHostname(),
+        //         'ipaddress' => $this->faker->ipv4,
+        //         'sshusername' => $this->faker->userName,
+        //         'sshkey' => $this->faker->password,
+        //         'status' => $this->faker->numberBetween(0, 1), // Assuming status is either 0 or 1
+        //     ]);
+        // }
     }
 
     /**
@@ -43,8 +43,8 @@ class ServerSeeder extends Seeder
      */
     private function generateHostname()
     {
-        $hostname = 'postmaster' . $this->faker->regexify('[A-Za-z0-9]{5}') . '@gov.com.my';
-        return $hostname;
+        // $hostname = 'postmaster' . $this->faker->regexify('[A-Za-z0-9]{5}') . '@gov.com.my';
+        // return $hostname;
     }
 
 }

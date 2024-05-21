@@ -9,6 +9,9 @@ use \Illuminate\Support\Facades\Hash;
 use Spatie\Permission\Models\Role;
 use App\Models\Department;
 use App\Models\Position;
+use App\Http\Controllers\Log;
+use App\Mail\WelcomeNewUser;
+use Illuminate\Support\Facades\Mail;
 
 
 class UsersController extends Controller
@@ -18,7 +21,7 @@ class UsersController extends Controller
      */
     public function index()
     {
-        $users =  User::orderBy('username','ASC')->get();
+        $users = User::with('role')->orderBy('id', 'DESC')->get();
         $user = Auth::user();
 
         return view('users.usermanagements.index', compact('user','users'));
@@ -44,21 +47,39 @@ class UsersController extends Controller
     public function store(Request $request)
     {
         try {
-            // Validate the form data
+            $existingEmail = User::where('email', $request->input('email'))->where('deleted_at',null)->first();
+            if ($existingEmail) {
+                return redirect()->route('usermanagements.index')->with('error', 'Email User already registered!');
+            }
+
             $validatedData = $request->validate([
                 'username' => 'required',
                 'fname' => 'required',
                 'lname' => 'required',
                 'role_id' => 'required',
-                'position' => 'required',
-                'department' => 'required',
+                'position' => 'nullable',
+                'department' => 'nullable',
                 'email' => 'required',
-                // 'ldap_authentication' => 'nullable',
-                'phone' => 'required',
+                'phone' => 'nullable',
                 'password' => 'required',
                 'enabled' => 'required',
             ]);
 
+            $existingPosition = Position::where('name', $validatedData['position'])->first();
+            if (!$existingPosition) {
+                Position::create([
+                    'name' => $validatedData['position'],
+                    'status'=> 1,
+                ]);
+            }
+            $existingDepartment = Department::where('name', $validatedData['department'])->first();
+            if (!$existingDepartment) {
+                Department::create([
+                    'name' => $validatedData['department'],
+                    'status'=> 1,
+                ]);
+            }
+            $plaintextPassword = $request->input('password');
             // Hash the password
             $hashedPassword = Hash::make($validatedData['password']);
 
@@ -68,7 +89,6 @@ class UsersController extends Controller
                 'password' => $hashedPassword,
                 'email' => $validatedData['email'],
                 'role_id' => $validatedData['role_id'],
-                // 'ldap_authentication' => $validatedData['ldap_authentication'],
                 'enabled' => $validatedData['enabled'],
                 'fname' => $validatedData['fname'],
                 'lname' => $validatedData['lname'],
@@ -79,6 +99,7 @@ class UsersController extends Controller
 
             // Check if user was created successfully
             if ($user) {
+                Mail::to($user->email)->send(new WelcomeNewUser($user,$plaintextPassword));
                 // Redirect back or to another page
                 return redirect()->route('usermanagements.index')->with('success', 'User added successfully');
             } else {
@@ -94,9 +115,6 @@ class UsersController extends Controller
             return redirect()->back()->with('error', 'An error occurred while creating user.');
         }
     }
-
-
-
 
     /**
      * Display the specified resource.
