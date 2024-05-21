@@ -30,15 +30,15 @@
                     <label for="ipaddress">IP Address</label>
                     <input class="form-control" id="ipaddress" name="ipaddress" type="text" placeholder="Enter IP Address" required>
                 </div>
-                <div class="mb-3">
+                {{-- <div class="mb-3" hidden @disabled(true)>
                     <label for="sshusername">SSH Username</label>
                     <input class="form-control" id="sshusername" name="sshusername" type="text" placeholder="Enter SSH Username" required>
                 </div>
-                <div class="mb-3">
+                <div class="mb-3" hidden @disabled(true)>
                     <label for="sshkey">SSH Key</label>
                     <input class="form-control" type="file" name="sshkey" id="sshkey" accept=".pem" />
                     <span class="text-xs text-danger">Upload File Key format .pem</span>
-                </div>
+                </div> --}}
                 <button class="btn btn-primary me-2 my-1" type="submit">Submit</button>
                 <a class="btn btn-danger me-2 my-1" type="button" href="{{ route('server.index')}}">Cancel</a>
                 </form>

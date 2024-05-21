@@ -706,7 +706,14 @@
 
                             function downloadChartJadual2() {
                             const canvas = document.getElementById('dailyEmel');
+                            const context = canvas.getContext('2d');
+                            const currentCanvasContent = context.getImageData(0, 0, canvas.width, canvas.height);
+                            context.globalCompositeOperation = 'destination-over';
+                            context.fillStyle = 'white';
+                            context.fillRect(0, 0, canvas.width, canvas.height);
                             const url = canvas.toDataURL('image/jpeg', 1.0);
+                            context.putImageData(currentCanvasContent, 0, 0);
+
                             const link = document.createElement('a');
                             link.download = 'Total Daily Emel-'+serverName+'.jpg';
                             link.href = url;
@@ -832,12 +839,18 @@
 
                                 function downloadChartJadual6() {
                                     const canvas = document.getElementById('trafficSummary');
+                                    const context = canvas.getContext('2d');
+                                    const currentCanvasContent = context.getImageData(0, 0, canvas.width, canvas.height);
+                                    context.globalCompositeOperation = 'destination-over';
+                                    context.fillStyle = 'white';
+                                    context.fillRect(0, 0, canvas.width, canvas.height);
                                     const url = canvas.toDataURL('image/jpeg', 1.0);
+                                    context.putImageData(currentCanvasContent, 0, 0);
                                     const link = document.createElement('a');
                                     link.download = 'Chart of Per-Hour Traffic Summary-'+serverName+'.jpg';
                                     link.href = url;
                                     link.click();
-                                    }
+                                }
 
                                     // Attach event listener for jadual6 download button
                                     document.getElementById('downloadButtonJadual6').addEventListener('click', downloadChartJadual6);
@@ -886,7 +899,13 @@
 
                             function downloadChartJadual10() {
                                     const canvas = document.getElementById('topEmel');
+                                    const context = canvas.getContext('2d');
+                                    const currentCanvasContent = context.getImageData(0, 0, canvas.width, canvas.height);
+                                    context.globalCompositeOperation = 'destination-over';
+                                    context.fillStyle = 'white';
+                                    context.fillRect(0, 0, canvas.width, canvas.height);
                                     const url = canvas.toDataURL('image/jpeg', 1.0);
+                                    context.putImageData(currentCanvasContent, 0, 0);
                                     const link = document.createElement('a');
                                     link.download = 'Chart of Top 20 Email Recipients-'+serverName+'.jpg';
                                     link.href = url;
@@ -942,7 +961,13 @@
 
                         function downloadChartJadual14() {
                                     const canvas = document.getElementById('topEmel14');
+                                    const context = canvas.getContext('2d');
+                                    const currentCanvasContent = context.getImageData(0, 0, canvas.width, canvas.height);
+                                    context.globalCompositeOperation = 'destination-over';
+                                    context.fillStyle = 'white';
+                                    context.fillRect(0, 0, canvas.width, canvas.height);
                                     const url = canvas.toDataURL('image/jpeg', 1.0);
+                                    context.putImageData(currentCanvasContent, 0, 0);
                                     const link = document.createElement('a');
                                     link.download = 'Chart of Top 20 Email Senders-'+serverName+'.jpg';
                                     link.href = url;

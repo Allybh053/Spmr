@@ -48,26 +48,6 @@ class SmtpRelayController extends Controller
         return view('smtp_relay.index', compact('user', 'role','agency','serverIds','defaultServerId','serverconfig','domainsArray'));
     }
 
-    /*public function search(Request $request)
-    {
-        $input1 = $request->input('agency'); // Assuming 'agency' is the name of the select input for Kementerian/Agensi/SUK
-        $input2Type = $request->input('calendarType');
-
-        // Generate Faker data based on the selected calendar type and agency
-        $faker = Faker::create();
-        $totalApplications = $faker->numberBetween(100, 500);
-        $totalIP = $faker->numberBetween(200, 1000);
-        $totalDeactivated = $faker->numberBetween(5, 50);
-
-        // You can adjust the search logic based on the selected calendar type and agency here
-
-        return response()->json([
-            'totalApplications' => $totalApplications,
-            'totalIP' => $totalIP,
-            'totalDeactivated' => $totalDeactivated
-        ]);
-    }*/
-
     public function datatable(Request $request)
     {
           // Get search parameters
@@ -184,13 +164,15 @@ class SmtpRelayController extends Controller
                 if (auth()->user()->can('smtp_mail_relay_view')) {
                     $data .= '<a class="btn btn-datatable btn-icon btn-transparent-dark me-2" href="'.route('smtp_relay.view',[$row['formA'],$row['typeB']]).'"><i class="fas fa-eye text-primary"></i></a>';
                 }
-                if (auth()->user()->can('smtp_mail_relay_update')) {
-                    $data .= '<a class="btn btn-datatable btn-icon btn-transparent-dark me-2" href="'.route('smtp_relay.kemaskini',[$row['smtpid'],$row['typeB']]).'"><i class="fas fa-edit text-primary"></i></a>';
-                }
-                if (auth()->user()->can('smtp_mail_relay_delete')) {
-                    $data .= '<a type="button" class="btn btn-datatable btn-icon btn-transparent-dark" id="delete" data-id="'.$row['smtpid'].'" data-url="'.route('smtp_relay.delete',[$row['smtpid'],$row['detailID'],$row['typeB']]).'">
-                        <i class="fas fa-trash-alt text-danger"></i>
-                    </a>';
+                if ($row['status'] == 0) {
+                    if (auth()->user()->can('smtp_mail_relay_update')) {
+                        $data .= '<a class="btn btn-datatable btn-icon btn-transparent-dark me-2" href="'.route('smtp_relay.kemaskini',[$row['smtpid'],$row['typeB']]).'"><i class="fas fa-edit text-primary"></i></a>';
+                    }
+                    if (auth()->user()->can('smtp_mail_relay_delete')) {
+                        $data .= '<a type="button" class="btn btn-datatable btn-icon btn-transparent-dark" id="delete" data-id="'.$row['smtpid'].'" data-url="'.route('smtp_relay.delete',[$row['smtpid'],$row['detailID'],$row['typeB']]).'">
+                            <i class="fas fa-trash-alt text-danger"></i>
+                        </a>';
+                    }
                 }
 
                 return $data;

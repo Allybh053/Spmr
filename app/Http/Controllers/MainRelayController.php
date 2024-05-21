@@ -17,6 +17,9 @@ use App\Models\User;
 use App\Models\Server;
 use App\Models\DomainServer;
 use App\Models\RoleServer;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\File;
+
 
 class MainRelayController extends Controller
 {
@@ -30,6 +33,56 @@ class MainRelayController extends Controller
 
         return view('mailrelay.index', compact('user','smtpMailServers'));
     }
+    public function checkIpAddress(Request $request)
+    {
+        // Get the IP address from the request
+        $ipAddress = $request->input('tableSpmr.0.ipaddress');
+        $selectedValuetype_req = $request->input('selectedValuetype_req');
+        $selectedValue = $request->input('selectedValue');
+        //think how to add identify
+        if ($selectedValue == 'postmaster1a-dev.mygovuc.gov.my'){
+            $filePath = storage_path('postmaster.mygovuc.gov.my/postfix/access_list');
+        }
+
+        try {
+            // Check the IP address in the database
+            $count = smtp_relay_server::where('ip_addr_server', $ipAddress)
+                                       ->where('types_req', $selectedValuetype_req)
+                                       ->count();
+
+            if ($count > 0) {
+                if ($selectedValuetype_req == 1) {
+                    return "<span style='color: red'>The IP address $ipAddress already exists in the system.</span>";
+                } elseif ($selectedValuetype_req == 2) {
+                    return "<span style='color: red'>The IP address $ipAddress already terminated in the system.</span>";
+                }
+            }
+
+            // Read the file content and check the IP address in the file
+            $fileContent = file_get_contents($filePath);
+            $lines = explode("\n", $fileContent);
+
+            foreach ($lines as $line) {
+                $trimmed_line = trim($line);
+
+                if ($selectedValuetype_req == 1) {
+                    // Check if the line matches the IP address exactly
+                    $file_ip = trim(explode('#', $trimmed_line)[0]);
+                    if ($file_ip === $ipAddress) {
+                        return "<span style='color: red'>The IP address $ipAddress already existed in the Server Access List.</span>";
+                    }
+                } elseif ($selectedValuetype_req == 2) {
+                    // Check if the line starts with '#' followed by the IP address
+                    if (strpos($trimmed_line, "#$ipAddress") === 0) {
+                        return "<span style='color: red'>The IP address $ipAddress already terminated in the Server Access List.</span>";
+                    }
+                }
+            }
+        } catch (\Exception $e) {
+            return "Database Error: " . $e->getMessage();
+        }
+    }
+
 
     public function show()
     {
@@ -52,6 +105,14 @@ class MainRelayController extends Controller
                 ->where('types_req',$smtpreq->types_req)
                 ->get();
 
+        // $filePath = 'storage/data/postmaster1/postfix/access_list';
+
+        // $logFilePath = storage_path('data/postmaster1/postfix/access_list');
+        // if (File::exists($logFilePath)) {
+        //     // Read the contents
+        //     $logContent = File::get($logFilePath);
+
+        // }
 
         return view('mailrelay.edit', compact('user','smtpMailServers','smtpreq'));
     }
@@ -88,6 +149,86 @@ class MainRelayController extends Controller
 
     public function submitappForm(Request $request)
     {
+        $formData = $request->all();
+        $smtp_relay_server = $request->input("smtp_relay_server");
+        $access_list = $request->input("access_list");
+        $types_req = $request->input("types_req");
+        $form_id = $request->input("form_id");
+
+        if ($types_req == 1 ){
+            // $access_list = preg_replace('/^.*$/m', '$0;', $access_list);
+            $lines = explode("\n", $access_list);
+
+            foreach ($lines as &$line) {
+                $line = trim($line) . $request->get('formId');
+            }
+            $access_list = implode("\n", $lines);
+
+            $filePath = storage_path('postmaster.mygovuc.gov.my/postfix/access_list');
+
+            $file = fopen($filePath, 'a');
+
+            fwrite($file, $access_list . PHP_EOL);
+
+            fclose($file);
+        } else if ($types_req == 2){
+            $filePath = storage_path('postmaster.mygovuc.gov.my/postfix/access_list');
+
+            $fileContent = file_get_contents($filePath);
+            $lines = explode("\n", $fileContent);
+            $ipFound = false;
+
+            foreach (explode("\n", $access_list) as $access_line) {
+
+                $access_ip = explode('#', $access_line)[0];
+                $access_ip = trim($access_ip);
+
+                if (!empty($access_ip)) {
+                    foreach ($lines as &$line) {
+                        // Trim leading and trailing whitespace from the file content line
+                        $trimmed_line = trim($line);
+
+                        // Split the file content line by '#' and take the first part
+                        $file_ip = explode('#', $trimmed_line)[0];
+
+                        // Trim leading and trailing whitespace from the file IP
+                        $file_ip = trim($file_ip);
+
+                        // Check if the access IP matches the file IP
+                        if ($file_ip === $access_ip) {
+                            // If the access IP is found, prepend '#' to the line
+                            $line = '#' . $line;
+                            $ipFound = true;
+                            break;
+                        }
+
+                    }
+                    // If the IP was not found in the existing lines, add it as a new line
+                    if (!$ipFound) {
+                        $lines[] = "#$access_ip #";
+                    }
+
+                    $record = smtp_relay_server::where('ip_addr_server', $access_ip)
+                    ->where('form_id', $form_id)
+                    ->first();
+                    if ($record) {
+                        // If the record exists, update the deactivated field
+                        $record->update(['deactivated' => 1]);
+                    }
+                }
+
+            }
+
+            // Join the lines back together
+            $newContent = implode("\n", $lines);
+
+            // Write the modified content back to the file
+            file_put_contents($filePath, $newContent);
+
+        }else{
+            //
+        }
+
         $comment = $request->input("comment");
         $user = Auth::user();
 
@@ -100,8 +241,9 @@ class MainRelayController extends Controller
             ->cc($request->input('owner_email_addr'))
             ->send(new mailApproved($request));
 
-        $successMessage = 'Form updated!';
-        return response()->json(['message' => $successMessage]);
+        $successMessage = 'Form updated';
+
+        return response()->json(['message' => $successMessage, 'serverhost'=> $smtp_relay_server]);
         }else{
         $Message = 'Error!';
         return response()->json(['message' => $Message]);
