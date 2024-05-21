@@ -76,6 +76,8 @@ class DashboardController extends Controller
 
             $days = range(1, 10);
 
+            $totalCountDashboard = $this->countTotalDashboard();
+            //dd($totalCountDashboard);
 
         if ($request->expectsJson()) {
             $responseData = [
@@ -90,12 +92,13 @@ class DashboardController extends Controller
             // Pass the data to the view
             return view('dashboard.index', compact(
                 'user', 'role', 'serverconfig', 'serverList', 'filteredMinistries',
-                'filteredDept', 'departmentCounts', 'departmentCounts2', 'limit', 'days','defaultServerId'));
+                'filteredDept', 'departmentCounts', 'departmentCounts2', 'limit', 'days','defaultServerId',
+                'totalCountDashboard'));
         }
 
     private function generateDataMinistry($limit = null)
     {
-        $dataSmtpForm = SmtpRelayReqForm::where('status', 0)->get()->toArray();
+        $dataSmtpForm = SmtpRelayReqForm::where('status', 1)->get()->toArray();
         $ids = [];
         foreach ($dataSmtpForm as $item) {
             $ids[] = $item['id'];
@@ -186,7 +189,7 @@ class DashboardController extends Controller
     private function generateDataDept($limit = null)
     {
 
-        $dataSmtpForm = SmtpRelayReqForm::where('status', 0)->get()->toArray();
+        $dataSmtpForm = SmtpRelayReqForm::where('status', 1)->get()->toArray();
         $ids = [];
         foreach ($dataSmtpForm as $item) {
             $ids[] = $item['id'];
@@ -276,5 +279,49 @@ class DashboardController extends Controller
         $limitedCollection2 = collect($limitedDepartmentCounts2);
 
         return $limitedCollection2;
+    }
+
+    private function countTotalDashboard($limit = null){
+        $user = Auth::user();
+        $serverIds = RoleServer::whereIn('role_id', $user->roles->pluck('id')->all())
+            ->pluck('server_id');
+
+        $dataSmtpFormReq = [];
+        $listServer = Server::whereIn('id', $serverIds)->where('status', 1)->orderBy('id', 'asc')->get();
+
+        $serverSum=[];
+        foreach ($listServer as $server) {
+            $dataSmtpForm = DB::table('smtp_relay_req_form')
+                ->join('smtp_relay_server', 'smtp_relay_req_form.id', '=', 'smtp_relay_server.smtpid')
+                ->join('servers', 'servers.hostname', '=', 'smtp_relay_req_form.smtp_relay_server')
+                ->where('smtp_relay_req_form.status', 1)
+                ->where('smtp_relay_req_form.smtp_relay_server', $server->hostname)
+                ->select('smtp_relay_req_form.id AS form_id', 'servers.hostname AS server_hostname',
+                    'smtp_relay_server.ip_addr_server AS server_ip')->get()->count();
+
+            $dataDomain = DB::table('mailrouting')
+                ->where('mailrouting.server', $server->hostname)->get()->count();
+
+            $dataSasl = DB::table('smtp_relay_req_form')
+                ->where('smtp_relay_req_form.smtp_relay_server', $server->hostname)
+                ->where('smtp_relay_req_form.smtp_relay_auth_method', 2)->get()->count();
+
+            $dataIpBased = DB::table('smtp_relay_req_form')
+                ->where('smtp_relay_req_form.smtp_relay_server', $server->hostname)
+                ->where('smtp_relay_req_form.smtp_relay_auth_method', 1)->get()->count();
+
+            $serverSum=[
+                'hostname'=>  $server->hostname,
+                'ipAddress' => $server->ipaddress,
+                'totalApplicationRegistered' => $dataSmtpForm,
+                'totalDomain' => $dataDomain,
+                'totalSasl' => $dataSasl,
+                'totalIpBased' => $dataIpBased
+            ];
+
+            $dataSmtpFormReq[] = $serverSum;
+        }
+
+        return $dataSmtpFormReq;
     }
 }
