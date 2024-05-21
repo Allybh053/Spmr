@@ -67,11 +67,6 @@
                             </div>
                             <!-- Form Row        -->
                             <div class="row gx-3 mb-3">
-                                <!-- Form Group (organization name)-->
-                                <div class="col-md-6">
-                                    <label class="small mb-1" for="acct_types">Account Type</label>
-                                    <p>{{ $user->acct_types }}</p>
-                                </div>
                                 <!-- Form Group (location)-->
                                 <div class="col-md-6">
                                     <label class="small mb-1" for="role_id">Role Type</label>
@@ -82,6 +77,23 @@
                                             No role assigned for this user.
                                         @endif
                                     </p>
+                                </div>
+                                <!-- Form Group (organization name)-->
+                                <div class="col-md-6" hidden @disabled(true)>
+                                    <label class="small mb-1" for="acct_types">Account Type</label>
+                                    <p>{{ $user->acct_types }}</p>
+                                </div>
+                            </div>
+                            <div class="row gx-3 mb-3">
+                                <!-- Form Group (organization name)-->
+                                <div class="col-md-6">
+                                    <label class="small mb-1" for="acct_types">Position</label>
+                                    <p>{{ $user->position_id }}</p>
+                                </div>
+                                <!-- Form Group (location)-->
+                                <div class="col-md-6">
+                                    <label class="small mb-1" for="role_id">Department</label>
+                                    <p>{{ $user->department_id }}</p>
                                 </div>
                             </div>
                             <!-- Form Group (email address)-->
@@ -100,7 +112,7 @@
                             <!-- Form Row-->
                             <div class="row gx-3 mb-3">
                                 <!-- Form Group (phone number)-->
-                                <div class="col-md-6" @disabled(true)>
+                                <div class="col-md-6" hidden @disabled(true)>
                                     <label class="small mb-1" for="ldap_authentication">LDAP Authentication</label>
                                     <p>{{ $user->ldap_authentication }}</p>
                                 </div>

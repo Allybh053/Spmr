@@ -336,21 +336,21 @@
 <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
 
 <script>
-var mySelect2 = $('#type_req');
+var mySelect2 = $('#type_reqs');
 
 mySelect2.select2();
 
 $("#formserver").validate({
 
 rules: {
-  systemtype: {
-    required: true
-  }
+//   systemtype: {
+//     required: true
+//   }
 },
 messages: {
-  systemtype: {
-    required: "Please choose the system type",
-  },
+//   systemtype: {
+//     required: "Please choose the system type",
+//   },
 
 },
 errorPlacement: function(label, element) {
@@ -417,7 +417,7 @@ mySelect2.on("change", function(e) {
                     'selectedValuetype_req': selectedValuetype_req
                 },
                 success: function(response) {
-                    //console.log(response);
+                    console.log(response);
                     $('#resultContainer').html(response);
 
                 },
