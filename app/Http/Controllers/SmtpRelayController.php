@@ -21,6 +21,10 @@ use Illuminate\Support\Facades\DB;
 use App\Models\RoleServer;
 use Illuminate\Support\Facades\Mail;
 use App\Mail\mailForm;
+//use Maatwebsite\Excel\Excel;
+use Maatwebsite\Excel\Facades\Excel;
+use App\Http\Controllers\ImportController;
+
 
 class SmtpRelayController extends Controller
 {
@@ -75,7 +79,7 @@ class SmtpRelayController extends Controller
         //     ->leftJoin('smtp_relay_server', 'smtp_relay_req_form.form_id', '=', 'smtp_relay_server.form_id');
 
 
-        $query = smtp_relay_server::select('smtp_relay_req_form.updated_at as updated_at','smtp_relay_req_form.form_id as formA', 'smtp_relay_req_form.ticket_id', 'smtp_relay_req_form.project_name', 'smtp_relay_req_form.smtp_relay_server', 'smtp_relay_req_form.date_verification_3', 'smtp_relay_server.types_req as typeB', 'smtp_relay_server.ip_addr_server','smtp_relay_server.id as detailID', 'smtp_relay_server.smtpid','smtp_relay_server.created_at as created_at', 'smtp_relay_server.server_name', 'smtp_relay_req_form.status as status')
+        $query = smtp_relay_server::select('smtp_relay_req_form.updated_at as updated_at','smtp_relay_req_form.form_id as formA', 'smtp_relay_req_form.ticket_id', 'smtp_relay_req_form.agencies', 'smtp_relay_req_form.project_name', 'smtp_relay_req_form.smtp_relay_server', 'smtp_relay_req_form.date_verification_3', 'smtp_relay_server.types_req as typeB', 'smtp_relay_server.ip_addr_server','smtp_relay_server.id as detailID', 'smtp_relay_server.smtpid','smtp_relay_server.created_at as created_at', 'smtp_relay_server.server_name', 'smtp_relay_req_form.status as status')
                 ->leftJoin('smtp_relay_req_form', 'smtp_relay_req_form.id', '=', 'smtp_relay_server.smtpid');
                 // ->distinct('smtp_relay_server.types_req');
 
@@ -110,6 +114,9 @@ class SmtpRelayController extends Controller
                         return 'Agency Onboarding';
                         break;
                 }
+            })
+            ->addColumn('agencies', function ($row) {
+                return $row['agencies'];
             })
             ->addColumn('project_name', function ($row) {
                 return $row['project_name'];
@@ -349,7 +356,6 @@ class SmtpRelayController extends Controller
                 'smtp_relay_server'=>$request->input('mailrelay'),
                 'smtp_username'=>$request->input('authusername'),
                 'smtp_password'=>$request->input('authpassword'),
-                'smtp_port'=>$request->input('authmethod'),
                 'smtp_port'=>$request->input('ports'),
                 'status' => 0,
             ]);
@@ -568,7 +574,6 @@ class SmtpRelayController extends Controller
                 'smtp_relay_server'=>$request->input('mailrelay'),
                 'smtp_username'=>$request->input('authusername'),
                 'smtp_password'=>$request->input('authpassword'),
-                'smtp_port'=>$request->input('authmethod'),
                 'smtp_port'=>$request->input('ports'),
                 'status' => 0,
             ]);
@@ -793,5 +798,52 @@ class SmtpRelayController extends Controller
     //     $details = smtp_relay_server::where('form_id', '=', $datareq->form_id)->get();
     //     return view('smtp_relay.view',compact('datasmtp','details'));
     // }
+
+
+    public function import(Request $request)
+    {
+        $request->validate([
+            'file' => 'required|mimes:xlsx,xls,csv'
+        ]);
+
+        $file = $request->file('file');
+
+        // Read the CSV file and insert data into the database
+        /*Excel::load($file, function($reader) {
+            foreach ($reader->toArray() as $row) {
+                SmtpRelayReqForm::create([
+                        'form_id'=> $row['column1'],
+                        'ticket_id' => $row['column2'],
+                        'types_req' => $row['column3'],
+                        'project_name' => $row['column4'],
+                        'ministry' => $row['column5'],
+                        'system_owner_name' => $row['column6'],
+                        'owner_email_addr' => $row['column7'],
+                        'owner_phone_number' => $row['column8'],
+                        'agencies' => $row['column9'],
+                        'dept_div_unit' => $row['column10'],
+                        'smtp_relay_auth_method' => $row['column11'],
+                        'mailfrom_email_addr' => $row['column12'],
+                        'mailbox_created' => $row['column13'],
+                        'applicant_name' => $row['column14'],
+                        'date_application' => $row['column15'],
+                        'verifier_1_name' => $row['column16'],
+                        'verifier_2_name' => $row['column17'],
+                        'date_verification_2' => $row['column18'],
+                        'verifier_3_name' => $row['column19'],
+                        'date_verification_3' => $row['column20'],
+                        'smtp_relay_server'=> $row['column21'],
+                        'smtp_username'=> $row['column22'],
+                        'smtp_password'=> $row['column23'],
+                        'smtp_port'=> $row['column24'],
+                        'status' => 0,
+                ]);
+            }
+        });*/
+
+        Excel::import(new ImportController(), $file);
+
+        return redirect()->route('smtp_relay.smtp_relay_req')->with('success', 'Data imported successfully.');
+    }
 
 }
