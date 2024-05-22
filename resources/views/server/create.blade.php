@@ -30,7 +30,8 @@
                 <div class="mb-3">
                     <label for="ipaddress">IP Address</label>
                     <input class="form-control" id="ipaddress" name="ipaddress" type="text" placeholder="Enter IP Address" required>
-                </div><hr>
+                </div>
+                {{-- <hr>
                 <strong><p style="color:midnightblue;">Primary Server</p></strong><hr>
                 <div class="mb-3">
                     <label for="primary1">Primary Server 1 Hostname</label>
@@ -47,7 +48,7 @@
                 <div class="mb-3">
                     <label for="primary2">Primary Server Ip Address</label>
                     <input class="form-control" id="primary2b" name="primary2ip" type="text" placeholder="">
-                </div>
+                </div> --}}
                 <button class="btn btn-primary me-2 my-1" type="submit">Submit</button>
                 <a class="btn btn-danger me-2 my-1" type="button" href="{{ route('server.index')}}">Cancel</a>
                 </form>

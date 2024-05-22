@@ -536,7 +536,8 @@ serverIpaddresses.push(serverMailRelay{{$loop->iteration}});
 @endforeach
 
 serverIpaddresses.forEach(hostname => {
-    const serverAddress = 'wss://' + hostname + '/wss/';
+    // const serverAddress = 'wss://' + hostname + '/wss/';
+    const serverAddress = 'wss://' + hostname + ':8000';
 
     const socket = new WebSocket(serverAddress);
     sockets.push(socket);

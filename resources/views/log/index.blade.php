@@ -76,7 +76,8 @@
                         //Websocket connections
                         let sockets = [];
                         let hostname = response.serverName[0];
-                        const serverAddress = 'wss://' + hostname + '/wss/';
+                        // const serverAddress = 'wss://' + hostname + '/wss/';
+                        const serverAddress = 'wss://' + hostname + ':8000';
                         const socket = new WebSocket(serverAddress);
                         sockets.push(socket);
 
