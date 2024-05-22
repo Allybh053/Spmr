@@ -213,7 +213,8 @@
 
                             const selectedServer = response.serverhost;
 
-                            const serverAddress = 'wss://' + selectedServer + '/wss/';
+                            // const serverAddress = 'wss://' + selectedServer + '/wss/';
+                            const serverAddress = 'wss://' + selectedServer + ':8000';
                             const socket = new WebSocket(serverAddress);
 
                             socket.addEventListener('open', (event) => {

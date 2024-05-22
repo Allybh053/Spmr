@@ -119,7 +119,8 @@
                  const mailFrom = response.MailFrom;
                  const recTo = response.RecepientTo;
 
-                 const serverAddress = 'wss://' + selectedServer + '/wss/';
+                //  const serverAddress = 'wss://' + selectedServer + '/wss/';
+                 const serverAddress = 'wss://' + selectedServer + ':8000';
                  const socket = new WebSocket(serverAddress);
 
                  socket.addEventListener('open', (event) => {

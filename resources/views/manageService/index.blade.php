@@ -177,7 +177,8 @@
 
     serverIpaddresses.forEach(hostname => {
         //const serverAddress = 'ws://' + ip + ':8000/';
-        const serverAddress = 'wss://' + hostname + '/wss/';
+        // const serverAddress = 'wss://' + hostname + '/wss/';
+        const serverAddress = 'wss://' + hostname + ':8000';
 
         const socket = new WebSocket(serverAddress);
         sockets.push(socket);
@@ -306,7 +307,8 @@
     });
     function startPostfixServices() {
         const selectedServer = $('#postfixStart').val();
-        const serverAddress = 'wss://' + selectedServer + '/wss/';
+        // const serverAddress = 'wss://' + selectedServer + '/wss/';
+        const serverAddress = 'wss://' + selectedServer + ':8000';
         //console.log(serverAddress);
         const socket = new WebSocket(serverAddress);
 
@@ -337,7 +339,8 @@
     });
     function stopPostfixServices() {
         const selectedServer = $('#postfixStop').val();
-        const serverAddress = 'wss://' + selectedServer + '/wss/';
+        // const serverAddress = 'wss://' + selectedServer + '/wss/';
+        const serverAddress = 'wss://' + selectedServer + ':8000';
         //console.log(serverAddress);
         const socket = new WebSocket(serverAddress);
 
@@ -368,7 +371,8 @@
     });
     function restartPostfixServices() {
         const selectedServer = $('#postfixRestart').val();
-        const serverAddress = 'wss://' + selectedServer + '/wss/';
+        // const serverAddress = 'wss://' + selectedServer + '/wss/';
+        const serverAddress = 'wss://' + selectedServer + ':8000';
         //console.log(serverAddress);
         const socket = new WebSocket(serverAddress);
 
@@ -402,7 +406,8 @@
     });
     function startApacheServices() {
         const selectedServer = $('#apacheStart').val();
-        const serverAddress = 'wss://' + selectedServer + '/wss/';
+        // const serverAddress = 'wss://' + selectedServer + '/wss/';
+        const serverAddress = 'wss://' + selectedServer + ':8000';
         //console.log(serverAddress);
         const socket = new WebSocket(serverAddress);
 
@@ -433,7 +438,8 @@
     });
     function stopApacheServices() {
         const selectedServer = $('#apacheStop').val();
-        const serverAddress = 'wss://' + selectedServer + '/wss/';
+        // const serverAddress = 'wss://' + selectedServer + '/wss/';
+        const serverAddress = 'wss://' + selectedServer + ':8000';
         //console.log(serverAddress);
         const socket = new WebSocket(serverAddress);
 
@@ -464,7 +470,8 @@
     });
     function restartApacheServices() {
         const selectedServer = $('#apacheRestart').val();
-        const serverAddress = 'wss://' + selectedServer + '/wss/';
+        // const serverAddress = 'wss://' + selectedServer + '/wss/';
+        const serverAddress = 'wss://' + selectedServer + ':8000';
         //console.log(serverAddress);
         const socket = new WebSocket(serverAddress);
 
@@ -498,7 +505,8 @@
     });
     function startWebminServices() {
         const selectedServer = $('#webminStart').val();
-        const serverAddress = 'wss://' + selectedServer + '/wss/';
+        // const serverAddress = 'wss://' + selectedServer + '/wss/';
+        const serverAddress = 'wss://' + selectedServer + ':8000';
         //console.log(serverAddress);
         const socket = new WebSocket(serverAddress);
 
@@ -529,7 +537,8 @@
     });
     function stopWebminServices() {
         const selectedServer = $('#webminStop').val();
-        const serverAddress = 'wss://' + selectedServer + '/wss/';
+        // const serverAddress = 'wss://' + selectedServer + '/wss/';
+        const serverAddress = 'wss://' + selectedServer + ':8000';
         //console.log(serverAddress);
         const socket = new WebSocket(serverAddress);
 
@@ -560,7 +569,8 @@
     });
     function restartWebminServices() {
         const selectedServer = $('#webminRestart').val();
-        const serverAddress = 'wss://' + selectedServer + '/wss/';
+        // const serverAddress = 'wss://' + selectedServer + '/wss/';
+        const serverAddress = 'wss://' + selectedServer + ':8000';
         //console.log(serverAddress);
         const socket = new WebSocket(serverAddress);
 
