@@ -54,25 +54,25 @@ class ServerController extends Controller
             'server_type' => 0,
         ]);
 
-        // Insert primary1name
-        Server::create([
-            'hostname' => $data['primary1name'],
-            'ipaddress' => $data['primary1ip'],
-            'sshusername' => "null",
-            'sshkey' => "null",
-            'server_type' => 1,
-            'master_id'=>$request->input('hostname'),
-        ]);
+        // // Insert primary1name
+        // Server::create([
+        //     'hostname' => $data['primary1name'],
+        //     'ipaddress' => $data['primary1ip'],
+        //     'sshusername' => "null",
+        //     'sshkey' => "null",
+        //     'server_type' => 1,
+        //     'master_id'=>$request->input('hostname'),
+        // ]);
 
-        // Insert primary2name
-        Server::create([
-            'hostname' => $data['primary2name'],
-            'ipaddress' => $data['primary2ip'],
-            'sshusername' => "null",
-            'sshkey' => "null",
-            'server_type' => 1,
-            'master_id'=>$request->input('hostname'),
-        ]);
+        // // Insert primary2name
+        // Server::create([
+        //     'hostname' => $data['primary2name'],
+        //     'ipaddress' => $data['primary2ip'],
+        //     'sshusername' => "null",
+        //     'sshkey' => "null",
+        //     'server_type' => 1,
+        //     'master_id'=>$request->input('hostname'),
+        // ]);
 
         $roles = Role::get();
 
