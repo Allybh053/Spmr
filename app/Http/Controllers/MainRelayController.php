@@ -42,6 +42,10 @@ class MainRelayController extends Controller
         //think how to add identify
         if ($selectedValue == 'postmaster1a-dev.mygovuc.gov.my'){
             $filePath = storage_path('postmaster.mygovuc.gov.my/postfix/access_list');
+        }elseif($selectedValue == 'postmaster1a-dev.mygovuc.gov.my'){
+            $filePath = storage_path('postmaster.mygovuc.gov.my/postfix/access_list');
+        }else{
+            //
         }
 
         try {
