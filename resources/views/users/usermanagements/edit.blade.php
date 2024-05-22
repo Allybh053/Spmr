@@ -20,9 +20,6 @@
         <!-- Account page navigation-->
         <nav class="nav nav-borders">
             <a class="nav-link active ms-0" href="account-profile.html">Details</a>
-            <!--a class="nav-link" href="account-billing.html">Billing</a>
-            <a class="nav-link" href="account-security.html">Security</a>
-            <a class="nav-link" href="account-notifications.html">Notifications</a-->
         </nav>
         <hr class="mt-0 mb-4" />
         <div class="row">
@@ -89,7 +86,7 @@
                                     <label class="small mb-1" for="position">Position</label>
                                     <select class="form-control select2" name="position_id" aria-label="Default select2" required>
                                         @foreach ($positions as $position)
-                                            <option value="{{ $position->id }}" {{ $user->position == $position->id ? 'selected' : '' }}>
+                                            <option value="{{ $position->id }}" {{ $user->position_id == $position->id ? 'selected' : '' }}>
                                                 {{ $position->name }}
                                             </option>
                                         @endforeach

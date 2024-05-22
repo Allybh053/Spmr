@@ -7,9 +7,17 @@
         <div class="row align-items-center justify-content-between pt-3">
           <div class="col-auto mb-3">
             <h1 class="page-header-title">
-              <div class="page-header-icon">
+              {{--<div class="page-header-icon">
                 <i data-feather="trello"></i>
-              </div> Generate Report
+              </div> Agencies Report--}}
+                <nav aria-label="breadcrumb">
+                    <ol class="breadcrumb">
+                        <div class="page-header-icon">
+                            <i data-feather="trello"></i>
+                        </div>
+                        <li class="breadcrumb-item">Agencies Report</li>
+                    </ol>
+                </nav>
             </h1>
           </div>
         </div>
@@ -250,7 +258,7 @@
                         <div class="card-header" id="titleTable3">List of SASL Registered</div>
                         <div class="card-body">
                             <div class="table-responsive">
-                                <table id="listFormRegistered"  class="display table table-striped table-bordered" cellspacing="0" width="100%">
+                                <table id="listFormSasl"  class="display table table-striped table-bordered" cellspacing="0" width="100%">
                                     <thead>
                                     <tr>
                                         <th>No.</th>
@@ -261,6 +269,28 @@
                                         <th>SMTP Relay Authentication Method</th>
                                         <th>SMTP Port</th>
                                         <th>SMTP Username</th>
+                                        <th>Date Approval</th>
+                                    </tr>
+                                    </thead>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                    <br>
+                    <div class="card">
+                        <div class="card-header" id="titleTable4">List of IP Based Registered</div>
+                        <div class="card-body">
+                            <div class="table-responsive">
+                                <table id="listFormIpBased"  class="display table table-striped table-bordered" cellspacing="0" width="100%">
+                                    <thead>
+                                    <tr>
+                                        <th>No.</th>
+                                        <th>Ticket No.</th>
+                                        <th>Types Request</th>
+                                        <th>Agency Name</th>
+                                        <th>Project Name</th>
+                                        <th>SMTP Relay Authentication Method</th>
+                                        <th>SMTP Port</th>
                                         <th>Date Approval</th>
                                     </tr>
                                     </thead>
@@ -356,49 +386,6 @@
     });
 
         // Initialize DataTable
-        /*var table = $('#listFormRegistered').DataTable({
-            ordering: true,
-            columns: [
-                { data: 'DT_RowIndex', name: 'DT_RowIndex', orderable: false, searchable: false, class: 'text-center' },
-                { data: 'ticket_id', name: 'ticket_id', class: 'text-center' },
-                {
-                    data: 'types_req',
-                    name: 'types_req',
-                    class: 'text-center',
-                    render: function(data, type, row) {
-                        // Define options based on the integer value of types_req
-                        switch (data) {
-                            case 1:
-                                return 'New Application';
-                            case 2:
-                                return 'Service Termination';
-                            case 3:
-                                return 'Onboarding Agency';
-                            default:
-                                return 'Unknown';
-                        }
-                    }
-                },
-                { data: 'project_name', name: 'project_name', class: 'text-center' },
-                { data: 'agencies', name: 'agencies', class: 'text-center' },
-                {
-                    data: 'date_verification_3',
-                    name: 'date_verification_3',
-                    class: 'text-center',
-                    render: function(data, type, row) {
-                        if (type === 'display' || type === 'filter') {
-                            // Parse the timestamp and format it as YY/mm/dd
-                            var date = new Date(data);
-                            var formattedDate = ('0' + date.getDate()).slice(-2) + '/' + ('0' + (date.getMonth() + 1)).slice(-2) + '/' + date.getFullYear();
-                            return formattedDate;
-                        }
-                        return data;
-                    }
-                },
-            ],
-            data: [] // Initialize with empty data
-        });*/
-
         var table2 = $('#listAgencyDomain').DataTable({
             ordering: true,
             columns: [
@@ -418,7 +405,7 @@
                 { data: 'server_name', name: 'server_name', class: 'text-center' },
                 { data: 'ip_addr_server', name: 'ip_addr_server', class: 'text-center' },
                 { data: 'fqdn_server', name: 'fqdn_server', class: 'text-center' },
-                { data: 'deactivated', name: 'deactivated', class: 'text-center' },
+                { data: 'types_req', name: 'types_req', class: 'text-center' },
             ],
             dom: '<"top"fBl>rt<"bottom"ip>',
             buttons: [
@@ -491,7 +478,7 @@
                 { data: 'server_name', name: 'server_name', class: 'text-center' },
                 { data: 'ip_addr_server', name: 'ip_addr_server', class: 'text-center' },
                 { data: 'fqdn_server', name: 'fqdn_server', class: 'text-center' },
-                { data: 'deactivated', name: 'deactivated', class: 'text-center' },
+                { data: 'types_req', name: 'types_req', class: 'text-center' },
             ],
             dom: '<"top"fBl>rt<"bottom"ip>',
             buttons: [
@@ -545,7 +532,7 @@
             }
         });
 
-        var table = $('#listFormRegistered').DataTable({
+        var table = $('#listFormSasl').DataTable({
             ordering: true,
             columns: [
                 /*{ data: 'DT_RowIndex', name: 'DT_RowIndex', orderable: false, searchable: false, class: 'text-center' },*/
@@ -649,10 +636,114 @@
                 });
             }
         });
+        var table4 = $('#listFormIpBased').DataTable({
+            ordering: true,
+            columns: [
+                /*{ data: 'DT_RowIndex', name: 'DT_RowIndex', orderable: false, searchable: false, class: 'text-center' },*/
+                {
+                    data: null,
+                    name: 'DT_RowIndex2',
+                    orderable: false,
+                    searchable: false,
+                    class: 'text-center',
+                    render: function (data, type, row, meta) {
+                        return meta.row + 1; // This will render the index starting from 1
+                    }
+                },
+                { data: 'ticket_id', name: 'ticket_id', class: 'text-center' },
+                {
+                    data: 'types_req',
+                    name: 'types_req',
+                    class: 'text-center',
+                    render: function(data, type, row) {
+                        // Define options based on the integer value of types_req
+                        switch (data) {
+                            case 1:
+                                return 'New Application';
+                            case 2:
+                                return 'Service Termination';
+                            case 3:
+                                return 'Onboarding Agency';
+                            default:
+                                return 'Unknown';
+                        }
+                    }
+                },
+                { data: 'agencies', name: 'agencies', class: 'text-center' },
+                { data: 'project_name', name: 'project_name', class: 'text-center' },
+                { data: 'smtp_relay_auth_method', name: 'smtp_relay_auth_method', class: 'text-center' },
+                { data: 'smtp_port', name: 'smtp_port', class: 'text-center' },
+                {
+                    data: 'date_verification_3',
+                    name: 'date_verification_3',
+                    class: 'text-center',
+                    render: function(data, type, row) {
+                        if (type === 'display' || type === 'filter') {
+                            // Parse the timestamp and format it as YY/mm/dd
+                            var date = new Date(data);
+                            var formattedDate = ('0' + date.getDate()).slice(-2) + '/' + ('0' + (date.getMonth() + 1)).slice(-2) + '/' + date.getFullYear();
+                            return formattedDate;
+                        }
+                        return data;
+                    }
+                },
+            ],
+            dom: '<"top"fBl>rt<"bottom"ip>',
+            buttons: [
+                {
+                    extend: 'copy',
+                    text: 'Copy',
+                    title: 'List of IP Based Registered',
+                    exportOptions: {
+                        columns: ':visible'
+                    }
+                },
+                {
+                    extend: 'csv',
+                    text: 'CSV',
+                    title: 'List of IP Based Registered',
+                    exportOptions: {
+                        columns: ':visible'
+                    }
+                },
+                {
+                    extend: 'excel',
+                    text: 'Excel',
+                    title: 'List of IP Based Registered',
+                    exportOptions: {
+                        columns: ':visible'
+                    }
+                },
+                {
+                    extend: 'pdf',
+                    text: 'PDF',
+                    title: 'List of SASL Registered',
+                    exportOptions: {
+                        columns: ':visible'
+                    }
+                },
+                {
+                    extend: 'print',
+                    text: 'Print',
+                    title: 'List of IP Based Registered',
+                    exportOptions: {
+                        columns: ':visible'
+                    }
+                }
+            ],
+            data: [], // Initialize with empty data
+            drawCallback: function(settings) {
+                var api = this.api();
+                api.column(0, {search:'applied', order:'applied'}).nodes().each(function(cell, i) {
+                    cell.innerHTML = i + 1;
+                });
+            }
+        });
 
         $('.dataTables_filter', table2.table().container()).addClass('d-inline-block mr-2').append($('.dt-buttons', table2.table().container()));
         $('.dataTables_filter', table3.table().container()).addClass('d-inline-block mr-2').append($('.dt-buttons', table3.table().container()));
         $('.dataTables_filter', table.table().container()).addClass('d-inline-block mr-2').append($('.dt-buttons', table.table().container()));
+        $('.dataTables_filter', table4.table().container()).addClass('d-inline-block mr-2').append($('.dt-buttons', table4.table().container()));
 
         /*$('#searchForm').submit(function (e) {
             e.preventDefault();
@@ -791,7 +882,45 @@
                         $('#totalDomain').text(response.totalDomain || "Not Found");
 
                         // Add index to each row
-                        $.each(response.data, function (index, row) {
+                        $.each(response.dataTbl1, function (index, row) {
+                            row['DT_RowIndex'] = index + 1;
+                            switch (row['smtp_relay_auth_method']) {
+                                case 1:
+                                    row['smtp_relay_auth_method'] = 'IP Based Authentication Relay';
+                                    break;
+                                case 2:
+                                    row['smtp_relay_auth_method'] = 'Username/Password Authentication Relay';
+                                    break;
+                            }
+                            switch (row['smtp_port']) {
+                                case 0:
+                                    row['smtp_port'] = 'Not Answered';
+                                    break;
+                                case 1:
+                                    row['smtp_port'] = '25/tcp';
+                                    break;
+                                case 2:
+                                    row['smtp_port'] = '465/tcp';
+                                    break;
+                                case 3:
+                                    row['smtp_port'] = '587/tcp';
+                                    break;
+                                case 4:
+                                    row['smtp_port'] = '25/tcp & 465/tcp';
+                                    break;
+                                case 5:
+                                    row['smtp_port'] = '25/tcp & 587/tcp';
+                                    break;
+                                case 6:
+                                    row['smtp_port'] = '465/tcp & 587/tcp';
+                                    break;
+                                case 7:
+                                    row['smtp_port'] = 'All';
+                                    break;
+                            }
+                        });
+
+                        $.each(response.dataTbl2, function (index, row) {
                             row['DT_RowIndex'] = index + 1;
                             switch (row['smtp_relay_auth_method']) {
                                 case 1:
@@ -831,16 +960,17 @@
 
                         $.each(response.data2, function (index, row) {
                             row['DT_RowIndex2'] = index + 1;
-                            row['deactivated'] = row['deactivated'] === 1 ? 'Deactivated' : 'Activated';
+                            row['types_req'] = row['types_req'] === 2 ? 'Deactivated' : 'Activated';
                         });
 
                         $.each(response.data3, function (index, row) {
                             row['DT_RowIndex2'] = index + 1;
-                            row['deactivated'] = row['deactivated'] === 1 ? 'Deactivated' : 'Activated';
+                            row['types_req'] = row['types_req'] === 2 ? 'Activated' : 'Deactivated';
                         });
 
                         // Clear existing data and add new data to the DataTable
-                        table.clear().rows.add(response.data).draw();
+                        table.clear().rows.add(response.dataTbl1).draw();
+                        table4.clear().rows.add(response.dataTbl2).draw();
                         table2.clear().rows.add(response.data2).draw();
                         table3.clear().rows.add(response.data3).draw();
 

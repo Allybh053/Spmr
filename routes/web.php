@@ -29,8 +29,9 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ManageServiceController;
 use App\Http\Controllers\GenerateReportingController;
 use App\Http\Controllers\TerminalController;
-use App\Http\Controllers\MinistryController;
 use App\Http\Controllers\AgencyController;
+use App\Http\Controllers\MinistryController;
+use App\Http\Controllers\MonthlyReportingController;
 
 
 /*
@@ -96,6 +97,7 @@ Route::group(['middleware' => ['auth']], function () {
     Route::group(['prefix' => 'mailrelay'], function () {
         Route::get('/', [MainRelayController::class, 'index'])->name('mailrelay.index')->middleware('auth.resource:manage_mail_relay_view');
         Route::get('/register', [MainRelayController::class, 'show'])->name('mailrelay.register');
+        Route::post('/check-ip-address', [MainRelayController::class, 'checkIpAddress'])->name('check.ip.address');
         Route::get('/mailupstream', [MainRelayController::class, 'mailupstream'])->name('mailrelay.mailupstream');
         Route::get('/detail/{id}/{type}', [MainRelayController::class, 'view'])->name('mailrelay.edit');
         Route::get('/reject/{id}', [MainRelayController::class, 'reject'])->name('mailrelay.reject');
@@ -106,6 +108,10 @@ Route::group(['middleware' => ['auth']], function () {
         // Route::post('/mailupstream/{serverconfig}', [MainRelayController::class, 'getNewServerData'])->name('mailrelay.getNewServerData');
 
         // Route::get('/detail/{id}', [MainRelayController::class, 'updatestatus']);
+
+        Route::get('/mailupstream', [MainRelayController::class, 'mailupstream'])->name('mailrelay.mailupstream')->middleware('auth.resource:mail_upstream_view');
+        Route::get('/getServer', [MainRelayController::class, 'api'])->name('mailrelay.api');
+        Route::get('/index/searching', [MainRelayController::class, 'search'])->name('mailrelay.index.search');
     });
 
     //SMTP Relay Request
@@ -125,6 +131,7 @@ Route::group(['middleware' => ['auth']], function () {
         Route::get('/update/{id}/{type}', [SmtpRelayController::class, 'kemaskini'])->name('smtp_relay.kemaskini');
         Route::post('/update/{id}/kemaskinidata', [SmtpRelayController::class, 'kemaskinidata'])->name('smtp_relay.kemaskinidata');
 
+        Route::post('/import', [SmtpRelayController::class, 'import'])->name('smtp_relay.import');
 
         Route::get('/index/searching', [SmtpRelayController::class, 'search'])->name('smtp_relay.index.search');
 
@@ -193,15 +200,15 @@ Route::group(['middleware' => ['auth']], function () {
         });
     });
 
-    		//role
-		Route::group(['prefix' => 'role'], function () {
-			Route::get('/',[RoleController::class,'index'])
-            ->name('setup.role.index')
-            ->middleware('auth.resource:role_permission_view');
-			Route::post('/add',[RoleController::class,'create'])->name('setup.role.create');
-			Route::post('/delete',[RoleController::class,'delete'])->name('setup.role.delete');
-			Route::post('/storePermission',[RoleController::class,'storePermission'])->name('setup.role.storePermission');
-		});
+    //role
+    Route::group(['prefix' => 'role'], function () {
+        Route::get('/',[RoleController::class,'index'])
+        ->name('setup.role.index')
+        ->middleware('auth.resource:role_permission_view');
+        Route::post('/add',[RoleController::class,'create'])->name('setup.role.create');
+        Route::post('/delete',[RoleController::class,'delete'])->name('setup.role.delete');
+        Route::post('/storePermission',[RoleController::class,'storePermission'])->name('setup.role.storePermission');
+    });
 
     Route::group(['prefix' => 'domain'], function () {
         Route::get('/', [DomainMinistryAgenciesListController::class, 'index'])
@@ -287,19 +294,28 @@ Route::group(['middleware' => ['auth']], function () {
 
     });
 
-    Route::get('/activity-logs', [ActivityLogController::class,'showActivityLogs'])->name('activityLog.index')
-      ->middleware('auth.resource:spmr_activity_log_view');
-    });
-
-      Route::group(['prefix' => 'terminal'], function () {
+    Route::group(['prefix' => 'terminal'], function () {
         // Route::get('/', [TerminalController::class, 'index'])->name('terminal.index');
         Route::post('/execute-ssh-command',[TerminalController::class, 'executeCommand'])->name('terminal.executeCommand');
         // Route::get('/internal-cli', [TerminalController::class, 'show'])->name('internal.cli');
         Route::get('/shell-in-a-box', [TerminalController::class, 'terminal'])->name('shell-in-a-box');
 
 
-
     });
+
+    Route::get('/activity-logs', [ActivityLogController::class,'showActivityLogs'])->name('activityLog.index')
+      ->middleware('auth.resource:spmr_activity_log_view');
+    });
+
+    Route::group(['prefix' => 'monthly-report'], function () {
+        Route::get('/', [MonthlyReportingController::class, 'index'])->name('monthlyReport.index')
+        ->middleware('auth.resource:monthly_report_view');
+        Route::get('/getServer', [MonthlyReportingController::class, 'api'])->name('monthlyReport.api');
+        Route::post('/index/searching', [MonthlyReportingController::class, 'search'])->name('monthlyReport.index.search');
+    });
+
+
+
 
 
 

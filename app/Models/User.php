@@ -26,7 +26,7 @@ class User extends Authenticatable implements Auditable
      */
     protected $fillable = [
         'username', 'password', 'email', 'role_id', 'acct_types', 'enabled',
-        'last_login_at', 'last_login_ip', 'ldap_authentication','fname','lname','phone'
+        'last_login_at', 'last_login_ip', 'ldap_authentication','fname','lname','phone','position_id','department_id'
     ];
 
     /**

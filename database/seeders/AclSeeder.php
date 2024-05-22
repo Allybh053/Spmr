@@ -72,6 +72,9 @@ class AclSeeder extends Seeder
                 "generate_report" => [
 					'generate_report_view',
 				],
+                "monthly_report"=>[
+                    'monthly_report_view',
+                ]
 			],
 			"configuration" => [
 				"server" => [
@@ -115,6 +118,12 @@ class AclSeeder extends Seeder
 					'agencies_add',
 					'agencies_update',
 					'agencies_delete',
+				],
+				"mail_upstream" => [
+					'mail_upstream_view',
+					'mail_upstream_add',
+					'mail_upstream_update',
+					'mail_upstream_delete',
 				],
 				"version" => [
 					'version_view'

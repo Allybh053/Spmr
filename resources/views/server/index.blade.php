@@ -74,12 +74,15 @@
                                 </div>
                                 <div class="card-body">
                                     <div class="mb-3">
+                                        <label class="small mb-1" for="inputNotificationEmail">Server Name : {{ $dataserver->hostname}}</label>
+                                    </div>
+                                    <div class="mb-3">
                                         <label class="small mb-1" for="inputNotificationEmail">IP Address : {{ $dataserver->ipaddress}}</label>
                                     </div>
-                                    <div class="mb-3">
+                                    <div class="mb-3" hidden>
                                         <label class="small mb-1" for="inputNotificationEmail">SSH Username : {{ $dataserver->sshusername}}</label>
                                     </div>
-                                    <div class="mb-3">
+                                    <div class="mb-3" hidden>
                                         <label class="small mb-1" for="inputNotificationEmail">SSH key Path : {{ $dataserver->sshkey}}</label>
                                     </div>
                                     <div class="mb-3">

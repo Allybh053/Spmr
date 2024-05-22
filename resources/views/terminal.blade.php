@@ -1,14 +1,13 @@
 @extends('layouts.app')
 
 @section('content')
-{{-- <div class="terminal-window">
-    <textarea id="terminal" readonly></textarea>
-    <input type="text" id="command-input" placeholder="Enter command..." autofocus />
-</div> --}}
 
-<div id="terminal"></div>
+
+<div id="terminal">
+    {{-- <pre>{{ $output }}</pre> --}}
+</div>
 @endsection
-@push('script')
+{{-- @push('script')
 <script src="https://unpkg.com/xterm-addon-fit"></script>
 <script>
     document.addEventListener('DOMContentLoaded', () => {
@@ -67,4 +66,4 @@
         });
     });
 </script>
-@endpush
+@endpush --}}

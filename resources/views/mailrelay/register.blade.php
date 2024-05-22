@@ -29,7 +29,8 @@
         @endif
         <div class="card">
             <div class="card-body">
-                <table id="datatablesSimple1" class="table table-striped">
+                <div class="table-responsive">
+                <table id="spmrDatatable"  class="display table table-striped table-bordered" cellspacing="0" width="100%">
                     <thead>
                         <tr>
                             <th>No</th>
@@ -66,18 +67,19 @@
                             @endif
                             </td>
                             <td> {{ \Carbon\Carbon::parse($smtpMailServer->created_at)->format('d-m-Y') }}</td>
-                            <td>
+                            <td style="text-align: center;">
                                 <a class="btn btn-datatable btn-icon me-2 text-blue" title="View Detail" href="{{ route('mailrelay.edit',['id' => $smtpMailServer->id,'type' => $smtpMailServer->types_req])}}"><i data-feather="eye"></i></a>
                                 <form class="btn btn-datatable btn-icon me-2 text-blue" action="" method="POST" onsubmit="return confirm('Are you sure you want to delete this user?')">
                                     @csrf
                                     @method('DELETE')
-                                    <button type="submit" class="btn btn-datatable btn-icon text-danger btn-transparent" title="Delete User"><i data-feather="trash-2"></i></button>
+                                    <button type="submit" class="btn btn-datatable btn-icon text-danger btn-transparent" title="Delete User" hidden><i data-feather="trash-2"></i></button>
                                 </form>
                             </td>
                         </tr>
                         @endforeach
                     </tbody>
                 </table>
+            </div>
             </div>
         </div>
     </div>
@@ -92,7 +94,7 @@
 @push('script')
     <script>
         (function ($) {
-    var table = $('#datatablesSimple1').DataTable({
+    var table = $('#spmrDatatable').DataTable({
         processing: true,
         serverSide: false,
         ordering: true,
@@ -134,7 +136,16 @@
                     columns: ':visible'
                 }
             }
-        ]
+        ],
+    drawCallback: function(settings) {
+            // Reinitialize Feather icons
+            if (typeof feather !== 'undefined') {
+                feather.replace();
+            }
+
+            // Reinitialize any other JavaScript functionality as needed
+            // For example, tooltips, modals, etc.
+        }
     });
 
     // Adjust positioning of search input and export buttons

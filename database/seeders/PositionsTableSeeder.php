@@ -14,16 +14,16 @@ class PositionsTableSeeder extends Seeder
      */
     public function run(): void
     {
-        $faker = Faker::create();
+        // $faker = Faker::create();
 
-        foreach (range(1, 50) as $index) {
-            DB::table('positions')->insert([
-                'name' => $faker->jobTitle,
-                'remark' => $faker->sentence,
-                'status' => $faker->randomElement([0, 1]),
-                'created_at' => now(),
-                'updated_at' => now(),
-            ]);
-        }
+        // foreach (range(1, 50) as $index) {
+        //     DB::table('positions')->insert([
+        //         'name' => $faker->jobTitle,
+        //         'remark' => $faker->sentence,
+        //         'status' => $faker->randomElement([0, 1]),
+        //         'created_at' => now(),
+        //         'updated_at' => now(),
+        //     ]);
+        // }
     }
 }
