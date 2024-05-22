@@ -97,6 +97,8 @@ class UsersController extends Controller
                 'department_id' => $validatedData['department'],
             ]);
 
+            $this->syncPermissions($request, $user);
+
             // Check if user was created successfully
             if ($user) {
                 Mail::to($user->email)->send(new WelcomeNewUser($user,$plaintextPassword));
@@ -177,6 +179,8 @@ class UsersController extends Controller
         $user->department_id = $validatedData['department_id'];
         $user->save();
 
+        $this->syncPermissions($request, $user);
+
         // Redirect back to the user management index page with a success message
         return redirect()->route('usermanagements.index')->with('success', 'User updated successfully');
     }
@@ -199,5 +203,28 @@ class UsersController extends Controller
         $user->delete();
 
         return redirect()->route('usermanagements.index')->with('success', 'User deleted successfully');
+    }
+
+    private function syncPermissions(Request $request, $user)
+    {
+        // Get the submitted roles
+        $roles = $request->get('role_id', []);
+        $permissions = $request->get('permissions', []);
+
+        // Get the roles
+        $roles = Role::find($roles);
+
+        // check for current role changes
+        if( ! $user->hasAllRoles( $roles ) ) {
+            // reset all direct permissions for user
+            $user->permissions()->sync([]);
+        } else {
+            // handle permissions
+            $user->syncPermissions($permissions);
+        }
+
+        $user->syncRoles($roles);
+
+        return $user;
     }
 }
