@@ -17,7 +17,7 @@ class ServerController extends Controller
     public function index()
     {
         $user = Auth::user();
-        $dataservers = Server::orderBy('id', 'asc')->get();
+        $dataservers = Server::whereNotNull('status')->orderBy('id', 'asc')->get();
 
         return view('server.index',compact('dataservers'));
     }
@@ -43,19 +43,35 @@ class ServerController extends Controller
 
     public function uploadServer(Request $request)
     {
-        // $file = $request->file('sshkey');
-        // $fileName = $file->getClientOriginalName();
-
-        // // Move the uploaded file to the 'key' directory at the same level as the 'app' folder
-        // $file->move(storage_path('../Storage/key'), $fileName);
-
+        $data = $request->all();
         // Save server details and file path in the database
         $server = Server::create([
             'hostname' => $request->input('hostname'),
             'ipaddress' => $request->input('ipaddress'),
             'sshusername' => "null",
             'status' => 0,
-            'sshkey' => "null", // Save the path relative to the storage directory
+            'sshkey' => "null",
+            'server_type' => 0,
+        ]);
+
+        // Insert primary1name
+        Server::create([
+            'hostname' => $data['primary1name'],
+            'ipaddress' => $data['primary1ip'],
+            'sshusername' => "null",
+            'sshkey' => "null",
+            'server_type' => 1,
+            'master_id'=>$request->input('hostname'),
+        ]);
+
+        // Insert primary2name
+        Server::create([
+            'hostname' => $data['primary2name'],
+            'ipaddress' => $data['primary2ip'],
+            'sshusername' => "null",
+            'sshkey' => "null",
+            'server_type' => 1,
+            'master_id'=>$request->input('hostname'),
         ]);
 
         $roles = Role::get();
@@ -84,7 +100,9 @@ class ServerController extends Controller
 
         $server = Server::findOrFail($id);
 
-        return view('server.edit',compact('server'));
+        $subserver = Server::where('master_id',$server->hostname)->get();
+
+        return view('server.edit',compact('server','subserver'));
     }
 
     /**
