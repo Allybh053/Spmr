@@ -40,10 +40,8 @@ class MainRelayController extends Controller
         $selectedValuetype_req = $request->input('selectedValuetype_req');
         $selectedValue = $request->input('selectedValue');
         //think how to add identify
-        if ($selectedValue == 'postmaster1a-dev.mygovuc.gov.my'){
-            $filePath = storage_path('postmaster.mygovuc.gov.my/postfix/access_list');
-        }elseif($selectedValue == 'postmaster1a-dev.mygovuc.gov.my'){
-            $filePath = storage_path('postmaster.mygovuc.gov.my/postfix/access_list');
+        if ($selectedValue == $selectedValue){
+            $filePath = storage_path($selectedValue.'/postfix/access_list');
         }else{
             //
         }
@@ -83,7 +81,7 @@ class MainRelayController extends Controller
                 }
             }
         } catch (\Exception $e) {
-            return "Database Error: " . $e->getMessage();
+            return "Error 404! ";// . $e->getMessage();
         }
     }
 
