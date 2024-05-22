@@ -15,7 +15,7 @@ class UserSeeder extends Seeder
         $users = [
             ['username' => 'spmr_superadmin', 'email' => 'spmr-superadmin@digital.gov.my','role_id'=>'2'],
             ['username' => 'spmr_dev', 'email' => 'spmr-dev@digital.gov.my','role_id'=>'1'],
-            ['username' => 'spmr_admin', 'email' => 'spmr-admin@digital.gov.my','role_id'=>'2']
+            ['username' => 'spmr_admin', 'email' => 'spmr-admin@digital.gov.my','role_id'=>'3']
         ];
 
         $password = Hash::make('spmr1234');
