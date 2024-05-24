@@ -37,9 +37,12 @@
                 </a> -->
 
                  <!-- Sidenav Menu Heading (Core)-->
-                 @if (Gate::check('smtp_mail_relay_view') || Gate::check('manage_mail_relay_view'))
+                 @php
+                 $canViewMailRelay = Gate::check('smtp_mail_relay_view') || Gate::check('manage_mail_relay_view') || Gate::check('mail_upstream_routing_view');
+             @endphp
+                 @if ($canViewMailRelay)
                  <div class="sidenav-menu-heading">Mail Relay Management</div>
-                 @endif
+
                 <!-- Sidenav Link (Charts)-->
                 @can('smtp_mail_relay_view')
                 <a class="nav-link" href="{{ route('smtp_relay.smtp_relay_req') }}">
@@ -62,13 +65,15 @@
                     </nav>
                 </div>
                 @endcan
+                @can('mail_upstream_routing_view')
 
                 <a class="nav-link" href="{{ route('mailrelay.mailupstream') }}">
                     <div class="nav-link-icon"><i data-feather="grid"></i></div>
                     Mail Upstream Routing
                     <div class="sidenav-collapse-arrow"></div>
                 </a>
-
+                @endcan
+                @endif
                 {{-- <!-- <a class="nav-link collapsed" href="javascript:void(0);" data-bs-toggle="collapse" data-bs-target="#collapseHistory" aria-expanded="false" aria-controls="collapseHistory">
                     <div class="nav-link-icon"><i data-feather="link"></i></div>
                    History Connection

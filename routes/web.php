@@ -71,7 +71,7 @@ Route::get('/logout', [LoginController::class, 'logout'])->name('logout' );
 
 
 
-Route::group(['middleware' => ['auth']], function () {
+Route::group(['middleware' => ['auth', 'nocache']], function () {
 
     //testing route
     Route::get('/home', [DashboardController::class, 'index'])->name('dashboard.index');
@@ -107,7 +107,7 @@ Route::group(['middleware' => ['auth']], function () {
 
         // Route::get('/detail/{id}', [MainRelayController::class, 'updatestatus']);
 
-        Route::get('/mailupstream', [MainRelayController::class, 'mailupstream'])->name('mailrelay.mailupstream');
+        Route::get('/mailupstream', [MainRelayController::class, 'mailupstream'])->name('mailrelay.mailupstream')->middleware('auth.resource:mail_upstream_routing_view');
         Route::get('/getServer', [MainRelayController::class, 'api'])->name('mailrelay.api');
         Route::get('/index/searching', [MainRelayController::class, 'search'])->name('mailrelay.index.search');
     });
