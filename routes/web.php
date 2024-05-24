@@ -97,6 +97,8 @@ Route::group(['middleware' => ['auth', 'nocache']], function () {
     Route::group(['prefix' => 'mailrelay'], function () {
         Route::get('/', [MainRelayController::class, 'index'])->name('mailrelay.index')->middleware('auth.resource:manage_mail_relay_view');
         Route::get('/register', [MainRelayController::class, 'show'])->name('mailrelay.register');
+        Route::post('/check-ip-address', [MainRelayController::class, 'checkIpAddress'])->name('check.ip.address');
+        Route::get('/mailupstream', [MainRelayController::class, 'mailupstream'])->name('mailrelay.mailupstream');
         Route::get('/detail/{id}/{type}', [MainRelayController::class, 'view'])->name('mailrelay.edit');
         Route::get('/reject/{id}', [MainRelayController::class, 'reject'])->name('mailrelay.reject');
         Route::post('/submit-form', [MainRelayController::class, 'submitappForm'])->name('mailrelay.form');

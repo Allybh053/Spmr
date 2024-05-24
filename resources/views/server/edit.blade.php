@@ -38,11 +38,11 @@
                     <label for="ipaddress">IP Address</label>
                     <input class="form-control" id="ipaddress" name="ipaddress" type="text" value="{{ old('ipaddress', $server->ipaddress) }}" required>
                 </div>
-                <div class="mb-3">
+                <div class="mb-3" hidden @disabled(true)>
                     <label for="sshusername">SSH Username</label>
                     <input class="form-control" id="sshusername" name="sshusername" type="text" value="{{ old('sshusername', $server->sshusername) }}" required>
                 </div>
-                <div class="mb-3">
+                <div class="mb-3" hidden @disabled(true)>
                     <label>Current SSH Key : <a href="{{ route('server.file.download', ['id' => $server->id]) }}" target="_blank">{{ $server->sshkey }}</a></label><hr>
                     <label for="sshkey">New SSH Key</label>
                     <input class="form-control" type="file" name="sshkey" id="sshkey" accept=".pem"/>

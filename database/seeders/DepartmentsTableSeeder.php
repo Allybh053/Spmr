@@ -14,16 +14,16 @@ class DepartmentsTableSeeder extends Seeder
      */
     public function run(): void
     {
-        $faker = Faker::create();
+        // $faker = Faker::create();
 
-        foreach (range(1, 30) as $index) {
-            DB::table('departments')->insert([
-                'name' => $faker->company,
-                'remark' => $faker->sentence,
-                'status' => $faker->randomElement([0, 1]),
-                'created_at' => now(),
-                'updated_at' => now(),
-            ]);
-        }
+        // foreach (range(1, 30) as $index) {
+        //     DB::table('departments')->insert([
+        //         'name' => $faker->company,
+        //         'remark' => $faker->sentence,
+        //         'status' => $faker->randomElement([0, 1]),
+        //         'created_at' => now(),
+        //         'updated_at' => now(),
+        //     ]);
+        // }
     }
 }

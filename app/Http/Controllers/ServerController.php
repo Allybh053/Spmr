@@ -17,7 +17,7 @@ class ServerController extends Controller
     public function index()
     {
         $user = Auth::user();
-        $dataservers = Server::orderBy('id', 'asc')->get();
+        $dataservers = Server::whereNotNull('status')->orderBy('id', 'asc')->get();
 
         return view('server.index',compact('dataservers'));
     }
@@ -43,28 +43,36 @@ class ServerController extends Controller
 
     public function uploadServer(Request $request)
     {
-        // $request->validate([
-        //     'hostname' => 'required|string|max:255',
-        //     'ipaddress' => 'required|ip',
-        //     'sshusername' => 'required|string|max:255',
-        //     'sshkey' => 'required|mimes:pem|max:1024', // Adjust the file validation rules
-        // ]);
-        // Handle other server details and database storage here
-
-        $file = $request->file('sshkey');
-        $fileName = $file->getClientOriginalName();
-
-        // Move the uploaded file to the 'key' directory at the same level as the 'app' folder
-        $file->move(storage_path('../Storage/key'), $fileName);
-
+        $data = $request->all();
         // Save server details and file path in the database
         $server = Server::create([
             'hostname' => $request->input('hostname'),
             'ipaddress' => $request->input('ipaddress'),
-            'sshusername' => $request->input('sshusername'),
+            'sshusername' => "null",
             'status' => 0,
-            'sshkey' => $fileName, // Save the path relative to the storage directory
+            'sshkey' => "null",
+            'server_type' => 0,
         ]);
+
+        // // Insert primary1name
+        // Server::create([
+        //     'hostname' => $data['primary1name'],
+        //     'ipaddress' => $data['primary1ip'],
+        //     'sshusername' => "null",
+        //     'sshkey' => "null",
+        //     'server_type' => 1,
+        //     'master_id'=>$request->input('hostname'),
+        // ]);
+
+        // // Insert primary2name
+        // Server::create([
+        //     'hostname' => $data['primary2name'],
+        //     'ipaddress' => $data['primary2ip'],
+        //     'sshusername' => "null",
+        //     'sshkey' => "null",
+        //     'server_type' => 1,
+        //     'master_id'=>$request->input('hostname'),
+        // ]);
 
         $roles = Role::get();
 
@@ -92,7 +100,9 @@ class ServerController extends Controller
 
         $server = Server::findOrFail($id);
 
-        return view('server.edit',compact('server'));
+        $subserver = Server::where('master_id',$server->hostname)->get();
+
+        return view('server.edit',compact('server','subserver'));
     }
 
     /**
@@ -111,8 +121,8 @@ class ServerController extends Controller
         $request->validate([
             'hostname' => 'required|string|max:255',
             'ipaddress' => 'required|string',
-            'sshusername' => 'required|string|max:255',
-            'sshkey' => 'sometimes|mimes:pem|max:1024', // Allow file replacement
+            // 'sshusername' => 'required|string|max:255',
+            // 'sshkey' => 'sometimes|mimes:pem|max:1024', // Allow file replacement
         ]);
 
         $server = Server::find($id);
@@ -124,19 +134,19 @@ class ServerController extends Controller
         // Handle other server details update here
         $server->hostname = $request->input('hostname');
         $server->ipaddress = $request->input('ipaddress');
-        $server->sshusername = $request->input('sshusername');
+        // $server->sshusername = $request->input('sshusername');
 
-        // Check if a new file is provided for replacement
-        if ($request->hasFile('sshkey')) {
-            $newFile = $request->file('sshkey');
-            $newFileName = $newFile->getClientOriginalName();
+        // // Check if a new file is provided for replacement
+        // if ($request->hasFile('sshkey')) {
+        //     $newFile = $request->file('sshkey');
+        //     $newFileName = $newFile->getClientOriginalName();
 
-            // Move the new file to the 'key' directory
-            $newFile->move(storage_path('../key'), $newFileName);
+        //     // Move the new file to the 'key' directory
+        //     $newFile->move(storage_path('../key'), $newFileName);
 
-            // Update the database with the new file path
-            $server->sshkey = $newFileName;
-        }
+        //     // Update the database with the new file path
+        //     $server->sshkey = $newFileName;
+        // }
 
         $server->save();
 

@@ -12,7 +12,7 @@ use OwenIt\Auditing\Contracts\Auditable;
 class Server extends Model  implements Auditable
 {
     use AuditableTrait;
-    
+
     use HasFactory, SoftDeletes;
 
     protected $table = 'servers';
@@ -23,6 +23,9 @@ class Server extends Model  implements Auditable
         'sshusername',
         'sshkey',
         'status',
+        'server_type',
+        'status_cluster',
+        'master_id',
     ];
 
     public function roles() {

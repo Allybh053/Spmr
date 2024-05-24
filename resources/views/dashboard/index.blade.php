@@ -15,19 +15,19 @@
                                         <p class="card-text mt-1 mb-1" id="ipAddress"></p><div class="small text-muted"></div></div></div></div></a> -->
 
 <!-- Start Loop By Server Here -->
-    @foreach ($serverconfig as $server)
+    @foreach ($totalCountDashboard as $server)
   <div class="row mb-4">
     <div class="col-xxl-12">
       <div class="card">
         <div class="card-header text-center p-5">
           <h5 style="text-align:left;">
-              {{ $server->hostname }}
-              <p>{{ $server->ipaddress }}</p>
+              {{ $server['hostname']}}
+              <p>{{ $server['ipAddress'] }}</p>
           </h5>
         </div>
         <div class="card-body">
           <div class="row">
-            <div class="col-xl-4 mb-4">
+            <div class="col-xl-6 mb-6">
               <a class="card lift h-100" href="#!">
                 <div class="card-body d-flex justify-content-center flex-column">
                   <div class="d-flex align-items-center justify-content-between">
@@ -36,7 +36,7 @@
                       <h5>Total Application Registered</h5>
                       <div class="inline">
                         <i class="feather-l text-primary" data-feather="corner-down-right"></i>
-                        <h2 id="totalApplications" style="display: inline-block; margin-left: 5px;">-</h2>
+                        <h2 id="totalApplications" style="display: inline-block; margin-left: 5px;">{{$server['totalApplicationRegistered'] ?? '-'}}</h2>
                       </div>
                     </div>
                     <img src="{{asset ('assets/img/illustrations/dash_app.svg')}}" alt="..." style="width: 8rem" />
@@ -44,7 +44,7 @@
                 </div>
               </a>
             </div>
-            <div class="col-xl-4 mb-4">
+            <div class="col-xl-6 mb-6">
               <a class="card lift h-100" href="#!">
                 <div class="card-body d-flex justify-content-center flex-column">
                   <div class="d-flex align-items-center justify-content-between">
@@ -53,7 +53,7 @@
                       <h5>Total Domain Registered</h5>
                       <div class="inline">
                         <i class="feather-l text-primary" data-feather="corner-down-right"></i>
-                        <h2 id="totalDomains" style="display: inline-block; margin-left: 5px;">-</h2>
+                        <h2 id="totalDomains" style="display: inline-block; margin-left: 5px;">{{$server['totalDomain'] ?? '-'}}</h2>
                       </div>
                     </div>
                     <img src="{{asset ('assets/img/illustrations/dash_domain.svg')}}" alt="..." style="width: 8rem" />
@@ -61,22 +61,42 @@
                 </div>
               </a>
             </div>
-            <div class="col-xl-4 mb-4">
-              <a class="card lift h-100" href="#!">
-                <div class="card-body d-flex justify-content-center flex-column">
-                  <div class="d-flex align-items-center justify-content-between">
-                    <div class="me-3">
-                      <i class="feather-xl text-green mb-3" data-feather="shield"></i>
-                      <h5>Numbers of Registered SASL</h5>
-                      <div class="inline">
-                        <i class="feather-l text-primary" data-feather="corner-down-right"></i>
-                        <h2 id="totalSASL" style="display: inline-block; margin-left: 5px;">-</h2>
-                      </div>
+          </div>
+          <br>
+          <div class="row">
+            <div class="col-xl-6 mb-6">
+                <a class="card lift h-100" href="#!">
+                    <div class="card-body d-flex justify-content-center flex-column">
+                        <div class="d-flex align-items-center justify-content-between">
+                            <div class="me-3">
+                                <i class="feather-xl text-green mb-3" data-feather="shield"></i>
+                                <h5>Numbers of Registered SASL</h5>
+                                <div class="inline">
+                                    <i class="feather-l text-primary" data-feather="corner-down-right"></i>
+                                    <h2 id="totalSASL" style="display: inline-block; margin-left: 5px;">{{$server['totalSasl'] ?? '-'}}</h2>
+                                </div>
+                            </div>
+                            <img src="{{asset ('assets/img/illustrations/dash_sasl.svg')}}" alt="..." style="width: 8rem" />
+                        </div>
                     </div>
-                    <img src="{{asset ('assets/img/illustrations/dash_sasl.svg')}}" alt="..." style="width: 8rem" />
-                  </div>
-                </div>
-              </a>
+                </a>
+            </div>
+            <div class="col-xl-6 mb-6">
+                <a class="card lift h-100" href="#!">
+                    <div class="card-body d-flex justify-content-center flex-column">
+                        <div class="d-flex align-items-center justify-content-between">
+                            <div class="me-3">
+                                <i class="feather-xl text-green mb-3" data-feather=""></i>
+                                <h5>Total IP Based Registered </h5>
+                                <div class="inline">
+                                    <i class="feather-l text-primary" data-feather="corner-down-right"></i>
+                                    <h2 id="totalIPBased" style="display: inline-block; margin-left: 5px;">{{$server['totalIpBased'] ?? '-'}}</h2>
+                                </div>
+                            </div>
+                            <img src="{{asset ('assets/img/illustrations/browser-stats.svg')}}" alt="..." style="width: 8rem" />
+                        </div>
+                    </div>
+                </a>
             </div>
           </div>
         </div>
@@ -448,7 +468,7 @@ serverIpaddresses1.forEach(function(hostname, index) {
 
 // Prepare datasets for Chart.js
 var datasets = Object.values(servers);
- 
+
 var xValues = datasets[0].data.map(function(dataPoint) {
     return dataPoint.x;
 });
@@ -516,7 +536,8 @@ serverIpaddresses.push(serverMailRelay{{$loop->iteration}});
 @endforeach
 
 serverIpaddresses.forEach(hostname => {
-    const serverAddress = 'wss://' + hostname + '/wss/';
+    // const serverAddress = 'wss://' + hostname + '/wss/';
+    const serverAddress = 'wss://' + hostname + ':8000';
 
     const socket = new WebSocket(serverAddress);
     sockets.push(socket);
@@ -548,9 +569,9 @@ sockets.forEach((socket, index) => {
 function getDataMailServer1(socket) {
 
     const commands = [
-        'wc -l /opt/cluster/postfix/access_list | cut -d " " -f1',
-        'wc -l /opt/cluster/postfix/sender_relay_maps | cut -d " " -f1',
-        '/usr/sbin/sasldblistusers2 | wc -l',
+        //'wc -l /opt/cluster/postfix/access_list | cut -d " " -f1',
+        //'wc -l /opt/cluster/postfix/sender_relay_maps | cut -d " " -f1',
+        //'/usr/sbin/sasldblistusers2 | wc -l',
         'mailq | grep -c "^[A-F0-9]"',
         'status=$(systemctl --no-pager status postfix | grep Active:); if echo "$status" | grep -q "active (exited) since"; then echo "Postfix is running"; elif echo "$status" | grep -q "inactive (dead) since"; then echo "Postfix is down"; else echo "Something is wrong"; fi',
         'status=$(systemctl --no-pager status fail2ban | grep Active:); if echo "$status" | grep -q "active (running) since"; then echo "Fail2ban is running"; elif echo "$status" | grep -q "inactive (dead) since"; then echo "Fail2ban is down"; else echo "Something is wrong"; fi',
@@ -582,16 +603,23 @@ function getDataMailServer1(socket) {
 
             if (outputs.length > commands.length) {
 
-                $('#totalApplications').text(outputs[1]);
-                $('#totalDomains').text(outputs[3]);
-                $('#totalSASL').text(outputs[5]);
-                $('#mailQueueCount').text(outputs[7]);
-                $('#statusPostfix').text(outputs[9]);
-                $('#statusFail2ban').text(outputs[11]);
-                $('#statusWebmin').text(outputs[13]);
-                $('#statusApache2').text(outputs[15]);
+                //$('#totalApplications').text(outputs[1]);
+                //$('#totalDomains').text(outputs[3]);
+                //$('#totalSASL').text(outputs[5]);
+                //$('#mailQueueCount').text(outputs[7]);
+                //$('#statusPostfix').text(outputs[9]);
+                //$('#statusFail2ban').text(outputs[11]);
+                //$('#statusWebmin').text(outputs[13]);
+                //$('#statusApache2').text(outputs[15]);
 
-                var postfixStatus = outputs[9];
+                $('#mailQueueCount').text(outputs[1]);
+                $('#statusPostfix').text(outputs[3]);
+                $('#statusFail2ban').text(outputs[5]);
+                $('#statusWebmin').text(outputs[7]);
+                $('#statusApache2').text(outputs[9]);
+
+                //var postfixStatus = outputs[9];
+                var postfixStatus = outputs[3];
                 var postfixAlt;
                 if(postfixStatus == "Postfix is running"){
                     postfixStatus = "Online";
@@ -603,7 +631,8 @@ function getDataMailServer1(socket) {
                 var postfixImageSrc = postfixStatus === 'Online' ? 'assets/img/demo/online.png' : 'assets/img/demo/offline.png';
                 $('#statusPostfixImage').attr('src', postfixImageSrc).attr('alt', postfixAlt);
 
-                var Apache2Status = outputs[15];
+                //var Apache2Status = outputs[15];
+                var Apache2Status = outputs[9];
                 var Apache2Alt;
                 if(Apache2Status == "Apache2 is running"){
                     Apache2Status = "Online";
@@ -615,7 +644,8 @@ function getDataMailServer1(socket) {
                 var Apache2ImageSrc = Apache2Status === 'Online' ? 'assets/img/demo/online.png' : 'assets/img/demo/offline.png';
                 $('#statusApache2Image').attr('src', Apache2ImageSrc).attr('alt', Apache2Alt);
 
-                var WebminStatus = outputs[13];
+                //var WebminStatus = outputs[13];
+                var WebminStatus = outputs[7];
                 var WebminAlt;
                 if(WebminStatus == "Webmin is running"){
                     WebminStatus = "Online";

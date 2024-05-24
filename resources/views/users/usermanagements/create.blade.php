@@ -45,7 +45,7 @@
                 <div class="card mb-4">
                     <div class="card-header">Account Details</div>
                     <div class="card-body">
-                        <form method="POST" action="{{ route('usersmanagements.store') }}">
+                        <form id="formserver" name="formserver" method="POST" action="{{ route('usersmanagements.store') }}">
                             @csrf
                             <!-- Form Group (username)-->
                             <div class="mb-3">
@@ -101,7 +101,7 @@
                                     <select class="form-control select2" name="position" aria-label="Default select2" required>
                                         <option selected disabled>Select Position:</option>
                                         @foreach ($positions as $position)
-                                        <option value="{{ $position->id }}">{{ $position->name }}</option>
+                                        <option value="{{ $position->name }}">{{ $position->name }}</option>
                                         @endforeach
                                     </select>
                                 </div>
@@ -111,7 +111,7 @@
                                     <select class="form-control select2" name="department" aria-label="Default select2" required>
                                         <option selected disabled>Select Department:</option>
                                         @foreach ($departments as $department)
-                                        <option value="{{ $department->id }}">{{ $department->name }}</option>
+                                        <option value="{{ $department->name }}">{{ $department->name }}</option>
                                         @endforeach
                                     </select>
                                 </div>
@@ -159,9 +159,80 @@
             </div>
         </div>
     </div>
+@push('script')
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+<link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-beta.1/dist/css/select2.min.css" rel="stylesheet" />
+<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-beta.1/dist/js/select2.min.js"></script>
+<script src="https://ajax.aspnetcdn.com/ajax/jquery.validate/1.11.1/jquery.validate.min.js"></script>
+
+<script>
+var mySelect2 = $('#type_reqs');
+
+mySelect2.select2();
+
+$("#formserver").validate({
+
+rules: {
+//   systemtype: {
+//     required: true
+//   }
+},
+messages: {
+//   systemtype: {
+//     required: "Please choose the system type",
+//   },
+
+},
+errorPlacement: function(label, element) {
+  if (element.hasClass('select2')) {
+    label.insertAfter(element.next('.select2-container')).addClass('mt-2 text-danger');
+    select2label = label
+  } else {
+    label.addClass('mt-2 text-danger');
+    label.insertAfter(element);
+  }
+},
+highlight: function(element) {
+  $(element).parent().addClass('is-invalid')
+  $(element).addClass('form-control-danger')
+},
+success: function(label, element) {
+  $(element).parent().removeClass('is-invalid')
+  $(element).removeClass('form-control-danger')
+  label.remove();
+}
+});
+
+mySelect2.on("change", function(e) {
+  select2label.remove(); //remove label
+});
+
+        document.getElementById('userForm').addEventListener('submit', function(event) {
+            var requiredFields = document.querySelectorAll('#userForm [required]');
+            var formValid = true;
+
+            requiredFields.forEach(function(field) {
+                if (!field.value.trim()) {
+                    field.classList.add('is-invalid');
+                    formValid = false;
+                } else {
+                    field.classList.remove('is-invalid');
+                }
+            });
+
+            if (!formValid) {
+                event.preventDefault();
+                alert('Please fill in all required fields.');
+            }
+        });
+    </script>
+    @endpush
     <style>
         label {
             font-weight: bold;
+        },
+        .is-invalid {
+            border-color: red;
         }
     </style>
 </main>
