@@ -30,6 +30,9 @@ class AclSeeder extends Seeder
 				'manage_mail_relay_edit',
 				'manage_mail_relay_delete'
 			],
+            "mail_upstream_routing" => [
+               'mail_upstream_routing_view',
+            ],
 			// "history_connection" => [
 			// 	'view_blacklist_firewall',
 			// 	'view_whitelist_firewall',
