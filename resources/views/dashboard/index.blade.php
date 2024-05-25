@@ -28,7 +28,7 @@
         <div class="card-body">
           <div class="row">
             <div class="col-xl-6 mb-6">
-              <div class="card lift h-100">
+              <div class="card h-100">
                 <div class="card-body d-flex justify-content-center flex-column">
                   <div class="d-flex align-items-center justify-content-between">
                     <div class="me-3">
@@ -45,7 +45,7 @@
             </div>
             </div>
             <div class="col-xl-6 mb-6">
-              <div class="card lift h-100">
+              <div class="card h-100">
                 <div class="card-body d-flex justify-content-center flex-column">
                   <div class="d-flex align-items-center justify-content-between">
                     <div class="me-3">
@@ -65,7 +65,7 @@
           <br>
           <div class="row">
             <div class="col-xl-6 mb-6">
-                <div class="card lift h-100">
+                <div class="card h-100">
                     <div class="card-body d-flex justify-content-center flex-column">
                         <div class="d-flex align-items-center justify-content-between">
                             <div class="me-3">
@@ -82,7 +82,7 @@
                 </div>
             </div>
             <div class="col-xl-6 mb-6">
-                <div class="card lift h-100">
+                <div class="card h-100">
                     <div class="card-body d-flex justify-content-center flex-column">
                         <div class="d-flex align-items-center justify-content-between">
                             <div class="me-3">
@@ -185,7 +185,7 @@
                     <div class="card-body">
                         <div class="row">
                             <div class="col-xl-4 mb-4">
-                                <a class="card lift h-100 mService" href="{{ route('manageService.index', ['server_id' => $server->id, 'server_type' => 'postfix']) }}">
+                                <a class="card h-100 mService" href="{{ route('manageService.index', ['server_id' => $server->id, 'server_type' => 'postfix']) }}">
                                     <div class="card-body cardService d-flex justify-content-center flex-column">
                                         <div class="d-flex align-items-center justify-content-between">
                                             <div class="me-3">
@@ -212,7 +212,7 @@
                               </a>
                             </div>--}}
                             <div class="col-xl-4 mb-4">
-                                <a class="card lift h-100 mService" href="{{ route('manageService.index', ['server_id' => $server->id , 'server_type' => 'apache']) }}">
+                                <a class="card h-100 mService" href="{{ route('manageService.index', ['server_id' => $server->id , 'server_type' => 'apache']) }}">
                                     <div class="card-body cardService d-flex justify-content-center flex-column">
                                         <div class="d-flex align-items-center justify-content-between">
                                             <div class="me-3">
@@ -226,7 +226,7 @@
                                 </a>
                             </div>
                             <div class="col-xl-4 mb-4">
-                                <a class="card lift h-100 mService" href="{{ route('manageService.index', ['server_id' => $server->id, 'server_type' => 'webmin']) }}">
+                                <a class="card h-100 mService" href="{{ route('manageService.index', ['server_id' => $server->id, 'server_type' => 'webmin']) }}">
                                     <div class="card-body cardService d-flex justify-content-center flex-column">
                                         <div class="d-flex align-items-center justify-content-between">
                                             <div class="me-3">

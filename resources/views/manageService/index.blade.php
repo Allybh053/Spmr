@@ -35,7 +35,7 @@
                           <div class="card-body mainRealtime" style="min-height: auto; max-height: 800px;overflow-y: auto;">
                               <div class="row">
                                   <div class="col-xl-6 mb-4 selected-item postfix {{$server->id}}">
-                                      <div class="card lift h-100">
+                                      <div class="card h-100">
                                           <div class="card-body cardService d-flex justify-content-center flex-column">
                                               <div class="d-flex align-items-center justify-content-between">
                                                   <div class="me-3">
@@ -63,7 +63,7 @@
                                             </div>
                                   </div>
                                   <div class="col-xl-6 mb-4 selected-item apache {{$server->id}}">
-                                      <div class="card lift h-100">
+                                      <div class="card h-100">
                                           <div class="card-body cardService d-flex justify-content-center flex-column">
                                               <div class="d-flex align-items-center justify-content-between">
                                                   <div class="me-3">
@@ -91,7 +91,7 @@
                                             </div>
                                   </div>
                                   <div class="col-xl-6 mb-4 selected-item webmin {{$server->id}}">
-                                      <div class="card lift h-100">
+                                      <div class="card h-100">
                                           <div class="card-body cardService d-flex justify-content-center flex-column">
                                               <div class="d-flex align-items-center justify-content-between">
                                                   <div class="me-3">

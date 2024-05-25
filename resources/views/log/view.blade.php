@@ -13,7 +13,7 @@
                 <div class="card-body mt-1 mb-4">
                     <div class="row">
                         <div class="col-xl-4 mb-4">
-                            <div class="card lift h-100">
+                            <div class="card h-100">
                                 <div class="card-body d-flex justify-content-center flex-column">
                                     <div class="d-flex align-items-center justify-content-between">
                                         <div class="me-3">
@@ -30,7 +30,7 @@
                             </div>
                         </div>
                         <div class="col-xl-4 mb-4">
-                            <div class="card lift h-100">
+                            <div class="card h-100">
                                 <div class="card-body d-flex justify-content-center flex-column">
                                     <div class="d-flex align-items-center justify-content-between">
                                         <div class="me-3">
@@ -47,7 +47,7 @@
                             </div>
                         </div>
                         <div class="col-xl-4 mb-4">
-                            <div class="card lift h-100">
+                            <div class="card h-100">
                                 <div class="card-body d-flex justify-content-center flex-column">
                                     <div class="d-flex align-items-center justify-content-between">
                                         <div class="me-3">
@@ -65,7 +65,7 @@
                             </div>
                         </div>
                         <div class="col-xl-4 mb-4">
-                            <div class="card lift h-100">
+                            <div class="card h-100">
                                 <div class="card-body d-flex justify-content-center flex-column">
                                     <div class="d-flex align-items-center justify-content-between">
                                         <div class="me-3">
@@ -83,7 +83,7 @@
                             </div>
                         </div>
                         <div class="col-xl-4 mb-4">
-                            <div class="card lift h-100">
+                            <div class="card h-100">
                                 <div class="card-body d-flex justify-content-center flex-column">
                                     <div class="d-flex align-items-center justify-content-between">
                                         <div class="me-3">
@@ -101,7 +101,7 @@
                             </div>
                         </div>
                         <div class="col-xl-4 mb-4">
-                            <div class="card lift h-100">
+                            <div class="card h-100">
                                 <div class="card-body d-flex justify-content-center flex-column">
                                     <div class="d-flex align-items-center justify-content-between">
                                         <div class="me-3">
