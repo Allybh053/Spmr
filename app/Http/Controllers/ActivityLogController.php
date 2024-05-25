@@ -25,8 +25,8 @@ class ActivityLogController extends Controller
         $logs = $auditLogs->merge($activityLogs);
 
         // Sort the merged logs by created_at timestamp
-        $logsPaginated = $logs->sortByDesc('created_at');
-
+        $logsPaginated = $logs->sortByDesc('created_at')->values();
+     
         // Assuming you want to pass the logs to a view named 'activityLog.index'
         return view('activityLog.index', compact('logsPaginated'));
     }

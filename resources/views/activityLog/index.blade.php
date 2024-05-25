@@ -59,10 +59,10 @@
                                         <td style="white-space: pre-line;">{{ $log->user_agent }}</td>
                                         <td>{{ $log->url }}</td>
                                         <td class="scrollable-column">
-                                            <pre>{{ json_encode(json_decode($log->old_values), JSON_PRETTY_PRINT) }}</pre>
+                                            {{ $log->old_values }}
                                         </td>
                                         <td class="scrollable-column">
-                                            <pre>{{ json_encode(json_decode($log->new_values), JSON_PRETTY_PRINT) }}</pre>
+                                            {{ $log->new_values }}
                                         </td>
                                         <td><pre>{{ $log->created_at->format('d/m/Y h:i:s A')  }}</pre></td>
                                     </tr>
@@ -97,8 +97,37 @@ var table = $('#spmrDatatable').DataTable({
         { extend: 'print', text: 'Print', exportOptions: { columns: ':visible' } }
     ],
     columnDefs: [
-        { type: 'date-uk', targets: ['dd/mm/yyyy'] }
+        { type: 'date-uk', targets: ['dd/mm/yyyy'] },
+        {
+            targets: [5, 6], // Assuming columns containing JSON data are the 6th and 7th columns
+            render: function(data, type, row, meta) {
+                if (!data) {
+                    return ''; // Return empty string if data is null
+                }
+
+                try {
+                    var json;
+                    if (data.startsWith('"') && data.endsWith('"')) {
+                        // Unescape the string if wrapped in double quotes
+                        var unescapedData = data.slice(1, -1).replace(/\\"/g, '"');
+                        json = JSON.parse(unescapedData);
+                    } else {
+                        // Parse the JSON string directly
+                        json = JSON.parse(data);
+                    }
+
+                    // Format JSON object with line breaks
+                    var formattedJson = JSON.stringify(json, null, 2);
+                    // Replace newlines with <br> tags for HTML rendering
+                    return '<pre>' + formattedJson + '</pre>';
+                } catch (error) {
+                    console.error("Error parsing JSON:", error);
+                    return "Invalid JSON";
+                }
+            }
+        }
     ],
+    order: [[7, 'desc']],
     drawCallback: function(settings) {
             // Reinitialize Feather icons
             if (typeof feather !== 'undefined') {
