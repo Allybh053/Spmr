@@ -24,6 +24,7 @@
                   <h5 style="text-align:left;">
                       {{ $server->hostname }}
                       <p>{{ $server->ipaddress }}</p>
+                      <input type="hidden" id="hostname" value="{{ $server->hostname }}" />
                   </h5>
               </div>
               <div class="card-body">
@@ -303,6 +304,24 @@
         let text = "Are you sure you want to START Postfix services?";
         if (confirm(text)) {
             startPostfixServices();
+
+            $.ajax({
+            url: '/start-postfix-services',
+            type: 'POST',
+            data: {
+                _token: '{{ csrf_token() }}',// Include CSRF token if required
+                server:  $('#hostname').val(),
+                status: 'start'
+            },
+            success: function(response) {
+                // Handle success response if needed
+                console.log(response);
+            },
+            error: function(xhr, status, error) {
+                // Handle error response if needed
+                console.error(error);
+            }
+        });
         }
     });
     function startPostfixServices() {
@@ -335,6 +354,24 @@
         let text = "Are you sure you want to STOP Postfix services?";
         if (confirm(text)) {
             stopPostfixServices();
+
+            $.ajax({
+            url: '/stop-postfix-services',
+            type: 'POST',
+            data: {
+                _token: '{{ csrf_token() }}',// Include CSRF token if required
+                server:  $('#hostname').val(),
+                status: 'stop'
+            },
+            success: function(response) {
+                // Handle success response if needed
+                console.log(response);
+            },
+            error: function(xhr, status, error) {
+                // Handle error response if needed
+                console.error(error);
+            }
+        });
         }
     });
     function stopPostfixServices() {
@@ -367,6 +404,24 @@
         let text = "Are you sure you want to RESTART Postfix services?";
         if (confirm(text)) {
             restartPostfixServices();
+
+            $.ajax({
+            url: '/restart-postfix-services',
+            type: 'POST',
+            data: {
+                _token: '{{ csrf_token() }}',// Include CSRF token if required
+                server:  $('#hostname').val(),
+                status: 'restart'
+            },
+            success: function(response) {
+                // Handle success response if needed
+                console.log(response);
+            },
+            error: function(xhr, status, error) {
+                // Handle error response if needed
+                console.error(error);
+            }
+        });
         }
     });
     function restartPostfixServices() {
