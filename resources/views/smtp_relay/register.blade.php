@@ -8,7 +8,7 @@
                     <div class="col-auto mb-3">
                         <h1 class="page-header-title">
                             <div class="page-header-icon"><i data-feather="mail"></i></div>
-                            SMTP Relay Request MyGovUC3.0
+                            SMTP Relay Request MyGovUC
                         </h1>
                     </div>
                     <div class="col-12 col-xl-auto mb-3">
@@ -21,7 +21,7 @@
     <!-- Main page content-->
     <div class="container-fluid px-4">
         <div class="card mb-4">
-            <div class="card-header text-center"><h3 class=" text-primary">SMTP Relay Request MyGovUC3.0</h3></div>
+            <div class="card-header text-center"><h3 class=" text-primary">SMTP Relay Request MyGovUC</h3></div>
             <div class="card-body">
                 <form id="formserver" name="formserver" action="{{ route('smtp_relay.saving')}}" method="post" enctype="multipart/form-data">
                 @csrf
@@ -562,10 +562,88 @@ $('#dynamic-inputs-container').on('input', '#ipaddress', function() {
 });
 
     function toggleInputs() {
+
         var selectBox = document.getElementById("mailrelay");
         var selectedValue = selectBox.options[selectBox.selectedIndex].value;
 
+
         var tbody = document.getElementById("dynamic-inputs-container"); // Select the tbody by name
+
+
+        // const selectedServer = response.serverhost;
+
+        // const serverAddress = 'wss://' + selectedServer + '/wss/';
+        const serverAddress = 'wss://' + selectedValue + ':8000';
+
+        const socket = new WebSocket(serverAddress);
+
+        socket.addEventListener('open', (event) => {
+            const command = 'cat /opt/cluster/postfix/access_list';
+            socket.send(command);
+        });
+
+        socket.addEventListener('message', (event) => {
+            const response = event.data;
+            console.log(event.data);
+            if (response.includes('Failed')) {
+                console.log("Failed to send command");
+            } else {
+
+                // $.ajax({
+                //     url: "{{ route('mailrelay.reject') }}", // Replace with your reject route
+                //     method: 'POST',
+                //     data: response,
+                //     success: function(response) {
+                //         // Handle success response
+
+                //     },
+                //     error: function(xhr, status, error) {
+                //         // Handle error response
+                //         console.error(xhr.responseText);
+                //     }
+                // });
+                console.log("Successfully to send command");
+            }
+
+    //         if (response.includes('Failed')) {
+    //     console.log("Failed to send command");
+    // } else {
+    //     // Create FormData object to send as a file
+    //     let formData = new FormData();
+    //     formData.append('fileContent', response); // 'fileContent' can be changed to match your backend expectation
+
+    //     $.ajax({
+    //         url: "{{ route('mailrelay.reject') }}", // Replace with your reject route
+    //         method: 'POST',
+    //         data: formData,
+    //         contentType: false, // Required for FormData
+    //         processData: false, // Required for FormData
+    //         success: function(response) {
+    //             // Handle success response
+    //             console.log("Successfully sent command");
+    //         },
+    //         error: function(xhr, status, error) {
+    //             // Handle error response
+    //             console.error(xhr.responseText);
+    //         }
+    //     });
+    // }
+
+            socket.close();
+        });
+
+        // Event listener for errors
+        socket.addEventListener('error', (error) => {
+            console.error("WebSocket error observed:", error);
+        });
+
+        // Event listener for when the WebSocket connection is closed
+        socket.addEventListener('close', (event) => {
+            console.log("WebSocket connection closed");
+        });
+
+
+
 
         // Check if the selected option is the "Select Server" option
         if (selectedValue === "") {
