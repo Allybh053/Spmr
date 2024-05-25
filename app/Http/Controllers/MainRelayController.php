@@ -41,7 +41,7 @@ class MainRelayController extends Controller
         $selectedValue = $request->input('selectedValue');
         //think how to add identify
         // if ($selectedValue == $selectedValue){
-            $filePath = storage_path($selectedValue.'/postfix/access_list'); //root : root permission denied
+        $filePath = storage_path($selectedValue.'/postfix/access_list'); //root : root permission denied
         // }else{
         //     //
         // }
@@ -81,7 +81,7 @@ class MainRelayController extends Controller
                 }
             }
         } catch (\Exception $e) {
-            return "Error 404! :No such file or directory!"; // . $e->getMessage();
+            return "Error 404! :No such file or directory!" . $e->getMessage();
         }
     }
 
