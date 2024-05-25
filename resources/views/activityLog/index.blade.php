@@ -127,7 +127,7 @@ var table = $('#spmrDatatable').DataTable({
             }
         }
     ],
-    order: [[7, 'desc']],
+    order: [[7, 'asc']],
     drawCallback: function(settings) {
             // Reinitialize Feather icons
             if (typeof feather !== 'undefined') {

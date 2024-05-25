@@ -306,12 +306,13 @@
             startPostfixServices();
 
             $.ajax({
-            url: '/start-postfix-services',
+            url: '/start-services',
             type: 'POST',
             data: {
                 _token: '{{ csrf_token() }}',// Include CSRF token if required
                 server:  $('#hostname').val(),
-                status: 'start'
+                status: 'start',
+                type:'postfix'
             },
             success: function(response) {
                 // Handle success response if needed
@@ -356,12 +357,13 @@
             stopPostfixServices();
 
             $.ajax({
-            url: '/stop-postfix-services',
+            url: '/stop-services',
             type: 'POST',
             data: {
                 _token: '{{ csrf_token() }}',// Include CSRF token if required
                 server:  $('#hostname').val(),
-                status: 'stop'
+                status: 'stop',
+                type: 'postfix'
             },
             success: function(response) {
                 // Handle success response if needed
@@ -406,12 +408,13 @@
             restartPostfixServices();
 
             $.ajax({
-            url: '/restart-postfix-services',
+            url: '/restart-services',
             type: 'POST',
             data: {
                 _token: '{{ csrf_token() }}',// Include CSRF token if required
                 server:  $('#hostname').val(),
-                status: 'restart'
+                status: 'restart',
+                type: 'postfix'
             },
             success: function(response) {
                 // Handle success response if needed
@@ -457,6 +460,25 @@
         let text = "Are you sure you want to START Apache2 services?";
         if (confirm(text)) {
             startApacheServices();
+
+            $.ajax({
+            url: '/start-services',
+            type: 'POST',
+            data: {
+                _token: '{{ csrf_token() }}',// Include CSRF token if required
+                server:  $('#hostname').val(),
+                status: 'start',
+                type: 'apache'
+            },
+            success: function(response) {
+                // Handle success response if needed
+                console.log(response);
+            },
+            error: function(xhr, status, error) {
+                // Handle error response if needed
+                console.error(error);
+            }
+        });
         }
     });
     function startApacheServices() {
@@ -489,6 +511,24 @@
         let text = "Are you sure you want to STOP Apache2 services?";
         if (confirm(text)) {
             stopApacheServices();
+            $.ajax({
+            url: '/stop-services',
+            type: 'POST',
+            data: {
+                _token: '{{ csrf_token() }}',// Include CSRF token if required
+                server:  $('#hostname').val(),
+                status: 'stop',
+                type: 'apache'
+            },
+            success: function(response) {
+                // Handle success response if needed
+                console.log(response);
+            },
+            error: function(xhr, status, error) {
+                // Handle error response if needed
+                console.error(error);
+            }
+        });
         }
     });
     function stopApacheServices() {
@@ -521,6 +561,26 @@
         let text = "Are you sure you want to RESTART Apache2 services?";
         if (confirm(text)) {
             restartApacheServices();
+
+            $.ajax({
+            url: '/restart-services',
+            type: 'POST',
+            data: {
+                _token: '{{ csrf_token() }}',// Include CSRF token if required
+                server:  $('#hostname').val(),
+                status: 'restart',
+                type: 'apache'
+            },
+            success: function(response) {
+                // Handle success response if needed
+                console.log(response);
+            },
+            error: function(xhr, status, error) {
+                // Handle error response if needed
+                console.error(error);
+            }
+        });
+
         }
     });
     function restartApacheServices() {
@@ -556,6 +616,25 @@
         let text = "Are you sure you want to START Webmin services?";
         if (confirm(text)) {
             startWebminServices();
+
+            $.ajax({
+            url: '/start-services',
+            type: 'POST',
+            data: {
+                _token: '{{ csrf_token() }}',// Include CSRF token if required
+                server:  $('#hostname').val(),
+                status: 'start',
+                type: 'webmin'
+            },
+            success: function(response) {
+                // Handle success response if needed
+                console.log(response);
+            },
+            error: function(xhr, status, error) {
+                // Handle error response if needed
+                console.error(error);
+            }
+        });
         }
     });
     function startWebminServices() {
@@ -588,6 +667,24 @@
         let text = "Are you sure you want to STOP Webmin services?";
         if (confirm(text)) {
             stopWebminServices();
+            $.ajax({
+            url: '/stop-services',
+            type: 'POST',
+            data: {
+                _token: '{{ csrf_token() }}',// Include CSRF token if required
+                server:  $('#hostname').val(),
+                status: 'stop',
+                type:'webmin'
+            },
+            success: function(response) {
+                // Handle success response if needed
+                console.log(response);
+            },
+            error: function(xhr, status, error) {
+                // Handle error response if needed
+                console.error(error);
+            }
+        });
         }
     });
     function stopWebminServices() {
@@ -620,6 +717,25 @@
         let text = "Are you sure you want to RESTART Webmin services?";
         if (confirm(text)) {
             restartWebminServices();
+
+            $.ajax({
+            url: '/restart-services',
+            type: 'POST',
+            data: {
+                _token: '{{ csrf_token() }}',// Include CSRF token if required
+                server:  $('#hostname').val(),
+                status: 'restart',
+                type: 'webmin'
+            },
+            success: function(response) {
+                // Handle success response if needed
+                console.log(response);
+            },
+            error: function(xhr, status, error) {
+                // Handle error response if needed
+                console.error(error);
+            }
+        });
         }
     });
     function restartWebminServices() {
