@@ -48,7 +48,8 @@
                             <!-- Form Group (username)-->
                             <div class="mb-3">
                                 <label class="small mb-1" for="username">Username (how the name will appear to other users on the site)</label>
-                                <input class="form-control" id="username" name="username" type="text" placeholder="Enter your username" value="{{ old('username', $user->username) }}" oninput="this.value = this.value.toLowerCase()" required/>
+                                <input class="form-control" id="username" name="username" type="text" placeholder="Enter your username" value="{{ old('username', $user->username) }}" oninput="validateInput(this)" required/>
+                                <span id="errorMessage" style="color: red;"></span>
                             </div>
                             <!-- Form Row-->
                             <div class="row gx-3 mb-3">
@@ -109,7 +110,7 @@
                                 <!-- Form Group (phone number)-->
                                 <div class="col-md-6" @disabled(true)>
                                     <label class="small mb-1" for="phone">Phone No</label>
-                                    <input class="form-control" id="phone" name="phone" type="text" value="{{ old('phone', $user->phone) }}"/>
+                                    <input class="form-control" id="phone" name="phone" type="number" value="{{ old('phone', $user->phone) }}"/>
                                 </div>
                             </div>
                             <hr>
@@ -125,7 +126,7 @@
                                     <label class="small mb-1" for="enabled">Account Status</label>
                                     <select class="form-control select2" name="enabled" aria-label="Default select example">
                                         <option value="1" {{ $user->enabled == 1 ? 'selected' : '' }}>Active</option>
-                                        <option value="0" {{ $user->enabled == 0 ? 'selected' : '' }}>Not Active</option>
+                                        <option value="0" {{ $user->enabled == 0 ? 'selected' : '' }}>In-Active</option>
                                     </select>
                                 </div>
                             </div>
@@ -144,5 +145,20 @@
         }
     </style>
 </main>
+<script>
+    function validateInput(input) {
+        // Regular expression to match only alias, underscore, numbering, and letters (uppercase or lowercase)
+        var regex = /^[a-zA-Z0-9_@]+$/;
+        var inputValue = input.value;
+        var errorMessage = document.getElementById('errorMessage');
 
+        if (regex.test(inputValue)) {
+            errorMessage.textContent = ''; // Clear error message if input is valid
+        } else {
+            errorMessage.textContent = 'Only letters, numbers, underscore, and alias are allowed.';
+            // Remove invalid characters from the input
+            input.value = inputValue.replace(/[^a-zA-Z0-9_]/g, '');
+        }
+    }
+</script>
 @endsection

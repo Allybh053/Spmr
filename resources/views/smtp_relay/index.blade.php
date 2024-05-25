@@ -75,8 +75,7 @@
                                 <th>Types Application</th>
                                 <th>Agency Name</th>
                                 <th>Project Name</th>
-                                <th>Server Mail Relay</th>
-                                {{--<th>Total Ip Address</th>--}}
+                                <th>Server Mail Relay</th> 
                                 <th>Ip Address</th>
                                 <th>Date Approval</th>
                                 <th>Date Created</th>

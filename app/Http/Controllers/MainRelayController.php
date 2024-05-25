@@ -81,7 +81,7 @@ class MainRelayController extends Controller
                 }
             }
         } catch (\Exception $e) {
-            return "Error 404! ";// . $e->getMessage();
+            return "Error 404! :No such file or directory!"; // . $e->getMessage();
         }
     }
 
@@ -105,16 +105,7 @@ class MainRelayController extends Controller
 
         $smtpMailServers = smtp_relay_server::where('form_id',$smtpreq->form_id)
                 ->where('types_req',$smtpreq->types_req)
-                ->get();
-
-        // $filePath = 'storage/data/postmaster1/postfix/access_list';
-
-        // $logFilePath = storage_path('data/postmaster1/postfix/access_list');
-        // if (File::exists($logFilePath)) {
-        //     // Read the contents
-        //     $logContent = File::get($logFilePath);
-
-        // }
+                ->get(); 
 
         return view('mailrelay.edit', compact('user','smtpMailServers','smtpreq'));
     }
@@ -166,7 +157,7 @@ class MainRelayController extends Controller
             }
             $access_list = implode("\n", $lines);
 
-            $filePath = storage_path('postmaster.mygovuc.gov.my/postfix/access_list');
+            $filePath = storage_path($smtp_relay_server.'/postfix/access_list');
 
             $file = fopen($filePath, 'a');
 
@@ -174,7 +165,7 @@ class MainRelayController extends Controller
 
             fclose($file);
         } else if ($types_req == 2){
-            $filePath = storage_path('postmaster.mygovuc.gov.my/postfix/access_list');
+            $filePath = storage_path($smtp_relay_server.'/postfix/access_list');
 
             $fileContent = file_get_contents($filePath);
             $lines = explode("\n", $fileContent);
@@ -228,7 +219,9 @@ class MainRelayController extends Controller
             file_put_contents($filePath, $newContent);
 
         }else{
-            //
+            //set outbound type of request here
+            $Message = 'Contact Administrator';
+            return response()->json(['message' => $Message]);
         }
 
         $comment = $request->input("comment");
@@ -247,31 +240,10 @@ class MainRelayController extends Controller
 
         return response()->json(['message' => $successMessage, 'serverhost'=> $smtp_relay_server]);
         }else{
-        $Message = 'Error!';
+        $Message = 'Error 404!';
         return response()->json(['message' => $Message]);
         }
     }
-
-    // public function executeCommand (Request $request)
-    // {
-    //     $server = '20.6.33.199';
-    //     $username = 'pentadbir';
-    //     $privateKey = storage_path('key/postmaster_key.pem');
-
-    //     $ssh = new SSH2($server);
-    //     if(!$ssh->login($username, $privateKey)){
-    //         return response()->json(['output' => 'Login Failed!']);
-    //     }
-
-    //     $command = $request->input('command');
-    //     $output = $ssh->exec($command);
-
-    //     $ssh->disconnect();
-
-    //     return response()->json(['output' => 'Login Failed!']);
-
-    // }
-
 
     public function mailupstream(Request $request)
     {

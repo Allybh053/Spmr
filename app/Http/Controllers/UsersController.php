@@ -51,6 +51,10 @@ class UsersController extends Controller
             if ($existingEmail) {
                 return redirect()->route('usermanagements.index')->with('error', 'Email User already registered!');
             }
+            $existingUsername = User::where('username', $request->input('username'))->where('deleted_at',null)->first();
+            if ($existingUsername) {
+                return redirect()->route('usermanagements.index')->with('error', 'Username User already registered!');
+            }
 
             $validatedData = $request->validate([
                 'username' => 'required',
@@ -123,7 +127,8 @@ class UsersController extends Controller
      */
     public function show(string $id)
     {
-        $user = User::find($id);
+        $user = User::where('id',$id)
+        ->first();
 
        return view('users.usermanagements.show', ['user' => $user]);
     }
@@ -150,7 +155,6 @@ class UsersController extends Controller
         $validatedData = $request->validate([
             'username' => 'required|string',
             'email' => 'required|email',
-            // 'acct_types' => 'required',
             'role_id' => 'required',
             'enabled' => 'required',
             'fname' => 'required',
@@ -160,6 +164,19 @@ class UsersController extends Controller
             'position_id' => 'nullable', // Add validation rule for position_id
             'department_id' => 'nullable', // Add validation rule for department_id
         ]);
+
+        $existingEmail = User::where('id','!=',$id)
+        ->where('email', $request->input('email'))
+        ->where('deleted_at',null)
+        ->first();
+        if ($existingEmail) {
+            return redirect()->route('usermanagements.index')->with('error', 'Email User already registered!');
+        }
+        $existingUsername = User::where('id','!=',$id)->where('username', $request->input('username'))->where('deleted_at',null)->first();
+        if ($existingUsername) {
+            return redirect()->route('usermanagements.index')->with('error', 'Username User already registered!');
+        }
+
         // Find the user by ID
         $user = User::findOrFail($id);
 

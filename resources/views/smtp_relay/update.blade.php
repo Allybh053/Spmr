@@ -33,7 +33,6 @@
                 <div class="row gx-3 mb-3">
                     <div class="col-md-6">
                         <label for="ticket_id">Ticket Number</label><br>
-                        {{--<p style="color: #0061f2 !important;">{{ $formsmtp->ticket_id }}</p>--}}
                         <input class="form-control" id="ticket_id" name="ticket_id" type="text" value="{{ old('ticket_id', $formsmtp->ticket_id) }}">
                     </div>
                     <div class="col-md-6">
@@ -48,15 +47,12 @@
                                 Onboarding Agency
                             @endif
                             </option>
-                            {{-- <option value="1">New Application</option>
-                            <option value="2">Service Termination</option>
-                            <option value="3">Onboarding Agency</option> --}}
                         </select>
                     </div>
                 </div>
                 <div class="mb-3">
                     <label for="project_name">Project Name</label>
-                    <input class="form-control" id="project_name" name="project_name" type="text" value="{{ old('project_name', $formsmtp->project_name) }}" required>
+                    <input class="form-control" id="project_name" name="project_name" type="text" value="{{ old('project_name', $formsmtp->project_name) }}">
                 </div>
                 <div class="mb-3">
                     <label for="system_owner_name">System Owner Name</label>
@@ -69,13 +65,12 @@
                     </div>
                     <div class="col-md-6">
                         <label for="owner_phone_number">Phone Number</label>
-                        <input class="form-control" id="owner_phone_number" name="owner_phone_number" type="phone" value="{{ old('owner_phone_number', $formsmtp->owner_phone_number) }}" required/>
+                        <input class="form-control" id="owner_phone_number" name="owner_phone_number" type="number" value="{{ old('owner_phone_number', $formsmtp->owner_phone_number) }}" required/>
                     </div>
                 </div>
                 <div class="mb-3">
                     <label for="ministry">Ministry</label>
                     <select class="form-control select2" name="ministry" id="ministry" aria-label="Default select">
-                        {{--<option selected disabled>Select Department/Division/Unit</option>--}}
                         <option value="{{ old('ministry', $formsmtp->ministry) }}">{{ old('ministry', $formsmtp->ministry) }}</option>
                         @foreach ($ministriesArray as $ministry)
                         <option value="{{ $ministry['name'] }}">{{ $ministry['name'] }}</option>
@@ -144,8 +139,9 @@
                         <tbody id="dynamic-inputs-container">
                             @foreach ($details as $detail)
                                 <tr class="dynamic-input-row">
-                                    <td hidden><input type="text" name="tableSpmr[{{ $loop->index }}][form_id]" id="form_id" value="{{ old('tableSpmr.' . $loop->index . '.form_id', $formsmtp->form_id) }}" class="form-control" /></td>
+                                    <td hidden><input type="text" name="tableSpmr[{{ $loop->index }}][form_id]" id="form_id" value="{{ $formsmtp->form_id }}" class="form-control" /></td>
                                     <td hidden><input type="text" name="tableSpmr[{{ $loop->index }}][id]" id="id" value="{{ old('tableSpmr.' . $loop->index . '.id', $detail->id) }}" class="form-control" /></td>
+                                    <td hidden><input type="text" name="tableSpmr[{{ $loop->index }}][types_req]" id="types_req" value="{{ old('tableSpmr.' . $loop->index . '.types_req', $formsmtp->types_req) }}" class="form-control" /></td>
                                     <td>
                                         <input type="text" name="tableSpmr[{{ $loop->index }}][server_name]" id="server_name" value="{{ old('tableSpmr.' . $loop->index . '.server_name', $detail->server_name) }}" class="form-control" required />
                                     </td>
@@ -210,11 +206,11 @@
                 <div class="row gx-3 mb-3">
                     <div class="col-md-6">
                         <label for="est_no_system_users_per_day">Estimated number of system users (per day)</label>
-                        <input class="form-control" id="est_no_system_users_per_day" name="est_no_system_users_per_day" type="number" pattern="[0-9]*" inputmode="numeric"  value="{{ old('est_no_system_users_per_day', $formsmtp->est_no_system_users_per_day) }}" required/>
+                        <input class="form-control" id="est_no_system_users_per_day" name="est_no_system_users_per_day" type="number" pattern="[0-9]*" inputmode="numeric"  value="{{ old('est_no_system_users_per_day', $formsmtp->est_no_system_users_per_day) }}"/>
                     </div>
                     <div class="col-md-6">
                         <label for="est_no_email_sent_from_system_users_per_day">Estimated number of emails sent from the system (per day)</label>
-                        <input class="form-control" id="est_no_email_sent_from_system_users_per_day" name="est_no_email_sent_from_system_users_per_day" type="number" pattern="[0-9]*" inputmode="numeric"  value="{{ old('est_no_email_sent_from_system_users_per_day', $formsmtp->est_no_email_sent_from_system_users_per_day) }}" required/>
+                        <input class="form-control" id="est_no_email_sent_from_system_users_per_day" name="est_no_email_sent_from_system_users_per_day" type="number" pattern="[0-9]*" inputmode="numeric"  value="{{ old('est_no_email_sent_from_system_users_per_day', $formsmtp->est_no_email_sent_from_system_users_per_day) }}"/>
                     </div>
                 </div>
                 <hr>
@@ -261,8 +257,6 @@
                         <label class=" mb-1" for="verifier_1_position">Verifier Position:</label>
                         <select class="form-control select2" name="verifier_1_position" id="verifier_1_position" aria-label="Default select">
                             <option value="{{ old('verifier_1_position', $formsmtp->verifier_1_position) }}">{{ old('verifier_1_position', $formsmtp->verifier_1_position) }}</option>
-                            {{--<option value="Pegawai Teknologi Maklumat F41">Pegawai Teknologi Maklumat F41</option>
-                            <option value="Pegawai Teknologi Maklumat F44">Pegawai Teknologi Maklumat F44</option>--}}
                             @foreach ($positionsArray as $position)
                                 <option value="{{ $position['name'] }}">{{ $position['name'] }}</option>
                             @endforeach
@@ -272,7 +266,6 @@
                         <label class=" mb-1" for="verifier_1_dept_div">Verifier Department / Division:</label>
                         <select class="form-control select2" name="verifier_1_dept_div" id="verifier_1_dept_div" aria-label="Default select">
                             <option value="{{ old('verifier_1_dept_div', $formsmtp->verifier_1_dept_div) }}">{{ old('verifier_1_dept_div', $formsmtp->verifier_1_dept_div) }}</option>
-                            {{--<option value="Jabatan Audit Negara/Bahagian Teknologi Maklumat">Jabatan Audit Negara/Bahagian Teknologi Maklumat</option>--}}
                             @foreach ($departmentsArray as $department)
                                 <option value="{{ $department['name'] }}">{{ $department['name'] }}</option>
                             @endforeach
@@ -330,9 +323,12 @@
                 <hr>
                 <div class="mb-3">
                     <label for="attachement">Current Attachement</label><br>
-                    <a href="{{ asset('attachments/' . old('upload_copy_attachment', $formsmtp->upload_copy_attachment)) }}" target="_blank">
-                        {{ old('upload_copy_attachment', $formsmtp->upload_copy_attachment) }}
-                    </a>
+                    @if ($formsmtp->upload_copy_attachment)
+                        <a href="{{ route('smtp_relay.viewPdf',['filename' => $formsmtp->upload_copy_attachment]) }}" target="_blank">{{$formsmtp->upload_copy_attachment}}</a></a>
+                    @else
+                        <span class="text-muted">No Attachment</span>
+                    @endif
+
                 </div>
                 <div class="mb-3">
                     <label for="upload_copy_attachment">Replace current Attachement (Optional)</label>
@@ -361,6 +357,193 @@
 @endsection
 @push('script')
 <script>
+    $(document).ready(function() {
+
+const dateAInput = document.getElementById('applicantdate');
+const dateBInput = document.getElementById('verifierdate');
+// const dateCInput = document.getElementById('dateC');
+const messageDiv = document.getElementById('message');
+function compareDates() {
+    const dateA = new Date(dateAInput.value);
+    const dateB = new Date(dateBInput.value);
+    // const dateC = new Date(dateCInput.value);
+
+    if (dateB && dateA) {
+        if (dateB < dateA) {
+            messageDiv.textContent = "Date Verifier must be greater than Date Applicant";
+
+        } else {
+            messageDiv.textContent = "";
+        }
+    }
+}
+dateBInput.addEventListener('change', compareDates);
+
+// dateForm.addEventListener('submit',function(event){
+//     if (!compareDates()){
+//         event.preventDefault();
+//         messageDiv.textContent = "Please correct the Dates before submitting";
+//     }
+// });
+
+$(".select2").select2();
+
+$("#formserver").validate({
+    errorPlacement: function(label, element) {
+        if (element.hasClass('select2')) {
+            label.insertAfter(element.next('.select2-container')).addClass('mt-2 text-danger');
+        } else {
+            label.addClass('mt-2 text-danger');
+            label.insertAfter(element);
+        }
+    },
+    highlight: function(element) {
+        $(element).parent().addClass('is-invalid');
+        $(element).addClass('form-control-danger');
+    },
+    unhighlight: function(element) {
+        $(element).parent().removeClass('is-invalid');
+        $(element).removeClass('form-control-danger');
+    },
+    success: function(label, element) {
+        if ($(element).hasClass('select2-hidden-accessible')) {
+            label.remove();
+        } else {
+            label.remove();
+        }
+    }
+});
+$('#date_verification_3').on('change', function() {
+    var isValid = $(this).valid();
+    if (isValid) {
+        $(this).removeClass('is-invalid');
+    }
+});
+$('#verifier_3_dept_div').on('change', function() {
+    var isValid = $(this).valid();
+    if (isValid) {
+        $(this).removeClass('is-invalid');
+    }
+});
+$('#verifier_3_position').on('change', function() {
+    var isValid = $(this).valid();
+    if (isValid) {
+        $(this).removeClass('is-invalid');
+    }
+});
+$('#verifier_1_dept_div').on('change', function() {
+    var isValid = $(this).valid();
+    if (isValid) {
+        $(this).removeClass('is-invalid');
+    }
+});
+$('#date_verification_1').on('change', function() {
+    var isValid = $(this).valid();
+    if (isValid) {
+        $(this).removeClass('is-invalid');
+        $(this).next('.select2-container').find('.select2-selection').removeClass('is-invalid');
+    }
+});
+$('#smtp_username').on('change', function() {
+    var isValid = $(this).valid();
+    if (isValid) {
+        $(this).removeClass('is-invalid');
+        $(this).next('.select2-container').find('.select2-selection').removeClass('is-invalid');
+    }
+});
+$('#smtp_password').on('change', function() {
+    var isValid = $(this).valid();
+    if (isValid) {
+        $(this).removeClass('is-invalid');
+        $(this).next('.select2-container').find('.select2-selection').removeClass('is-invalid');
+    }
+});
+$('#types_req').on('change', function() {
+    var isValid = $(this).valid();
+    if (isValid) {
+        $(this).removeClass('is-invalid');
+        $(this).next('.select2-container').find('.select2-selection').removeClass('is-invalid');
+    }
+});
+$('#ministry').on('change', function() {
+    var isValid = $(this).valid();
+    if (isValid) {
+        $(this).removeClass('is-invalid');
+        $(this).next('.select2-container').find('.select2-selection').removeClass('is-invalid');
+    }
+});
+$('#agencies').on('change', function() {
+    var isValid = $(this).valid();
+    if (isValid) {
+        $(this).removeClass('is-invalid');
+        $(this).next('.select2-container').find('.select2-selection').removeClass('is-invalid');
+    }
+});
+$('#dept_div_unit').on('change', function() {
+    var isValid = $(this).valid();
+    if (isValid) {
+        $(this).removeClass('is-invalid');
+        $(this).next('.select2-container').find('.select2-selection').removeClass('is-invalid');
+    }
+});
+$('#smtp_relay_auth_method').on('change', function() {
+    var isValid = $(this).valid();
+    if (isValid) {
+        $(this).removeClass('is-invalid');
+        $(this).next('.select2-container').find('.select2-selection').removeClass('is-invalid');
+    }
+});
+$('#smtp_relay_server').on('change', function() {
+    var isValid = $(this).valid();
+    if (isValid) {
+        $(this).removeClass('is-invalid');
+        $(this).next('.select2-container').find('.select2-selection').removeClass('is-invalid');
+    }
+});
+$('#ports').on('change', function() {
+    var isValid = $(this).valid();
+    if (isValid) {
+        $(this).removeClass('is-invalid');
+        $(this).next('.select2-container').find('.select2-selection').removeClass('is-invalid');
+    }
+});
+$('#mailbox').on('change', function() {
+    var isValid = $(this).valid();
+    if (isValid) {
+        $(this).removeClass('is-invalid');
+        $(this).next('.select2-container').find('.select2-selection').removeClass('is-invalid');
+    }
+});
+$('#applicant_position').on('change', function() {
+    var isValid = $(this).valid();
+    if (isValid) {
+        $(this).removeClass('is-invalid');
+        $(this).next('.select2-container').find('.select2-selection').removeClass('is-invalid');
+    }
+});
+$('#applicant_dept_div').on('change', function() {
+    var isValid = $(this).valid();
+    if (isValid) {
+        $(this).removeClass('is-invalid');
+        $(this).next('.select2-container').find('.select2-selection').removeClass('is-invalid');
+    }
+});
+$('#date_application').on('change', function() {
+    var isValid = $(this).valid();
+    if (isValid) {
+        $(this).removeClass('is-invalid');
+        $(this).next('.select2-container').find('.select2-selection').removeClass('is-invalid');
+    }
+});
+$('#verifier_1_position').on('change', function() {
+    var isValid = $(this).valid();
+    if (isValid) {
+        $(this).removeClass('is-invalid');
+        $(this).next('.select2-container').find('.select2-selection').removeClass('is-invalid');
+    }
+});
+});
+
     $('#dynamic-inputs-container').on('input', '#ip_addr_server', function() {
 
         var type_req = document.getElementById("types_req");
