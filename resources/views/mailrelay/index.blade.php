@@ -46,7 +46,7 @@
                             <th>Ticket No</th>
                             <th>Mail Relay Server</th>
                             <th>Type Application</th>
-                            <th>Requestor</th>
+                            <th>Applicant Name</th>
                             <th>Status</th>
                             <th>Date</th>
                             <th>Actions</th>
