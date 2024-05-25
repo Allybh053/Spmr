@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Storage;
 use phpseclib3\Net\SSH2;
+use OwenIt\Auditing\Models\Audit;
 
 class ManageServiceController extends Controller
 {
@@ -39,6 +40,80 @@ class ManageServiceController extends Controller
         //return view('manageService.index');
         return view('manageService.index',
             compact('user', 'role', 'serverconfig', 'serverList','defaultServerId'));
+    }
+
+
+
+    public function start(Request $request){
+        $serverId = Server::where('hostname', $request->input('server'))->first();
+        $oldValues = [];
+        $oldValuesJson = json_encode($oldValues);
+        $newValues=[
+            'server' => $request->input('server'),
+            'process' => 'start'
+        ];
+        $newValuesJson = json_encode($newValues);
+
+        $audit = new Audit();
+        $audit->auditable_type = Server::class;
+        $audit->auditable_id = $serverId->id;
+        $audit->old_values = $oldValuesJson; // Empty for creation
+        $audit->new_values = $newValuesJson;
+        $audit->user_id = Auth::user()->id;
+        $audit->event = 'start server';
+        $audit->url = request()->fullUrl();
+        $audit->ip_address = request()->ip();
+        $audit->user_agent = request()->userAgent();
+        $audit->tags = json_encode(['manual-audit']); // Ensure tags are in JSON format
+        $audit->save();
+    }
+
+    public function stop(Request $request){
+        $serverId = Server::where('hostname', $request->input('server'))->first();
+        $oldValues = [];
+        $oldValuesJson = json_encode($oldValues);
+        $newValues=[
+            'server' => $request->input('server'),
+            'process' => 'stop'
+        ];
+        $newValuesJson = json_encode($newValues);
+
+        $audit = new Audit();
+        $audit->auditable_type = Server::class;
+        $audit->auditable_id = $serverId->id;
+        $audit->old_values = $oldValuesJson; // Empty for creation
+        $audit->new_values = $newValuesJson;
+        $audit->user_id = Auth::user()->id;
+        $audit->event = 'stop server';
+        $audit->url = request()->fullUrl();
+        $audit->ip_address = request()->ip();
+        $audit->user_agent = request()->userAgent();
+        $audit->tags = json_encode(['manual-audit']); // Ensure tags are in JSON format
+        $audit->save();
+    }
+
+    public function restart(Request $request){
+        $serverId = Server::where('hostname', $request->input('server'))->first();
+        $oldValues = [];
+        $oldValuesJson = json_encode($oldValues);
+        $newValues=[
+            'server' => $request->input('server'),
+            'process' => 'restart'
+        ];
+        $newValuesJson = json_encode($newValues);
+
+        $audit = new Audit();
+        $audit->auditable_type = Server::class;
+        $audit->auditable_id = $serverId->id;
+        $audit->old_values = $oldValuesJson; // Empty for creation
+        $audit->new_values = $newValuesJson;
+        $audit->user_id = Auth::user()->id;
+        $audit->event = 'restart server';
+        $audit->url = request()->fullUrl();
+        $audit->ip_address = request()->ip();
+        $audit->user_agent = request()->userAgent();
+        $audit->tags = json_encode(['manual-audit']); // Ensure tags are in JSON format
+        $audit->save();
     }
 
 }
