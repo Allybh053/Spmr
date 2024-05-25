@@ -25,7 +25,12 @@ return [
         'scanSentence' => 'Scan this QR code using your authenticator app (e.g., Google Authenticator, Authy).',
         'shortLinkSentence' =>'Welcome to Short Links',
     ],
-    
-    
+
+    'dashboard' => [
+        'welcome' => 'Welcome to SPMR System',
+        'dashboarMailRelay' => 'Dashboard For Mail Relay Server'
+    ]
+
+
 ];
 

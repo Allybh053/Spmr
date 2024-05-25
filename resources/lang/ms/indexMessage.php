@@ -25,7 +25,12 @@ return [
         'scanSentence' => 'Scan this QR code using your authenticator app (e.g., Google Authenticator, Authy).',
         'shortLinkSentence' =>'Selamat Datang ke Pautan Pintas',
     ],
-    
-    
+
+    'dashboard' => [
+        'welcome' => 'Selamat Datang Ke Sistem SPMR',
+        'dashboarMailRelay' => 'Halaman Utama untuk Mail Relay Server'
+    ]
+
+
 ];
 

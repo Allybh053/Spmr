@@ -53,6 +53,40 @@
     text-align: right; /* Align buttons to the right */
 }
 
+.btn-circle-lang {
+    display: inline-block;
+    width: 40px;
+    height: 40px;
+    text-align: center;
+    padding: 6px 0;
+    font-size: 18px;
+    line-height: 1.428571429;
+    border-radius: 50%;
+    border: 1px solid #ccc;
+    margin: 0 5px;
+    color: #fff;
+    background-color: #aeb0b3;
+    text-decoration: none;
+}
+
+.btn-circle-lang:hover {
+    background-color: #6796c4;
+    text-decoration: none;
+}
+
+.lang-switch {
+    font-weight: bold;
+}
+
+.active-lang {
+    background-color: #3b28a7; /* Different background for active language */
+    border-color: #3b28a7; /* Matching border color for active language */
+}
+
+.active-lang:hover {
+    background-color: #3b28a7; /* Different hover color for active language */
+}
+
 </style>
     @stack('meta')
     @stack('css')
