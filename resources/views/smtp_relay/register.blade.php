@@ -36,7 +36,7 @@
                     </div>
                     <div class="col-md-6">
                         <label for="type_req">Type Of Request<span style="color: red"> *</span></label>
-                        <select class="form-control select2" name="type_req" id="type_req" aria-label="Default select" required>
+                        <select class="select2 form-control form-control-danger " name="type_req" id="type_req" required>
                             <option disabled selected value="">Select Type Of Request:</option>
                             <option value="1">New Application</option>
                             <option value="2">Service Termination</option>
@@ -59,12 +59,12 @@
                     </div>
                     <div class="col-md-6">
                         <label for="phone">Phone Number<span style="color: red"> *</span></label>
-                        <input class="form-control" id="phone" name="phone" type="phone" value="" required/>
+                        <input class="form-control" id="phone" name="phone" type="number" value="" pattern="[0-9]*" required/>
                     </div>
                 </div>
                 <div class="mb-3">
                     <label for="ministry">Ministry<span style="color: red"> *</span></label>
-                    <select class="form-control select2" name="ministry" id="ministry" aria-label="Default select" required>
+                    <select class="form-control select2" name="ministry" id="ministry" required>
                         <option disabled selected>Select Ministry</option>
                         @foreach ($ministriesArray as $ministry)
                         <option value="{{ $ministry['name'] }}">{{ $ministry['name'] }}</option>
@@ -74,7 +74,7 @@
                 <div class="row gx-3 mb-3">
                     <div class="col-md-6">
                         <label for="agency">Agency<span style="color: red"> *</span></label>
-                        <select class="form-control select2" name="agency" id="agency" aria-label="Default select" required>
+                        <select class="form-control select2" name="agency" id="agency" required>
                             <option disabled selected>Select Agency</option>
                             @foreach ($agenciesArray as $agency)
                             <option value="{{ $agency['name'] }}">{{ $agency['name'] }}</option>
@@ -83,7 +83,7 @@
                     </div>
                     <div class="col-md-6">
                         <label for="departowner">Department/Division/Unit</label>
-                        <select class="form-control select2" name="departowner" id="departowner" aria-label="Default select" required>
+                        <select class="form-control select2" name="departowner" id="departowner" required>
                             <option disabled selected>Select Department/Division/Unit</option>
                             @foreach ($departmentsArray as $department)
                             <option value="{{ $department['name'] }}">{{ $department['name'] }}</option>
@@ -109,7 +109,7 @@
                 </div>
                 <div class="mb-3">
                     <label for="mailrelay">Server Mail Relay<span style="color: red"> *</span></label>
-                    <select class="form-control select2" name="mailrelay" id="mailrelay" aria-label="Default select" required onchange="toggleInputs()">
+                    <select class="form-control select2" name="mailrelay" id="mailrelay" required onchange="toggleInputs()">
                         <option disabled selected>Select Server</option>
                         @foreach ($serversArray as $server)
                         <option value="{{ $server['hostname'] }}">{{ $server['hostname'] }}</option>
@@ -141,14 +141,14 @@
                                 </th>
                             </tr>
                         </tfoot>
-                        <p id="resultContainer"></p>
+                        <strong><p style="color: red;" id="resultContainer"></p></strong>
                     </table>
                 </div>
 
                 <div class="row gx-3 mb-3">
                     <div class="col-md-6">
                         <label for="ports">SMTP Port Number<span style="color: red"> *</span></label>
-                        <select class="form-control select2" name="ports" id="ports" aria-label="Default select" required>
+                        <select class="form-control select2" name="ports" id="ports" required>
                             <option disabled selected></option>
                             <option value="0">Not Answered</option>
                             <option value="1">25/tcp</option>
@@ -181,7 +181,7 @@
                     </div>
                     <div class="col-md-6">
                         <label for="mailbox">MailBox<span style="color: red"> *</span></label>
-                        <select class="form-control select2" name="mailbox" id="mailbox" aria-label="Default select" required>
+                        <select class="form-control select2" name="mailbox" id="mailbox" required>
                             <option disabled selected>Select Mailbox</option>
                             <option value="0">Not Answered</option>
                             <option value="1">No</option>
@@ -204,12 +204,12 @@
                 <span>I hereby confirm that all information and statements provided in this application form are <b>TRUE</b> and <b>VALID</b>:</span><br><br>
                 <div class="mb-3">
                     <label for="applicantname">Applicant Name</label>
-                    <input class="form-control" id="applicantname" name="applicantname" type="text" placeholder="" value="">
+                    <input class="form-control" id="applicantname" name="applicantname" type="text" placeholder="" value="" required>
                 </div>
                 <div class="row col-12">
                     <div class="mb-3 col-md-4">
                         <label class=" mb-1" for="applicantposition">Applicant's Position:</label>
-                        <select class="form-control select2" name="applicantposition" id="applicantposition" aria-label="Default select" required>
+                        <select class="form-control select2" name="applicantposition" id="applicantposition" required>
                             <option disabled selected>Select Position</option>
                             @foreach ($positionsArray as $position)
                             <option value="{{ $position['name'] }}">{{ $position['name'] }}</option>
@@ -218,7 +218,7 @@
                     </div>
                     <div class="mb-3 col-md-4">
                         <label class=" mb-1" for="applicantdepart">Applicant's Department / Division:</label>
-                        <select class="form-control select2" name="applicantdepart" id="applicantdepart" aria-label="Default select" required>
+                        <select class="form-control select2" name="applicantdepart" id="applicantdepart" required>
                             <option disabled selected>Select Department / Division</option>
                             @foreach ($departmentsArray as $department)
                             <option value="{{ $department['name'] }}">{{ $department['name'] }}</option>
@@ -234,12 +234,12 @@
                 <div class="card-header text-center"><h4 class=" text-primary">Verifier I</h4></div><br>
                 <div class="mb-3">
                     <label for="verifiername">Verifier Name</label>
-                    <input class="form-control" id="verifiername" name="verifiername" type="text" placeholder="" value="">
+                    <input class="form-control" id="verifiername" name="verifiername" type="text" placeholder="" value="" required>
                 </div>
                 <div class="row col-12">
                     <div class="mb-3 col-md-4">
                         <label class=" mb-1" for="verifierposition">Verifier Position:</label>
-                        <select class="form-control select2" name="verifierposition" id="verifierposition" aria-label="Default select" required>
+                        <select class="form-control select2" name="verifierposition" id="verifierposition" required>
                             <option disabled selected>Select Position</option>
                             @foreach ($positionsArray as $position)
                             <option value="{{ $position['name'] }}">{{ $position['name'] }}</option>
@@ -248,7 +248,7 @@
                     </div>
                     <div class="mb-3 col-md-4">
                         <label class=" mb-1" for="verifierdepart">Verifier Department / Division:</label>
-                        <select class="form-control select2" name="verifierdepart" id="verifierdepart" aria-label="Default select" required>
+                        <select class="form-control select2" name="verifierdepart" id="verifierdepart" required>
                             <option disabled selected>Select Department / Division</option>
                             @foreach ($departmentsArray as $department)
                             <option value="{{ $department['name'] }}">{{ $department['name'] }}</option>
@@ -257,7 +257,8 @@
                     </div>
                     <div class="mb-3 col-md-4">
                         <label class=" mb-1" for="verifierdate">Date:</label>
-                        <input class="form-control" type="date" id="verifierdate" name="verifierdate">
+                        <input class="form-control" type="date" id="verifierdate" name="verifierdate" required><br>
+                        <span style="color: red"><div id="message"></div></span>
                     </div>
                 </div>
                 <hr>
@@ -276,12 +277,12 @@
                 <div class="card-header text-center"><h4 class=" text-primary">Approval MAMPU</h4></div><br>
                 <div class="mb-3">
                     <label for="approvalname">Approval Name</label>
-                    <input class="form-control" id="approvalname" name="approvalname" type="text" placeholder="" value="">
+                    <input class="form-control" id="approvalname" name="approvalname" type="text" placeholder="" value="" required>
                 </div>
                 <div class="row col-12">
                     <div class="mb-3 col-md-4">
                         <label class=" mb-1" for="approvalposition">Approval Position</label>
-                        <select class="form-control select2" name="approvalposition" id="approvalposition" aria-label="Default select" required>
+                        <select class="form-control select2" name="approvalposition" id="approvalposition" required>
                             <option disabled selected>Select Position</option>
                             @foreach ($positionsArray as $position)
                             <option value="{{ $position['name'] }}">{{ $position['name'] }}</option>
@@ -290,7 +291,7 @@
                     </div>
                     <div class="mb-3 col-md-4">
                         <label class=" mb-1" for="approvaldepart">Approval Department / Division:</label>
-                        <select class="form-control select2" name="approvaldepart" id="approvaldepart" aria-label="Default select" required>
+                        <select class="form-control select2" name="approvaldepart" id="approvaldepart" required>
                             <option disabled selected>Select Department / Division</option>
                             @foreach ($departmentsArray as $department)
                             <option value="{{ $department['name'] }}">{{ $department['name'] }}</option>
@@ -310,7 +311,7 @@
                     <span class="text-xs text-danger">Upload File format .pdf</span>
                 </div>
                 <hr>
-                <button class="btn btn-primary me-2 my-1" name="submit" type="submit">Submit</button>
+                <button class="btn btn-primary me-2 my-1" id="submit" name="submit" type="submit">Submit</button>
                 <a class="btn btn-danger me-2 my-1" type="button" href="{{ route('smtp_relay.smtp_relay_req')}}">Cancel</a>
                 </form>
             </div>
@@ -326,112 +327,239 @@
     </style>
 </main>
 
-
 @endsection
 @push('script')
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
-<link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-beta.1/dist/css/select2.min.css" rel="stylesheet" />
 <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-beta.1/dist/js/select2.min.js"></script>
-<script src="https://ajax.aspnetcdn.com/ajax/jquery.validate/1.11.1/jquery.validate.min.js"></script>
-<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+<script src="https://ajax.aspnetcdn.com/ajax/jquery.validate/1.19.2/jquery.validate.min.js"></script>
 
 <script>
-var mySelect2 = $('#type_reqs');
 
-mySelect2.select2();
+    $(document).ready(function() {
 
-$("#formserver").validate({
+        const dateAInput = document.getElementById('applicantdate');
+        const dateBInput = document.getElementById('verifierdate');
+        // const dateCInput = document.getElementById('dateC');
+        const messageDiv = document.getElementById('message');
+        function compareDates() {
+            const dateA = new Date(dateAInput.value);
+            const dateB = new Date(dateBInput.value);
+            // const dateC = new Date(dateCInput.value);
 
-rules: {
-//   systemtype: {
-//     required: true
-//   }
-},
-messages: {
-//   systemtype: {
-//     required: "Please choose the system type",
-//   },
+            if (dateB && dateA) {
+                if (dateB < dateA) {
+                    messageDiv.textContent = "Date Verifier must be greater than Date Applicant";
 
-},
-errorPlacement: function(label, element) {
-  if (element.hasClass('select2')) {
-    label.insertAfter(element.next('.select2-container')).addClass('mt-2 text-danger');
-    select2label = label
-  } else {
-    label.addClass('mt-2 text-danger');
-    label.insertAfter(element);
-  }
-},
-highlight: function(element) {
-  $(element).parent().addClass('is-invalid')
-  $(element).addClass('form-control-danger')
-},
-success: function(label, element) {
-  $(element).parent().removeClass('is-invalid')
-  $(element).removeClass('form-control-danger')
-  label.remove();
-}
-});
-
-mySelect2.on("change", function(e) {
-  select2label.remove(); //remove label
-});
-
-
-
-    document.addEventListener('DOMContentLoaded', function() {
-        const submitButton = document.querySelector('button[name="submit"]');
-        const resultContainer = document.getElementById('resultContainer');
-
-        // Function to check if resultContainer is empty and disable/enable the button
-        function checkResultContainer() {
-            if (resultContainer.innerHTML.trim() !== "") {
-                submitButton.disabled = true;
-            } else {
-                submitButton.disabled = false;
+                } else {
+                    messageDiv.textContent = "";
+                }
             }
         }
+        dateBInput.addEventListener('change', compareDates);
 
-        // Initial check on page load
-        checkResultContainer();
-    });
-    $('#dynamic-inputs-container').on('input', '#ipaddress', function() {
+        // dateForm.addEventListener('submit',function(event){
+        //     if (!compareDates()){
+        //         event.preventDefault();
+        //         messageDiv.textContent = "Please correct the Dates before submitting";
+        //     }
+        // });
 
-        var type_req = document.getElementById("type_req");
-        var selectBox = document.getElementById("mailrelay");
-        var selectedValue = selectBox.options[selectBox.selectedIndex].value;
-        var selectedValuetype_req = type_req.options[type_req.selectedIndex].value;
-        var ipAddress = $(this).val();
+        $(".select2").select2();
 
-        if (/^(?:[0-9]{1,3}\.){3}[0-9]{1,3}$/.test(ipAddress)) {
-            // Send AJAX request
-            $.ajax({
-                type: 'POST',
-                url: '{{ route("check.ip.address") }}', // Replace with your route name
-                data: {
-                    '_token': '{{ csrf_token() }}',
-                    'tableSpmr': [{
-                        'ipaddress': ipAddress
-                    }],
-                    'selectedValue': selectedValue,
-                    'selectedValuetype_req': selectedValuetype_req
-                },
-                success: function(response) {
-                    console.log(response);
-                    $('#resultContainer').html(response);
-
-                },
-                error: function(xhr, status, error) {
-                    console.error(xhr.responseText);
+        $("#formserver").validate({
+            errorPlacement: function(label, element) {
+                if (element.hasClass('select2')) {
+                    label.insertAfter(element.next('.select2-container')).addClass('mt-2 text-danger');
+                } else {
+                    label.addClass('mt-2 text-danger');
+                    label.insertAfter(element);
                 }
-            });
-
-        }else {
-            // Clear result container if input is invalid
-            $('#resultContainer').empty();
-        }
-
+            },
+            highlight: function(element) {
+                $(element).parent().addClass('is-invalid');
+                $(element).addClass('form-control-danger');
+            },
+            unhighlight: function(element) {
+                $(element).parent().removeClass('is-invalid');
+                $(element).removeClass('form-control-danger');
+            },
+            success: function(label, element) {
+                if ($(element).hasClass('select2-hidden-accessible')) {
+                    label.remove();
+                } else {
+                    label.remove();
+                }
+            }
+        });
+        $('#approvaldate').on('change', function() {
+            var isValid = $(this).valid();
+            if (isValid) {
+                $(this).removeClass('is-invalid');
+            }
+        });
+        $('#approvaldepart').on('change', function() {
+            var isValid = $(this).valid();
+            if (isValid) {
+                $(this).removeClass('is-invalid');
+            }
+        });
+        $('#approvalposition').on('change', function() {
+            var isValid = $(this).valid();
+            if (isValid) {
+                $(this).removeClass('is-invalid');
+            }
+        });
+        $('#verifierdepart').on('change', function() {
+            var isValid = $(this).valid();
+            if (isValid) {
+                $(this).removeClass('is-invalid');
+            }
+        });
+        $('#verifierdate').on('change', function() {
+            var isValid = $(this).valid();
+            if (isValid) {
+                $(this).removeClass('is-invalid');
+                $(this).next('.select2-container').find('.select2-selection').removeClass('is-invalid');
+            }
+        });
+        $('#authpassword').on('change', function() {
+            var isValid = $(this).valid();
+            if (isValid) {
+                $(this).removeClass('is-invalid');
+                $(this).next('.select2-container').find('.select2-selection').removeClass('is-invalid');
+            }
+        });
+        $('#authusername').on('change', function() {
+            var isValid = $(this).valid();
+            if (isValid) {
+                $(this).removeClass('is-invalid');
+                $(this).next('.select2-container').find('.select2-selection').removeClass('is-invalid');
+            }
+        });
+        $('#type_req').on('change', function() {
+            var isValid = $(this).valid();
+            if (isValid) {
+                $(this).removeClass('is-invalid');
+                $(this).next('.select2-container').find('.select2-selection').removeClass('is-invalid');
+            }
+        });
+        $('#ministry').on('change', function() {
+            var isValid = $(this).valid();
+            if (isValid) {
+                $(this).removeClass('is-invalid');
+                $(this).next('.select2-container').find('.select2-selection').removeClass('is-invalid');
+            }
+        });
+        $('#agency').on('change', function() {
+            var isValid = $(this).valid();
+            if (isValid) {
+                $(this).removeClass('is-invalid');
+                $(this).next('.select2-container').find('.select2-selection').removeClass('is-invalid');
+            }
+        });
+        $('#departowner').on('change', function() {
+            var isValid = $(this).valid();
+            if (isValid) {
+                $(this).removeClass('is-invalid');
+                $(this).next('.select2-container').find('.select2-selection').removeClass('is-invalid');
+            }
+        });
+        $('#authmethod').on('change', function() {
+            var isValid = $(this).valid();
+            if (isValid) {
+                $(this).removeClass('is-invalid');
+                $(this).next('.select2-container').find('.select2-selection').removeClass('is-invalid');
+            }
+        });
+        $('#mailrelay').on('change', function() {
+            var isValid = $(this).valid();
+            if (isValid) {
+                $(this).removeClass('is-invalid');
+                $(this).next('.select2-container').find('.select2-selection').removeClass('is-invalid');
+            }
+        });
+        $('#ports').on('change', function() {
+            var isValid = $(this).valid();
+            if (isValid) {
+                $(this).removeClass('is-invalid');
+                $(this).next('.select2-container').find('.select2-selection').removeClass('is-invalid');
+            }
+        });
+        $('#mailbox').on('change', function() {
+            var isValid = $(this).valid();
+            if (isValid) {
+                $(this).removeClass('is-invalid');
+                $(this).next('.select2-container').find('.select2-selection').removeClass('is-invalid');
+            }
+        });
+        $('#applicantposition').on('change', function() {
+            var isValid = $(this).valid();
+            if (isValid) {
+                $(this).removeClass('is-invalid');
+                $(this).next('.select2-container').find('.select2-selection').removeClass('is-invalid');
+            }
+        });
+        $('#applicantdepart').on('change', function() {
+            var isValid = $(this).valid();
+            if (isValid) {
+                $(this).removeClass('is-invalid');
+                $(this).next('.select2-container').find('.select2-selection').removeClass('is-invalid');
+            }
+        });
+        $('#applicantdate').on('change', function() {
+            var isValid = $(this).valid();
+            if (isValid) {
+                $(this).removeClass('is-invalid');
+                $(this).next('.select2-container').find('.select2-selection').removeClass('is-invalid');
+            }
+        });
+        $('#verifierposition').on('change', function() {
+            var isValid = $(this).valid();
+            if (isValid) {
+                $(this).removeClass('is-invalid');
+                $(this).next('.select2-container').find('.select2-selection').removeClass('is-invalid');
+            }
+        });
     });
+
+
+
+$('#dynamic-inputs-container').on('input', '#ipaddress', function() {
+
+    var type_req = document.getElementById("type_req");
+    var selectBox = document.getElementById("mailrelay");
+    var selectedValue = selectBox.options[selectBox.selectedIndex].value;
+    var selectedValuetype_req = type_req.options[type_req.selectedIndex].value;
+    var ipAddress = $(this).val();
+
+    if (/^(?:[0-9]{1,3}\.){3}[0-9]{1,3}$/.test(ipAddress)) {
+        // Send AJAX request
+        $.ajax({
+            type: 'POST',
+            url: '{{ route("check.ip.address") }}', // Replace with your route name
+            data: {
+                '_token': '{{ csrf_token() }}',
+                'tableSpmr': [{
+                    'ipaddress': ipAddress
+                }],
+                'selectedValue': selectedValue,
+                'selectedValuetype_req': selectedValuetype_req
+            },
+            success: function(response) {
+                console.log(response);
+                $('#resultContainer').html(response);
+
+            },
+            error: function(xhr, status, error) {
+                console.error(xhr.responseText);
+            }
+        });
+
+    }else {
+        // Clear result container if input is invalid
+        $('#resultContainer').empty();
+    }
+
+});
 
     function toggleInputs() {
         var selectBox = document.getElementById("mailrelay");
@@ -498,5 +626,6 @@ function updateNameAttribute(nameAttr, newIndex) {
     // Replace the index in the name attribute
     return nameAttr.replace('[' + currentIndex + ']', '[' + newIndex + ']');
 }
+
 </script>
 @endpush
