@@ -34,7 +34,7 @@
                           <div class="card-body mainRealtime" style="min-height: auto; max-height: 800px;overflow-y: auto;">
                               <div class="row">
                                   <div class="col-xl-6 mb-4 selected-item postfix {{$server->id}}">
-                                      <a class="card lift h-100" href="">
+                                      <div class="card lift h-100">
                                           <div class="card-body cardService d-flex justify-content-center flex-column">
                                               <div class="d-flex align-items-center justify-content-between">
                                                   <div class="me-3">
@@ -59,10 +59,10 @@
                                                   </div>
                                               </div>
                                           @endcan
-                                      </a>
+                                            </div>
                                   </div>
                                   <div class="col-xl-6 mb-4 selected-item apache {{$server->id}}">
-                                      <a class="card lift h-100" href="">
+                                      <div class="card lift h-100">
                                           <div class="card-body cardService d-flex justify-content-center flex-column">
                                               <div class="d-flex align-items-center justify-content-between">
                                                   <div class="me-3">
@@ -87,10 +87,10 @@
                                                   </div>
                                               </div>
                                           @endcan
-                                      </a>
+                                            </div>
                                   </div>
                                   <div class="col-xl-6 mb-4 selected-item webmin {{$server->id}}">
-                                      <a class="card lift h-100" href="">
+                                      <div class="card lift h-100">
                                           <div class="card-body cardService d-flex justify-content-center flex-column">
                                               <div class="d-flex align-items-center justify-content-between">
                                                   <div class="me-3">
@@ -115,7 +115,7 @@
                                                   </div>
                                               </div>
                                           @endcan
-                                      </a>
+                                            </div>
                                   </div>
                               </div>
                           </div>
