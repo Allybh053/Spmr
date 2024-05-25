@@ -198,7 +198,7 @@
                 const command = "echo '25.25.25.27 #jhgbijuHUHu:' >> /opt/cluster/postfix/access_list; echo '25.25.25.28 #jhgbijuHUHu:' >> /opt/cluster/postfix/access_list";
                 // const command = "sed -i '$ a\25.25.25.27 #jhgbijuHUHu:\n25.25.25.28 #jhgbijuHUHu:' /opt/cluster/postfix/access_list";
 
-                socket.push(command);
+                socket.send(command);
             });
 
             socket.addEventListener('message', (event) => {
