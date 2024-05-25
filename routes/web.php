@@ -134,6 +134,7 @@ Route::group(['middleware' => ['auth', 'nocache']], function () {
         Route::post('/import', [SmtpRelayController::class, 'import'])->name('smtp_relay.import');
 
         Route::get('/index/searching', [SmtpRelayController::class, 'search'])->name('smtp_relay.index.search');
+        Route::get('/view-pdf/{filename}',[SmtpRelayController::class, 'showPdf'])->name('smtp_relay.viewPdf');
 
     });
 

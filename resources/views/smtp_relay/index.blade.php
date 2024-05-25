@@ -10,7 +10,7 @@
                                 <div class="page-header-icon"></div>
                                 <nav aria-label="breadcrumb">
                                     <ol class="breadcrumb">
-                                         <li class="breadcrumb-item">SMTP Relay Request MyGovUC3.0</li>
+                                         <li class="breadcrumb-item">SMTP Relay Request MyGovUC</li>
                                     </ol>
                                 </nav>
                             </h1>
@@ -63,7 +63,7 @@
                 </div>
             @endif --}}
             <div class="card">
-                 <div class="card-header">List SMTP Relay Request MyGovUC3.0</div>
+                 <div class="card-header">List SMTP Relay Request MyGovUC</div>
                 <div class="card-body">
                 <div class="table-responsive">
                     <table id="spmrDatatable"  class="display table table-striped table-bordered" cellspacing="0" width="100%">
@@ -75,8 +75,7 @@
                                 <th>Types Application</th>
                                 <th>Agency Name</th>
                                 <th>Project Name</th>
-                                <th>Server Mail Relay</th>
-                                {{--<th>Total Ip Address</th>--}}
+                                <th>Server Mail Relay</th> 
                                 <th>Ip Address</th>
                                 <th>Date Approval</th>
                                 <th>Date Created</th>
