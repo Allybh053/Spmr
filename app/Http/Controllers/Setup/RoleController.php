@@ -72,6 +72,7 @@ class RoleController extends Controller
         $audit->auditable_id = $role->id;
         $audit->old_values = $oldValuesJson; // Empty for creation
         $audit->new_values = $newValuesJson;
+        $audit->user_id = Auth::user()->id;
         $audit->event = 'created';
         $audit->url = request()->fullUrl();
         $audit->ip_address = request()->ip();
@@ -83,6 +84,7 @@ class RoleController extends Controller
         $audit = new Audit();
         $audit->auditable_type = Role::class;
         $audit->auditable_id = $role->id;
+        $audit->user_id = Auth::user()->id;
         $audit->old_values = $oldValuesJson;
         $audit->new_values = $newValuesJson;
         $audit->event = 'updated';
@@ -144,6 +146,7 @@ class RoleController extends Controller
         $audit = new Audit();
         $audit->auditable_type = Role::class;
         $audit->auditable_id = $roleId;
+        $audit->user_id = Auth::user()->id;
         $audit->old_values = json_encode(['permissions' => $oldPermissions, 'servers' => $oldServers]);
         $audit->new_values = json_encode(['permissions' => $newPermissions, 'servers' => $newServers]);
         $audit->event = 'updated';
@@ -173,6 +176,7 @@ class RoleController extends Controller
             $audit = new Audit();
             $audit->auditable_type = Role::class;
             $audit->auditable_id = $request->id;
+            $audit->user_id = Auth::user()->id;
             $audit->old_values = json_encode($oldValues);
             $audit->new_values = null; // Since the role is deleted, there are no new values
             $audit->event = 'deleted';

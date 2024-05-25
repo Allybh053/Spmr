@@ -8,7 +8,7 @@
                     <div class="col-auto mb-3">
                         <h1 class="page-header-title">
                             <div class="page-header-icon"><i data-feather="mail"></i></div>
-                            Update SMTP Relay Request MyGovUC3.0
+                            Update SMTP Relay Request MyGovUC
                         </h1>
                     </div>
                     <div class="col-12 col-xl-auto mb-3">
@@ -21,7 +21,7 @@
     <!-- Main page content-->
     <div class="container-fluid px-4">
         <div class="card mb-4">
-            <div class="card-header text-center"><h3 class=" text-primary">Update SMTP Relay Request MyGovUC3.0</h3></div>
+            <div class="card-header text-center"><h3 class=" text-primary">Update SMTP Relay Request MyGovUC</h3></div>
             <div class="card-body">
                 <form id="formserver" action="{{ route('smtp_relay.kemaskinidata', ['id' => $formsmtp->form_id]) }}" method="post" enctype="multipart/form-data">
                 @csrf
@@ -309,7 +309,7 @@
                         <label class=" mb-1" for="verifier_3_dept_div">Approval Department / Division:</label>
                         <select class="form-control select2" name="verifier_3_dept_div" id="verifier_3_dept_div" aria-label="Default select">
                             <option value="{{ old('verifier_3_dept_div', $formsmtp->verifier_3_dept_div) }}">{{ old('verifier_3_dept_div', $formsmtp->verifier_3_dept_div) }}</option>
-                            {{--<option value="Pasukan Projek MyGovUC3.0">Pasukan Projek MyGovUC3.0</option>--}}
+                            {{--<option value="Pasukan Projek MyGovUC">Pasukan Projek MyGovUC</option>--}}
                             @foreach ($departmentsArray as $department)
                                 <option value="{{ $department['name'] }}">{{ $department['name'] }}</option>
                             @endforeach

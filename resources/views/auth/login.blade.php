@@ -44,7 +44,15 @@
                                             <!-- Form Group (password)-->
                                             <div class="mb-3 form-group{{ $errors->has('password') ? ' has-error' : '' }}">
                                                 <label class="small mb-1" for="inputPassword">Password</label>
-                                                <input class="form-control" id="password" name="password" type="password" placeholder="Enter password" required/>
+                                                <div class="input-group mb-3">
+                                                    <input class="form-control" id="password" name="password" type="password" placeholder="Enter password" required/>
+                                                    <div class="input-group-append">
+                                                        <button class="btn btn-outline-secondary" type="button" id="togglePassword" style="border-top-left-radius: 0; border-bottom-left-radius: 0;">
+                                                            <i class="fas fa-eye" id="toggleIcon"></i>
+                                                        </button>
+                                                    </div>
+                                                </div>
+
                                             </div>
                                            <!-- Form Group (remember password checkbox) -->
                                             <div class="mb-3">
@@ -80,5 +88,16 @@
         </div>
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js" crossorigin="anonymous"></script>
         <script src="js/scripts.js"></script>
+        <script>
+            const togglePassword = document.querySelector('#togglePassword');
+            const password = document.querySelector('#password');
+            const toggleIcon = document.querySelector('#toggleIcon');
+
+            togglePassword.addEventListener('click', function (e) {
+                const type = password.getAttribute('type') === 'password' ? 'text' : 'password';
+                password.setAttribute('type', type);
+                toggleIcon.classList.toggle('fa-eye-slash');
+            });
+        </script>
     </body>
 </html>

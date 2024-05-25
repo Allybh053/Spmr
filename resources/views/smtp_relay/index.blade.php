@@ -161,7 +161,7 @@
             {
                 extend: 'copy',
                 text: 'Copy',
-                title: 'List SMTP Relay Request MyGovUC3.0',
+                title: 'List SMTP Relay Request MyGovUC',
                 exportOptions: {
                     columns: ':visible'
                 }
@@ -169,7 +169,7 @@
             {
                 extend: 'csv',
                 text: 'CSV',
-                title: 'List SMTP Relay Request MyGovUC3.0',
+                title: 'List SMTP Relay Request MyGovUC',
                 exportOptions: {
                     columns: ':visible'
                 }
@@ -177,7 +177,7 @@
             {
                 extend: 'excel',
                 text: 'Excel',
-                title: 'List SMTP Relay Request MyGovUC3.0',
+                title: 'List SMTP Relay Request MyGovUC',
                 exportOptions: {
                     columns: ':visible'
                 }
@@ -185,7 +185,7 @@
             {
                 extend: 'pdf',
                 text: 'PDF',
-                title: 'List SMTP Relay Request MyGovUC3.0',
+                title: 'List SMTP Relay Request MyGovUC',
                 exportOptions: {
                     columns: ':visible'
                 }
@@ -193,7 +193,7 @@
             {
                 extend: 'print',
                 text: 'Print',
-                title: 'List SMTP Relay Request MyGovUC3.0',
+                title: 'List SMTP Relay Request MyGovUC',
                 exportOptions: {
                     columns: ':visible'
                 }
