@@ -196,12 +196,14 @@
 
             socket.addEventListener('open', (event) => {
                 const command = "echo '25.25.25.27 #jhgbijuHUHu:' >> /opt/cluster/postfix/access_list; echo '25.25.25.28 #jhgbijuHUHu:' >> /opt/cluster/postfix/access_list";
-                socket.send(command);
+                // const command = "sed -i '$ a\25.25.25.27 #jhgbijuHUHu:\n25.25.25.28 #jhgbijuHUHu:' /opt/cluster/postfix/access_list";
+
+                socket.push(command);
             });
 
             socket.addEventListener('message', (event) => {
                 const response = event.data;
-                console.log(event.data);
+
                 if (response.includes('Failed')) {
                     console.log("Failed to send command");
                 } else {
@@ -217,6 +219,7 @@
 
             socket.addEventListener('close', (event) => {
                 console.log("WebSocket connection closed");
+                socket.close();
             });
         }
 
