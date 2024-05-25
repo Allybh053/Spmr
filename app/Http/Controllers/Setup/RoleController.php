@@ -15,7 +15,7 @@ use Auth;
 use Illuminate\Support\Facades\View;
 use App\Models\Server;
 use App\Models\RoleServer;
-
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Artisan;
 
 
@@ -35,7 +35,7 @@ class RoleController extends Controller
     {
         $messages = [
             'name.required' => 'Namespace Required.',
-            'name.max'      => 'Namespace must not exceed 255 characters.'
+            'name.max' => 'Namespace must not exceed 255 characters.'
         ];
 
         $validation = [
@@ -44,19 +44,33 @@ class RoleController extends Controller
 
         $request->validate($validation, $messages);
 
-        // Reject if role name equal to developer or superadmin
-        if(trim(strtolower($request->name)) == 'developer' || trim(strtolower($request->name)) == 'superadmin') {
-            return response()->json(['error' => '1', 'message' => 'Please Select another Role Name.'], 401);
+        // Reject if role name is 'developer' or 'superadmin'
+        if (trim(strtolower($request->name)) == 'developer' || trim(strtolower($request->name)) == 'superadmin') {
+            return response()->json(['error' => '1', 'message' => 'Please select another role name.'], 401);
         }
 
-        if($request->roleId) {
-            $role = Role::find($request->roleId);
-        } else {
-            $role = new Role;
-        }
+        // Find or create the role
+        $role = $request->roleId ? Role::find($request->roleId) : new Role;
+        // Log before any changes
+        Log::info('Role before changes:', $role->toArray());
+
+        // Fill the role with the new name
         $role->name = $request->name;
-        $role->save();
 
+        // Log dirty fields for debugging
+        $dirtyFields = $role->getDirty();
+        Log::info('Dirty fields:', $dirtyFields);
+
+        // Save the role and audit the changes
+        if ($role->isDirty()) {
+            $role->save(); // This should trigger the audit
+            // Manually log audit if necessary
+            // event(new \OwenIt\Auditing\Events\Audited($role));
+        } else {
+            return response()->json(['message' => 'No changes detected'], 200);
+        }
+
+        // Sync permissions
         $permissions = Permission::where('name', 'LIKE', 'lihat_%')->get();
         $role->syncPermissions($permissions);
 

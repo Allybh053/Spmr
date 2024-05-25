@@ -9,7 +9,7 @@ use \Illuminate\Support\Facades\Hash;
 use Spatie\Permission\Models\Role;
 use App\Models\Department;
 use App\Models\Position;
-use App\Http\Controllers\Log;
+use Illuminate\Support\Facades\Log;
 use App\Mail\WelcomeNewUser;
 use Illuminate\Support\Facades\Mail;
 
