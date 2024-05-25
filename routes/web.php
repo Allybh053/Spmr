@@ -32,7 +32,7 @@ use App\Http\Controllers\TerminalController;
 use App\Http\Controllers\AgencyController;
 use App\Http\Controllers\MinistryController;
 use App\Http\Controllers\MonthlyReportingController;
-
+use App\Http\Controllers\LanguageController;
 
 /*
 |--------------------------------------------------------------------------
@@ -318,6 +318,8 @@ Route::group(['middleware' => ['auth', 'nocache']], function () {
     Route::post('/start-postfix-services', [ManageServiceController::class, 'start'])->name('start-postfix-services');
     Route::post('/stop-postfix-services', [ManageServiceController::class, 'stop'])->name('stop-postfix-services');
     Route::post('/restart-postfix-services', [ManageServiceController::class, 'restart'])->name('restart-postfix-services');
+
+    Route::get('/lang/{locale}', [LanguageController::class, 'switchLang'])->name('lang.switch');
 
 
 
