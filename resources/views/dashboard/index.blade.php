@@ -28,7 +28,7 @@
         <div class="card-body">
           <div class="row">
             <div class="col-xl-6 mb-6">
-              <a class="card lift h-100" href="#!">
+              <div class="card lift h-100">
                 <div class="card-body d-flex justify-content-center flex-column">
                   <div class="d-flex align-items-center justify-content-between">
                     <div class="me-3">
@@ -42,10 +42,10 @@
                     <img src="{{asset ('assets/img/illustrations/dash_app.svg')}}" alt="..." style="width: 8rem" />
                   </div>
                 </div>
-              </a>
+            </div>
             </div>
             <div class="col-xl-6 mb-6">
-              <a class="card lift h-100" href="#!">
+              <div class="card lift h-100">
                 <div class="card-body d-flex justify-content-center flex-column">
                   <div class="d-flex align-items-center justify-content-between">
                     <div class="me-3">
@@ -59,13 +59,13 @@
                     <img src="{{asset ('assets/img/illustrations/dash_domain.svg')}}" alt="..." style="width: 8rem" />
                   </div>
                 </div>
-              </a>
+            </div>
             </div>
           </div>
           <br>
           <div class="row">
             <div class="col-xl-6 mb-6">
-                <a class="card lift h-100" href="#!">
+                <div class="card lift h-100">
                     <div class="card-body d-flex justify-content-center flex-column">
                         <div class="d-flex align-items-center justify-content-between">
                             <div class="me-3">
@@ -79,10 +79,10 @@
                             <img src="{{asset ('assets/img/illustrations/dash_sasl.svg')}}" alt="..." style="width: 8rem" />
                         </div>
                     </div>
-                </a>
+                </div>
             </div>
             <div class="col-xl-6 mb-6">
-                <a class="card lift h-100" href="#!">
+                <div class="card lift h-100">
                     <div class="card-body d-flex justify-content-center flex-column">
                         <div class="d-flex align-items-center justify-content-between">
                             <div class="me-3">
@@ -96,7 +96,7 @@
                             <img src="{{asset ('assets/img/illustrations/browser-stats.svg')}}" alt="..." style="width: 8rem" />
                         </div>
                     </div>
-                </a>
+                </div>
             </div>
           </div>
         </div>
