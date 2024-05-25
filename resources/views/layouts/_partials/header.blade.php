@@ -18,9 +18,12 @@
             <ul class="navbar-nav align-items-center ms-auto">
                 <!-- Navbar Search Dropdown-->
                 <!-- * * Note: * * Visible only below the lg breakpoint-->
+
                 {{-- open this when want use --}}
                 {{-- <a href="{{ route('lang.switch', 'en') }}" class="btn btn-circle-lang lang-switch @if(app()->getLocale() == 'en') active-lang @endif">EN</a>
                 <a href="{{ route('lang.switch', 'ms') }}" class="btn btn-circle-lang lang-switch @if(app()->getLocale() == 'ms') active-lang @endif">MS</a> --}}
+
+
                 <!-- User Dropdown-->
                 <li class="nav-item dropdown no-caret dropdown-user me-3 me-lg-4">
                     <a class="btn btn-icon btn-transparent-dark dropdown-toggle" id="navbarDropdownUserImage" href="javascript:void(0);" role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><img class="img-fluid" src="{{ asset('assets/img/illustrations/profiles/profile-6.jpg') }}" /></a>
