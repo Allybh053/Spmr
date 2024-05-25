@@ -198,20 +198,30 @@
 
 
             socket.addEventListener('open', (event) => {
-            smtpMailServers.forEach(smtpMailServer => {
-                // Adjust the key names based on your actual data structure
-                const ipAddress = smtpMailServer.ip_addr_server;
-                console.log(ipAddress);
-                const formIds = smtpMailServer.form_id;
-                console.log(formIds);
-                // Construct your command
-                const command = `echo '${ipAddress} #${formIds}:' >> /opt/cluster/postfix/access_list`;
-                console.log(command);
+                smtpMailServers.forEach(smtpMailServer => {
+                    let command = '';
 
-                // Send the command through the WebSocket
-                socket.send(command);
+                    if(smtpMailServer.types_req == 1) {
+                    // Adjust the key names based on your actual data structure
+                    const ipAddress = smtpMailServer.ip_addr_server;
+                    const formIds = smtpMailServer.form_id;
+                    // Construct your command
+                    const command = `echo '${ipAddress} #${formIds}:' >> /opt/cluster/postfix/access_list`;
+
+                    } else if (smtpMailServer.types_req == 2){
+                    // Adjust the key names based on your actual data structure
+                    const ipAddress = smtpMailServer.ip_addr_server;
+                    const formIds = smtpMailServer.form_id;
+                    // Construct your command
+                    const command = `if grep -q '^${ipAddress} ' /opt/cluster/postfix/access_list; then sed -i 's/^${ipAddress} .*/#${ipAddress} #${formIds}:/' /opt/cluster/postfix/access_list; else echo '#${ipAddress} #${formIds}:' >> /opt/cluster/postfix/access_list; fi`;
+
+                    }
+                    // Send the command through the WebSocket if it's not empty
+                    if (command) {
+                        socket.send(command);
+                    }
+                });
             });
-        });
 
             socket.addEventListener('message', (event) => {
                 const response = event.data;

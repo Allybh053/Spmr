@@ -20,8 +20,8 @@
                 <!-- * * Note: * * Visible only below the lg breakpoint-->
 
                 {{-- open this when want use --}}
-                {{-- <a href="{{ route('lang.switch', 'en') }}" class="btn btn-circle-lang lang-switch @if(app()->getLocale() == 'en') active-lang @endif">EN</a>
-                <a href="{{ route('lang.switch', 'ms') }}" class="btn btn-circle-lang lang-switch @if(app()->getLocale() == 'ms') active-lang @endif">MS</a> --}}
+                <a href="{{ route('lang.switch', 'en') }}" class="btn btn-circle-lang lang-switch @if(app()->getLocale() == 'en') active-lang @endif">EN</a>
+                <a href="{{ route('lang.switch', 'ms') }}" class="btn btn-circle-lang lang-switch @if(app()->getLocale() == 'ms') active-lang @endif">MS</a>
 
 
                 <!-- User Dropdown-->
