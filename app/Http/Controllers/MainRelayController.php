@@ -40,13 +40,21 @@ class MainRelayController extends Controller
         $selectedValuetype_req = $request->input('selectedValuetype_req');
         $selectedValue = $request->input('selectedValue');
         //think how to add identify
-        if ($selectedValue == $selectedValue){
-            $filePath = storage_path($selectedValue.'/postfix/access_list');
-        }else{
-            //
-        }
+        // if ($selectedValue == $selectedValue){
+            $filePath = storage_path($selectedValue.'/postfix/access_list'); //root : root permission denied
+        // }else{
+        //     //
+        // }
 
         try {
+
+            $command = escapeshellcmd("sudo " . $filePath);
+            $content = shell_exec($command);
+
+            if ($content === null) {
+                throw new Exception("Unable to read file.");
+            }
+
             // Check the IP address in the database
             $count = smtp_relay_server::where('ip_addr_server', $ipAddress)
                                        ->where('types_req', $selectedValuetype_req)
@@ -62,7 +70,7 @@ class MainRelayController extends Controller
 
             // Read the file content and check the IP address in the file
             $fileContent = file_get_contents($filePath);
-            $lines = explode("\n", $fileContent);
+            $lines = explode("\n", $content);
 
             foreach ($lines as $line) {
                 $trimmed_line = trim($line);
@@ -81,7 +89,7 @@ class MainRelayController extends Controller
                 }
             }
         } catch (\Exception $e) {
-            return "Error 404! :No such file or directory!"; // . $e->getMessage();
+            return "Error 404! :No such file or directory!" . $e->getMessage();
         }
     }
 
@@ -105,7 +113,7 @@ class MainRelayController extends Controller
 
         $smtpMailServers = smtp_relay_server::where('form_id',$smtpreq->form_id)
                 ->where('types_req',$smtpreq->types_req)
-                ->get(); 
+                ->get();
 
         return view('mailrelay.edit', compact('user','smtpMailServers','smtpreq'));
     }
