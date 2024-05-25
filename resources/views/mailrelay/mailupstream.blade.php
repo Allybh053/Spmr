@@ -113,7 +113,7 @@
                         <div class="card-body">
                             <div class="row">
                                 <div class="col-xl-4 mb-4">
-                                    <a class="card lift h-100" href="#!">
+                                    <div class="card lift h-100">
                                         <div class="card-body d-flex justify-content-center flex-column">
                                             <div class="d-flex align-items-center justify-content-between">
                                                 <div class="me-3">
@@ -125,10 +125,10 @@
                                                 </div>
                                             </div>
                                         </div>
-                                    </a>
+                                    </div>
                                 </div>
                                 <div class="col-xl-4 mb-4">
-                                    <a class="card lift h-100" href="#!">
+                                    <div class="card lift h-100">
                                         <div class="card-body d-flex justify-content-center flex-column">
                                             <div class="d-flex align-items-center justify-content-between">
                                                 <div class="me-3">
@@ -140,10 +140,10 @@
                                                 </div>
                                             </div>
                                         </div>
-                                    </a>
+                                    </div>
                                 </div>
                                 <div class="col-xl-4 mb-4">
-                                    <a class="card lift h-100" href="#!">
+                                    <div class="card lift h-100">
                                         <div class="card-body d-flex justify-content-center flex-column">
                                             <div class="d-flex align-items-center justify-content-between">
                                                 <div class="me-3">
@@ -155,7 +155,7 @@
                                                 </div>
                                             </div>
                                         </div>
-                                    </a>
+                                    </div>
                                 </div>
                             </div>
 

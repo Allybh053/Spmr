@@ -40,11 +40,11 @@ class MainRelayController extends Controller
         $selectedValuetype_req = $request->input('selectedValuetype_req');
         $selectedValue = $request->input('selectedValue');
         //think how to add identify
-        if ($selectedValue == $selectedValue){
-            $filePath = storage_path($selectedValue.'/postfix/access_list');
-        }else{
-            //
-        }
+        // if ($selectedValue == $selectedValue){
+        $filePath = storage_path($selectedValue.'/postfix/access_list'); //root : root permission denied
+        // }else{
+        //     //
+        // }
 
         try {
             // Check the IP address in the database
@@ -81,7 +81,7 @@ class MainRelayController extends Controller
                 }
             }
         } catch (\Exception $e) {
-            return "Error 404! :No such file or directory!"; // . $e->getMessage();
+            return "Error 404! :No such file or directory!" . $e->getMessage();
         }
     }
 
@@ -105,7 +105,7 @@ class MainRelayController extends Controller
 
         $smtpMailServers = smtp_relay_server::where('form_id',$smtpreq->form_id)
                 ->where('types_req',$smtpreq->types_req)
-                ->get(); 
+                ->get();
 
         return view('mailrelay.edit', compact('user','smtpMailServers','smtpreq'));
     }
