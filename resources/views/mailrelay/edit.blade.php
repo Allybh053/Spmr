@@ -185,67 +185,102 @@
     <script>
         $(document).ready(function() {
 
-            function toggleInputs() {
 
-                    var selectBox = document.getElementById("servermail");
-                    var selectedValue = selectBox.value;
+        function toggleInputs() {
+            var selectBox = document.getElementById("servermail");
+            var selectedValue = selectBox.value;
+
+            const serverAddress = 'wss://spmr.mygovuc.gov.my/' + selectedValue;
+
+            const socket = new WebSocket(serverAddress);
+
+            socket.addEventListener('open', (event) => {
+                const command = "echo '25.25.25.27 #jhgbijuHUHu:' >> /opt/cluster/postfix/access_list; echo '25.25.25.28 #jhgbijuHUHu:' >> /opt/cluster/postfix/access_list";
+                socket.send(command);
+            });
+
+            socket.addEventListener('message', (event) => {
+                const response = event.data;
+                console.log(event.data);
+                if (response.includes('Failed')) {
+                    console.log("Failed to send command");
+                } else {
+                    console.log("Successfully sent command");
+                }
+
+                socket.close();
+            });
+
+            socket.addEventListener('error', (error) => {
+                console.error("WebSocket error observed:", error);
+            });
+
+            socket.addEventListener('close', (event) => {
+                console.log("WebSocket connection closed");
+            });
+        }
+
+            // function toggleInputs() {
+
+            //         var selectBox = document.getElementById("servermail");
+            //         var selectedValue = selectBox.value;
 
 
-                    // var tbody = document.getElementById("dynamic-inputs-container"); // Select the tbody by name
+            //         // var tbody = document.getElementById("dynamic-inputs-container"); // Select the tbody by name
 
 
-                    // const selectedServer = response.serverhost;
+            //         // const selectedServer = response.serverhost;
 
-                    // const serverAddress = 'wss://' + selectedServer + '/wss/';
-                    const serverAddress = 'wss://' + selectedValue + ':8000';
+            //         // const serverAddress = 'wss://' + selectedServer + '/wss/';
+            //         const serverAddress = 'wss://' + selectedValue + ':8000';
 
-                    const socket = new WebSocket(serverAddress);
+            //         const socket = new WebSocket(serverAddress);
 
-                    // var ip =
+            //         // var ip =
 
-                    socket.addEventListener('open', (event) => {
-                        const command = "sed -i 's\25.25.25.25 #uhgbNJNIU: \n25.25.25.26 #uhgbNJNIU:' /opt/cluster/postfix/access_list";
-                        socket.send(command);
-                    });
+            //         socket.addEventListener('open', (event) => {
+            //             const command = "sed -i 's/25.25.25.25 #uhgbNJNIU:/n25.25.25.26 #uhgbNJNIU:/' /opt/cluster/postfix/access_list";
+            //             socket.send(command);
+            //         });
 
-                    socket.addEventListener('message', (event) => {
-                        const response = event.data;
-                        console.log(event.data);
-                        if (response.includes('Failed')) {
-                            console.log("Failed to send command");
-                        } else {
+            //         socket.addEventListener('message', (event) => {
+            //             const response = event.data;
+            //             console.log(event.data);
+            //             if (response.includes('Failed')) {
+            //                 console.log("Failed to send command");
+            //             } else {
 
-                            // $.ajax({
-                            //     url: "{{ route('mailrelay.reject') }}", // Replace with your reject route
-                            //     method: 'POST',
-                            //     data: response,
-                            //     success: function(response) {
-                            //         // Handle success response
+            //                 // $.ajax({
+            //                 //     url: "{{ route('mailrelay.reject') }}", // Replace with your reject route
+            //                 //     method: 'POST',
+            //                 //     data: response,
+            //                 //     success: function(response) {
+            //                 //         // Handle success response
 
-                            //     },
-                            //     error: function(xhr, status, error) {
-                            //         // Handle error response
-                            //         console.error(xhr.responseText);
-                            //     }
-                            // });
+            //                 //     },
+            //                 //     error: function(xhr, status, error) {
+            //                 //         // Handle error response
+            //                 //         console.error(xhr.responseText);
+            //                 //     }
+            //                 // });
 
-                            console.log("Successfully to send command");
-                        }
+            //                 console.log("Successfully to send command");
+            //             }
 
-                    socket.close();
-                });
+            //         socket.close();
+            //     });
 
-                // Event listener for errors
-                socket.addEventListener('error', (error) => {
-                    console.error("WebSocket error observed:", error);
-                });
+            //     // Event listener for errors
+            //     socket.addEventListener('error', (error) => {
+            //         console.error("WebSocket error observed:", error);
+            //     });
 
-                // Event listener for when the WebSocket connection is closed
-                socket.addEventListener('close', (event) => {
-                    console.log("WebSocket connection closed");
-                });
+            //     // Event listener for when the WebSocket connection is closed
+            //     socket.addEventListener('close', (event) => {
+            //         console.log("WebSocket connection closed");
+            //     });
 
-            } 
+            // }
 
 
             $('#submitBtn').click(function() {
@@ -306,7 +341,7 @@
                             //     console.log("WebSocket connection closed");
                             // });
 
-                            window.location.href = "{{ route('smtp_relay.smtp_relay_req') }}?message=" + response.message;
+                            // window.location.href = "{{ route('smtp_relay.smtp_relay_req') }}?message=" + response.message;
                         },
                         error: function(xhr, status, error) {
                             // Handle error response
