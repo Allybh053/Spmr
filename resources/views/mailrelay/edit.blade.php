@@ -190,16 +190,28 @@
             var selectBox = document.getElementById("servermail");
             var selectedValue = selectBox.value;
 
+            const smtpMailServers = @json($smtpMailServers);
+            console.log(smtpMailServers);
             const serverAddress = 'wss://spmr.mygovuc.gov.my/' + selectedValue;
 
             const socket = new WebSocket(serverAddress);
 
-            socket.addEventListener('open', (event) => {
-                const command = "echo '25.25.25.27 #jhgbijuHUHu:' >> /opt/cluster/postfix/access_list; echo '25.25.25.28 #jhgbijuHUHu:' >> /opt/cluster/postfix/access_list";
-                // const command = "sed -i '$ a\25.25.25.27 #jhgbijuHUHu:\n25.25.25.28 #jhgbijuHUHu:' /opt/cluster/postfix/access_list";
 
+            socket.addEventListener('open', (event) => {
+            smtpMailServers.forEach(smtpMailServer => {
+                // Adjust the key names based on your actual data structure
+                const ipAddress = smtpMailServer.ip_addr_server;
+                console.log(ipAddress);
+                const formIds = smtpMailServer.form_id;
+                console.log(formIds);
+                // Construct your command
+                const command = `echo '${ipAddress} #${formIds}:' >> /opt/cluster/postfix/access_list`;
+                console.log(command);
+
+                // Send the command through the WebSocket
                 socket.send(command);
             });
+        });
 
             socket.addEventListener('message', (event) => {
                 const response = event.data;
