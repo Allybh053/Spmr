@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\Storage;
 use Maatwebsite\Excel\Facades\Excel;
 use App\Excel\ExportStatisticData;
 use Illuminate\Support\Facades\Auth;
+use OwenIt\Auditing\Models\Audit;
 
 class LoopBackController extends Controller
 {
@@ -51,6 +52,28 @@ class LoopBackController extends Controller
 
         $serverMailRelay = Server::find($serverIds);
         $serverName = $serverMailRelay->hostname;
+
+          // Prepare old and new values for auditing
+        $oldValues = []; // Assuming there are no old values to track for this action
+        $newValues = [
+            'server' => $serverName,
+            'mail_from' => $mailForm,
+            'rec_to' => $recTo,
+        ];
+
+        // Perform the audit logging
+        $audit = new Audit();
+        $audit->auditable_type = Server::class;
+        $audit->auditable_id = $serverMailRelay->id;
+        $audit->old_values = json_encode($oldValues); // Empty for this operation
+        $audit->new_values = json_encode($newValues);
+        $audit->user_id = Auth::user()->id; // Ensure the user is authenticated
+        $audit->event = 'Loopback SMTP Test'; // Specify the event
+        $audit->url = $request->fullUrl();
+        $audit->ip_address = $request->ip();
+        $audit->user_agent = $request->userAgent();
+        $audit->tags = json_encode(['manual-audit']);
+        $audit->save();
 
         return response()->json([
             'data' => $serverName,
