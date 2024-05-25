@@ -106,12 +106,12 @@ class UsersController extends Controller
                 return redirect()->route('usermanagements.index')->with('success', 'User added successfully');
             } else {
                 // Log error or return error response
-                Log::error('Failed to create user');
+                // Log::error('Failed to create user');
                 return redirect()->back()->with('error', 'Failed to create user.');
             }
         } catch (\Exception $e) {
             // Log the exception for debugging
-            Log::error('Error creating user: ' . $e->getMessage());
+            // Log::error('Error creating user: ' . $e->getMessage());
 
             // Return error response
             return redirect()->back()->with('error', 'An error occurred while creating user.');

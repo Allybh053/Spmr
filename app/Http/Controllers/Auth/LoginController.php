@@ -48,8 +48,11 @@ class LoginController extends Controller
         if ($user->enabled == 0) {
             Auth::logout();
 
-            throw ValidationException::withMessages([
-                $this->username() => [trans('auth.failed')],
+            // throw ValidationException::withMessages([
+            //     $this->username() => [trans('auth.failed')],
+            // ]);
+            return back()->withErrors([
+                'email' => 'This account is inactive.',
             ]);
         }
 
