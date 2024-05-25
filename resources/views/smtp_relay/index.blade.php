@@ -10,7 +10,7 @@
                                 <div class="page-header-icon"></div>
                                 <nav aria-label="breadcrumb">
                                     <ol class="breadcrumb">
-                                         <li class="breadcrumb-item">SMTP Relay Request MyGovUC3.0</li>
+                                         <li class="breadcrumb-item">SMTP Relay Request MyGovUC</li>
                                     </ol>
                                 </nav>
                             </h1>
@@ -63,7 +63,7 @@
                 </div>
             @endif --}}
             <div class="card">
-                 <div class="card-header">List SMTP Relay Request MyGovUC3.0</div>
+                 <div class="card-header">List SMTP Relay Request MyGovUC</div>
                 <div class="card-body">
                 <div class="table-responsive">
                     <table id="spmrDatatable"  class="display table table-striped table-bordered" cellspacing="0" width="100%">
@@ -162,7 +162,7 @@
             {
                 extend: 'copy',
                 text: 'Copy',
-                title: 'List SMTP Relay Request MyGovUC3.0',
+                title: 'List SMTP Relay Request MyGovUC',
                 exportOptions: {
                     columns: ':visible'
                 }
@@ -170,7 +170,7 @@
             {
                 extend: 'csv',
                 text: 'CSV',
-                title: 'List SMTP Relay Request MyGovUC3.0',
+                title: 'List SMTP Relay Request MyGovUC',
                 exportOptions: {
                     columns: ':visible'
                 }
@@ -178,7 +178,7 @@
             {
                 extend: 'excel',
                 text: 'Excel',
-                title: 'List SMTP Relay Request MyGovUC3.0',
+                title: 'List SMTP Relay Request MyGovUC',
                 exportOptions: {
                     columns: ':visible'
                 }
@@ -186,7 +186,7 @@
             {
                 extend: 'pdf',
                 text: 'PDF',
-                title: 'List SMTP Relay Request MyGovUC3.0',
+                title: 'List SMTP Relay Request MyGovUC',
                 exportOptions: {
                     columns: ':visible'
                 }
@@ -194,7 +194,7 @@
             {
                 extend: 'print',
                 text: 'Print',
-                title: 'List SMTP Relay Request MyGovUC3.0',
+                title: 'List SMTP Relay Request MyGovUC',
                 exportOptions: {
                     columns: ':visible'
                 }
