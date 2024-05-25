@@ -74,7 +74,7 @@ $(document).on("click", "#deleteRoles", function (e) {
         showCancelButton: true,
         confirmButtonColor: '#3085d6',
         cancelButtonColor: '#d33',
-        confirmButtonText: 'Ya',
+        confirmButtonText: 'Yes',
         // cancelButtonText: 'Tidak',
     }).then(function(confirmed) {
         toggleLoader();
@@ -87,7 +87,7 @@ $(document).on("click", "#deleteRoles", function (e) {
                 showCancelButton: true,
                 confirmButtonColor: '#3085d6',
                 cancelButtonColor: '#d33',
-                confirmButtonText: 'Ya',
+                confirmButtonText: 'Yes',
                 // cancelButtonText: 'Tidak',
             }).then(function(confirmed) {
                 toggleLoader();

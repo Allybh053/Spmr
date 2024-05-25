@@ -15,7 +15,7 @@ use Auth;
 use Illuminate\Support\Facades\View;
 use App\Models\Server;
 use App\Models\RoleServer;
-use Illuminate\Support\Facades\Log;
+use OwenIt\Auditing\Models\Audit;
 use Illuminate\Support\Facades\Artisan;
 
 
@@ -35,7 +35,7 @@ class RoleController extends Controller
     {
         $messages = [
             'name.required' => 'Namespace Required.',
-            'name.max' => 'Namespace must not exceed 255 characters.'
+            'name.max'      => 'Namespace must not exceed 255 characters.'
         ];
 
         $validation = [
@@ -44,33 +44,55 @@ class RoleController extends Controller
 
         $request->validate($validation, $messages);
 
-        // Reject if role name is 'developer' or 'superadmin'
-        if (trim(strtolower($request->name)) == 'developer' || trim(strtolower($request->name)) == 'superadmin') {
-            return response()->json(['error' => '1', 'message' => 'Please select another role name.'], 401);
+        // Reject if role name equal to developer or superadmin
+        if(trim(strtolower($request->name)) == 'developer' || trim(strtolower($request->name)) == 'superadmin') {
+            return response()->json(['error' => '1', 'message' => 'Please Select another Role Name.'], 401);
         }
 
-        // Find or create the role
-        $role = $request->roleId ? Role::find($request->roleId) : new Role;
-        // Log before any changes
-        Log::info('Role before changes:', $role->toArray());
 
-        // Fill the role with the new name
-        $role->name = $request->name;
+    if ($request->roleId) {
+        $role = Role::find($request->roleId);
+        $oldValues = $role->getOriginal(); // Capture old values before update
+    } else {
+        $role = new Role;
+        $oldValues = []; // No old values for a new record
+    }
 
-        // Log dirty fields for debugging
-        $dirtyFields = $role->getDirty();
-        Log::info('Dirty fields:', $dirtyFields);
+    $role->name = $request->name;
+    $role->save();
 
-        // Save the role and audit the changes
-        if ($role->isDirty()) {
-            $role->save(); // This should trigger the audit
-            // Manually log audit if necessary
-            // event(new \OwenIt\Auditing\Events\Audited($role));
-        } else {
-            return response()->json(['message' => 'No changes detected'], 200);
-        }
+    // Convert old and new values to JSON format
+    $oldValuesJson = json_encode($oldValues);
+    $newValuesJson = json_encode($role->getAttributes());
 
-        // Sync permissions
+    // Manual auditing for created role
+    if (!$request->roleId) {
+        $audit = new Audit();
+        $audit->auditable_type = Role::class;
+        $audit->auditable_id = $role->id;
+        $audit->old_values = $oldValuesJson; // Empty for creation
+        $audit->new_values = $newValuesJson;
+        $audit->event = 'created';
+        $audit->url = request()->fullUrl();
+        $audit->ip_address = request()->ip();
+        $audit->user_agent = request()->userAgent();
+        $audit->tags = json_encode(['manual-audit']); // Ensure tags are in JSON format
+        $audit->save();
+    } else {
+        // Manual auditing for updated role
+        $audit = new Audit();
+        $audit->auditable_type = Role::class;
+        $audit->auditable_id = $role->id;
+        $audit->old_values = $oldValuesJson;
+        $audit->new_values = $newValuesJson;
+        $audit->event = 'updated';
+        $audit->url = request()->fullUrl();
+        $audit->ip_address = request()->ip();
+        $audit->user_agent = request()->userAgent();
+        $audit->tags = json_encode(['manual-audit']); // Ensure tags are in JSON format
+        $audit->save();
+    }
+
         $permissions = Permission::where('name', 'LIKE', 'lihat_%')->get();
         $role->syncPermissions($permissions);
 
@@ -85,6 +107,10 @@ class RoleController extends Controller
 
         // Find the role by ID
         $role = Role::find($roleId);
+
+        // Capture old permissions and servers for auditing
+        $oldPermissions = $role->permissions()->pluck('id')->toArray();
+        $oldServers = RoleServer::where('role_id', $roleId)->pluck('server_id')->toArray();
 
             // Detach all existing permissions associated with the role
             DB::table('role_has_permissions')->where('role_id', $roleId)->delete();
@@ -110,16 +136,57 @@ class RoleController extends Controller
 
         $this->clearCacheAndAutoload();
 
+        // Capture new permissions and servers for auditing
+        $newPermissions = $role->permissions()->pluck('id')->toArray();
+        $newServers = RoleServer::where('role_id', $roleId)->pluck('server_id')->toArray();
 
+        // Create audit log
+        $audit = new Audit();
+        $audit->auditable_type = Role::class;
+        $audit->auditable_id = $roleId;
+        $audit->old_values = json_encode(['permissions' => $oldPermissions, 'servers' => $oldServers]);
+        $audit->new_values = json_encode(['permissions' => $newPermissions, 'servers' => $newServers]);
+        $audit->event = 'updated';
+        $audit->url = $request->fullUrl();
+        $audit->ip_address = $request->ip();
+        $audit->user_agent = $request->userAgent();
+        $audit->tags = json_encode(['manual-audit']);
+        $audit->save();
 
         return response()->json(['success' => '1', 'redirect' => route('setup.role.index'), 'message' => 'Permissions saved successfully.']);
     }
 
     public function delete(Request $request)
     {
-        $role = Role::find($request->id)->delete();
+        // Find the role by ID before deleting it
+        $role = Role::find($request->id);
 
-        return response()->json(['success' => '1', 'redirect' => route('setup.role.index'), 'message' => 'Role deleted successfully.']);
+        // Check if the role exists
+        if ($role) {
+            // Capture the role's attributes for auditing before deleting it
+            $oldValues = $role->getAttributes();
+
+            // Delete the role
+            $role->delete();
+
+            // Create an audit log for the deletion
+            $audit = new Audit();
+            $audit->auditable_type = Role::class;
+            $audit->auditable_id = $request->id;
+            $audit->old_values = json_encode($oldValues);
+            $audit->new_values = null; // Since the role is deleted, there are no new values
+            $audit->event = 'deleted';
+            $audit->url = $request->fullUrl();
+            $audit->ip_address = $request->ip();
+            $audit->user_agent = $request->userAgent();
+            $audit->tags = json_encode(['manual-audit']);
+            $audit->save();
+
+            return response()->json(['success' => '1', 'redirect' => route('setup.role.index'), 'message' => 'Role deleted successfully.']);
+        }
+
+        // If the role does not exist, return an error response
+        return response()->json(['error' => '1', 'message' => 'Role not found.'], 404);
     }
 
     private function clearCacheAndAutoload()
