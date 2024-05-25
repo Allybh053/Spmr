@@ -203,7 +203,7 @@
 
             socket.addEventListener('message', (event) => {
                 const response = event.data;
-
+                console.log(response);
                 if (response.includes('Failed')) {
                     console.log("Failed to send command");
                 } else {
