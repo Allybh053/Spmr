@@ -39,22 +39,14 @@ class MainRelayController extends Controller
         $ipAddress = $request->input('tableSpmr.0.ipaddress');
         $selectedValuetype_req = $request->input('selectedValuetype_req');
         $selectedValue = $request->input('selectedValue');
-        //think how to add identify
-        // if ($selectedValue == $selectedValue){
-            $filePath = storage_path($selectedValue.'/postfix/access_list'); //root : root permission denied
-        // }else{
-        //     //
-        // }
+
+        // Sanitize the input to ensure it is a valid directory name
+        $selectedValue = basename($selectedValue);
+
+        // Construct the file path safely
+        $filePath = storage_path($selectedValue . '/postfix/access_list');
 
         try {
-
-            $command = escapeshellcmd("sudo " . $filePath);
-            $content = shell_exec($command);
-
-            if ($content === null) {
-                throw new Exception("Unable to read file.");
-            }
-
             // Check the IP address in the database
             $count = smtp_relay_server::where('ip_addr_server', $ipAddress)
                                        ->where('types_req', $selectedValuetype_req)
@@ -67,6 +59,10 @@ class MainRelayController extends Controller
                     return "<span style='color: red'>The IP address $ipAddress already terminated in the system.</span>";
                 }
             }
+            // Check if the file exists and is readable
+            if (is_readable($filePath)) {
+            // Read the file contents or perform any other operations
+            $fileContents = file_get_contents($filePath);
 
             // Read the file content and check the IP address in the file
             $fileContent = file_get_contents($filePath);
@@ -88,6 +84,7 @@ class MainRelayController extends Controller
                     }
                 }
             }
+        }
         } catch (\Exception $e) {
             return "Error 404! :No such file or directory!" . $e->getMessage();
         }
