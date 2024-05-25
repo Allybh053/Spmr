@@ -8,30 +8,29 @@ use App\Models\AuditLog;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\DB;
 
 class ActivityLogController extends Controller
 {
     public function showActivityLogs()
     {
+
         // Fetch audit logs
-        $auditLogs = AuditLog::orderBy('created_at', 'desc')->paginate(10);
-    
+        $auditLogs = AuditLog::orderBy('created_at', 'desc')->get();
+
         // Fetch activity logs
-        $activityLogs = ActivityLog::orderBy('created_at', 'desc')->paginate(10);
+        $activityLogs = ActivityLog::orderBy('created_at', 'desc')->get();
+
         // Merge audit logs and activity logs into a single collection
-        $logs = new Collection([...$auditLogs, ...$activityLogs]);
+        $logs = $auditLogs->merge($activityLogs);
 
         // Sort the merged logs by created_at timestamp
-        $sortedLogs = $logs->sortByDesc('created_at');
-    
-        // Paginate the sorted logs
-        $perPage = 10; // Number of items per page
-        $currentPage = LengthAwarePaginator::resolveCurrentPage();
-        $currentItems = $sortedLogs->slice(($currentPage - 1) * $perPage, $perPage)->all();
-        $logsPaginated = new LengthAwarePaginator($currentItems, count($sortedLogs), $perPage, $currentPage);
-    
+        $logsPaginated = $logs->sortByDesc('created_at');
+
         // Assuming you want to pass the logs to a view named 'activityLog.index'
         return view('activityLog.index', compact('logsPaginated'));
     }
-    
+
+
+
 }
