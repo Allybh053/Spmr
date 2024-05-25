@@ -50,8 +50,10 @@ class ManageServiceController extends Controller
         $oldValuesJson = json_encode($oldValues);
         $newValues=[
             'server' => $request->input('server'),
+            'service_type' => $request->input('type'),
             'process' => 'start'
         ];
+
         $newValuesJson = json_encode($newValues);
 
         $audit = new Audit();
@@ -74,6 +76,7 @@ class ManageServiceController extends Controller
         $oldValuesJson = json_encode($oldValues);
         $newValues=[
             'server' => $request->input('server'),
+            'service_type' => $request->input('type'),
             'process' => 'stop'
         ];
         $newValuesJson = json_encode($newValues);
@@ -98,6 +101,7 @@ class ManageServiceController extends Controller
         $oldValuesJson = json_encode($oldValues);
         $newValues=[
             'server' => $request->input('server'),
+            'service_type' => $request->input('type'),
             'process' => 'restart'
         ];
         $newValuesJson = json_encode($newValues);

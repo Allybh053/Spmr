@@ -315,9 +315,9 @@ Route::group(['middleware' => ['auth', 'nocache']], function () {
         Route::post('/index/searching', [MonthlyReportingController::class, 'search'])->name('monthlyReport.index.search');
     });
 
-    Route::post('/start-postfix-services', [ManageServiceController::class, 'start'])->name('start-postfix-services');
-    Route::post('/stop-postfix-services', [ManageServiceController::class, 'stop'])->name('stop-postfix-services');
-    Route::post('/restart-postfix-services', [ManageServiceController::class, 'restart'])->name('restart-postfix-services');
+    Route::post('/start-services', [ManageServiceController::class, 'start'])->name('start-postfix-services');
+    Route::post('/stop-services', [ManageServiceController::class, 'stop'])->name('stop-postfix-services');
+    Route::post('/restart-services', [ManageServiceController::class, 'restart'])->name('restart-postfix-services');
 
     Route::get('/lang/{locale}', [LanguageController::class, 'switchLang'])->name('lang.switch');
 
