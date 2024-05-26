@@ -25,7 +25,10 @@ class MailLogController extends Controller
     {
         $user = Auth::user();
         $role = $user->roles->isNotEmpty() ? $user->roles->pluck('name')->first() : null;
-        $serversArray = Server::all()->toArray();
+        $serversArray = Server::leftJoin('role_servers as rs','servers.id','rs.server_id')
+        ->where('rs.role_id',$user->roles->pluck('id')->first())
+        ->where('servers.status',1)
+        ->get();
         $serverIds = RoleServer::whereIn('role_id', $user->roles->pluck('id')->all())
             ->pluck('server_id');
 
