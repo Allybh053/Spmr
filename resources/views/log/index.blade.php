@@ -77,7 +77,7 @@
                         let sockets = [];
                         let hostname = response.serverName[0];
                         // const serverAddress = 'wss://' + hostname + '/wss/';
-                        const serverAddress = 'wss://' + hostname + ':8000';
+                        const serverAddress = 'wss://spmr.mygovuc.gov.my/' + hostname;
                         const socket = new WebSocket(serverAddress);
                         sockets.push(socket);
 
