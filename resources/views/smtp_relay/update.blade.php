@@ -108,7 +108,8 @@
                 <div class="mb-3">
                     <label for="smtp_relay_auth_method">Mail Relay Authentication Method</label>
                     <select class="form-control select2" name="smtp_relay_auth_method" id="smtp_relay_auth_method" required>
-                        <option value="{{ old('smtp_relay_auth_method', $formsmtp->smtp_relay_auth_method) }}">@if ($formsmtp->smtp_relay_auth_method == 1)
+                        <option value="{{ old('smtp_relay_auth_method', $formsmtp->smtp_relay_auth_method) }}">
+                        @if ($formsmtp->smtp_relay_auth_method == 1)
                             IP Based Authentication Relay
                         @else
                             Username/Password Authentication Relay
@@ -118,8 +119,8 @@
                     </select>
                 </div>
                 <div class="mb-3">
-                    <label for="smtp_relay_server">Server Mail Relay</label>
-                    <select class="form-control select2" name="smtp_relay_server" id="smtp_relay_server" aria-label="Default select" required>
+                    <label for="smtp_relay_server">Server Mail Relays</label>
+                    <select class="form-control select2" name="smtp_relay_server" id="smtp_relay_server" aria-label="Default select" required onchange="toggleInputs()">
                         <option value="{{ old('smtp_relay_server', $formsmtp->smtp_relay_server) }}">{{ old('smtp_relay_server', $formsmtp->smtp_relay_server) }} </option>
                         @foreach ($serversArray as $server)
                         <option value="{{ $server['hostname'] }}">{{ $server['hostname'] }}</option>
@@ -146,8 +147,8 @@
                                         <input type="text" name="tableSpmr[{{ $loop->index }}][server_name]" id="server_name" value="{{ old('tableSpmr.' . $loop->index . '.server_name', $detail->server_name) }}" class="form-control" required />
                                     </td>
                                     <td><input type="text" name="tableSpmr[{{ $loop->index }}][ip_addr_server]" id="ip_addr_server" value="{{ old('tableSpmr.' . $loop->index . '.ip_addr_server', $detail->ip_addr_server) }}" class="form-control" required /></td>
-                                        <td><input type="text" name="tableSpmr[{{ $loop->index }}][fqdn_server]" id="fqdn_server" value="{{ old('tableSpmr.' . $loop->index . '.fqdn_server', $detail->fqdn_server) }}" class="form-control" required /></td>
-                                        <td hidden><input type="text" name="tableSpmr[{{ $loop->index }}][deactivated]" id="deactivated" value="{{ old('tableSpmr.' . $loop->index . '.deactivated', $detail->deactivated) }}" class="form-control" /></td>
+                                    <td><input type="text" name="tableSpmr[{{ $loop->index }}][fqdn_server]" id="fqdn_server" value="{{ old('tableSpmr.' . $loop->index . '.fqdn_server', $detail->fqdn_server) }}" class="form-control" required /></td>
+                                    <td hidden><input type="text" name="tableSpmr[{{ $loop->index }}][deactivated]" id="deactivated" value="{{ old('tableSpmr.' . $loop->index . '.deactivated', $detail->deactivated) }}" class="form-control" /></td>
                                     <td><button class="btn btn-danger remove-row"><i class="me-1" data-feather="minus"></i>Remove</button></td>
                                 </tr>
                             @endforeach
@@ -174,7 +175,7 @@
                         <label for=""></label>
                     </div>
                 </div>
-                <div class="row gx-3 mb-3" id="authusername" style="display: none;">
+                <div class="row gx-3 mb-3" id="authusername" @if ($formsmtp->smtp_relay_auth_method == 1) style="display: none;" @endif>
                     <div class="col-md-6">
                         <label for="smtp_username">SMTP Username</label>
                         <input type="text" name="smtp_username" id="smtp_username" value="{{ old('smtp_username', $formsmtp->smtp_username) }}" class="form-control" required>
@@ -358,6 +359,61 @@
 @push('script')
 <script>
     $(document).ready(function() {
+
+        $('#dynamic-inputs-container').on('input', '#ip_addr_server', function() {
+            var type_req = document.getElementById("types_req");
+            var selectBox = document.getElementById("smtp_relay_server");
+            var selectedValuesmtp_relay_server = selectBox.options[selectBox.selectedIndex].value;
+            var selectedValue = selectBox.options[selectBox.selectedIndex].value;
+            var selectedValuetype_req = type_req.options[type_req.selectedIndex].value;
+            var ipAddress = $(this).val();
+
+
+            if (/^(?:[0-9]{1,3}\.){3}[0-9]{1,3}$/.test(ipAddress)) {
+                const serverAddress = 'wss://spmr.mygovuc.gov.my/' + selectedValuesmtp_relay_server;
+                const socket = new WebSocket(serverAddress);
+
+                socket.addEventListener('open', (event) => {
+                    let command = '';
+
+                    if (selectedValuetype_req == 1) {
+                        // Construct your command
+                        command = `grep -q '^${ipAddress} ' /opt/cluster/postfix/access_list && echo "IP address exists"`;
+                    } else if (selectedValuetype_req == 2) {
+                        // Construct your command
+                        command = `grep -q '^#${ipAddress} ' /opt/cluster/postfix/access_list && echo "IP address exists"`;
+                    }
+
+                    // Send the command through the WebSocket if it's not empty
+                    if (command) {
+                        socket.send(command);
+                    }
+                });
+
+                socket.addEventListener('message', (event) => {
+                    const response = event.data;
+                    if (response.includes('IP address exists')) {
+                        $('#resultContainer').html(response);
+                    } else {
+                        console.log("Successfully sent command");
+                    }
+                    socket.close();
+                });
+
+                socket.addEventListener('error', (error) => {
+                    // console.error("WebSocket error observed:", error);
+                });
+
+                socket.addEventListener('close', (event) => {
+                    // console.log("WebSocket connection closed");
+                    socket.close();
+                });
+            } else {
+                // Clear result container if input is invalid
+                $('#resultContainer').empty();
+            }
+        });
+
 
 const dateAInput = document.getElementById('applicantdate');
 const dateBInput = document.getElementById('verifierdate');
