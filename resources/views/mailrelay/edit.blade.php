@@ -26,8 +26,8 @@
                         New Application
                     @elseif($smtpreq->types_req === 2)
                         Service Termination
-                    @elseif($smtpreq->types_req === 3)
-                        Onboarding Agency
+                    {{-- @elseif($smtpreq->types_req === 3)
+                        Onboarding Agency --}}
                     @endif
                 <br>Ticket Number : {{ $smtpreq->ticket_id }} &nbsp;&nbsp; [Serial Number: {{ $smtpreq->form_id }}]
             </div>

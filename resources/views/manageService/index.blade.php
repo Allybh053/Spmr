@@ -41,20 +41,20 @@
                                                   <div class="me-3">
                                                       <h5>Postfix</h5>
                                                   </div>
-                                                  <img id="statusPostfixImage" src="{{ asset('assets/img/demo/offline.png') }}" alt="Postfix is down" style="width: 5rem">
+                                                  <img id="statusPostfixImage{{ $loop->index }}" src="{{ asset('assets/img/demo/offline.png') }}" alt="Postfix is down" style="width: 5rem">
                                               </div>
-                                              <p id="statusPostfix" style="display: inline-block; margin-left: 5px;">--</p>
+                                              <p id="statusPostfix{{ $loop->index }}" style="display: inline-block; margin-left: 5px;">--</p>
                                           </div>
                                           @can('manage_service_update')
                                               <div class="col-md-6 d-flex justify-content-center" style="padding-left: 150px;padding-bottom: 15px;">
                                                   <div class="btn-group" role="group" aria-label="Button group with nested dropdown">
-                                                      <button type="button" id="postfixStart" class="btn btn-primary" value="{{ $server->hostname }}">
+                                                      <button type="button" id="postfixStart" class="btn btn-primary" value="{{ $server->hostname }}" onclick="startPostfixServices.call(this)">
                                                           <i class="fas fa-play"></i>
                                                       </button>
-                                                      <button type="button" id="postfixStop" class="btn btn-danger" value="{{ $server->hostname }}">
+                                                      <button type="button" id="postfixStop" class="btn btn-danger" value="{{ $server->hostname }}" onclick="stopPostfixServices.call(this)">
                                                           <i class="fas fa-stop"></i>
                                                       </button>
-                                                      <button type="button" id="postfixRestart" class="btn btn-warning" value="{{ $server->hostname }}">
+                                                      <button type="button" id="postfixRestart" class="btn btn-warning" value="{{ $server->hostname }}" onclick="restartPostfixServices.call(this)">
                                                           <i class="fas fa-redo"></i>
                                                       </button>
                                                   </div>
@@ -69,20 +69,20 @@
                                                   <div class="me-3">
                                                       <h5>Apache</h5>
                                                   </div>
-                                                  <img id="statusApache2Image" src="{{ asset('assets/img/demo/offline.png') }}" alt="Apache2 is down" style="width: 5rem">
+                                                  <img id="statusApache2Image{{ $loop->index }}" src="{{ asset('assets/img/demo/offline.png') }}" alt="Apache2 is down" style="width: 5rem">
                                               </div>
-                                              <p id="statusApache2" style="display: inline-block; margin-left: 5px;">--</p>
+                                              <p id="statusApache2{{ $loop->index }}" style="display: inline-block; margin-left: 5px;">--</p>
                                           </div>
                                           @can('manage_service_update')
                                               <div class="col-md-6 d-flex justify-content-center" style="padding-left: 150px;padding-bottom: 15px;">
                                                   <div class="btn-group" role="group" aria-label="Button group with nested dropdown">
-                                                      <button type="button" id="apacheStart" class="btn btn-primary" value="{{ $server->hostname }}">
+                                                      <button type="button" id="apacheStart" class="btn btn-primary" value="{{ $server->hostname }}" onclick="startApacheServices.call(this)">
                                                           <i class="fas fa-play"></i>
                                                       </button>
-                                                      <button type="button" id="apacheStop" class="btn btn-danger" value="{{ $server->hostname }}">
+                                                      <button type="button" id="apacheStop" class="btn btn-danger" value="{{ $server->hostname }}" onclick="stopApacheServices.call(this)">
                                                           <i class="fas fa-stop"></i>
                                                       </button>
-                                                      <button type="button" id="apacheRestart" class="btn btn-warning" value="{{ $server->hostname }}">
+                                                      <button type="button" id="apacheRestart" class="btn btn-warning" value="{{ $server->hostname }}" onclick="restartApacheServices.call(this)">
                                                           <i class="fas fa-redo"></i>
                                                       </button>
                                                   </div>
@@ -97,20 +97,20 @@
                                                   <div class="me-3">
                                                       <h5>Webmin</h5>
                                                   </div>
-                                                  <img id="statusWebminImage" src="{{ asset('assets/img/demo/offline.png') }}" alt="Webmin is down" style="width: 5rem">
+                                                  <img id="statusWebminImage{{ $loop->index }}" src="{{ asset('assets/img/demo/offline.png') }}" alt="Webmin is down" style="width: 5rem">
                                               </div>
-                                              <p id="statusWebmin" style="display: inline-block; margin-left: 5px;">--</p>
+                                              <p id="statusWebmin{{ $loop->index }}" style="display: inline-block; margin-left: 5px;">--</p>
                                           </div>
                                           @can('manage_service_update')
                                               <div class="col-md-6 d-flex justify-content-center" style="padding-left: 150px;padding-bottom: 15px;">
                                                   <div class="btn-group" role="group" aria-label="Button group with nested dropdown">
-                                                      <button type="button" id="webminStart" class="btn btn-primary" value="{{ $server->hostname }}">
+                                                      <button type="button" id="webminStart" class="btn btn-primary" value="{{ $server->hostname }}" onclick="startWebminServices.call(this)">
                                                           <i class="fas fa-play"></i>
                                                       </button>
-                                                      <button type="button" id="webminStop" class="btn btn-danger" value="{{ $server->hostname }}">
+                                                      <button type="button" id="webminStop" class="btn btn-danger" value="{{ $server->hostname }}" onclick="stopWebminServices.call(this)">
                                                           <i class="fas fa-stop"></i>
                                                       </button>
-                                                      <button type="button" id="webminRestart" class="btn btn-warning" value="{{ $server->hostname }}">
+                                                      <button type="button" id="webminRestart" class="btn btn-warning" value="{{ $server->hostname }}" onclick="restartWebminServices.call(this)">
                                                           <i class="fas fa-redo"></i>
                                                       </button>
                                                   </div>
@@ -185,9 +185,30 @@
         sockets.push(socket);
     });
 
+    var commands = [
+                        {
+                            command: 'status=$(systemctl --no-pager status postfix | grep Active:); if echo "$status" | grep -q "active (exited) since"; then echo "Postfix is running"; elif echo "$status" | grep -q "inactive (dead) since"; then echo "Postfix is down"; else echo "Something is wrong"; fi',
+                            id: 'statusPostfix'
+                        },
+                        {
+                            command: 'status=$(systemctl --no-pager status webmin | grep Active:); if echo "$status" | grep -q "active (running) since"; then echo "Webmin is running"; elif echo "$status" | grep -q "inactive (dead) since"; then echo "Webmin is down"; else echo "Something is wrong"; fi',
+                            id: 'statusWebmin'
+                        },
+                        {
+                            command: 'status=$(systemctl --no-pager status apache2 | grep Active:); if echo "$status" | grep -q "active (running) since"; then echo "Apache2 is running"; elif echo "$status" | grep -q "inactive (dead) since"; then echo "Apache2 is down"; else echo "Something is wrong"; fi',
+                            id: 'statusApache2'
+                        }
+                    ];
+
     sockets.forEach((socket, index) => {
-        getStatusServicesMailServer(socket);
+        // getStatusServicesMailServer(socket);
         socket.addEventListener('open', (event) => {
+        commands.forEach((commandObj, commandIndex) => {
+            setTimeout(() => {
+                //console.log("Sending command to : " + commandObj.command);
+                socket.send(commandObj.command);
+            }, commandIndex * 1000); // Delay each command by 1 second
+        });
 
         });
 
@@ -198,106 +219,148 @@
         socket.addEventListener('error', (event) => {
 
         });
-
+        var outputs = [];
         socket.addEventListener('message', (event) => {
+        const response = event.data;
+        outputs.push(response);
+        $('#statusPostfix'+ index).text(outputs[0]);
+        var postfixStatus = outputs[0];
+            var postfixAlt;
+            if(postfixStatus == "Postfix is running"){
+            postfixStatus = "Online";
+            postfixAlt = "Postfix is running";
+            }else{
+            postfixStatus = "Offline";
+            postfixAlt = "Postfix is down";
+            }
+            var postfixImageSrc = postfixStatus === 'Online' ? '/assets/img/demo/online.png' : '/assets/img/demo/offline.png';
+            $('#statusPostfixImage'+ index).attr('src', postfixImageSrc).attr('alt', postfixAlt);
+
+
+        $('#statusWebmin'+ index).text(outputs[1]);
+            var WebminStatus = outputs[1];
+            var WebminAlt;
+            if(WebminStatus == "Webmin is running"){
+            WebminStatus = "Online";
+            WebminAlt = "Webmin is running";
+            }else{
+            WebminStatus = "Offline";
+            WebminAlt = "Webmin is down";
+            }
+            var WebminImageSrc = WebminStatus === 'Online' ? '/assets/img/demo/online.png' : '/assets/img/demo/offline.png';
+            $('#statusWebminImage'+ index).attr('src', WebminImageSrc).attr('alt', WebminAlt);
+
+        $('#statusApache2'+ index).text(outputs[2]);
+            var Apache2Status = outputs[2];
+            var Apache2Alt;
+            if(Apache2Status == "Apache2 is running"){
+            Apache2Status = "Online";
+            Apache2Alt = "Apache2 is running";
+            }else{
+            Apache2Status = "Offline";
+            Apache2Alt = "Apache2 is down";
+            }
+            var Apache2ImageSrc = Apache2Status === 'Online' ? '/assets/img/demo/online.png' : '/assets/img/demo/offline.png';
+            $('#statusApache2Image'+ index).attr('src', Apache2ImageSrc).attr('alt', Apache2Alt);
 
         });
+        // socket.close();
     });
 
-    function getStatusServicesMailServer(socket) {
+    // function getStatusServicesMailServer(socket) {
 
-        const commands = [
-            'status=$(systemctl --no-pager status postfix | grep Active:); if echo "$status" | grep -q "active (exited) since"; then echo "Postfix is running"; elif echo "$status" | grep -q "inactive (dead) since"; then echo "Postfix is down"; else echo "Something is wrong"; fi',
-            'status=$(systemctl --no-pager status webmin | grep Active:); if echo "$status" | grep -q "active (running) since"; then echo "Webmin is running"; elif echo "$status" | grep -q "inactive (dead) since"; then echo "Webmin is down"; else echo "Something is wrong"; fi',
-            'status=$(systemctl --no-pager status apache2 | grep Active:); if echo "$status" | grep -q "active (running) since"; then echo "Apache2 is running"; elif echo "$status" | grep -q "inactive (dead) since"; then echo "Apache2 is down"; else echo "Something is wrong"; fi',
+    //     const commands = [
+    //         'status=$(systemctl --no-pager status postfix | grep Active:); if echo "$status" | grep -q "active (exited) since"; then echo "Postfix is running"; elif echo "$status" | grep -q "inactive (dead) since"; then echo "Postfix is down"; else echo "Something is wrong"; fi',
+    //         'status=$(systemctl --no-pager status webmin | grep Active:); if echo "$status" | grep -q "active (running) since"; then echo "Webmin is running"; elif echo "$status" | grep -q "inactive (dead) since"; then echo "Webmin is down"; else echo "Something is wrong"; fi',
+    //         'status=$(systemctl --no-pager status apache2 | grep Active:); if echo "$status" | grep -q "active (running) since"; then echo "Apache2 is running"; elif echo "$status" | grep -q "inactive (dead) since"; then echo "Apache2 is down"; else echo "Something is wrong"; fi',
 
-        ];
+    //     ];
 
-        const outputs = [];
+    //     const outputs = [];
 
-        socket.addEventListener('open', (event) => {
+    //     socket.addEventListener('open', (event) => {
 
-            commands.forEach(command => {
-                socket.send(command);
-            });
-        });
+    //         commands.forEach(command => {
+    //             socket.send(command);
+    //         });
+    //     });
 
-        socket.addEventListener('message', (event) => {
+    //     socket.addEventListener('message', (event) => {
 
-            const response = event.data;
+    //         const response = event.data;
 
-            const output = extractOutput(response);
-            if (output !== null) {
+    //         const output = extractOutput(response);
+    //         if (output !== null) {
 
-                outputs.push(output);
+    //             outputs.push(output);
 
-                if (outputs.length > commands.length) {
+    //             if (outputs.length > commands.length) {
 
-                    $('#statusPostfix').text(outputs[1]);
-                    $('#statusWebmin').text(outputs[3]);
-                    $('#statusApache2').text(outputs[5]);
+    //                 $('#statusPostfix').text(outputs[1]);
+    //                 $('#statusWebmin').text(outputs[3]);
+    //                 $('#statusApache2').text(outputs[5]);
 
-                    var postfixStatus = outputs[1];
-                      var postfixAlt;
-                      if(postfixStatus == "Postfix is running"){
-                        postfixStatus = "Online";
-                        postfixAlt = "Postfix is running";
-                      }else{
-                        postfixStatus = "Offline";
-                        postfixAlt = "Postfix is down";
-                      }
-                      var postfixImageSrc = postfixStatus === 'Online' ? '/assets/img/demo/online.png' : '/assets/img/demo/offline.png';
-                      $('#statusPostfixImage').attr('src', postfixImageSrc).attr('alt', postfixAlt);
+    //                 var postfixStatus = outputs[1];
+    //                   var postfixAlt;
+    //                   if(postfixStatus == "Postfix is running"){
+    //                     postfixStatus = "Online";
+    //                     postfixAlt = "Postfix is running";
+    //                   }else{
+    //                     postfixStatus = "Offline";
+    //                     postfixAlt = "Postfix is down";
+    //                   }
+    //                   var postfixImageSrc = postfixStatus === 'Online' ? '/assets/img/demo/online.png' : '/assets/img/demo/offline.png';
+    //                   $('#statusPostfixImage').attr('src', postfixImageSrc).attr('alt', postfixAlt);
 
-                      var Apache2Status = outputs[5];
-                      var Apache2Alt;
-                      if(Apache2Status == "Apache2 is running"){
-                        Apache2Status = "Online";
-                        Apache2Alt = "Apache2 is running";
-                      }else{
-                        Apache2Status = "Offline";
-                        Apache2Alt = "Apache2 is down";
-                      }
-                      var Apache2ImageSrc = Apache2Status === 'Online' ? '/assets/img/demo/online.png' : '/assets/img/demo/offline.png';
-                      $('#statusApache2Image').attr('src', Apache2ImageSrc).attr('alt', Apache2Alt);
+    //                   var Apache2Status = outputs[5];
+    //                   var Apache2Alt;
+    //                   if(Apache2Status == "Apache2 is running"){
+    //                     Apache2Status = "Online";
+    //                     Apache2Alt = "Apache2 is running";
+    //                   }else{
+    //                     Apache2Status = "Offline";
+    //                     Apache2Alt = "Apache2 is down";
+    //                   }
+    //                   var Apache2ImageSrc = Apache2Status === 'Online' ? '/assets/img/demo/online.png' : '/assets/img/demo/offline.png';
+    //                   $('#statusApache2Image').attr('src', Apache2ImageSrc).attr('alt', Apache2Alt);
 
-                      var WebminStatus = outputs[3];
-                      var WebminAlt;
-                      if(WebminStatus == "Webmin is running"){
-                        WebminStatus = "Online";
-                        WebminAlt = "Webmin is running";
-                      }else{
-                        WebminStatus = "Offline";
-                        WebminAlt = "Webmin is down";
-                      }
-                      var WebminImageSrc = WebminStatus === 'Online' ? '/assets/img/demo/online.png' : '/assets/img/demo/offline.png';
-                      $('#statusWebminImage').attr('src', WebminImageSrc).attr('alt', WebminAlt);
+    //                   var WebminStatus = outputs[3];
+    //                   var WebminAlt;
+    //                   if(WebminStatus == "Webmin is running"){
+    //                     WebminStatus = "Online";
+    //                     WebminAlt = "Webmin is running";
+    //                   }else{
+    //                     WebminStatus = "Offline";
+    //                     WebminAlt = "Webmin is down";
+    //                   }
+    //                   var WebminImageSrc = WebminStatus === 'Online' ? '/assets/img/demo/online.png' : '/assets/img/demo/offline.png';
+    //                   $('#statusWebminImage').attr('src', WebminImageSrc).attr('alt', WebminAlt);
 
 
-                }
-            }
-            socket.close();
-        });
+    //             }
+    //         }
+    //         socket.close();
+    //     });
 
-        function extractOutput(response) {
+        // function extractOutput(response) {
 
-            const cleanResponse = response.replace(/\[\d;?\d*m/g, '').trim();
+        //     const cleanResponse = response.replace(/\[\d;?\d*m/g, '').trim();
 
-            //const outputMatch = cleanResponse.match(/command: (.*)/);
-            const outputMatch = cleanResponse.match(/\[.*?\]#\S (.*)/);
+        //     //const outputMatch = cleanResponse.match(/command: (.*)/);
+        //     const outputMatch = cleanResponse.match(/\[.*?\]#\S (.*)/);
 
-            const outputs = [];
+        //     const outputs = [];
 
-            if (outputMatch && outputMatch.length > 1) {
+        //     if (outputMatch && outputMatch.length > 1) {
 
-                outputs.push(outputMatch[1]);
+        //         outputs.push(outputMatch[1]);
 
-                return outputs;
-            } else {
-                return null;
-            }
-        }
-    }
+        //         return outputs;
+        //     } else {
+        //         return null;
+        //     }
+        // }
+    // }
 
     // Postfix Controller //
     // Start //
@@ -327,8 +390,7 @@
         }
     });
     function startPostfixServices() {
-        const selectedServer = $('#postfixStart').val();
-        // const serverAddress = 'wss://' + selectedServer + '/wss/';
+        const selectedServer = $(this).val();
         const serverAddress = 'wss://spmr.mygovuc.gov.my/'+ selectedServer;
         //console.log(serverAddress);
         const socket = new WebSocket(serverAddress);
@@ -345,7 +407,21 @@
             if (response.includes('Failed')) {
                 alert("Failed to start Postfix services on " + selectedServer);
             } else {
-                alert("Postfix services successfully started on " + selectedServer);
+
+                Swal.fire({
+                    title: 'Succesfully starting Postfix..'+ selectedServer,
+                    allowOutsideClick: false, // Prevent outside clicks
+                    showConfirmButton: false, // Disable the "OK" button
+                    onBeforeOpen: () => {
+                        Swal.showLoading();
+                    },
+                    timer: 100000, // 6 seconds
+                    willClose: () => {
+                        // You can add any action you want to perform when the alert is about to close
+                        // console.log('The alert is closing');
+                    }
+                });
+                // alert("Postfix services successfully started on " + selectedServer);
             }
             socket.close();
             location.reload();
@@ -378,7 +454,7 @@
         }
     });
     function stopPostfixServices() {
-        const selectedServer = $('#postfixStop').val();
+        const selectedServer = $(this).val();
         // const serverAddress = 'wss://' + selectedServer + '/wss/';
         const serverAddress = 'wss://spmr.mygovuc.gov.my/'+ selectedServer;
         //console.log(serverAddress);
@@ -392,11 +468,25 @@
         socket.addEventListener('message', (event) => {
             //alert("Postfix services successfully stopped on " + selectedServer);
             const response = event.data;
-            //console.log(response);
+            console.log(response);
             if (response.includes('Failed')) {
                 alert("Failed to stop Postfix services on " + selectedServer);
             } else {
-                alert("Postfix services successfully stopped on " + selectedServer);
+
+                Swal.fire({
+                    title: 'Postfix services successfully stopped on'+ selectedServer,
+                    allowOutsideClick: false, // Prevent outside clicks
+                    showConfirmButton: false, // Disable the "OK" button
+                    onBeforeOpen: () => {
+                        Swal.showLoading();
+                    },
+                    timer: 100000, // 6 seconds
+                    willClose: () => {
+                        // You can add any action you want to perform when the alert is about to close
+                        // console.log('The alert is closing');
+                    }
+                });
+                // alert("Postfix services successfully stopped on " + selectedServer);
             }
             socket.close();
             location.reload();
@@ -429,7 +519,7 @@
         }
     });
     function restartPostfixServices() {
-        const selectedServer = $('#postfixRestart').val();
+        const selectedServer = $(this).val();
         // const serverAddress = 'wss://' + selectedServer + '/wss/';
         const serverAddress = 'wss://spmr.mygovuc.gov.my/'+ selectedServer;
         //console.log(serverAddress);
@@ -447,7 +537,21 @@
             if (response.includes('Failed')) {
                 alert("Failed to restart Postfix services on " + selectedServer);
             } else {
-                alert("Postfix services successfully restarting on " + selectedServer);
+
+                Swal.fire({
+                    title: 'Postfix services successfully restarting on'+ selectedServer,
+                    allowOutsideClick: false, // Prevent outside clicks
+                    showConfirmButton: false, // Disable the "OK" button
+                    onBeforeOpen: () => {
+                        Swal.showLoading();
+                    },
+                    timer: 100000, // 6 seconds
+                    willClose: () => {
+                        // You can add any action you want to perform when the alert is about to close
+                        // console.log('The alert is closing');
+                    }
+                });
+                // alert("Postfix services successfully restarting on " + selectedServer);
             }
             socket.close();
             location.reload();
@@ -483,7 +587,7 @@
         }
     });
     function startApacheServices() {
-        const selectedServer = $('#apacheStart').val();
+        const selectedServer = $(this).val();
         // const serverAddress = 'wss://' + selectedServer + '/wss/';
         const serverAddress = 'wss://spmr.mygovuc.gov.my/'+ selectedServer;
         //console.log(serverAddress);
@@ -501,7 +605,20 @@
             if (response.includes('Failed')) {
                 alert("Failed to start Apache2 services on " + selectedServer);
             } else {
-                alert("Apache2 services successfully started on " + selectedServer);
+                Swal.fire({
+                    title: 'Apache2 services successfully started on'+ selectedServer,
+                    allowOutsideClick: false, // Prevent outside clicks
+                    showConfirmButton: false, // Disable the "OK" button
+                    onBeforeOpen: () => {
+                        Swal.showLoading();
+                    },
+                    timer: 100000, // 6 seconds
+                    willClose: () => {
+                        // You can add any action you want to perform when the alert is about to close
+                        // console.log('The alert is closing');
+                    }
+                });
+                // alert("Apache2 services successfully started on " + selectedServer);
             }
             socket.close();
             location.reload();
@@ -533,7 +650,7 @@
         }
     });
     function stopApacheServices() {
-        const selectedServer = $('#apacheStop').val();
+        const selectedServer = $(this).val();
         // const serverAddress = 'wss://' + selectedServer + '/wss/';
         const serverAddress = 'wss://spmr.mygovuc.gov.my/'+ selectedServer;
         //console.log(serverAddress);
@@ -551,7 +668,20 @@
             if (response.includes('Failed')) {
                 alert("Failed to stop Apache2 services on " + selectedServer);
             } else {
-                alert("Apache2 services successfully stopped on " + selectedServer);
+                Swal.fire({
+                    title: 'Apache2 services successfully stopped on '+ selectedServer,
+                    allowOutsideClick: false, // Prevent outside clicks
+                    showConfirmButton: false, // Disable the "OK" button
+                    onBeforeOpen: () => {
+                        Swal.showLoading();
+                    },
+                    timer: 100000, // 6 seconds
+                    willClose: () => {
+                        // You can add any action you want to perform when the alert is about to close
+                        // console.log('The alert is closing');
+                    }
+                });
+                // alert("Apache2 services successfully stopped on " + selectedServer);
             }
             socket.close();
             location.reload();
@@ -585,7 +715,7 @@
         }
     });
     function restartApacheServices() {
-        const selectedServer = $('#apacheRestart').val();
+        const selectedServer = $(this).val();
         // const serverAddress = 'wss://' + selectedServer + '/wss/';
         const serverAddress = 'wss://spmr.mygovuc.gov.my/'+ selectedServer;
         //console.log(serverAddress);
@@ -603,7 +733,20 @@
             if (response.includes('Failed')) {
                 alert("Failed to restart Apache2 services on " + selectedServer);
             } else {
-                alert("Apache2 services successfully restarting on " + selectedServer);
+                Swal.fire({
+                    title: 'Apache2 services successfully restarting on '+ selectedServer,
+                    allowOutsideClick: false, // Prevent outside clicks
+                    showConfirmButton: false, // Disable the "OK" button
+                    onBeforeOpen: () => {
+                        Swal.showLoading();
+                    },
+                    timer: 100000, // 6 seconds
+                    willClose: () => {
+                        // You can add any action you want to perform when the alert is about to close
+                        // console.log('The alert is closing');
+                    }
+                });
+                // alert("Apache2 services successfully restarting on " + selectedServer);
             }
             socket.close();
             location.reload();
@@ -639,7 +782,7 @@
         }
     });
     function startWebminServices() {
-        const selectedServer = $('#webminStart').val();
+        const selectedServer = $(this).val();
         // const serverAddress = 'wss://' + selectedServer + '/wss/';
         const serverAddress = 'wss://spmr.mygovuc.gov.my/'+ selectedServer;
         //console.log(serverAddress);
@@ -657,7 +800,21 @@
             if (response.includes('Failed')) {
                 alert("Failed to start Webmin services on " + selectedServer);
             } else {
-                alert("Webmin services successfully started on " + selectedServer);
+                Swal.fire({
+                    title: 'Webmin services successfully started on '+ selectedServer,
+                    allowOutsideClick: false, // Prevent outside clicks
+                    showConfirmButton: false, // Disable the "OK" button
+                    onBeforeOpen: () => {
+                        Swal.showLoading();
+                    },
+                    timer: 100000, // 6 seconds
+                    willClose: () => {
+                        // You can add any action you want to perform when the alert is about to close
+                        // console.log('The alert is closing');
+                    }
+                });
+
+                // alert("Webmin services successfully started on " + selectedServer);
             }
             socket.close();
             location.reload();
@@ -689,7 +846,7 @@
         }
     });
     function stopWebminServices() {
-        const selectedServer = $('#webminStop').val();
+        const selectedServer = $(this).val();
         // const serverAddress = 'wss://' + selectedServer + '/wss/';
         const serverAddress = 'wss://spmr.mygovuc.gov.my/'+ selectedServer;
         //console.log(serverAddress);
@@ -707,7 +864,20 @@
             if (response.includes('Failed')) {
                 alert("Failed to stop Webmin services on " + selectedServer);
             } else {
-                alert("Webmin services successfully stopped on " + selectedServer);
+                Swal.fire({
+                    title: 'Webmin services successfully stopped on '+ selectedServer,
+                    allowOutsideClick: false, // Prevent outside clicks
+                    showConfirmButton: false, // Disable the "OK" button
+                    onBeforeOpen: () => {
+                        Swal.showLoading();
+                    },
+                    timer: 100000, // 6 seconds
+                    willClose: () => {
+                        // You can add any action you want to perform when the alert is about to close
+                        // console.log('The alert is closing');
+                    }
+                });
+                // alert("Webmin services successfully stopped on " + selectedServer);
             }
             socket.close();
             location.reload();
@@ -740,7 +910,7 @@
         }
     });
     function restartWebminServices() {
-        const selectedServer = $('#webminRestart').val();
+        const selectedServer = $(this).val();
         // const serverAddress = 'wss://' + selectedServer + '/wss/';
         const serverAddress = 'wss://spmr.mygovuc.gov.my/'+ selectedServer;
         //console.log(serverAddress);
@@ -758,7 +928,20 @@
             if (response.includes('Failed')) {
                 alert("Failed to restart Webmin services on " + selectedServer);
             } else {
-                alert("Webmin services successfully restarting on " + selectedServer);
+                Swal.fire({
+                    title: 'Webmin services successfully restarting on '+ selectedServer,
+                    allowOutsideClick: false, // Prevent outside clicks
+                    showConfirmButton: false, // Disable the "OK" button
+                    onBeforeOpen: () => {
+                        Swal.showLoading();
+                    },
+                    timer: 100000, // 6 seconds
+                    willClose: () => {
+                        // You can add any action you want to perform when the alert is about to close
+                        // console.log('The alert is closing');
+                    }
+                });
+                // alert("Webmin services successfully restarting on " + selectedServer);
             }
             socket.close();
             location.reload();
