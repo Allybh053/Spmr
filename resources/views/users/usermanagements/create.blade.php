@@ -26,20 +26,6 @@
         </nav>
         <hr class="mt-0 mb-4" />
         <div class="row">
-            <div class="col-xl-4" @disabled(true) hidden>
-                <!-- Profile picture card-->
-                <div class="card mb-4 mb-xl-0">
-                    <div class="card-header">User Picture</div>
-                    <div class="card-body text-center">
-                        <!-- Profile picture image-->
-                        <img class="img-account-profile rounded-circle mb-2" src="assets/img/illustrations/profiles/profile-1.png" alt="" />
-                        <!-- Profile picture help block-->
-                        <div class="small font-italic text-muted mb-4">JPG or PNG no larger than 5 MB</div>
-                        <!-- Profile picture upload button-->
-                        <button class="btn btn-primary" type="button">Upload new image</button>
-                    </div>
-                </div>
-            </div>
             <div class="col-xl-8">
                 <!-- Account details card-->
                 <div class="card mb-4">
@@ -51,7 +37,7 @@
                             <div class="mb-3">
                                 <label class="small mb-1" for="username">Username (how the name will appear to other users on the site)</label>
                                 {{-- <input class="form-control" id="username" name="username" type="text" placeholder="Enter your username" value="" oninput="this.value = this.value.toLowerCase()" required/> --}}
-                                <input disabled class="form-control" id="username" name="username" type="text" value="" oninput="validateInput(this)" required/>
+                                <input readonly class="form-control" id="username" name="username" type="text" value="" oninput="validateInput(this)" required/>
                                 <span id="errorMessage" style="color: red;"></span>
                             </div>
                             <!-- Form Row-->
@@ -160,7 +146,7 @@
         </div>
     </div>
 @push('script')
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+{{-- <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script> --}}
 <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-beta.1/dist/css/select2.min.css" rel="stylesheet" />
 <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-beta.1/dist/js/select2.min.js"></script>
 <script src="https://ajax.aspnetcdn.com/ajax/jquery.validate/1.11.1/jquery.validate.min.js"></script>
@@ -170,13 +156,61 @@
 function handleEmailChange() {
     const emailInput = document.getElementById('email');
     let emailValue = emailInput.value;
-    emailValue = emailValue.replace(/[@.]/g, '');
+    emailValue = emailValue.replace(/[@._-]/g, '');
 
     const usernameInput = document.getElementById('username');
     usernameInput.value = emailValue;
 }
 
 $(document).ready(function() {
+
+
+    $(".select2").select2();
+
+        $("#formserver").validate({
+            errorPlacement: function(label, element) {
+                if (element.hasClass('select2')) {
+                    label.insertAfter(element.next('.select2-container')).addClass('mt-2 text-danger');
+                } else {
+                    label.addClass('mt-2 text-danger');
+                    label.insertAfter(element);
+                }
+            },
+            highlight: function(element) {
+                $(element).parent().addClass('is-invalid');
+                $(element).addClass('form-control-danger');
+            },
+            unhighlight: function(element) {
+                $(element).parent().removeClass('is-invalid');
+                $(element).removeClass('form-control-danger');
+            },
+            success: function(label, element) {
+                if ($(element).hasClass('select2-hidden-accessible')) {
+                    label.remove();
+                } else {
+                    label.remove();
+                }
+            }
+        });
+        $('#role_id').on('change', function() {
+            var isValid = $(this).valid();
+            if (isValid) {
+                $(this).removeClass('is-invalid');
+            }
+        });
+        $('#position').on('change', function() {
+            var isValid = $(this).valid();
+            if (isValid) {
+                $(this).removeClass('is-invalid');
+            }
+        });
+        $('#department').on('change', function() {
+            var isValid = $(this).valid();
+            if (isValid) {
+                $(this).removeClass('is-invalid');
+            }
+        });
+
     function matchCustom(params, data) {
                 // If there are no search terms, return all data
                 if ($.trim(params.term) === '') {
@@ -207,67 +241,6 @@ $(document).ready(function() {
                 placeholder: 'Select an option',
                 allowClear: true
             });
-        });
-
-var mySelect2 = $('#type_reqs');
-
-mySelect2.select2();
-
-
-$("#formserver").validate({
-
-rules: {
-//   systemtype: {
-//     required: true
-//   }
-},
-messages: {
-//   systemtype: {
-//     required: "Please choose the system type",
-//   },
-
-},
-errorPlacement: function(label, element) {
-  if (element.hasClass('select2')) {
-    label.insertAfter(element.next('.select2-container')).addClass('mt-2 text-danger');
-    select2label = label
-  } else {
-    label.addClass('mt-2 text-danger');
-    label.insertAfter(element);
-  }
-},
-highlight: function(element) {
-  $(element).parent().addClass('is-invalid')
-  $(element).addClass('form-control-danger')
-},
-success: function(label, element) {
-  $(element).parent().removeClass('is-invalid')
-  $(element).removeClass('form-control-danger')
-  label.remove();
-}
-});
-
-mySelect2.on("change", function(e) {
-  select2label.remove(); //remove label
-});
-
-        document.getElementById('userForm').addEventListener('submit', function(event) {
-            var requiredFields = document.querySelectorAll('#userForm [required]');
-            var formValid = true;
-
-            requiredFields.forEach(function(field) {
-                if (!field.value.trim()) {
-                    field.classList.add('is-invalid');
-                    formValid = false;
-                } else {
-                    field.classList.remove('is-invalid');
-                }
-            });
-
-            if (!formValid) {
-                event.preventDefault();
-                alert('Please fill in all required fields.');
-            }
         });
 
         function validateInput(input) {

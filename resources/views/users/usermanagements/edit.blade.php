@@ -48,7 +48,7 @@
                             <!-- Form Group (username)-->
                             <div class="mb-3">
                                 <label class="small mb-1" for="username">Username (how the name will appear to other users on the site)</label>
-                                <input class="form-control" id="username" name="username" type="text" placeholder="Enter your username" value="{{ old('username', $user->username) }}" oninput="validateInput(this)" required/>
+                                <input readonly class="form-control" id="username" name="username" type="text" placeholder="Enter your username" value="{{ old('username', $user->username) }}" oninput="validateInput(this)" required/>
                                 <span id="errorMessage" style="color: red;"></span>
                             </div>
                             <!-- Form Row-->
@@ -79,13 +79,13 @@
                             <!-- Form Group (email address)-->
                             <div class="mb-3">
                                 <label class="small mb-1" for="email">Email address</label>
-                                <input class="form-control" id="email" name="email" type="email" placeholder="Enter email address" value="{{ old('email', $user->email) }}" oninput="this.value = this.value.toLowerCase()" required/>
+                                <input class="form-control" id="email" name="email" type="email" placeholder="Enter email address" value="{{ old('email', $user->email) }}" oninput="this.value = this.value.toLowerCase()" onchange="handleEmailChange()" required/>
                             </div>
                             <!-- Form Row-->
                             <div class="row gx-3 mb-3">
                                 <div class="col-md-6">
                                     <label class="small mb-1" for="position">Position</label>
-                                    <select class="form-control select2" name="position_id" aria-label="Default select2" required>
+                                    <select class="form-control select2" id="position_id" name="position_id" aria-label="Default select2" required>
                                         @foreach ($positions as $position)
                                             <option value="{{ $position->id }}" {{ $user->position_id == $position->id ? 'selected' : '' }}>
                                                 {{ $position->name }}
@@ -96,7 +96,7 @@
                                 <!-- Form Group (phone number)-->
                                 <div class="col-md-6" @disabled(true)>
                                     <label class="small mb-1" for="department">Department</label>
-                                    <select class="form-control select2" name="department_id" aria-label="Default select2" required>
+                                    <select class="form-control select2" id="department_id" name="department_id" aria-label="Default select2" required>
                                         @foreach ($departments as $department)
                                             <option value="{{ $department->id }}" {{ $user->department_id == $department->id ? 'selected' : '' }}>
                                                 {{ $department->name }}
@@ -145,7 +145,25 @@
         }
     </style>
 </main>
+@push('script')
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+<link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-beta.1/dist/css/select2.min.css" rel="stylesheet" />
+<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-beta.1/dist/js/select2.min.js"></script>
+<script src="https://ajax.aspnetcdn.com/ajax/jquery.validate/1.11.1/jquery.validate.min.js"></script>
+
 <script>
+
+function handleEmailChange() {
+    const emailInput = document.getElementById('email');
+    let emailValue = emailInput.value;
+    emailValue = emailValue.replace(/[@._-]/g, '');
+
+    const usernameInput = document.getElementById('username');
+    usernameInput.value = emailValue;
+}
+
+
     function validateInput(input) {
         // Regular expression to match only alias, underscore, numbering, and letters (uppercase or lowercase)
         var regex = /^[a-zA-Z0-9_@]+$/;
@@ -160,5 +178,87 @@
             input.value = inputValue.replace(/[^a-zA-Z0-9_]/g, '');
         }
     }
+
+    $(document).ready(function() {
+
+
+$(".select2").select2();
+
+    $("#formserver").validate({
+        errorPlacement: function(label, element) {
+            if (element.hasClass('select2')) {
+                label.insertAfter(element.next('.select2-container')).addClass('mt-2 text-danger');
+            } else {
+                label.addClass('mt-2 text-danger');
+                label.insertAfter(element);
+            }
+        },
+        highlight: function(element) {
+            $(element).parent().addClass('is-invalid');
+            $(element).addClass('form-control-danger');
+        },
+        unhighlight: function(element) {
+            $(element).parent().removeClass('is-invalid');
+            $(element).removeClass('form-control-danger');
+        },
+        success: function(label, element) {
+            if ($(element).hasClass('select2-hidden-accessible')) {
+                label.remove();
+            } else {
+                label.remove();
+            }
+        }
+    });
+    $('#role_id').on('change', function() {
+        var isValid = $(this).valid();
+        if (isValid) {
+            $(this).removeClass('is-invalid');
+        }
+    });
+    $('#position_id').on('change', function() {
+        var isValid = $(this).valid();
+        if (isValid) {
+            $(this).removeClass('is-invalid');
+        }
+    });
+    $('#department_id').on('change', function() {
+        var isValid = $(this).valid();
+        if (isValid) {
+            $(this).removeClass('is-invalid');
+        }
+    });
+
+function matchCustom(params, data) {
+            // If there are no search terms, return all data
+            if ($.trim(params.term) === '') {
+                return data;
+            }
+
+            // Do not display the item if there is no 'text' property
+            if (typeof data.text === 'undefined') {
+                return null;
+            }
+
+            // Check if the search term is contained in the text
+            if (data.text.toLowerCase().indexOf(params.term.toLowerCase()) > -1) {
+                return data;
+            }
+
+            // Return `null` if the term should not be displayed
+            return null;
+        }
+
+        $('#position_id').select2({
+            matcher: matchCustom,
+            placeholder: 'Select an option',
+            allowClear: true
+        });
+        $('#department_id').select2({
+            matcher: matchCustom,
+            placeholder: 'Select an option',
+            allowClear: true
+        });
+    });
 </script>
+@endpush
 @endsection
