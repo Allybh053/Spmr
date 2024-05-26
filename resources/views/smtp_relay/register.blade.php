@@ -270,7 +270,8 @@
                     </div>
                     <div class="col-md-6">
                         <label for="officerdate">Date:</label>
-                        <input class="form-control" type="date" id="officerdate" name="officerdate">
+                        <input class="form-control" type="date" id="officerdate" name="officerdate"><br>
+                        <span style="color: red"><div id="message3"></div></span>
                     </div>
                 </div>
                 <hr>
@@ -300,7 +301,8 @@
                     </div>
                     <div class="mb-3 col-md-4">
                         <label class=" mb-1" for="approvaldate">Date:<span style="color: red"> *</span></label>
-                        <input class="form-control" type="date" id="approvaldate" name="approvaldate" required>
+                        <input class="form-control" type="date" id="approvaldate" name="approvaldate" required><br>
+                        <span style="color: red"><div id="message2"></div></span>
                     </div>
                 </div>
                 <hr>
@@ -377,11 +379,15 @@
 
         const dateAInput = document.getElementById('applicantdate');
         const dateBInput = document.getElementById('verifierdate');
-        // const dateCInput = document.getElementById('dateC');
+        const dateCInput = document.getElementById('approvaldate');
+        const dateDInput = document.getElementById('officerdate');
         const messageDiv = document.getElementById('message');
+        const messageDiv2 = document.getElementById('message2');
+        const messageDiv3 = document.getElementById('message3');
+
         function compareDates() {
-            const dateA = new Date(dateAInput.value);
-            const dateB = new Date(dateBInput.value);
+            var dateA = new Date(dateAInput.value);
+            var dateB = new Date(dateBInput.value);
             // const dateC = new Date(dateCInput.value);
 
             if (dateB && dateA) {
@@ -393,8 +399,39 @@
                 }
             }
         }
+        function compareDates3() {
+            var dateA = new Date(dateAInput.value);
+            var dateD = new Date(dateDInput.value);
+            // const dateC = new Date(dateCInput.value);
+
+            if (dateD && dateA) {
+                if ( dateD < dateA) {
+                    messageDiv3.textContent = "Date Helpdesk must be greater than Date Applicant";
+
+                } else {
+                    messageDiv3.textContent = "";
+                }
+            }
+        }
+
+        function compareDates2() {
+            var dateA = new Date(dateBInput.value);
+            var dateC = new Date(dateCInput.value);
+            // const dateC = new Date(dateCInput.value);
+
+            if (dateC && dateA) {
+                if (dateC < dateA) {
+                    messageDiv2.textContent = "Date Approval must be greater than Date Verifier";
+
+                } else {
+                    messageDiv2.textContent = "";
+                }
+            }
+        }
 
         dateBInput.addEventListener('change', compareDates);
+        dateCInput.addEventListener('change', compareDates2);
+        dateDInput.addEventListener('change', compareDates3);
 
         $(".select2").select2();
 

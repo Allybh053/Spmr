@@ -113,11 +113,12 @@
                         <div class="card-body">
                             <div class="row">
                                 <div class="col-xl-4 mb-4">
-                                    <div class="card lift h-100">
+                                    <div class="card h-100">
                                         <div class="card-body d-flex justify-content-center flex-column">
                                             <div class="d-flex align-items-center justify-content-between">
                                                 <div class="me-3">
                                                     <h5>Total Domain Activated</h5>
+                                                    <span>Updated every 30 minutes</span>
                                                     <div class="inline">
                                                         <i class="feather-l text-primary" data-feather="corner-down-right"></i>
                                                         <h2 id="totalIP" style="display: inline-block; margin-left: 5px;">--</h2>
@@ -128,11 +129,12 @@
                                     </div>
                                 </div>
                                 <div class="col-xl-4 mb-4">
-                                    <div class="card lift h-100">
+                                    <div class="card h-100">
                                         <div class="card-body d-flex justify-content-center flex-column">
                                             <div class="d-flex align-items-center justify-content-between">
                                                 <div class="me-3">
                                                     <h5>Total Domain Deactivated</h5>
+                                                    <span>Updated every 30 minutes</span>
                                                     <div class="inline">
                                                         <i class="feather-l text-primary" data-feather="corner-down-right"></i>
                                                         <h2 id="totalDeactivated" style="display: inline-block; margin-left: 5px;">--</h2>
@@ -143,11 +145,12 @@
                                     </div>
                                 </div>
                                 <div class="col-xl-4 mb-4">
-                                    <div class="card lift h-100">
+                                    <div class="card h-100">
                                         <div class="card-body d-flex justify-content-center flex-column">
                                             <div class="d-flex align-items-center justify-content-between">
                                                 <div class="me-3">
                                                     <h5>Total Domain Registered</h5>
+                                                    <span>Updated every 30 minutes</span>
                                                     <div class="inline">
                                                         <i class="feather-l text-primary" data-feather="corner-down-right"></i>
                                                         <h2 id="totalDomain" style="display: inline-block; margin-left: 5px;">--</h2>
@@ -401,9 +404,9 @@ $(document).ready(function () {
                     Swal.close();
 
                     // Update UI with the response data
-                    $('#totalIP').text(response.totalDomainActivated || "Not Found");
-                    $('#totalDeactivated').text(response.totalDomainDeactivated || "Not Found");
-                    $('#totalDomain').text(response.totalDomainRegistered || "Not Found");
+                    $('#totalIP').text(response.totalDomainActivated || "0");
+                    $('#totalDeactivated').text(response.totalDomainDeactivated || "0");
+                    $('#totalDomain').text(response.totalDomainRegistered || "0");
 
                     // Add index to each row for jadual2
                     $.each(response.dataMailRoute, function (index, row) {
