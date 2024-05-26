@@ -194,7 +194,7 @@
             var selectedValue = selectBox.value;
 
             const smtpMailServers = @json($smtpMailServers);
-            console.log(smtpMailServers);
+            
             const serverAddress = 'wss://spmr.mygovuc.gov.my/' + selectedValue;
 
             const socket = new WebSocket(serverAddress);
