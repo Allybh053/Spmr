@@ -27,43 +27,49 @@
         </div>
         <div class="card-body">
           <div class="row">
+            @can('total_application_registered')
             <div class="col-xl-6 mb-6">
-              <div class="card h-100">
-                <div class="card-body d-flex justify-content-center flex-column">
-                  <div class="d-flex align-items-center justify-content-between">
-                    <div class="me-3">
-                      <i class="feather-xl text-primary mb-3" data-feather="activity"></i>
-                      <h5>Total Application Registered</h5>
-                      <div class="inline">
-                        <i class="feather-l text-primary" data-feather="corner-down-right"></i>
-                        <h2 id="totalApplications" style="display: inline-block; margin-left: 5px;">{{$server['totalApplicationRegistered'] ?? '-'}}</h2>
+                <div class="card h-100">
+                  <div class="card-body d-flex justify-content-center flex-column">
+                    <div class="d-flex align-items-center justify-content-between">
+                      <div class="me-3">
+                        <i class="feather-xl text-primary mb-3" data-feather="activity"></i>
+                        <h5>Total Application Registered</h5>
+                        <div class="inline">
+                          <i class="feather-l text-primary" data-feather="corner-down-right"></i>
+                          <h2 id="totalApplications" style="display: inline-block; margin-left: 5px;">{{$server['totalApplicationRegistered'] ?? '-'}}</h2>
+                        </div>
                       </div>
+                      <img src="{{asset ('assets/img/illustrations/dash_app.svg')}}" alt="..." style="width: 8rem" />
                     </div>
-                    <img src="{{asset ('assets/img/illustrations/dash_app.svg')}}" alt="..." style="width: 8rem" />
                   </div>
-                </div>
+              </div>
             </div>
-            </div>
+            @endcan
+            @can('total_domain_registered')
             <div class="col-xl-6 mb-6">
-              <div class="card h-100">
-                <div class="card-body d-flex justify-content-center flex-column">
-                  <div class="d-flex align-items-center justify-content-between">
-                    <div class="me-3">
-                      <i class="feather-xl text-secondary mb-3" data-feather="zap"></i>
-                      <h5>Total Domain Registered</h5>
-                      <div class="inline">
-                        <i class="feather-l text-primary" data-feather="corner-down-right"></i>
-                        <h2 id="totalDomains" style="display: inline-block; margin-left: 5px;">{{$server['totalDomain'] ?? '-'}}</h2>
+                <div class="card h-100">
+                  <div class="card-body d-flex justify-content-center flex-column">
+                    <div class="d-flex align-items-center justify-content-between">
+                      <div class="me-3">
+                        <i class="feather-xl text-secondary mb-3" data-feather="zap"></i>
+                        <h5>Total Domain Registered</h5>
+                        <div class="inline">
+                          <i class="feather-l text-primary" data-feather="corner-down-right"></i>
+                          <h2 id="totalDomains" style="display: inline-block; margin-left: 5px;">{{$server['totalDomain'] ?? '-'}}</h2>
+                        </div>
                       </div>
+                      <img src="{{asset ('assets/img/illustrations/dash_domain.svg')}}" alt="..." style="width: 8rem" />
                     </div>
-                    <img src="{{asset ('assets/img/illustrations/dash_domain.svg')}}" alt="..." style="width: 8rem" />
                   </div>
-                </div>
-            </div>
-            </div>
+              </div>
+              </div>
+            @endcan
+
           </div>
           <br>
           <div class="row">
+            @can('number_of_registered_sasl')
             <div class="col-xl-6 mb-6">
                 <div class="card h-100">
                     <div class="card-body d-flex justify-content-center flex-column">
@@ -81,6 +87,9 @@
                     </div>
                 </div>
             </div>
+            @endcan
+
+            @can('total_ip_based_registered')
             <div class="col-xl-6 mb-6">
                 <div class="card h-100">
                     <div class="card-body d-flex justify-content-center flex-column">
@@ -98,6 +107,9 @@
                     </div>
                 </div>
             </div>
+            @endcan
+
+
           </div>
         </div>
       </div>
@@ -107,71 +119,83 @@
 <!-- End Loop By Server Here -->
 
   <div class="row mb-4">
+    @can('top_5_list_ministry')
     <div class="col-xxl-6">
-      <div class="card">
-        <div class="card-header text-center p-5">
-          <h5>Top 5 List Ministry/Agency/SUK</h5>
-        </div>
-        <div class="card-body">
-          <!-- <label for="limitSelectKementerian">Select Limit:</label><select name="limitKementerian" id="limitSelectKementerian"><option value="all" {{ $limit === 'all' ? 'selected' : '' }}>All</option><option value="10" {{ $limit == 10 ? 'selected' : '' }}>Top 10</option><option value="20" {{ $limit == 20 ? 'selected' : '' }}>Top 20</option><option value="50" {{ $limit == 50 ? 'selected' : '' }}>Top 50</option></select> -->
-          <canvas id="kementerianChart"></canvas>
+        <div class="card">
+          <div class="card-header text-center p-5">
+            <h5>Top 5 List Ministry/Agency/SUK</h5>
+          </div>
+          <div class="card-body">
+            <!-- <label for="limitSelectKementerian">Select Limit:</label><select name="limitKementerian" id="limitSelectKementerian"><option value="all" {{ $limit === 'all' ? 'selected' : '' }}>All</option><option value="10" {{ $limit == 10 ? 'selected' : '' }}>Top 10</option><option value="20" {{ $limit == 20 ? 'selected' : '' }}>Top 20</option><option value="50" {{ $limit == 50 ? 'selected' : '' }}>Top 50</option></select> -->
+            <canvas id="kementerianChart"></canvas>
+          </div>
         </div>
       </div>
-    </div>
+    @endcan
+
+    @can('top_5_list_department')
     <div class="col-xxl-6">
-      <div class="card">
-        <div class="card-header text-center p-5">
-          <h5>Top 5 List Department/Division/Unit</h5>
-        </div>
-        <div class="card-body">
-          <!-- <label for="limitSelect">Select Limit:</label><select name="limit" id="limitSelect"><option value="all" {{ $limit === 'all' ? 'selected' : '' }}>All</option><option value="10" {{ $limit == 10 ? 'selected' : '' }}>Top 10</option><option value="20" {{ $limit == 20 ? 'selected' : '' }}>Top 20</option><option value="50" {{ $limit == 50 ? 'selected' : '' }}>Top 50</option></select> -->
-          <canvas id="departmentChart"></canvas>
+        <div class="card">
+          <div class="card-header text-center p-5">
+            <h5>Top 5 List Department/Division/Unit</h5>
+          </div>
+          <div class="card-body">
+            <!-- <label for="limitSelect">Select Limit:</label><select name="limit" id="limitSelect"><option value="all" {{ $limit === 'all' ? 'selected' : '' }}>All</option><option value="10" {{ $limit == 10 ? 'selected' : '' }}>Top 10</option><option value="20" {{ $limit == 20 ? 'selected' : '' }}>Top 20</option><option value="50" {{ $limit == 50 ? 'selected' : '' }}>Top 50</option></select> -->
+            <canvas id="departmentChart"></canvas>
+          </div>
         </div>
       </div>
-    </div>
+    @endcan
+
   </div>
   <!-- <div class="row mb-4"><div class="col-xxl-4"><div class="card"><div class="card-header text-center p-5"><h5>Graf serial apps vs day</h5></div><div class="card-body"><canvas id="appsChart"></canvas></div></div></div><div class="col-xxl-4"><div class="card"><div class="card-header text-center p-5"><h5>Graf serial domain vs day</h5></div><div class="card-body"><canvas id="domainChart"></canvas></div></div></div><div class="col-xxl-4"><div class="card"><div class="card-header text-center p-5"><h5>Graf serial sasl vs day</h5></div><div class="card-body"><canvas id="saslChart"></canvas></div></div></div></div> -->
   <div class="row">
+    @can('serial_mail_queue_chart')
     <div class="col-xxl-12">
         <div class="card">
             <div class="card-header text-center p-5">
-                <h5>Graf serial Mail Queue vs Time</h5>
+                <h5>Serial Mail Queue vs Time Chart</h5>
             </div>
             <div class="card-body">
                 <canvas id="mailQueueChart"></canvas>
             </div>
         </div>
     </div>
+    @endcan
 
+    @can('view_current_mail_queue_count')
     <div class="col-xxl-12 mt-5">
-      <div class="card">
+        <div class="card">
         <div class="card-header text-center p-5">
-          <h5>View Current MailQueue Count</h5>
+            <h5>View Current MailQueue Count</h5>
         </div>
         <div class="card-body">
-          <div class="table-responsive">
+            <div class="table-responsive">
             <table id="spmrDatatable" class="display table table-striped table-bordered" cellspacing="0" width="100%">
-              <thead>
+                <thead>
                 <tr>
                     @foreach ($serverconfig as $server)
                         <th>{{ $server->hostname }}</th>
                     @endforeach
                 </tr>
-              </thead>
-              <tbody>
+                </thead>
+                <tbody>
                 <tr>
                     @foreach ($serverconfig as $server)
                         <td id="mailQueueCount">--</td>
                     @endforeach
                 </tr>
-              </tbody>
+                </tbody>
             </table>
-          </div>
+            </div>
         </div>
-      </div>
+        </div>
     </div>
+    @endcan
+
 </div>
-  <div class="row  mt-5">
+@can('realtime_service_status')
+<div class="row  mt-5">
     <div class="col-xxl-12">
       <div class="card">
         <div class="card-header text-center p-5">
@@ -283,6 +307,8 @@
     </div>
   </div>
 </div>
+@endcan
+
 @endsection
 @push('script')
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.4/Chart.min.js" crossorigin="anonymous"></script>
