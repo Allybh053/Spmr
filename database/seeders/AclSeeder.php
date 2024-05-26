@@ -18,6 +18,17 @@ class AclSeeder extends Seeder
 	{
 		// Create Permissions
 		$permissions = [
+            "dashboard" => [
+				'total_application_registered',
+				'total_domain_registered',
+				'number_of_registered_sasl',
+				'total_ip_based_registered',
+                'top_5_list_ministry',
+                'top_5_list_department',
+                'serial_mail_queue_chart',
+                'view_current_mail_queue_count',
+                'realtime_service_status'
+			],
 			"smtp_mail_relay" => [
 				'smtp_mail_relay_view',
 				'smtp_mail_relay_add',
