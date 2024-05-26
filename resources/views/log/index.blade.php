@@ -115,21 +115,29 @@
                             socket.addEventListener('message', (event) => {
 
                                 const response = event.data;
+                                outputs.push(response);
+                                $('#server-status').text(outputs[1]);
+                                $('#service-status').text(outputs[3]);
+                                $('#sasl').text(outputs[5]);
+                                $('#smtpd-lost').text(outputs[7]);
+                                $('#smtpd-timeout').text(outputs[9]);
+                                $('#bounced').text(outputs[11]);
+
                                 getHostDomSum(response)
                                 const output = extractOutput(response);
-                                if (output !== null) {
+                                // if (output !== null) {
 
-                                    outputs.push(output);
+                                //     outputs.push(output);
 
-                                    if (outputs.length > commands.length) {
-                                        $('#server-status').text(outputs[1]);
-                                        $('#service-status').text(outputs[3]);
-                                        $('#sasl').text(outputs[5]);
-                                        $('#smtpd-lost').text(outputs[7]);
-                                        $('#smtpd-timeout').text(outputs[9]);
-                                        $('#bounced').text(outputs[11]);
-                                    }
-                                }
+                                //     if (outputs.length > commands.length) {
+                                //         $('#server-status').text(outputs[1]);
+                                //         $('#service-status').text(outputs[3]);
+                                //         $('#sasl').text(outputs[5]);
+                                //         $('#smtpd-lost').text(outputs[7]);
+                                //         $('#smtpd-timeout').text(outputs[9]);
+                                //         $('#bounced').text(outputs[11]);
+                                //     }
+                                // }
                             });
                         }
 
