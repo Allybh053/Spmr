@@ -51,7 +51,7 @@
                             <div class="mb-3">
                                 <label class="small mb-1" for="username">Username (how the name will appear to other users on the site)</label>
                                 {{-- <input class="form-control" id="username" name="username" type="text" placeholder="Enter your username" value="" oninput="this.value = this.value.toLowerCase()" required/> --}}
-                                <input class="form-control" id="username" name="username" type="text" placeholder="Enter your username" value="" oninput="validateInput(this)" required/>
+                                <input disabled class="form-control" id="username" name="username" type="text" value="" oninput="validateInput(this)" required/>
                                 <span id="errorMessage" style="color: red;"></span>
                             </div>
                             <!-- Form Row-->
@@ -68,7 +68,6 @@
                                 </div>
                             </div>
                             <!-- Form Row        -->
-                            {{-- <div class="row gx-3 mb-3"> --}}
                                 <!-- Form Group (organization name)-->
                                 <div class="col-md-6" hidden @disabled(true)>
                                     <label class="small mb-1" for="acct_types">Account Type</label>
@@ -90,17 +89,16 @@
                                     @endforeach
                                     </select>
                                 </div>
-                            {{-- </div> --}}
                             <!-- Form Group (email address)-->
                             <div class="mb-3">
                                 <label class="small mb-1" for="email">Email address</label>
-                                <input class="form-control" id="email" name="email" type="email" placeholder="Enter email address" value="" oninput="this.value = this.value.toLowerCase()" required/>
+                                <input class="form-control" id="email" name="email" type="email" placeholder="Enter email address" value="" oninput="this.value = this.value.toLowerCase()" onchange="handleEmailChange()" required/>
                             </div>
                             <!-- Form Row-->
                             <div class="row gx-3 mb-3">
                                 <div class="col-md-6">
                                     <label class="small mb-1" for="position">Position</label>
-                                    <select class="form-control select2" name="position" aria-label="Default select2" required>
+                                    <select id="position" class="form-control select2" name="position" aria-label="Default select2" required>
                                         <option selected disabled>Select Position:</option>
                                         @foreach ($positions as $position)
                                         <option value="{{ $position->name }}">{{ $position->name }}</option>
@@ -110,7 +108,7 @@
                                 <!-- Form Group (phone number)-->
                                 <div class="col-md-6">
                                     <label class="small mb-1" for="department">Department</label>
-                                    <select class="form-control select2" name="department" aria-label="Default select2" required>
+                                    <select id="department" class="form-control select2" name="department" aria-label="Default select2" required>
                                         <option selected disabled>Select Department:</option>
                                         @foreach ($departments as $department)
                                         <option value="{{ $department->name }}">{{ $department->name }}</option>
@@ -168,9 +166,53 @@
 <script src="https://ajax.aspnetcdn.com/ajax/jquery.validate/1.11.1/jquery.validate.min.js"></script>
 
 <script>
+
+function handleEmailChange() {
+    const emailInput = document.getElementById('email');
+    let emailValue = emailInput.value;
+    emailValue = emailValue.replace(/[@.]/g, '');
+
+    const usernameInput = document.getElementById('username');
+    usernameInput.value = emailValue;
+}
+
+$(document).ready(function() {
+    function matchCustom(params, data) {
+                // If there are no search terms, return all data
+                if ($.trim(params.term) === '') {
+                    return data;
+                }
+
+                // Do not display the item if there is no 'text' property
+                if (typeof data.text === 'undefined') {
+                    return null;
+                }
+
+                // Check if the search term is contained in the text
+                if (data.text.toLowerCase().indexOf(params.term.toLowerCase()) > -1) {
+                    return data;
+                }
+
+                // Return `null` if the term should not be displayed
+                return null;
+            }
+
+            $('#position').select2({
+                matcher: matchCustom,
+                placeholder: 'Select an option',
+                allowClear: true
+            });
+            $('#department').select2({
+                matcher: matchCustom,
+                placeholder: 'Select an option',
+                allowClear: true
+            });
+        });
+
 var mySelect2 = $('#type_reqs');
 
 mySelect2.select2();
+
 
 $("#formserver").validate({
 

@@ -32,7 +32,7 @@
                 <br>Ticket Number : {{ $smtpreq->ticket_id }} &nbsp;&nbsp; [Serial Number: {{ $smtpreq->form_id }}]
             </div>
 
-            <div class="card-body"><a href="{{ route('mailrelay.view',['id' => $smtpreq->id,'type' => $smtpreq->types_req]) }}" target="_blank" class="btn btn-outline-primary">View Detail</a><hr>
+            <div class="card-body"><a href="{{ route('mailrelay.view',['id' => $smtpreq->id,'type' => $smtpreq->types_req]) }}" class="btn btn-outline-primary">View Detail</a><hr>
                 <div class="row gx-3 mb-3">
                     <!-- Form Group (mail from)-->
                     <div class="col-md-4">
@@ -188,143 +188,128 @@
     <script>
         $(document).ready(function() {
 
+            function toggleInputs() {
 
-        function toggleInputs() {
             var selectBox = document.getElementById("servermail");
             var selectedValue = selectBox.value;
 
             const smtpMailServers = @json($smtpMailServers);
-
+                        console.log(smtpMailServers);
             const serverAddress = 'wss://spmr.mygovuc.gov.my/' + selectedValue;
 
             const socket = new WebSocket(serverAddress);
-
 
             socket.addEventListener('open', (event) => {
                 smtpMailServers.forEach(smtpMailServer => {
                     let command = '';
 
                     if(smtpMailServer.types_req == 1) {
-                    // Adjust the key names based on your actual data structure
-                    const ipAddress = smtpMailServer.ip_addr_server;
-                    const formIds = smtpMailServer.form_id;
-                    // Construct your command
-                    const command = `echo '${ipAddress} #${formIds}:' >> /opt/cluster/postfix/access_list`;
+                        // Adjust the key names based on your actual data structure
+                        const ipAddress = smtpMailServer.ip_addr_server;
+                        const formIds = smtpMailServer.form_id;
+                        // Construct your command
+                        command = `echo '${ipAddress} #${formIds}:' >> /opt/cluster/postfix/access_list`;
 
-                    } else if (smtpMailServer.types_req == 2){
-                    // Adjust the key names based on your actual data structure
-                    const ipAddress = smtpMailServer.ip_addr_server;
-                    const formIds = smtpMailServer.form_id;
-                    // Construct your command
-                    const command = `if grep -q '^${ipAddress} ' /opt/cluster/postfix/access_list; then sed -i 's/^${ipAddress} .*/#${ipAddress} #${formIds}:/' /opt/cluster/postfix/access_list; else echo '#${ipAddress} #${formIds}:' >> /opt/cluster/postfix/access_list; fi`;
+                    }
+                    if (smtpMailServer.types_req == 2){
+                        // Adjust the key names based on your actual data structure
+                        const ipAddress = smtpMailServer.ip_addr_server;
+                        const formIds = smtpMailServer.form_id;
+                        // Construct your command
+                        command = `if grep -q '^${ipAddress} ' /opt/cluster/postfix/access_list; then sed -i 's/^${ipAddress} .*/#${ipAddress} #${formIds}:/' /opt/cluster/postfix/access_list; else echo '#${ipAddress} #${formIds}:' >> /opt/cluster/postfix/access_list; fi`;
 
                     }
                     // Send the command through the WebSocket if it's not empty
                     if (command) {
                         socket.send(command);
+
+                        Swal.fire({
+                            title: 'Succesfully register mail relay..',
+                            allowOutsideClick: false, // Prevent outside clicks
+                            showConfirmButton: false, // Disable the "OK" button
+                            onBeforeOpen: () => {
+                                Swal.showLoading();
+                            },
+                            timer: 6000, // 6 seconds
+                            willClose: () => {
+                                // You can add any action you want to perform when the alert is about to close
+                                console.log('The alert is closing');
+                            }
+                        });
+
                     }
+
                 });
             });
 
             socket.addEventListener('message', (event) => {
                 const response = event.data;
-                console.log(response);
+
                 if (response.includes('Failed')) {
                     console.log("Failed to send command");
                 } else {
                     console.log("Successfully sent command");
                 }
 
+                // Close the socket after processing the response
                 socket.close();
             });
 
             socket.addEventListener('error', (error) => {
                 console.error("WebSocket error observed:", error);
+                socket.close();
             });
 
             socket.addEventListener('close', (event) => {
                 console.log("WebSocket connection closed");
-                socket.close();
             });
         }
 
+$('#submitBtn').click(function(event) {
+    // Prevent the default form submission
+    event.preventDefault();
+    if (confirm('Are you sure you want to submit this form?')) {
+        // Serialize form data
+        var formData = $('#myForm').serialize();
+        // Show loading animation
+        Swal.fire({
+            title: 'Processing...',
+            allowOutsideClick: false, // Prevent outside clicks
+            showConfirmButton: false, // Disable the "OK" button
+            onBeforeOpen: () => {
+                Swal.showLoading();
+            },
+            timer: 6000, // 6 seconds
+            willClose: () => {
+                // You can add any action you want to perform when the alert is about to close
+                console.log('The alert is closing');
+            }
+        });
+        // Send AJAX request
+        $.ajax({
+            url: "{{ route('mailrelay.form') }}", // Replace with your reject route
+            method: 'POST',
+            data: formData,
+            headers: {
+                'X-CSRF-TOKEN': '{{ csrf_token() }}' // Add CSRF token header
+            },
+            success: function(response) {
+                console.log(response);
+                toggleInputs();
+                //window.location.href = "{{ route('smtp_relay.smtp_relay_req') }}?message=" + response.message;
+            },
+            error: function(xhr, status, error) {
+                // Handle error response
+                console.error(xhr.responseText);
+            }
+        });
 
-            $('#submitBtn').click(function() {
-                // Prevent the default form submission
-                event.preventDefault();
-                if (confirm('Are you sure you want to submit this form?')) {
-                // Serialize form data
-                var formData = $('#myForm').serialize();
-                        // Show loading animation
-                            Swal.fire({
-                                title: 'Processing...',
-                                allowOutsideClick: true,
-                                showConfirmButton: false, // Disable the "OK" button
-                                onBeforeOpen: () => {
-                                    Swal.showLoading();
-                                },
-                                timer: 5000, // 3 seconds
-                                willClose: () => {
-                                    // You can add any action you want to perform when the alert is about to close
-                                    console.log('The alert is closing');
-                                }
-                            });
-                    // Send reject AJAX request
-                    $.ajax({
-                        url: "{{ route('mailrelay.form') }}", // Replace with your reject route
-                        method: 'POST',
-                        data: formData,
-                        headers: {
-                            'X-CSRF-TOKEN': '{{ csrf_token() }}' // Add CSRF token header
-                        },
-                        success: function(response) {
-                            toggleInputs();
-                            // $commandupdate = 'sudo systemctl restart apache2';
+    } else {
+        // If the user clicks "Cancel" in the confirmation dialog, do nothing
+        return false;
+    }
+});
 
-                            // const selectedServer = response.serverhost;
-
-                            // // const serverAddress = 'wss://' + selectedServer + '/wss/';
-                            // const serverAddress = 'wss://' + selectedServer + ':8000';
-                            // const socket = new WebSocket(serverAddress);
-
-                            // socket.addEventListener('open', (event) => {
-                            //     const command = 'sudo systemctl restart apache2';
-                            //     socket.send(command);
-                            // });
-
-                            // socket.addEventListener('message', (event) => {
-                            //     const response = event.data;
-                            //     if (response.includes('Failed')) {
-                            //         console.log("Failed to send command");
-                            //     } else {
-                            //         console.log("Successfully to send command");
-                            //     }
-                            //     socket.close();
-                            // });
-
-                            // // Event listener for errors
-                            // socket.addEventListener('error', (error) => {
-                            //     console.error("WebSocket error observed:", error);
-                            // });
-
-                            // // Event listener for when the WebSocket connection is closed
-                            // socket.addEventListener('close', (event) => {
-                            //     console.log("WebSocket connection closed");
-                            // });
-
-                            window.location.href = "{{ route('smtp_relay.smtp_relay_req') }}?message=" + response.message;
-                        },
-                        error: function(xhr, status, error) {
-                            // Handle error response
-                            console.error(xhr.responseText);
-                        }
-                    });
-
-                } else {
-                    // If the user clicks "Cancel" in the confirmation dialog, do nothing
-                    return false;
-                }
-            });
 
             $('#rejectBtn').click(function() {
 
