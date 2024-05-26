@@ -122,9 +122,11 @@ class MainRelayController extends Controller
     public function submitrejForm(Request $request){
 
         $comment = $request->input("comment");
+        $smtp_username = $request->input("smtp_username");
+        $smtp_password = $request->input("smtp_password");
         $user = Auth::user();
 
-        $update = SmtpRelayReqForm::where('id', $request->input('smtpid'))->update(['comments' => $comment,'status'=>2,'implementation_name'=>$user->username]);
+        $update = SmtpRelayReqForm::where('id', $request->input('smtpid'))->update(['comments' => $comment,'status'=>2,'implementation_name'=>$user->username,'smtp_password'=>$smtp_password,'smtp_username'=>$smtp_username]);
         return response()->json(['message' => $update]);
         if ($update) {
         $adminEmails = User::where('role_id', 3)->pluck('email')->toArray(); //role admin will receive the email and cc to the helpdesk
@@ -225,10 +227,13 @@ class MainRelayController extends Controller
             return response()->json(['message' => $Message]);
         }
 
+        $smtp_username = $request->input("smtp_username");
+        $smtp_password = $request->input("smtp_password");
         $comment = $request->input("comment");
         $user = Auth::user();
+        $update = SmtpRelayReqForm::where('id', $request->input('smtpid'))->update(['comments' => $comment,'status'=>1,'implementation_name'=>$user->username,'smtp_password'=>$smtp_password,'smtp_username'=>$smtp_username]);
 
-        $update = SmtpRelayReqForm::where('id', $request->input('smtpid'))->update(['comments' => $comment,'status'=>1,'implementation_name'=>$user->username]);
+        // $update = SmtpRelayReqForm::where('id', $request->input('smtpid'))->update(['comments' => $comment,'status'=>1,'implementation_name'=>$user->username]);
 
         if ($update) {
 

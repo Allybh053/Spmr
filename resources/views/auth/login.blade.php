@@ -47,7 +47,7 @@
                                                 <div class="input-group mb-3">
                                                     <input class="form-control" id="password" name="password" type="password" placeholder="Enter password" required/>
                                                     <div class="input-group-append">
-                                                        <button class="btn btn-outline-secondary" type="button" id="togglePassword" style="border-top-left-radius: 0; border-bottom-left-radius: 0;">
+                                                        <button class="btn btn-outline-primary" type="button" id="togglePassword" style="border-top-left-radius: 0; border-bottom-left-radius: 0;">
                                                             <i class="fas fa-eye" id="toggleIcon"></i>
                                                         </button>
                                                     </div>

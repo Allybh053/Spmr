@@ -188,7 +188,7 @@ class SmtpRelayController extends Controller
 
     public function daftar()
     {
-        $serversArray = Server::all()->toArray();
+        $serversArray = Server::where('status',1)->get()->toArray();
         $domainsArray = DomainMinistryAgencies::where('enabled', 1)->get()->toArray();
         $departmentsArray = Department::where('status', 1)->get()->toArray();
         $positionsArray = Position::where('status', 1)->get()->toArray();
