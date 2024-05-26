@@ -82,7 +82,7 @@
                             @if($user->enabled == 1)
                                 <span class="badge bg-green-soft text-green">Active</span>
                             @else
-                                <span class="badge bg-red-soft text-red">Inactive</span>
+                                <span class="badge bg-red-soft text-red">In-Active</span>
                             @endif
                             </td>
                             <td>{{ $user->created_at->format('d/m/Y') }}</td>
