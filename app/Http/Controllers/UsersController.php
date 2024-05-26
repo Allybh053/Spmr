@@ -35,7 +35,7 @@ class UsersController extends Controller
         $user =  User::whereHas('roles', function($q){
 			$q->whereNotIn('name', ['Developer','Superadmin']);
 		})->orderBy('username','ASC')->get();
-        $roles = Role::whereNotIn('name', ['Developer', 'Superadmin'])->pluck('name', 'id')->toArray();
+        $roles = Role::whereNotIn('name', ['Developer','Superadmin'])->pluck('name', 'id')->toArray();
         $departments = Department::where('status',1)->get();
         $positions = Position::where('status',1)->get();
         return view('users.usermanagements.create', compact('user','roles','departments','positions'));

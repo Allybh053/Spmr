@@ -573,7 +573,8 @@
             if (selectedValuetype_req == 1) {
                 // Construct your command
                 command = `grep -q '^${ipAddress} ' /opt/cluster/postfix/access_list && echo "IP address exists"`;
-            } else if (selectedValuetype_req == 2) {
+            }
+            if (selectedValuetype_req == 2) {
                 // Construct your command
                 command = `grep -q '^#${ipAddress} ' /opt/cluster/postfix/access_list && echo "IP address exists"`;
             }
