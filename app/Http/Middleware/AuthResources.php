@@ -18,6 +18,10 @@ class AuthResources
      */
     public function handle($request, Closure $next,$permission_name)
     {
+        if (!Auth::check()) {
+            return redirect()->route('login');
+        }
+        
         //first check that name in your db
         $permission = Permission::where('name',$permission_name)->first();
             if($permission){
