@@ -589,9 +589,9 @@ sockets.forEach((socket, index) => {
     });
 });
 
-// function updateChart() {
-//     mailQueueChart.update();
-// }
+function updateChart() {
+    mailQueueChart.update();
+}
 
 function getDataMailServer1(socket) {
 
