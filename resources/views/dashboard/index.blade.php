@@ -537,7 +537,7 @@ serverIpaddresses.push(serverMailRelay{{$loop->iteration}});
 
 serverIpaddresses.forEach(hostname => {
     // const serverAddress = 'wss://' + hostname + '/wss/';
-    const serverAddress = 'wss://' + hostname + ':8000';
+    const serverAddress = 'wss://spmr.mygovuc.gov.my/' + hostname;
 
     const socket = new WebSocket(serverAddress);
     sockets.push(socket);
@@ -546,11 +546,11 @@ serverIpaddresses.forEach(hostname => {
 sockets.forEach((socket, index) => {
     getDataMailServer1(socket);
     socket.addEventListener('open', (event) => {
-
+        socket.close();
     });
 
     socket.addEventListener('close', (event) => {
-
+        socket.close();
     });
 
     socket.addEventListener('error', (event) => {
@@ -558,7 +558,7 @@ sockets.forEach((socket, index) => {
     });
 
     socket.addEventListener('message', (event) => {
-
+        socket.close();
     });
 });
 
@@ -569,15 +569,12 @@ sockets.forEach((socket, index) => {
 function getDataMailServer1(socket) {
 
     const commands = [
-        //'wc -l /opt/cluster/postfix/access_list | cut -d " " -f1',
-        //'wc -l /opt/cluster/postfix/sender_relay_maps | cut -d " " -f1',
-        //'/usr/sbin/sasldblistusers2 | wc -l',
         'mailq | grep -c "^[A-F0-9]"',
         'status=$(systemctl --no-pager status postfix | grep Active:); if echo "$status" | grep -q "active (exited) since"; then echo "Postfix is running"; elif echo "$status" | grep -q "inactive (dead) since"; then echo "Postfix is down"; else echo "Something is wrong"; fi',
         'status=$(systemctl --no-pager status fail2ban | grep Active:); if echo "$status" | grep -q "active (running) since"; then echo "Fail2ban is running"; elif echo "$status" | grep -q "inactive (dead) since"; then echo "Fail2ban is down"; else echo "Something is wrong"; fi',
         'status=$(systemctl --no-pager status webmin | grep Active:); if echo "$status" | grep -q "active (running) since"; then echo "Webmin is running"; elif echo "$status" | grep -q "inactive (dead) since"; then echo "Webmin is down"; else echo "Something is wrong"; fi',
         'status=$(systemctl --no-pager status apache2 | grep Active:); if echo "$status" | grep -q "active (running) since"; then echo "Apache2 is running"; elif echo "$status" | grep -q "inactive (dead) since"; then echo "Apache2 is down"; else echo "Something is wrong"; fi',
-        '/usr/bin/tail -120 /data/collections/spmr/count_mailq.txt',
+        '/usr/bin/tail -121 /data/collections/spmr/count_mailq.txt',
 
     ];
 
@@ -602,15 +599,6 @@ function getDataMailServer1(socket) {
             outputs.push(output);
 
             if (outputs.length > commands.length) {
-
-                //$('#totalApplications').text(outputs[1]);
-                //$('#totalDomains').text(outputs[3]);
-                //$('#totalSASL').text(outputs[5]);
-                //$('#mailQueueCount').text(outputs[7]);
-                //$('#statusPostfix').text(outputs[9]);
-                //$('#statusFail2ban').text(outputs[11]);
-                //$('#statusWebmin').text(outputs[13]);
-                //$('#statusApache2').text(outputs[15]);
 
                 $('#mailQueueCount').text(outputs[1]);
                 $('#statusPostfix').text(outputs[3]);

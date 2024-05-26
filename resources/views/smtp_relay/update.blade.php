@@ -33,7 +33,7 @@
                 <div class="row gx-3 mb-3">
                     <div class="col-md-6">
                         <label for="ticket_id">Ticket Number</label><br>
-                        <input class="form-control" id="ticket_id" name="ticket_id" type="text" value="{{ old('ticket_id', $formsmtp->ticket_id) }}">
+                        <input class="form-control" id="ticket_id" name="ticket_id" type="text" value="{{ old('ticket_id', $formsmtp->ticket_id) }}" required>
                     </div>
                     <div class="col-md-6">
                         <label for="types_req">Type Of Request</label>
@@ -70,7 +70,7 @@
                 </div>
                 <div class="mb-3">
                     <label for="ministry">Ministry</label>
-                    <select class="form-control select2" name="ministry" id="ministry" aria-label="Default select">
+                    <select class="form-control select2" name="ministry" id="ministry">
                         <option value="{{ old('ministry', $formsmtp->ministry) }}">{{ old('ministry', $formsmtp->ministry) }}</option>
                         @foreach ($ministriesArray as $ministry)
                         <option value="{{ $ministry['name'] }}">{{ $ministry['name'] }}</option>
@@ -357,6 +357,11 @@
 
 @endsection
 @push('script')
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+<link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+<script src="https://ajax.aspnetcdn.com/ajax/jquery.validate/1.19.2/jquery.validate.min.js"></script>
+
 <script>
     $(document).ready(function() {
 
@@ -415,190 +420,190 @@
         });
 
 
-const dateAInput = document.getElementById('applicantdate');
-const dateBInput = document.getElementById('verifierdate');
-// const dateCInput = document.getElementById('dateC');
-const messageDiv = document.getElementById('message');
-function compareDates() {
-    const dateA = new Date(dateAInput.value);
-    const dateB = new Date(dateBInput.value);
-    // const dateC = new Date(dateCInput.value);
+    const dateAInput = document.getElementById('applicantdate');
+    const dateBInput = document.getElementById('verifierdate');
+    // const dateCInput = document.getElementById('dateC');
+    const messageDiv = document.getElementById('message');
+    function compareDates() {
+        const dateA = new Date(dateAInput.value);
+        const dateB = new Date(dateBInput.value);
+        // const dateC = new Date(dateCInput.value);
 
-    if (dateB && dateA) {
-        if (dateB < dateA) {
-            messageDiv.textContent = "Date Verifier must be greater than Date Applicant";
+        if (dateB && dateA) {
+            if (dateB < dateA) {
+                messageDiv.textContent = "Date Verifier must be greater than Date Applicant";
 
-        } else {
-            messageDiv.textContent = "";
+            } else {
+                messageDiv.textContent = "";
+            }
         }
     }
-}
-dateBInput.addEventListener('change', compareDates);
+    dateBInput.addEventListener('change', compareDates);
 
-// dateForm.addEventListener('submit',function(event){
-//     if (!compareDates()){
-//         event.preventDefault();
-//         messageDiv.textContent = "Please correct the Dates before submitting";
-//     }
-// });
+    // dateForm.addEventListener('submit',function(event){
+    //     if (!compareDates()){
+    //         event.preventDefault();
+    //         messageDiv.textContent = "Please correct the Dates before submitting";
+    //     }
+    // });
 
-$(".select2").select2();
+    $(".select2").select2();
 
-$("#formserver").validate({
-    errorPlacement: function(label, element) {
-        if (element.hasClass('select2')) {
-            label.insertAfter(element.next('.select2-container')).addClass('mt-2 text-danger');
-        } else {
-            label.addClass('mt-2 text-danger');
-            label.insertAfter(element);
+    $("#formserver").validate({
+        errorPlacement: function(label, element) {
+            if (element.hasClass('select2')) {
+                label.insertAfter(element.next('.select2-container')).addClass('mt-2 text-danger');
+            } else {
+                label.addClass('mt-2 text-danger');
+                label.insertAfter(element);
+            }
+        },
+        highlight: function(element) {
+            $(element).parent().addClass('is-invalid');
+            $(element).addClass('form-control-danger');
+        },
+        unhighlight: function(element) {
+            $(element).parent().removeClass('is-invalid');
+            $(element).removeClass('form-control-danger');
+        },
+        success: function(label, element) {
+            if ($(element).hasClass('select2-hidden-accessible')) {
+                label.remove();
+            } else {
+                label.remove();
+            }
         }
-    },
-    highlight: function(element) {
-        $(element).parent().addClass('is-invalid');
-        $(element).addClass('form-control-danger');
-    },
-    unhighlight: function(element) {
-        $(element).parent().removeClass('is-invalid');
-        $(element).removeClass('form-control-danger');
-    },
-    success: function(label, element) {
-        if ($(element).hasClass('select2-hidden-accessible')) {
-            label.remove();
-        } else {
-            label.remove();
+    });
+    $('#date_verification_3').on('change', function() {
+        var isValid = $(this).valid();
+        if (isValid) {
+            $(this).removeClass('is-invalid');
         }
-    }
-});
-$('#date_verification_3').on('change', function() {
-    var isValid = $(this).valid();
-    if (isValid) {
-        $(this).removeClass('is-invalid');
-    }
-});
-$('#verifier_3_dept_div').on('change', function() {
-    var isValid = $(this).valid();
-    if (isValid) {
-        $(this).removeClass('is-invalid');
-    }
-});
-$('#verifier_3_position').on('change', function() {
-    var isValid = $(this).valid();
-    if (isValid) {
-        $(this).removeClass('is-invalid');
-    }
-});
-$('#verifier_1_dept_div').on('change', function() {
-    var isValid = $(this).valid();
-    if (isValid) {
-        $(this).removeClass('is-invalid');
-    }
-});
-$('#date_verification_1').on('change', function() {
-    var isValid = $(this).valid();
-    if (isValid) {
-        $(this).removeClass('is-invalid');
-        $(this).next('.select2-container').find('.select2-selection').removeClass('is-invalid');
-    }
-});
-$('#smtp_username').on('change', function() {
-    var isValid = $(this).valid();
-    if (isValid) {
-        $(this).removeClass('is-invalid');
-        $(this).next('.select2-container').find('.select2-selection').removeClass('is-invalid');
-    }
-});
-$('#smtp_password').on('change', function() {
-    var isValid = $(this).valid();
-    if (isValid) {
-        $(this).removeClass('is-invalid');
-        $(this).next('.select2-container').find('.select2-selection').removeClass('is-invalid');
-    }
-});
-$('#types_req').on('change', function() {
-    var isValid = $(this).valid();
-    if (isValid) {
-        $(this).removeClass('is-invalid');
-        $(this).next('.select2-container').find('.select2-selection').removeClass('is-invalid');
-    }
-});
-$('#ministry').on('change', function() {
-    var isValid = $(this).valid();
-    if (isValid) {
-        $(this).removeClass('is-invalid');
-        $(this).next('.select2-container').find('.select2-selection').removeClass('is-invalid');
-    }
-});
-$('#agencies').on('change', function() {
-    var isValid = $(this).valid();
-    if (isValid) {
-        $(this).removeClass('is-invalid');
-        $(this).next('.select2-container').find('.select2-selection').removeClass('is-invalid');
-    }
-});
-$('#dept_div_unit').on('change', function() {
-    var isValid = $(this).valid();
-    if (isValid) {
-        $(this).removeClass('is-invalid');
-        $(this).next('.select2-container').find('.select2-selection').removeClass('is-invalid');
-    }
-});
-$('#smtp_relay_auth_method').on('change', function() {
-    var isValid = $(this).valid();
-    if (isValid) {
-        $(this).removeClass('is-invalid');
-        $(this).next('.select2-container').find('.select2-selection').removeClass('is-invalid');
-    }
-});
-$('#smtp_relay_server').on('change', function() {
-    var isValid = $(this).valid();
-    if (isValid) {
-        $(this).removeClass('is-invalid');
-        $(this).next('.select2-container').find('.select2-selection').removeClass('is-invalid');
-    }
-});
-$('#ports').on('change', function() {
-    var isValid = $(this).valid();
-    if (isValid) {
-        $(this).removeClass('is-invalid');
-        $(this).next('.select2-container').find('.select2-selection').removeClass('is-invalid');
-    }
-});
-$('#mailbox').on('change', function() {
-    var isValid = $(this).valid();
-    if (isValid) {
-        $(this).removeClass('is-invalid');
-        $(this).next('.select2-container').find('.select2-selection').removeClass('is-invalid');
-    }
-});
-$('#applicant_position').on('change', function() {
-    var isValid = $(this).valid();
-    if (isValid) {
-        $(this).removeClass('is-invalid');
-        $(this).next('.select2-container').find('.select2-selection').removeClass('is-invalid');
-    }
-});
-$('#applicant_dept_div').on('change', function() {
-    var isValid = $(this).valid();
-    if (isValid) {
-        $(this).removeClass('is-invalid');
-        $(this).next('.select2-container').find('.select2-selection').removeClass('is-invalid');
-    }
-});
-$('#date_application').on('change', function() {
-    var isValid = $(this).valid();
-    if (isValid) {
-        $(this).removeClass('is-invalid');
-        $(this).next('.select2-container').find('.select2-selection').removeClass('is-invalid');
-    }
-});
-$('#verifier_1_position').on('change', function() {
-    var isValid = $(this).valid();
-    if (isValid) {
-        $(this).removeClass('is-invalid');
-        $(this).next('.select2-container').find('.select2-selection').removeClass('is-invalid');
-    }
-});
-});
+    });
+    $('#verifier_3_dept_div').on('change', function() {
+        var isValid = $(this).valid();
+        if (isValid) {
+            $(this).removeClass('is-invalid');
+        }
+    });
+    $('#verifier_3_position').on('change', function() {
+        var isValid = $(this).valid();
+        if (isValid) {
+            $(this).removeClass('is-invalid');
+        }
+    });
+    $('#verifier_1_dept_div').on('change', function() {
+        var isValid = $(this).valid();
+        if (isValid) {
+            $(this).removeClass('is-invalid');
+        }
+    });
+    $('#date_verification_1').on('change', function() {
+        var isValid = $(this).valid();
+        if (isValid) {
+            $(this).removeClass('is-invalid');
+            $(this).next('.select2-container').find('.select2-selection').removeClass('is-invalid');
+        }
+    });
+    $('#smtp_username').on('change', function() {
+        var isValid = $(this).valid();
+        if (isValid) {
+            $(this).removeClass('is-invalid');
+            $(this).next('.select2-container').find('.select2-selection').removeClass('is-invalid');
+        }
+    });
+    $('#smtp_password').on('change', function() {
+        var isValid = $(this).valid();
+        if (isValid) {
+            $(this).removeClass('is-invalid');
+            $(this).next('.select2-container').find('.select2-selection').removeClass('is-invalid');
+        }
+    });
+    $('#types_req').on('change', function() {
+        var isValid = $(this).valid();
+        if (isValid) {
+            $(this).removeClass('is-invalid');
+            $(this).next('.select2-container').find('.select2-selection').removeClass('is-invalid');
+        }
+    });
+    $('#ministry').on('change', function() {
+        var isValid = $(this).valid();
+        if (isValid) {
+            $(this).removeClass('is-invalid');
+            $(this).next('.select2-container').find('.select2-selection').removeClass('is-invalid');
+        }
+    });
+    $('#agencies').on('change', function() {
+        var isValid = $(this).valid();
+        if (isValid) {
+            $(this).removeClass('is-invalid');
+            $(this).next('.select2-container').find('.select2-selection').removeClass('is-invalid');
+        }
+    });
+    $('#dept_div_unit').on('change', function() {
+        var isValid = $(this).valid();
+        if (isValid) {
+            $(this).removeClass('is-invalid');
+            $(this).next('.select2-container').find('.select2-selection').removeClass('is-invalid');
+        }
+    });
+    $('#smtp_relay_auth_method').on('change', function() {
+        var isValid = $(this).valid();
+        if (isValid) {
+            $(this).removeClass('is-invalid');
+            $(this).next('.select2-container').find('.select2-selection').removeClass('is-invalid');
+        }
+    });
+    $('#smtp_relay_server').on('change', function() {
+        var isValid = $(this).valid();
+        if (isValid) {
+            $(this).removeClass('is-invalid');
+            $(this).next('.select2-container').find('.select2-selection').removeClass('is-invalid');
+        }
+    });
+    $('#ports').on('change', function() {
+        var isValid = $(this).valid();
+        if (isValid) {
+            $(this).removeClass('is-invalid');
+            $(this).next('.select2-container').find('.select2-selection').removeClass('is-invalid');
+        }
+    });
+    $('#mailbox').on('change', function() {
+        var isValid = $(this).valid();
+        if (isValid) {
+            $(this).removeClass('is-invalid');
+            $(this).next('.select2-container').find('.select2-selection').removeClass('is-invalid');
+        }
+    });
+    $('#applicant_position').on('change', function() {
+        var isValid = $(this).valid();
+        if (isValid) {
+            $(this).removeClass('is-invalid');
+            $(this).next('.select2-container').find('.select2-selection').removeClass('is-invalid');
+        }
+    });
+    $('#applicant_dept_div').on('change', function() {
+        var isValid = $(this).valid();
+        if (isValid) {
+            $(this).removeClass('is-invalid');
+            $(this).next('.select2-container').find('.select2-selection').removeClass('is-invalid');
+        }
+    });
+    $('#date_application').on('change', function() {
+        var isValid = $(this).valid();
+        if (isValid) {
+            $(this).removeClass('is-invalid');
+            $(this).next('.select2-container').find('.select2-selection').removeClass('is-invalid');
+        }
+    });
+    $('#verifier_1_position').on('change', function() {
+        var isValid = $(this).valid();
+        if (isValid) {
+            $(this).removeClass('is-invalid');
+            $(this).next('.select2-container').find('.select2-selection').removeClass('is-invalid');
+        }
+    });
+    });
 
     $('#dynamic-inputs-container').on('input', '#ip_addr_server', function() {
 
