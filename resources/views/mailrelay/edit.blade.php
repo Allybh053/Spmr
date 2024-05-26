@@ -216,8 +216,8 @@
                         const ipAddress = smtpMailServer.ip_addr_server;
                         const formIds = smtpMailServer.form_id;
                         // Construct your command
-                        // command = `if grep -q '^${ipAddress} ' /opt/cluster/postfix/access_list; then sed -i 's/^${ipAddress} .*/#${ipAddress} #${formIds}:/' /opt/cluster/postfix/access_list; else echo '#${ipAddress} #${formIds}:' >> /opt/cluster/postfix/access_list; fi`;
-                           command = "grep -q '^10.10.10.14 ' /opt/cluster/postfix/access_list && sed -i 's/^10.10.10.14 .*/#10.10.10.14 #aabbccddee:/' /opt/cluster/postfix/access_list || echo '#10.10.10.14 #aabbccddee:' >> /opt/cluster/postfix/access_list";
+                        command = `grep -q '^${ipAddress} ' /opt/cluster/postfix/access_list; && sed -i 's/^${ipAddress} .*/#${ipAddress} #${formIds}:/' /opt/cluster/postfix/access_list; || echo '#${ipAddress} #${formIds}:' >> /opt/cluster/postfix/access_list;`;
+                        // command = "grep -q '^10.10.10.14 ' /opt/cluster/postfix/access_list && sed -i 's/^10.10.10.14 .*/#10.10.10.14 #aabbccddee:/' /opt/cluster/postfix/access_list || echo '#10.10.10.14 #aabbccddee:' >> /opt/cluster/postfix/access_list";
                     }
                     // Send the command through the WebSocket if it's not empty
                     if (command) {

@@ -718,7 +718,7 @@ class SmtpRelayController extends Controller
 
             // Log dirty fields for debugging
             $dirtyFields = $form->getDirty();
-            Log::info('Dirty fields:', $dirtyFields);
+            
 
         // Process 'tableSpmr' data
         $tableSpmrData = $request->input('tableSpmr');
@@ -772,10 +772,7 @@ class SmtpRelayController extends Controller
             // Save the main form (this should trigger the audit)
             $form->save();
 
-            // Log all changes for auditing
-            foreach ($allChanges as $change) {
-                Log::info('Dirty fields:', $change);
-            }
+
         } else {
             return response()->json(['message' => 'No changes detected'], 200);
         }

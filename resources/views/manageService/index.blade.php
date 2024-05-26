@@ -276,6 +276,7 @@
 
                 }
             }
+            socket.close();
         });
 
         function extractOutput(response) {
