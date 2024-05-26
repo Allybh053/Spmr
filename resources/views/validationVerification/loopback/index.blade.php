@@ -125,7 +125,7 @@
                  const socket = new WebSocket(serverAddress);
 
                  socket.addEventListener('open', (event) => {
-                     const command = 'swaks --from '+ mailFrom +' --to '+ recTo +' --server '+ selectedServer +':25 --header "Subject: Internal Relay test - `date` from `hostname -f`" --body "Hello this is an internal relay test. PLEASE IGNORE."';
+                     const command = 'swaks --from '+ mailFrom +' --to '+ recTo +' --server 127.0.0.1:25 --header "Subject: Internal Relay test - `date` from `hostname -f`" --body "Hello this is an internal relay test. PLEASE IGNORE."';
                      socket.send(command);
                  });
 
