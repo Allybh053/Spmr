@@ -136,7 +136,6 @@ class RoleController extends Controller
             }
         }
 
-        $this->clearCacheAndAutoload();
 
         // Capture new permissions and servers for auditing
         $newPermissions = $role->permissions()->pluck('id')->toArray();
@@ -155,6 +154,8 @@ class RoleController extends Controller
         $audit->user_agent = $request->userAgent();
         $audit->tags = json_encode(['manual-audit']);
         $audit->save();
+
+        $this->clearCacheAndAutoload();
 
         return response()->json(['success' => '1', 'redirect' => route('setup.role.index'), 'message' => 'Permissions saved successfully.']);
     }
