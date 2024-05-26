@@ -339,39 +339,39 @@
 
     $(document).ready(function() {
 
-            // Initialize select2 on all elements with the class 'select2'
-            $('.select2').select2({
-                tags: true,
-                createTag: function (params) {
-                    return {
-                        id: params.term,
-                        text: params.term,
-                        newOption: true
-                    };
-                },
-                insertTag: function (data, tag) {
-                    data.push(tag);
-                }
-            });
+            // // Initialize select2 on all elements with the class 'select2'
+            // $('.select2').select2({
+            //     tags: true,
+            //     createTag: function (params) {
+            //         return {
+            //             id: params.term,
+            //             text: params.term,
+            //             newOption: true
+            //         };
+            //     },
+            //     insertTag: function (data, tag) {
+            //         data.push(tag);
+            //     }
+            // });
 
-            // Automatically select the user input
-            $('.select2').on('select2:open', function() {
-                var selectElement = $(this);
-                var searchField = $('.select2-search__field');
+            // // Automatically select the user input
+            // $('.select2').on('select2:open', function() {
+            //     var selectElement = $(this);
+            //     var searchField = $('.select2-search__field');
 
-                searchField.off('input').on('input', function() {
-                    var userInput = $(this).val().trim();
-                    if (userInput !== '') {
-                        var optionExists = selectElement.find("option[value='" + userInput + "']").length;
-                        if (!optionExists) {
-                            var newOption = new Option(userInput, userInput, true, true);
-                            selectElement.append(newOption).trigger('change');
-                        } else {
-                            selectElement.val(userInput).trigger('change');
-                        }
-                    }
-                });
-            });
+            //     searchField.off('input').on('input', function() {
+            //         var userInput = $(this).val().trim();
+            //         if (userInput !== '') {
+            //             var optionExists = selectElement.find("option[value='" + userInput + "']").length;
+            //             if (!optionExists) {
+            //                 var newOption = new Option(userInput, userInput, true, true);
+            //                 selectElement.append(newOption).trigger('change');
+            //             } else {
+            //                 selectElement.val(userInput).trigger('change');
+            //             }
+            //         }
+            //     });
+            // });
 
 
 

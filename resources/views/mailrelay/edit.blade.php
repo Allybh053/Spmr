@@ -194,7 +194,7 @@
             var selectedValue = selectBox.value;
 
             const smtpMailServers = @json($smtpMailServers);
-            
+
             const serverAddress = 'wss://spmr.mygovuc.gov.my/' + selectedValue;
 
             const socket = new WebSocket(serverAddress);
@@ -256,13 +256,19 @@
                 // Serialize form data
                 var formData = $('#myForm').serialize();
                         // Show loading animation
-                    Swal.fire({
-                        title: 'Processing...',
-                        allowOutsideClick: true,
-                        onBeforeOpen: () => {
-                            Swal.showLoading();
-                        }
-                    });
+                            Swal.fire({
+                                title: 'Processing...',
+                                allowOutsideClick: true,
+                                showConfirmButton: false, // Disable the "OK" button
+                                onBeforeOpen: () => {
+                                    Swal.showLoading();
+                                },
+                                timer: 5000, // 3 seconds
+                                willClose: () => {
+                                    // You can add any action you want to perform when the alert is about to close
+                                    console.log('The alert is closing');
+                                }
+                            });
                     // Send reject AJAX request
                     $.ajax({
                         url: "{{ route('mailrelay.form') }}", // Replace with your reject route
@@ -272,7 +278,6 @@
                             'X-CSRF-TOKEN': '{{ csrf_token() }}' // Add CSRF token header
                         },
                         success: function(response) {
-                            console.log(response.serverhost);
                             toggleInputs();
                             // $commandupdate = 'sudo systemctl restart apache2';
 
