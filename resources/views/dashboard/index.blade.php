@@ -183,7 +183,7 @@
                 <tbody>
                 <tr>
                     @foreach ($serverconfig as $server)
-                        <td id="mailQueueCount">--</td>
+                        <td id="mailQueueCount{{ $loop->index }}">--</td>
                     @endforeach
                 </tr>
                 </tbody>
@@ -216,26 +216,12 @@
                                             <div class="me-3">
                                                 <h5>Postfix</h5>
                                             </div>
-                                            <img id="statusPostfixImage" src="{{ asset('assets/img/demo/offline.png') }}" alt="Postfix is down" style="width: 5rem">
+                                            <img id="statusPostfixImage{{ $loop->index }}" src="{{ asset('assets/img/demo/offline.png') }}" alt="Postfix is down" style="width: 5rem">
                                         </div>
-                                        <p id="statusPostfix" style="display: inline-block; margin-left: 5px;">--</p>
+                                        <p id="statusPostfix{{ $loop->index }}" style="display: inline-block; margin-left: 5px;">--</p>
                                     </div>
-                                    <!-- <div class="col-md-6 d-flex justify-content-center" style="padding-left: 150px;padding-bottom: 15px;"><div class="btn-group" role="group" aria-label="Button group with nested dropdown"><button type="button" class="btn btn-primary"><i class="fas fa-play"></i></button><button type="button" class="btn btn-danger"><i class="fas fa-stop"></i></button><button type="button" class="btn btn-warning"><i class="fas fa-redo"></i></button><button type="button" class="btn btn-info"><i class="fas fa-sync-alt"></i></button></div></div> -->
                                 </a>
                             </div>
-                            {{--<div class="col-xl-4 mb-4">
-                              <a class="card lift h-100" href="#!">
-                                <div class="card-body cardService d-flex justify-content-center flex-column">
-                                  <div class="d-flex align-items-center justify-content-between">
-                                    <div class="me-3">
-                                      <h5>Fail-To-Ban</h5>
-                                    </div>
-                                    <img src="{{ isset($status) && $status === 'Online' ? asset('assets/img/demo/online.png') : asset('assets/img/demo/offline.png') }}" alt="{{ $status === 'Online' ? 'Online' : 'Offline' }}" style="width: 5rem">
-                                  </div>
-                                    <p id="statusFail2ban" style="display: inline-block; margin-left: 5px;">--</p>
-                                </div>
-                              </a>
-                            </div>--}}
                             <div class="col-xl-4 mb-4">
                                 <a class="card h-100 mService" href="{{ route('manageService.index', ['server_id' => $server->id , 'server_type' => 'apache']) }}">
                                     <div class="card-body cardService d-flex justify-content-center flex-column">
@@ -243,11 +229,10 @@
                                             <div class="me-3">
                                                 <h5>Apache</h5>
                                             </div>
-                                            <img id="statusApache2Image" src="{{ asset('assets/img/demo/offline.png') }}" alt="Apache2 is down" style="width: 5rem">
+                                            <img id="statusApache2Image{{ $loop->index }}" src="{{ asset('assets/img/demo/offline.png') }}" alt="Apache2 is down" style="width: 5rem">
                                         </div>
-                                        <p id="statusApache2" style="display: inline-block; margin-left: 5px;">--</p>
+                                        <p id="statusApache2{{ $loop->index }}" style="display: inline-block; margin-left: 5px;">--</p>
                                     </div>
-                                    <!-- <div class="col-md-6 d-flex justify-content-center" style="padding-left: 150px;padding-bottom: 15px;"><div class="btn-group" role="group" aria-label="Button group with nested dropdown"><button type="button" class="btn btn-primary"><i class="fas fa-play"></i></button><button type="button" class="btn btn-danger"><i class="fas fa-stop"></i></button><button type="button" class="btn btn-warning"><i class="fas fa-redo"></i></button><button type="button" class="btn btn-info"><i class="fas fa-sync-alt"></i></button></div></div> -->
                                 </a>
                             </div>
                             <div class="col-xl-4 mb-4">
@@ -257,48 +242,12 @@
                                             <div class="me-3">
                                                 <h5>Webmin</h5>
                                             </div>
-                                            <img id="statusWebminImage" src="{{ asset('assets/img/demo/offline.png') }}" alt="Webmin is down" style="width: 5rem">
+                                            <img id="statusWebminImage{{ $loop->index }}" src="{{ asset('assets/img/demo/offline.png') }}" alt="Webmin is down" style="width: 5rem">
                                         </div>
-                                        <p id="statusWebmin" style="display: inline-block; margin-left: 5px;">--</p>
+                                        <p id="statusWebmin{{ $loop->index }}" style="display: inline-block; margin-left: 5px;">--</p>
                                     </div>
                                 </a>
                             </div>
-                            {{--<div class="col-xl-4 mb-4">
-                              <a class="card lift h-100" href="#!">
-                                <div class="card-body cardService d-flex justify-content-center flex-column">
-                                  <div class="d-flex align-items-center justify-content-between">
-                                    <div class="me-3">
-                                      <h5>Replicate Mail Relay</h5>
-                                    </div>
-                                    <img src="{{ isset($status) && $status === 'Online' ? asset('assets/img/demo/online.png') : asset('assets/img/demo/offline.png') }}" alt="{{ $status === 'Online' ? 'Online' : 'Offline' }}" style="width: 5rem">
-                                  </div>
-                                </div>
-                              </a>
-                            </div>--}}
-                            {{--<div class="col-xl-4 mb-4">
-                              <a class="card lift h-100" href="#!">
-                                <div class="card-body cardService d-flex justify-content-center flex-column">
-                                  <div class="d-flex align-items-center justify-content-between">
-                                    <div class="me-3">
-                                      <h5>Policy Server</h5>
-                                    </div>
-                                    <img src="{{ isset($status) && $status === 'Online' ? asset('assets/img/demo/online.png') : asset('assets/img/demo/offline.png') }}" alt="{{ $status === 'Online' ? 'Online' : 'Offline' }}" style="width: 5rem">
-                                  </div>
-                                </div>
-                              </a>
-                            </div>--}}
-                            {{--<div class="col-xl-4 mb-4">
-                              <a class="card lift h-100" href="#!">
-                                <div class="card-body cardService d-flex justify-content-center flex-column">
-                                  <div class="d-flex align-items-center justify-content-between">
-                                    <div class="me-3">
-                                      <h5>Keep Alive</h5>
-                                    </div>
-                                    <img src="{{ isset($status) && $status === 'Online' ? asset('assets/img/demo/online.png') : asset('assets/img/demo/offline.png') }}" alt="{{ $status === 'Online' ? 'Online' : 'Offline' }}" style="width: 5rem">
-                                  </div>
-                                </div>
-                              </a>
-                            </div>--}}
                         </div>
                     </div>
                 </div>
@@ -320,10 +269,10 @@
 </script>
 <script>
 
-let data = [];
-let sockets = [];
-let serverIpaddresses = [];
-let serverIpaddresses1 = [];
+var data = [];
+var sockets = [];
+var serverIpaddresses = [];
+var serverIpaddresses1 = [];
 $(document).ready(function() {
 
 $('a.mService').click(function(e) {
@@ -482,7 +431,7 @@ function formatDate(date) {
 
 
 @foreach ($serverconfig as $server)
-let serverMailRelay1{{$loop->iteration}} = "{{ $server->hostname }}";
+var serverMailRelay1{{$loop->iteration}} = "{{ $server->hostname }}";
 serverIpaddresses1.push(serverMailRelay1{{$loop->iteration}});
 @endforeach
 
@@ -497,6 +446,7 @@ serverIpaddresses1.forEach(function(hostname, index) {
 var datasets = Object.values(servers);
 
 var xValues = datasets[0].data.map(function(dataPoint) {
+    console.log("hahaha -> "+xValues);
     return dataPoint.x;
 });
 
@@ -567,87 +517,111 @@ serverIpaddresses.forEach(hostname => {
     const serverAddress = 'wss://spmr.mygovuc.gov.my/' + hostname;
 
     const socket = new WebSocket(serverAddress);
+    // console.log("serverAddress-> "+ serverAddress);
     sockets.push(socket);
 });
 
+var commands = [
+    {
+        command: 'mailq | grep -c "^[A-F0-9]"',
+        id: 'mailQueueCount'
+    },
+    {
+        command: 'status=$(systemctl --no-pager status postfix | grep Active:); if echo "$status" | grep -q "active (exited) since"; then echo "Postfix is running"; elif echo "$status" | grep -q "inactive (dead) since"; then echo "Postfix is down"; else echo "Something is wrong"; fi',
+        id: 'statusPostfix'
+    },
+    {
+        command: 'status=$(systemctl --no-pager status fail2ban | grep Active:); if echo "$status" | grep -q "active (running) since"; then echo "Fail2ban is running"; elif echo "$status" | grep -q "inactive (dead) since"; then echo "Fail2ban is down"; else echo "Something is wrong"; fi',
+        id: 'statusFail2ban'
+    },
+    {
+        command: 'status=$(systemctl --no-pager status webmin | grep Active:); if echo "$status" | grep -q "active (running) since"; then echo "Webmin is running"; elif echo "$status" | grep -q "inactive (dead) since"; then echo "Webmin is down"; else echo "Something is wrong"; fi',
+        id: 'statusWebmin'
+    },
+    {
+        command: 'status=$(systemctl --no-pager status apache2 | grep Active:); if echo "$status" | grep -q "active (running) since"; then echo "Apache2 is running"; elif echo "$status" | grep -q "inactive (dead) since"; then echo "Apache2 is down"; else echo "Something is wrong"; fi',
+        id: 'statusApache2'
+    },
+    {
+        command: '/usr/bin/tail -121 /data/collections/spmr/count_mailq.txt'
+    },
+];
+
 sockets.forEach((socket, index) => {
-    getDataMailServer1(socket);
+
     socket.addEventListener('open', (event) => {
-        socket.close();
+        //console.log("WebSocket connection opened to " + socket.url);
+        // Function to send each command with delay
+        commands.forEach((commandObj, commandIndex) => {
+            setTimeout(() => {
+                //console.log("Sending command to : " + commandObj.command);
+                socket.send(commandObj.command);
+            }, commandIndex * 1000); // Delay each command by 1 second
+        });
+
     });
 
     socket.addEventListener('close', (event) => {
-        socket.close();
+        //console.log("WebSocket connection closed to " + socket.url);
     });
 
     socket.addEventListener('error', (event) => {
-
+        //console.error("WebSocket error occurred with " + socket.url + ": " + event);
     });
-
+    var outputs = [];
     socket.addEventListener('message', (event) => {
-        socket.close();
-    });
-});
-
-function updateChart() {
-    mailQueueChart.update();
-}
-
-function getDataMailServer1(socket) {
-
-    const commands = [
-        'mailq | grep -c "^[A-F0-9]"',
-        'status=$(systemctl --no-pager status postfix | grep Active:); if echo "$status" | grep -q "active (exited) since"; then echo "Postfix is running"; elif echo "$status" | grep -q "inactive (dead) since"; then echo "Postfix is down"; else echo "Something is wrong"; fi',
-        'status=$(systemctl --no-pager status fail2ban | grep Active:); if echo "$status" | grep -q "active (running) since"; then echo "Fail2ban is running"; elif echo "$status" | grep -q "inactive (dead) since"; then echo "Fail2ban is down"; else echo "Something is wrong"; fi',
-        'status=$(systemctl --no-pager status webmin | grep Active:); if echo "$status" | grep -q "active (running) since"; then echo "Webmin is running"; elif echo "$status" | grep -q "inactive (dead) since"; then echo "Webmin is down"; else echo "Something is wrong"; fi',
-        'status=$(systemctl --no-pager status apache2 | grep Active:); if echo "$status" | grep -q "active (running) since"; then echo "Apache2 is running"; elif echo "$status" | grep -q "inactive (dead) since"; then echo "Apache2 is down"; else echo "Something is wrong"; fi',
-        '/usr/bin/tail -121 /data/collections/spmr/count_mailq.txt',
-
-    ];
-
-    const outputs = [];
-
-    socket.addEventListener('open', (event) => {
-
-        commands.forEach(command => {
-            socket.send(command);
-        });
-    });
-
-    socket.addEventListener('message', (event) => {
-
+        //console.log("Message received from " + socket.url + ": " + event.data);
         const response = event.data;
-        // console.log(event.data);
+        outputs.push(response);
+        // Update the corresponding element based on the response
+            $('#mailQueueCount' + index).text(outputs[0]);
 
-        const output = extractOutput(response);
-        if (output !== null) {
+            $('#statusPostfix' + index).text(outputs[1]);
 
+            var postfixStatus = outputs[1];
+            var postfixAlt;
+            if(postfixStatus == "Postfix is running"){
+                postfixStatus = "Online";
+                postfixAlt = "Postfix is running";
+            }else{
+                postfixStatus = "Offline";
+                postfixAlt = "Postfix is down";
+            }
+            var postfixImageSrc = postfixStatus === 'Online' ? 'assets/img/demo/online.png' : 'assets/img/demo/offline.png';
 
-            outputs.push(output);
+            $('#statusPostfixImage'+ index).attr('src', postfixImageSrc).attr('alt', postfixAlt);
 
-            if (outputs.length > commands.length) {
+            $('#statusFail2ban' + index).text(outputs[2]);
 
-                $('#mailQueueCount').text(outputs[1]);
-                $('#statusPostfix').text(outputs[3]);
-                $('#statusFail2ban').text(outputs[5]);
-                $('#statusWebmin').text(outputs[7]);
-                $('#statusApache2').text(outputs[9]);
+            // var Fail2banStatus = outputs[2];
+            // var Fail2banAlt;
+            // if(Fail2banStatus == "Fail2ban is running"){
+            //     Fail2banStatus = "Online";
+            //     Fail2banAlt = "Fail2ban is running";
+            // }else{
+            //     Fail2banStatus = "Offline";
+            //     Fail2banAlt = "Postfix is down";
+            // }
+            // var postfixImageSrc = Fail2banStatus === 'Online' ? 'assets/img/demo/online.png' : 'assets/img/demo/offline.png';
 
-                //var postfixStatus = outputs[9];
-                var postfixStatus = outputs[3];
-                var postfixAlt;
-                if(postfixStatus == "Postfix is running"){
-                    postfixStatus = "Online";
-                    postfixAlt = "Postfix is running";
-                }else{
-                    postfixStatus = "Offline";
-                    postfixAlt = "Postfix is down";
-                }
-                var postfixImageSrc = postfixStatus === 'Online' ? 'assets/img/demo/online.png' : 'assets/img/demo/offline.png';
-                $('#statusPostfixImage').attr('src', postfixImageSrc).attr('alt', postfixAlt);
+            // $('#statusPostfixImage').attr('src', postfixImageSrc).attr('alt', postfixAlt);
 
-                //var Apache2Status = outputs[15];
-                var Apache2Status = outputs[9];
+            $('#statusWebmin' + index).text(outputs[3]);
+            var WebminStatus = outputs[3];
+            var WebminAlt;
+            if(WebminStatus == "Webmin is running"){
+                WebminStatus = "Online";
+                WebminAlt = "Webmin is running";
+            }else{
+                WebminStatus = "Offline";
+                WebminAlt = "Webmin is down";
+            }
+            var WebminImageSrc = WebminStatus === 'Online' ? 'assets/img/demo/online.png' : 'assets/img/demo/offline.png';
+            $('#statusWebminImage'+ index).attr('src', WebminImageSrc).attr('alt', WebminAlt);
+
+            $('#statusApache2' + index).text(outputs[4]);
+
+            var Apache2Status = outputs[4];
                 var Apache2Alt;
                 if(Apache2Status == "Apache2 is running"){
                     Apache2Status = "Online";
@@ -657,47 +631,142 @@ function getDataMailServer1(socket) {
                     Apache2Alt = "Apache2 is down";
                 }
                 var Apache2ImageSrc = Apache2Status === 'Online' ? 'assets/img/demo/online.png' : 'assets/img/demo/offline.png';
-                $('#statusApache2Image').attr('src', Apache2ImageSrc).attr('alt', Apache2Alt);
+                $('#statusApache2Image'+ index).attr('src', Apache2ImageSrc).attr('alt', Apache2Alt);
 
-                //var WebminStatus = outputs[13];
-                var WebminStatus = outputs[7];
-                var WebminAlt;
-                if(WebminStatus == "Webmin is running"){
-                    WebminStatus = "Online";
-                    WebminAlt = "Webmin is running";
-                }else{
-                    WebminStatus = "Offline";
-                    WebminAlt = "Webmin is down";
-                }
-                var WebminImageSrc = WebminStatus === 'Online' ? 'assets/img/demo/online.png' : 'assets/img/demo/offline.png';
-                $('#statusWebminImage').attr('src', WebminImageSrc).attr('alt', WebminAlt);
+                // console.log(outputs[5]);
 
-
-
-            }
-        }
     });
+});
 
-    function extractOutput(response) {
+function extractOutput(response) {
 
-        const cleanResponse = response.replace(/\[\d;?\d*m/g, '').trim();
-        generateServerData('Mailq Server', cleanResponse);
+const cleanResponse = response.replace(/\[\d;?\d*m/g, '').trim();
+generateServerData('Mailq Server', cleanResponse);
 
-        const outputMatch = cleanResponse.match(/\[.*?\]#\S (.*)/);
+const outputMatch = cleanResponse.match(/\[.*?\]#\S (.*)/);
 
-        const outputs = [];
+const outputs = [];
 
-        if (outputMatch && outputMatch.length > 1) {
+if (outputMatch && outputMatch.length > 1) {
 
-            outputs.push(outputMatch[1]);
+    outputs.push(outputMatch[1]);
 
-            return outputs;
-        } else {
-            return null;
-        }
-    }
-
+    return outputs;
+} else {
+    return null;
 }
+}
+
+function updateChart() {
+    mailQueueChart.update();
+}
+
+// function getDataMailServer1(socket) {
+    // console.log("socket -> "+socket);
+    // const commands = [
+    //     'mailq | grep -c "^[A-F0-9]"',
+    //     'status=$(systemctl --no-pager status postfix | grep Active:); if echo "$status" | grep -q "active (exited) since"; then echo "Postfix is running"; elif echo "$status" | grep -q "inactive (dead) since"; then echo "Postfix is down"; else echo "Something is wrong"; fi',
+    //     'status=$(systemctl --no-pager status fail2ban | grep Active:); if echo "$status" | grep -q "active (running) since"; then echo "Fail2ban is running"; elif echo "$status" | grep -q "inactive (dead) since"; then echo "Fail2ban is down"; else echo "Something is wrong"; fi',
+    //     'status=$(systemctl --no-pager status webmin | grep Active:); if echo "$status" | grep -q "active (running) since"; then echo "Webmin is running"; elif echo "$status" | grep -q "inactive (dead) since"; then echo "Webmin is down"; else echo "Something is wrong"; fi',
+    //     'status=$(systemctl --no-pager status apache2 | grep Active:); if echo "$status" | grep -q "active (running) since"; then echo "Apache2 is running"; elif echo "$status" | grep -q "inactive (dead) since"; then echo "Apache2 is down"; else echo "Something is wrong"; fi',
+    //     '/usr/bin/tail -121 /data/collections/spmr/count_mailq.txt',
+
+    // ];
+
+    // const outputs = [];
+
+    // socket.addEventListener('open', (event) => {
+
+    //     commands.forEach(command => {
+    //         socket.send(command);
+    //     });
+    // });
+
+    // socket.addEventListener('message', (event) => {
+
+    //     const response = event.data;
+    //     console.log("response ->"+response);
+
+    //     const output = extractOutput(response);
+    //     if (output !== null) {
+
+
+    //         outputs.push(output);
+
+    //         if (outputs.length > commands.length) {
+
+    //             $('#mailQueueCount').text(outputs[1]);
+    //             $('#statusPostfix').text(outputs[3]);
+    //             $('#statusFail2ban').text(outputs[5]);
+    //             $('#statusWebmin').text(outputs[7]);
+    //             $('#statusApache2').text(outputs[9]);
+
+    //             //var postfixStatus = outputs[9];
+    //             var postfixStatus = outputs[3];
+    //             var postfixAlt;
+    //             if(postfixStatus == "Postfix is running"){
+    //                 postfixStatus = "Online";
+    //                 postfixAlt = "Postfix is running";
+    //             }else{
+    //                 postfixStatus = "Offline";
+    //                 postfixAlt = "Postfix is down";
+    //             }
+    //             var postfixImageSrc = postfixStatus === 'Online' ? 'assets/img/demo/online.png' : 'assets/img/demo/offline.png';
+    //             $('#statusPostfixImage').attr('src', postfixImageSrc).attr('alt', postfixAlt);
+
+    //             //var Apache2Status = outputs[15];
+    //             var Apache2Status = outputs[9];
+    //             var Apache2Alt;
+    //             if(Apache2Status == "Apache2 is running"){
+    //                 Apache2Status = "Online";
+    //                 Apache2Alt = "Apache2 is running";
+    //             }else{
+    //                 Apache2Status = "Offline";
+    //                 Apache2Alt = "Apache2 is down";
+    //             }
+    //             var Apache2ImageSrc = Apache2Status === 'Online' ? 'assets/img/demo/online.png' : 'assets/img/demo/offline.png';
+    //             $('#statusApache2Image').attr('src', Apache2ImageSrc).attr('alt', Apache2Alt);
+
+    //             //var WebminStatus = outputs[13];
+    //             var WebminStatus = outputs[7];
+    //             var WebminAlt;
+    //             if(WebminStatus == "Webmin is running"){
+    //                 WebminStatus = "Online";
+    //                 WebminAlt = "Webmin is running";
+    //             }else{
+    //                 WebminStatus = "Offline";
+    //                 WebminAlt = "Webmin is down";
+    //             }
+    //             var WebminImageSrc = WebminStatus === 'Online' ? 'assets/img/demo/online.png' : 'assets/img/demo/offline.png';
+    //             $('#statusWebminImage').attr('src', WebminImageSrc).attr('alt', WebminAlt);
+
+
+
+    //         }
+    //     }
+    //     socket.close();
+    // });
+
+    // function extractOutput(response) {
+
+    //     const cleanResponse = response.replace(/\[\d;?\d*m/g, '').trim();
+    //     generateServerData('Mailq Server', cleanResponse);
+
+    //     const outputMatch = cleanResponse.match(/\[.*?\]#\S (.*)/);
+
+    //     const outputs = [];
+
+    //     if (outputMatch && outputMatch.length > 1) {
+
+    //         outputs.push(outputMatch[1]);
+
+    //         return outputs;
+    //     } else {
+    //         return null;
+    //     }
+    // }
+
+// }
 
 });
 
