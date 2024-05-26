@@ -65,7 +65,7 @@
                 <div class="mb-3">
                     <label for="ministry">Ministry<span style="color: red"> *</span></label>
                     <select class="form-control select2" name="ministry" id="ministry" required>
-                        <option disabled selected>Select Ministry</option>
+                        <option selected disabled>Select Ministry</option>
                         @foreach ($ministriesArray as $ministry)
                         <option value="{{ $ministry['name'] }}">{{ $ministry['name'] }}</option>
                         @endforeach
@@ -329,12 +329,51 @@
 
 @endsection
 @push('script')
-<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-beta.1/dist/js/select2.min.js"></script>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+<link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
 <script src="https://ajax.aspnetcdn.com/ajax/jquery.validate/1.19.2/jquery.validate.min.js"></script>
 
 <script>
 
     $(document).ready(function() {
+
+            // Initialize select2 on all elements with the class 'select2'
+            $('.select2').select2({
+                tags: true,
+                createTag: function (params) {
+                    return {
+                        id: params.term,
+                        text: params.term,
+                        newOption: true
+                    };
+                },
+                insertTag: function (data, tag) {
+                    data.push(tag);
+                }
+            });
+
+            // Automatically select the user input
+            $('.select2').on('select2:open', function() {
+                var selectElement = $(this);
+                var searchField = $('.select2-search__field');
+
+                searchField.off('input').on('input', function() {
+                    var userInput = $(this).val().trim();
+                    if (userInput !== '') {
+                        var optionExists = selectElement.find("option[value='" + userInput + "']").length;
+                        if (!optionExists) {
+                            var newOption = new Option(userInput, userInput, true, true);
+                            selectElement.append(newOption).trigger('change');
+                        } else {
+                            selectElement.val(userInput).trigger('change');
+                        }
+                    }
+                });
+            });
+
+
 
         const dateAInput = document.getElementById('applicantdate');
         const dateBInput = document.getElementById('verifierdate');
@@ -354,14 +393,8 @@
                 }
             }
         }
-        dateBInput.addEventListener('change', compareDates);
 
-        // dateForm.addEventListener('submit',function(event){
-        //     if (!compareDates()){
-        //         event.preventDefault();
-        //         messageDiv.textContent = "Please correct the Dates before submitting";
-        //     }
-        // });
+        dateBInput.addEventListener('change', compareDates);
 
         $(".select2").select2();
 
@@ -523,8 +556,7 @@
 
 
 
-$('#dynamic-inputs-container').on('input', '#ipaddress', function() {
-
+    $('#dynamic-inputs-container').on('input', '#ipaddress', function() {
     var type_req = document.getElementById("type_req");
     var selectBox = document.getElementById("mailrelay");
     var selectedValue = selectBox.options[selectBox.selectedIndex].value;
@@ -532,34 +564,52 @@ $('#dynamic-inputs-container').on('input', '#ipaddress', function() {
     var ipAddress = $(this).val();
 
     if (/^(?:[0-9]{1,3}\.){3}[0-9]{1,3}$/.test(ipAddress)) {
-        // Send AJAX request
-        $.ajax({
-            type: 'POST',
-            url: '{{ route("check.ip.address") }}', // Replace with your route name
-            data: {
-                '_token': '{{ csrf_token() }}',
-                'tableSpmr': [{
-                    'ipaddress': ipAddress
-                }],
-                'selectedValue': selectedValue,
-                'selectedValuetype_req': selectedValuetype_req
-            },
-            success: function(response) {
-                console.log(response);
-                $('#resultContainer').html(response);
+        const serverAddress = 'wss://spmr.mygovuc.gov.my/' + selectedValue;
+        const socket = new WebSocket(serverAddress);
 
-            },
-            error: function(xhr, status, error) {
-                console.error(xhr.responseText);
+        socket.addEventListener('open', (event) => {
+            let command = '';
+
+            if (selectedValuetype_req == 1) {
+                // Construct your command
+                command = `grep -q '^${ipAddress} ' /opt/cluster/postfix/access_list && echo "IP address exists"`;
+            } else if (selectedValuetype_req == 2) {
+                // Construct your command
+                command = `grep -q '^#${ipAddress} ' /opt/cluster/postfix/access_list && echo "IP address exists"`;
+            }
+
+            // Send the command through the WebSocket if it's not empty
+            if (command) {
+                socket.send(command);
             }
         });
 
-    }else {
+        socket.addEventListener('message', (event) => {
+            const response = event.data;
+
+            if (response.includes('IP address exists')) {
+                $('#resultContainer').html(response);
+            } else {
+                console.log("Successfully sent command");
+            }
+
+            socket.close();
+        });
+
+        socket.addEventListener('error', (error) => {
+            console.error("WebSocket error observed:", error);
+        });
+
+        socket.addEventListener('close', (event) => {
+            console.log("WebSocket connection closed");
+            socket.close();
+        });
+    } else {
         // Clear result container if input is invalid
         $('#resultContainer').empty();
     }
-
 });
+
 
     function toggleInputs() {
 
@@ -568,82 +618,6 @@ $('#dynamic-inputs-container').on('input', '#ipaddress', function() {
 
 
         var tbody = document.getElementById("dynamic-inputs-container"); // Select the tbody by name
-
-
-        // const selectedServer = response.serverhost;
-
-        // const serverAddress = 'wss://' + selectedServer + '/wss/';
-        const serverAddress = 'wss://' + selectedValue + ':8000';
-
-        const socket = new WebSocket(serverAddress);
-
-        socket.addEventListener('open', (event) => {
-            const command = 'cat /opt/cluster/postfix/access_list';
-            socket.send(command);
-        });
-
-        socket.addEventListener('message', (event) => {
-            const response = event.data;
-            console.log(event.data);
-            if (response.includes('Failed')) {
-                console.log("Failed to send command");
-            } else {
-
-                // $.ajax({
-                //     url: "{{ route('mailrelay.reject') }}", // Replace with your reject route
-                //     method: 'POST',
-                //     data: response,
-                //     success: function(response) {
-                //         // Handle success response
-
-                //     },
-                //     error: function(xhr, status, error) {
-                //         // Handle error response
-                //         console.error(xhr.responseText);
-                //     }
-                // });
-                console.log("Successfully to send command");
-            }
-
-    //         if (response.includes('Failed')) {
-    //     console.log("Failed to send command");
-    // } else {
-    //     // Create FormData object to send as a file
-    //     let formData = new FormData();
-    //     formData.append('fileContent', response); // 'fileContent' can be changed to match your backend expectation
-
-    //     $.ajax({
-    //         url: "{{ route('mailrelay.reject') }}", // Replace with your reject route
-    //         method: 'POST',
-    //         data: formData,
-    //         contentType: false, // Required for FormData
-    //         processData: false, // Required for FormData
-    //         success: function(response) {
-    //             // Handle success response
-    //             console.log("Successfully sent command");
-    //         },
-    //         error: function(xhr, status, error) {
-    //             // Handle error response
-    //             console.error(xhr.responseText);
-    //         }
-    //     });
-    // }
-
-            socket.close();
-        });
-
-        // Event listener for errors
-        socket.addEventListener('error', (error) => {
-            console.error("WebSocket error observed:", error);
-        });
-
-        // Event listener for when the WebSocket connection is closed
-        socket.addEventListener('close', (event) => {
-            console.log("WebSocket connection closed");
-        });
-
-
-
 
         // Check if the selected option is the "Select Server" option
         if (selectedValue === "") {

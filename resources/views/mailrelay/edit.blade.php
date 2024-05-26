@@ -63,24 +63,30 @@
                     </div>
                 </div>
                 <hr>
+                <form id="myForm" method="POST">
+                @csrf
                 <div class="row gx-3 mb-3">
                     <!-- Form Group (mail from)-->
                     <div class="col-md-4">
                         <label for="emailaddfrom">SMTP Username</label>
-                        <p class="text-primary">@if (empty($smtpreq->smtp_username))
-                            <span class="badge bg-danger text-white rounded-pill">None</span>
+                        @if ($smtpreq->smtp_relay_auth_method == 2)
+                        <input class="form-control" type="text" id="smtp_username" name="smtp_username" value="{{ $smtpreq->smtp_username }}"/>
                         @else
-                            {{ $smtpreq->smtp_username }}
-                        @endif</p>
+                        <br>
+                        <input class="form-control" type="hidden" id="smtp_username" name="smtp_username" value=""/>
+                        <span class="badge bg-danger text-white rounded-pill">None</span>
+                        @endif
                     </div>
                     <!-- Form Group (mailbox)-->
                     <div class="col-md-4">
                         <label for="mailbox">SMTP Password</label>
-                        <p class="text-primary">@if (empty($smtpreq->smtp_password))
-                            <span class="badge bg-danger text-white rounded-pill">None</span>
+                        @if ($smtpreq->smtp_relay_auth_method == 2)
+                        <input class="form-control" type="text" id="smtp_password" name="smtp_password" value="{{ $smtpreq->smtp_password }}"/>
                         @else
-                            {{ $smtpreq->smtp_password }}
-                        @endif</p>
+                        <br>
+                        <input class="form-control" type="hidden" id="smtp_password" name="smtp_password" value=""/>
+                        <span class="badge bg-danger text-white rounded-pill">None</span>
+                        @endif
                     </div>
                     <div class="col-md-4">
                         <label for="mailbox">SMTP Port</label>
@@ -137,9 +143,6 @@
             </div>
         </div>
     </div>
-
-    <form id="myForm" method="POST">
-        @csrf
         <textarea hidden id="access_list" name="access_list" rows="10" cols="50">
             @foreach ($smtpMailServers as $smtpMailServer){{ preg_replace('/^\s*/', '', $smtpMailServer->ip_addr_server) }} #{{ $smtpMailServers->first()->form_id }};
             @endforeach
@@ -245,68 +248,6 @@
             });
         }
 
-            // function toggleInputs() {
-
-            //         var selectBox = document.getElementById("servermail");
-            //         var selectedValue = selectBox.value;
-
-
-            //         // var tbody = document.getElementById("dynamic-inputs-container"); // Select the tbody by name
-
-
-            //         // const selectedServer = response.serverhost;
-
-            //         // const serverAddress = 'wss://' + selectedServer + '/wss/';
-            //         const serverAddress = 'wss://' + selectedValue + ':8000';
-
-            //         const socket = new WebSocket(serverAddress);
-
-            //         // var ip =
-
-            //         socket.addEventListener('open', (event) => {
-            //             const command = "sed -i 's/25.25.25.25 #uhgbNJNIU:/n25.25.25.26 #uhgbNJNIU:/' /opt/cluster/postfix/access_list";
-            //             socket.send(command);
-            //         });
-
-            //         socket.addEventListener('message', (event) => {
-            //             const response = event.data;
-            //             console.log(event.data);
-            //             if (response.includes('Failed')) {
-            //                 console.log("Failed to send command");
-            //             } else {
-
-            //                 // $.ajax({
-            //                 //     url: "{{ route('mailrelay.reject') }}", // Replace with your reject route
-            //                 //     method: 'POST',
-            //                 //     data: response,
-            //                 //     success: function(response) {
-            //                 //         // Handle success response
-
-            //                 //     },
-            //                 //     error: function(xhr, status, error) {
-            //                 //         // Handle error response
-            //                 //         console.error(xhr.responseText);
-            //                 //     }
-            //                 // });
-
-            //                 console.log("Successfully to send command");
-            //             }
-
-            //         socket.close();
-            //     });
-
-            //     // Event listener for errors
-            //     socket.addEventListener('error', (error) => {
-            //         console.error("WebSocket error observed:", error);
-            //     });
-
-            //     // Event listener for when the WebSocket connection is closed
-            //     socket.addEventListener('close', (event) => {
-            //         console.log("WebSocket connection closed");
-            //     });
-
-            // }
-
 
             $('#submitBtn').click(function() {
                 // Prevent the default form submission
@@ -366,7 +307,7 @@
                             //     console.log("WebSocket connection closed");
                             // });
 
-                            // window.location.href = "{{ route('smtp_relay.smtp_relay_req') }}?message=" + response.message;
+                            window.location.href = "{{ route('smtp_relay.smtp_relay_req') }}?message=" + response.message;
                         },
                         error: function(xhr, status, error) {
                             // Handle error response
