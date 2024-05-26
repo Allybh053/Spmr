@@ -83,11 +83,11 @@
                                     <!-- Form Group (organization name)-->
                                     <div class="col-md-6">
                                         <label class="small mb-1" for="position_id">Position</label>
-                                        <input class="form-control" id="position_id" name="position_id" type="text" placeholder="" value="{{ old('position_id', optional($profile->position)->name) }}" disabled/>
+                                        <input class="form-control" id="position_id" name="position_id" type="text" placeholder="" value="{{ $profile->position_id ?? '' }}" disabled/>
                                     </div>
                                     <div class="col-md-6">
                                         <label class="small mb-1" for="department">Department</label>
-                                        <input class="form-control" id="department_id" name="department_id" type="text" placeholder="" value="{{ old('department_id', optional($profile->department)->name) }}" disabled/>
+                                        <input class="form-control" id="department_id" name="department_id" type="text" placeholder="" value="{{ $profile->department_id ?? '' }}" disabled/>
                                     </div>
                                 </div>
                                 <!-- Form Group (email address)-->

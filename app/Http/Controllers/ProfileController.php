@@ -17,7 +17,7 @@ class ProfileController extends Controller
     public function index()
     {
         // Get the currently authenticated user
-        $profile = Auth::user();
+        $profile = User::find(Auth::user()->id);
 
         return view('users.profile.index', compact('profile'));
     }

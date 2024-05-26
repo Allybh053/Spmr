@@ -296,7 +296,7 @@ $('#submitBtn').click(function(event) {
             success: function(response) {
                 console.log(response);
                 toggleInputs();
-                //window.location.href = "{{ route('smtp_relay.smtp_relay_req') }}?message=" + response.message;
+                window.location.href = "{{ route('smtp_relay.smtp_relay_req') }}?message=" + response.message;
             },
             error: function(xhr, status, error) {
                 // Handle error response
