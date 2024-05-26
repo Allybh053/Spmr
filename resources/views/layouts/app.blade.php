@@ -112,7 +112,8 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js" crossorigin="anonymous"></script>
     <script src="{{asset('js/scripts.js')}}" type="text/javascript"></script>
     <script src="{{asset('js/sweetalert2.min.js')}}"></script>
-    <script src="{{asset('js/feather.min.js')}}" type="text/javascript"></script>
+    <script src="https://cdn.jsdelivr.net/npm/feather-icons@latest/dist/feather.min.js"></script>
+
 
     <script src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.min.js"></script>
     <script src="https://cdn.datatables.net/buttons/2.2.2/js/dataTables.buttons.min.js"></script>
