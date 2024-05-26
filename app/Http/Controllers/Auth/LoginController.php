@@ -17,6 +17,10 @@ class LoginController extends Controller
 
     public function handle($request, Closure $next)
     {
+        if (!Auth::check()) {
+            return redirect()->route('login');
+        }
+        
         $authenticator = app(Authenticator::class)->boot($request);
 
         if (!$authenticator->isAuthenticated()) {
