@@ -54,6 +54,7 @@
                       <div class="me-3">
                         <i class="feather-xl text-secondary mb-3" data-feather="zap"></i>
                         <h5>Total Domain Registered</h5>
+                        <span>Updated every 30 minutes</span>
                         <div class="inline">
                           <i class="feather-l text-primary" data-feather="corner-down-right"></i>
                           <h2 id="totalDomains" style="display: inline-block; margin-left: 5px;">{{$server['totalDomain'] ?? '-'}}</h2>
