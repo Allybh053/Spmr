@@ -154,7 +154,7 @@
     <div class="col-xxl-12">
         <div class="card">
             <div class="card-header text-center p-5">
-                <h5>Serial Mail Queue vs Time Chart</h5>
+                <h5>Graph Serial Mail Queue vs Time</h5>
             </div>
             <div class="card-body">
                 <canvas id="mailQueueChart"></canvas>
