@@ -52,11 +52,13 @@ class LoopBackController extends Controller
 
         $serverMailRelay = Server::find($serverIds);
         $serverName = $serverMailRelay->hostname;
+        $serverIp= $serverMailRelay->ipaddress;
 
           // Prepare old and new values for auditing
         $oldValues = []; // Assuming there are no old values to track for this action
         $newValues = [
             'server' => $serverName,
+            'ipaddress' => $serverIp,
             'mail_from' => $mailForm,
             'rec_to' => $recTo,
         ];
@@ -78,7 +80,8 @@ class LoopBackController extends Controller
         return response()->json([
             'data' => $serverName,
             'MailFrom' => $mailForm,
-            'RecepientTo' => $recTo
+            'RecepientTo' => $recTo,
+            'ipaddress' => $serverIp
         ]);
 
     }
