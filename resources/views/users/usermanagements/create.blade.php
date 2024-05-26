@@ -113,9 +113,9 @@
                                     </select>
                                 </div>
                                 <!-- Form Group (phone number)-->
-                                <div class="col-md-6" @disabled(true)>
+                                <div class="col-md-6">
                                     <label class="small mb-1" for="phone">Phone No</label>
-                                    <input class="form-control" id="phone" name="phone" type="number" value=""/>
+                                    <input class="form-control" id="phone" name="phone" type="text" value="" minlength="10"/>
                                 </div>
                             </div>
                             <!-- Form Group (inputPassword)-->
@@ -130,7 +130,7 @@
                                     <select class="form-control select2" name="enabled" aria-label="Default select " required>
                                         <option selected disabled>Select Account Status:</option>
                                         <option value="1" selected>Active</option>
-                                        <option value="0">In-Active</option>
+                                        <option value="0">Inactive</option>
                                     </select>
                                 </div>
                             </div>
@@ -152,6 +152,17 @@
 <script src="https://ajax.aspnetcdn.com/ajax/jquery.validate/1.11.1/jquery.validate.min.js"></script>
 
 <script>
+
+    function allowOnlyNumbers(event) {
+        var charCode = event.which ? event.which : event.keyCode;
+        // Only allow number keys (0-9) and control keys (backspace, delete, arrow keys)
+        if (charCode < 48 || charCode > 57) {
+            event.preventDefault();
+        }
+    }
+
+    // Attach the event listener to the phone input field
+    document.getElementById('phone').addEventListener('keypress', allowOnlyNumbers);
 
 function handleEmailChange() {
     const emailInput = document.getElementById('email');
