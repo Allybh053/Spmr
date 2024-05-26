@@ -39,6 +39,10 @@ class LoginController extends Controller
             'last_login_at' => now(),
             'last_login_ip' => $request->ip(),
         ]);
+
+
+
+
        // Check if TOTP is enabled for the user
        if ($user->totp_enabled) {// Debugging statement
 
@@ -55,6 +59,8 @@ class LoginController extends Controller
                 'email' => 'This account is inactive.',
             ]);
         }
+
+
 
         return redirect()->intended($this->redirectPath());
     }
@@ -112,5 +118,19 @@ class LoginController extends Controller
         $request->session()->regenerate();
 
         return redirect('/login');
+    }
+
+    public function login(Request $request)
+    {
+        $credentials = $request->only('email', 'password');
+        $remember = $request->has('remember'); // Check if the remember checkbox is checked
+
+        if (Auth::attempt($credentials, $remember)) {
+            // Authentication passed, handle post-login logic
+            return $this->authenticated($request, Auth::user());
+        }
+
+        // Authentication failed, redirect back with input
+        return redirect()->back()->withInput($request->only('email', 'remember'))->withErrors(['email' => 'Invalid credentials']);
     }
 }

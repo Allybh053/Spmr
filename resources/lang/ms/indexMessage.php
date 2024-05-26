@@ -27,7 +27,7 @@ return [
     ],
 
     'dashboard' => [
-        'welcome' => 'Selamat Datang Ke Sistem SPMR',
+        'welcome' => 'Sistem Pengurusan Mail Relay (SPMR)',
         'dashboarMailRelay' => 'Halaman Utama untuk Mail Relay Server'
     ]
 

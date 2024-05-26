@@ -27,7 +27,7 @@ return [
     ],
 
     'dashboard' => [
-        'welcome' => 'Welcome to SPMR System',
+        'welcome' => 'SPMR Mail Relay System',
         'dashboarMailRelay' => 'Dashboard For Mail Relay Server'
     ]
 
