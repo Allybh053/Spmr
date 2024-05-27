@@ -188,7 +188,10 @@ class SmtpRelayController extends Controller
 
     public function daftar()
     {
-        $serversArray = Server::where('status',1)->get()->toArray();
+        $serversArray = Server::leftJoin('role_servers as rs','servers.id','rs.server_id')
+        ->where('rs.role_id',$user->roles->pluck('id')->first())
+        ->where('servers.status',1)
+        ->orderBy('servers.id', 'asc')->get()->toArray();
         $domainsArray = DomainMinistryAgencies::where('enabled', 1)->get()->toArray();
         $departmentsArray = Department::where('status', 1)->get()->toArray();
         $positionsArray = Position::where('status', 1)->get()->toArray();
@@ -621,7 +624,10 @@ class SmtpRelayController extends Controller
     public function kemaskini(Request $request,$id, $type){
         $formsmtp = SmtpRelayReqForm::find($id);
         $details = smtp_relay_server::where('form_id', '=', $formsmtp->form_id)->where('types_req',$type)->get();
-        $serversArray = Server::all()->toArray();
+        $serversArray = Server::leftJoin('role_servers as rs','servers.id','rs.server_id')
+        ->where('rs.role_id',$user->roles->pluck('id')->first())
+        ->where('servers.status',1)
+        ->orderBy('servers.id', 'asc')->get()->toArray();
         //$domainsArray = DomainMinistryAgencies::take(10)->get()->toArray();
         $domainsArray = DomainMinistryAgencies::where('enabled', 1)->get()->toArray();
         $departmentsArray = Department::where('status', 1)->get()->toArray();
