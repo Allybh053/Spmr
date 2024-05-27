@@ -28,6 +28,7 @@ class MailLogController extends Controller
         $serversArray = Server::leftJoin('role_servers as rs','servers.id','rs.server_id')
         ->where('rs.role_id',$user->roles->pluck('id')->first())
         ->where('servers.status',1)
+        ->orderBy('servers.id', 'asc')
         ->get();
         $serverIds = RoleServer::whereIn('role_id', $user->roles->pluck('id')->all())
             ->pluck('server_id');
