@@ -188,6 +188,7 @@ class SmtpRelayController extends Controller
 
     public function daftar()
     {
+        $user = Auth::user();
         $serversArray = Server::leftJoin('role_servers as rs','servers.id','rs.server_id')
         ->where('rs.role_id',$user->roles->pluck('id')->first())
         ->where('servers.status',1)
@@ -622,6 +623,7 @@ class SmtpRelayController extends Controller
     }
 
     public function kemaskini(Request $request,$id, $type){
+        $user = Auth::user();
         $formsmtp = SmtpRelayReqForm::find($id);
         $details = smtp_relay_server::where('form_id', '=', $formsmtp->form_id)->where('types_req',$type)->get();
         $serversArray = Server::leftJoin('role_servers as rs','servers.id','rs.server_id')
