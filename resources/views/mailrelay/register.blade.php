@@ -55,8 +55,8 @@
                                 <span class="badge bg-success text-white rounded-pill">New Application</span>
                             @elseif($smtpMailServer -> types_req == 2)
                                 <span class="badge bg-danger text-white rounded-pill">Terminate of Service</span>
-                            @else
-                                <span class="badge bg-primary text-white rounded-pill">Onboarding Agency</span>
+                            {{-- @else
+                                <span class="badge bg-primary text-white rounded-pill">Onboarding Agency</span> --}}
                             @endif</td>
                             <td>{{ $smtpMailServer -> applicant_name }}</td>
                             <td>

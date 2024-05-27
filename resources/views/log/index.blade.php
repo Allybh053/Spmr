@@ -115,51 +115,76 @@
                             socket.addEventListener('message', (event) => {
 
                                 const response = event.data;
+                                //console.log("outputs"+outputs);
+                                outputs.push(response);
+
+                                $('#server-status').text(outputs[0]);
+                                $('#service-status').text(outputs[1]);
+                                $('#sasl').text(outputs[2]);
+                                $('#smtpd-lost').text(outputs[3]);
+                                $('#smtpd-timeout').text(outputs[4]);
+                                $('#bounced').text(outputs[5]);
+
                                 getHostDomSum(response)
+                                getGrandTotals(outputs);
                                 const output = extractOutput(response);
-                                if (output !== null) {
+                                // if (output !== null) {
 
-                                    outputs.push(output);
+                                //     outputs.push(output);
 
-                                    if (outputs.length > commands.length) {
-                                        $('#server-status').text(outputs[1]);
-                                        $('#service-status').text(outputs[3]);
-                                        $('#sasl').text(outputs[5]);
-                                        $('#smtpd-lost').text(outputs[7]);
-                                        $('#smtpd-timeout').text(outputs[9]);
-                                        $('#bounced').text(outputs[11]);
-                                    }
-                                }
+                                //     if (outputs.length > commands.length) {
+                                //         $('#server-status').text(outputs[1]);
+                                //         $('#service-status').text(outputs[3]);
+                                //         $('#sasl').text(outputs[5]);
+                                //         $('#smtpd-lost').text(outputs[7]);
+                                //         $('#smtpd-timeout').text(outputs[9]);
+                                //         $('#bounced').text(outputs[11]);
+                                //     }
+                                // }
                             });
                         }
 
-                        function extractOutput(response) {
-                            const cleanResponse = response.replace(/\[\d;?\d*m/g, '').trim();
-                            getGrandTotals(cleanResponse);
-                            getHostDomSum(response);
-                            const outputMatch = cleanResponse.match(/\[.*?\]#\S (.*)/);
-                            const outputs = [];
-                            if (outputMatch && outputMatch.length > 1) {
-                                outputs.push(outputMatch[1]);
-                                return outputs;
-                            } else {
-                                return null;
-                            }
-                        }
+                        // function extractOutput(response) {
+                        //     console.log(response);
+                        //     const cleanResponse = response.replace(/\[\d;?\d*m/g, '').trim();
+                        //     getGrandTotals(outputs);
+                        //     getHostDomSum(response);
+                        //     const outputMatch = cleanResponse.match(/\[.*?\]#\S (.*)/);
+                        //     const outputs = [];
+                        //     if (outputMatch && outputMatch.length > 1) {
+                        //         outputs.push(outputMatch[1]);
+                        //         return outputs;
+                        //     } else {
+                        //         return null;
+                        //     }
+                        // }
 
 
                         var labels = ['received', 'deferred', 'delivered', 'bounced', 'recipients', 'sending hosts/domains'];
                         var datasetValues = [];
 
                         // Update Messages Overview table
-                        function getGrandTotals(cleanResponse) {
-                            if (cleanResponse) {
-                                const outputMatch = cleanResponse.match(/\[.*?\]#\S (.*)/);
-                                const numericLines = outputMatch.filter(line => /^\d/.test(line));
+                        function getGrandTotals(outputs) {
+
+                            // console.log("cleanResponse -> "+cleanResponse);
+                            if (outputs) {
+                                // console.log(outputs);
+                                // const outputMatch = cleanResponse.match(/\[.*?\]#\S (.*)/);
+                                const numericLines = outputs.filter(line => /^\d/.test(line));
+                                // console.log("numericLines ->"+numericLines);
                                 const filteredLines = numericLines.filter(line => !line.includes(','));
-                                if (filteredLines.length > 0 && filteredLines[0] !== undefined) {
-                                    datasetValues.push(filteredLines[0]);
-                                }
+                                // console.log("filteredLines ->"+filteredLines);
+                                // if (filteredLines.length > 0 && filteredLines[0] !== undefined) {
+                                //     datasetValues.push(filteredLines);
+
+                                // }
+
+                                // Flatten numericLines array into datasetValues
+                                filteredLines.forEach(line => {
+                                    line.split(',').forEach(filteredLines => {
+                                        datasetValues.push(filteredLines.trim());
+                                    });
+                                });
 
                             } else {
                                 //console.error("cleanResponse is undefined");
@@ -174,13 +199,15 @@
                                 tableBody.innerHTML = '';
 
                                 // Create a row for each label-value pair
-                                for (var i = 0; i < labels.length && i < datasetValues.length; i++) {
+                                for (let i = 0; i < labels.length; i++) {
                                     var row = document.createElement('tr');
                                     var labelCell = document.createElement('td');
-                                    var valueCell = document.createElement('td');
                                     labelCell.textContent = labels[i];
-                                    valueCell.textContent = datasetValues[i];
                                     row.appendChild(labelCell);
+
+
+                                    var valueCell = document.createElement('td');
+                                    valueCell.textContent = datasetValues[i];
                                     row.appendChild(valueCell);
                                     tableBody.appendChild(row);
                                 }
