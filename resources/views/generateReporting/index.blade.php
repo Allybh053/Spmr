@@ -35,7 +35,7 @@
                         <div class="serverBox col-md-6">
                             <div class="mb-3">
                                 <label class="small mb-1" for="inputAgencies">Choose Server:</label>
-                                {!! Form::select('server', $serverconfig,  null,  ['id'=>'server', 'name'=>'server', 'class'=>'form-control select2', 'placeholder'=>config('params.dropdown_default')]) !!}
+                                {!! Form::select('server', $serverconfig,  $defaultServerId ?? 1,  ['id'=>'server', 'name'=>'server', 'class'=>'form-control select2', 'placeholder'=>config('params.dropdown_default')]) !!}
                                 <p class="card-text mt-1 mb-1" id="ipAddress"></p>
                                 <div class="small text-muted"></div>
                             </div>
