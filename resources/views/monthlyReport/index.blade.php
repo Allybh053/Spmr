@@ -753,15 +753,15 @@
                                 //     const date = new Date(`1970-01-01T${d.time.split('+')[0]}`);
                                 //     return date.toTimeString().slice(0, 8); // H:M:S format
                                 // });
-
+                                const labels = data.map(d => d.time);
                                 // time format H:m-H:m
-                                const labels = data.map((d, index) => {
-                                    const startDate = new Date(`1970-01-01T${d.time.split('+')[0]}`);
-                                    const endDate = new Date(`1970-01-01T${data[index + 1] ? data[index + 1].time.split('+')[0] : d.time.split('+')[0]}`);
-                                    const startTime = startDate.getHours() + ':' + ('0' + startDate.getMinutes()).slice(-2);
-                                    const endTime = endDate.getHours() + ':' + ('0' + endDate.getMinutes()).slice(-2);
-                                    return `${startTime}-${endTime}`;
-                                }).slice(0, -1); // Remove last interval, assuming it's incomplete or unwanted
+                                // const labels = data.map((d, index) => {
+                                    // const startDate = new Date(`1970-01-01T${d.time.split('+')[0]}`);
+                                    // const endDate = new Date(`1970-01-01T${data[index + 1] ? data[index + 1].time.split('+')[0] : d.time.split('+')[0]}`);
+                                    // const startTime = startDate.getHours() + ':' + ('0' + startDate.getMinutes()).slice(-2);
+                                    // const endTime = endDate.getHours() + ':' + ('0' + endDate.getMinutes()).slice(-2);
+                                    // return `${startTime}-${endTime}`;
+                                // }).slice(0, -1); // Remove last interval, assuming it's incomplete or unwanted
 
                                 const receivedData = data.map(d => d.received);
                                 const deliveredData = data.map(d => d.delivered);
