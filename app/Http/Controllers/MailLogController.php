@@ -33,13 +33,15 @@ class MailLogController extends Controller
         $serverIds = RoleServer::whereIn('role_id', $user->roles->pluck('id')->all())
             ->pluck('server_id');
 
-        $defaultServerId = 1;
+        $defaultServerId = $serverIds->min();
+
+        $serverIp = Server::find($defaultServerId);
 
         // Filter servers based on the fetched IDs
         $serverconfig = Server::whereIn('id', $serverIds)
             ->where('status', 1)
             ->pluck('hostname', 'id');
 
-        return view('mailLog.index',compact( 'user', 'role', 'serversArray', 'serverIds', 'defaultServerId', 'serverconfig'));
+        return view('mailLog.index',compact( 'user', 'role', 'serversArray', 'serverIds', 'defaultServerId', 'serverconfig','serverIp'));
     }
 }

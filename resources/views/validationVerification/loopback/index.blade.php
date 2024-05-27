@@ -36,7 +36,7 @@
                         <div class="row col-12 mb-1">
                                     <div class="col-md-4">
                                         <label class="small mb-1" for="serverName">Server Name:</label>
-                                        {!! Form::select('serverName', $serverName, null, ['id'=>'serverName', 'name'=>'serverName', 'class'=>'form-control select2', 'placeholder'=>config('params.dropdown_default')]) !!}
+                                        {!! Form::select('serverName', $serverName, $defaultServerId ?? 1, ['id'=>'serverName', 'name'=>'serverName', 'class'=>'form-control select2', 'placeholder'=>config('params.dropdown_default')]) !!}
                                     </div>
                         </div>
                         <div class="row col-12 mb-1">

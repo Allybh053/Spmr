@@ -27,7 +27,7 @@ class LoopBackController extends Controller
         $serverIds = RoleServer::whereIn('role_id', $user->roles->pluck('id')->all())
         ->pluck('server_id');
 
-        $defaultServerId = 1;
+        $defaultServerId = $serverIds->min();
 
         // Filter servers based on the fetched IDs
         $serverName = Server::whereIn('id', $serverIds)

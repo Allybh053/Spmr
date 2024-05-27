@@ -21,7 +21,7 @@ class ManageServiceController extends Controller
         $role = $user->roles->isNotEmpty() ? $user->roles->pluck('name')->first() : null;
         $serverIds = RoleServer::whereIn('role_id', $user->roles->pluck('id')->all())->pluck('server_id');
 
-        $defaultServerId = 1;
+        $defaultServerId = $serverIds->min();
 
         // Filter servers based on the fetched IDs
         $serverconfig =  Server::whereIn('id', $serverIds)
