@@ -292,12 +292,11 @@ class DashboardController extends Controller
         $serverSum=[];
         foreach ($listServer as $server) {
             $dataSmtpForm = DB::table('smtp_relay_req_form')
-                ->join('smtp_relay_server', 'smtp_relay_req_form.id', '=', 'smtp_relay_server.smtpid')
-                ->join('servers', 'servers.hostname', '=', 'smtp_relay_req_form.smtp_relay_server')
+                ->leftJoin('smtp_relay_server', 'smtp_relay_req_form.id', 'smtp_relay_server.smtpid')
+                ->leftJoin('servers', 'servers.hostname', 'smtp_relay_req_form.smtp_relay_server')
                 ->where('smtp_relay_req_form.status', 1)
                 ->where('smtp_relay_req_form.smtp_relay_server', $server->hostname)
-                ->select('smtp_relay_req_form.id AS form_id', 'servers.hostname AS server_hostname',
-                    'smtp_relay_server.ip_addr_server AS server_ip')->get()->count();
+                ->count();
 
             $dataDomain = DB::table('mailrouting')
                 ->where('mailrouting.server', $server->hostname)->get()->count();

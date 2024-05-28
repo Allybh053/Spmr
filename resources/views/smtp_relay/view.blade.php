@@ -261,11 +261,18 @@
                 <hr>
                 <div class="mb-3">
                     <label for="attachement">Attachement</label><br>
-                    @if ($datasmtp->upload_copy_attachment)
-                    <a href="{{ route('smtp_relay.viewPdf',['filename' => $datasmtp->upload_copy_attachment]) }}" target="_blank">{{$datasmtp->upload_copy_attachment}}</a> 
-                    @else
-                        <span class="text-muted">No Attachment</span>
-                    @endif
+                    @foreach ($attachment as $attachments)
+                        @if ($attachments->upload_copy_attachment)
+                            <a href="{{ route('smtp_relay.viewPdf', ['filename' => $attachments->upload_copy_attachment]) }}" target="_blank">{{ $attachments->upload_copy_attachment }}</a><br>
+                        @endif
+                        @if ($attachments->attachment_path)
+                            <a href="{{ route('smtp_relay.viewPdf', ['filename' => $attachments->attachment_path]) }}" target="_blank">{{ $attachments->attachment_path }}</a><br>
+                        @endif
+                        @if (!$attachments->upload_copy_attachment && !$attachments->attachment_path)
+                            <span class="text-muted">No Attachment</span><br>
+                        @endif
+                    @endforeach
+
                 </div>
                 <div class="mb-3">
                     <label for="Comments">Comments</label>

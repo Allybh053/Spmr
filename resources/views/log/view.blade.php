@@ -53,7 +53,7 @@
                                         <div class="me-3">
                                             <i class="feather-xl text-green mb-3" data-feather="shield"></i>
                                             <h5>SASL Authentication Failed</h5>
-                                            <span>Updated every 2 hours</span>
+                                            <div  class="small text-muted">Updated every 2 hours</div>
                                             <div class="inline">
                                                 <i class="feather-l text-primary" data-feather="corner-down-right"></i>
                                                 <p style="display: inline-block; margin-left: 5px;" id="sasl">{{ $serverData['sasl'] }}</p>
@@ -71,7 +71,7 @@
                                         <div class="me-3">
                                             <i class="feather-xl text-primary mb-3" data-feather="activity"></i>
                                             <h5>(%) SMTPD Connection Lost</h5>
-                                            <span>Updated every 2 hours</span>
+                                            <div  class="small text-muted">Updated every 2 hours</div>
                                             <div class="inline">
                                                 <i class="feather-l text-primary" data-feather="corner-down-right"></i>
                                                 <p style="display: inline-block; margin-left: 5px;" id="smtpd-lost">{{ $serverData['smtpdLost'] }}</p>
@@ -89,7 +89,7 @@
                                         <div class="me-3">
                                             <i class="feather-xl text-secondary mb-3" data-feather="zap"></i>
                                             <h5>(%) SMTPD Connection Timeout</h5>
-                                            <span>Updated every 2 hours</span>
+                                            <div  class="small text-muted">Updated every 2 hours</div>
                                             <div class="inline">
                                                 <i class="feather-l text-primary" data-feather="corner-down-right"></i>
                                                 <p style="display: inline-block; margin-left: 5px;" id="smtpd-timeout">{{ $serverData['smtpdTimeOut'] }}</p>
@@ -107,7 +107,7 @@
                                         <div class="me-3">
                                             <i class="feather-xl text-green mb-3" data-feather="shield"></i>
                                             <h5>Bounced Non-Delivery Notifications</h5>
-                                            <span>Updated every 2 hours</span>
+                                            <div  class="small text-muted">Updated every 2 hours</div>
                                             <div class="inline">
                                                 <i class="feather-l text-primary" data-feather="corner-down-right"></i>
                                                 <p style="display: inline-block; margin-left: 5px;" id="bounced">{{ $serverData['bounced'] }}</p>
@@ -121,6 +121,11 @@
 
 
                     </div>
+                    @php
+                    use Carbon\Carbon;
+
+                        $currentDate = Carbon::now()->format('d/m/Y');
+                    @endphp
                     <div class="row">
                         <div class="col-lg-6">
                             <!-- Pie chart example-->
@@ -135,13 +140,13 @@
                                                 <th>Grand Totals</th>
                                             </tr>
                                             </thead>
-                                            <tbody id="tableBody">
+                                            <tbody id="grandTotalTable">
                                             <!-- Rows will be dynamically added here -->
                                             </tbody>
                                         </table>
                                     </div>
                                 </div>
-                                <div class="card-footer small text-muted">Updated yesterday at 11:59 PM</div>
+                                <div class="card-footer small text-muted">Updated {{ $currentDate }}</div>
                             </div>
                         </div>
 
@@ -164,7 +169,7 @@
                                         </table>
                                     </div>
                                 </div>
-                                <div class="card-footer small text-muted">Updated yesterday at 11:59 PM</div>
+                                <div class="card-footer small text-muted">Updated {{ $currentDate }}</div>
                             </div>
                         </div>
                     </div>
@@ -191,7 +196,7 @@
                                         </table>
                                     </div>
                                 </div>
-                                <div class="card-footer small text-muted">Updated yesterday at 11:59 PM</div>
+                                <div class="card-footer small text-muted">Updated {{ $currentDate }}</div>
                             </div>
                         </div>
                     </div>
