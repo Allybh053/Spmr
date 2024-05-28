@@ -264,7 +264,7 @@ class MainRelayController extends Controller
 
         //$serverdetail = DomainServer::where('server_id', $ff)->get();
 
-        $defaultServerId = 1;
+        $defaultServerId = $serverIds->min();
 
         // Filter servers based on the fetched IDs
         $serverconfig = Server::whereIn('id', $serverIds)

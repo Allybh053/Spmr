@@ -273,6 +273,8 @@ var data = [];
 var sockets = [];
 var serverIpaddresses = [];
 var serverIpaddresses1 = [];
+var labels = [];
+var datasets = {};
 $(document).ready(function() {
 
 $('a.mService').click(function(e) {
@@ -285,10 +287,12 @@ $('a.mService').click(function(e) {
 });
 
 function getRandomColor() {
-    var red = Math.floor(Math.random() * 128) + 128; // Range: 128-255
-    var green = Math.floor(Math.random() * 128) + 128; // Range: 128-255
-    var blue = Math.floor(Math.random() * 128) + 128; // Range: 128-255
-    return 'rgb(' + red + ',' + green + ',' + blue + ')';
+    var letters = '0123456789ABCDEF';
+    var color = '#';
+    for (var i = 0; i < 6; i++) {
+        color += letters[Math.floor(Math.random() * 16)];
+    }
+    return color;
 }
 
 renderChartKementerian();
@@ -427,7 +431,6 @@ function formatDate(date) {
     return day + '/' + month + '/' + year + ' ' + hours + ':' + minutes + ':' + seconds;
 }
 
-// Generate random data for multiple servers
 
 
 @foreach ($serverconfig as $server)
@@ -437,30 +440,83 @@ serverIpaddresses1.push(serverMailRelay1{{$loop->iteration}});
 
 var servers = {};
 
+// Function to handle WebSocket connection and data processing
+function connectAndProcess(hostname1, index) {
+    const serverAddress1 = 'wss://spmr.mygovuc.gov.my/' + hostname1;
+    const socket1 = new WebSocket(serverAddress1);
+
+    socket1.onopen = function() {
+        console.log("Connected to " + serverAddress1);
+
+        // Send any initial message if needed
+        // socket.send("Initial message or request data");
+    };
+
+    socket1.onmessage = function(event1) {
+        var message = event1.data.trim();
+
+        // Check if the message matches the desired format
+        if (!/^\d{4}-\d{2}-\d{2} \d{2}:\d{2},\d+$/.test(message)) {
+            // console.log("Skipping message from " + serverAddress1 + ":", message);
+            return; // Skip processing if the message does not match the format
+        }
+        const [timestamp, value] = message.split(',');
+
+         // Push timestamp to labels array if it's not already present
+         if (!labels.includes(timestamp)) {
+            labels.push(timestamp);
+        }
+
+        // Add value to the dataset corresponding to the hostname
+        if (!datasets[hostname1]) {
+            datasets[hostname1] = {
+                label: hostname1,
+                data: [],
+                borderColor: getRandomColor(), // Random color for the line
+                borderWidth: 2, // Bold line
+                fill: false
+            };
+        }
+        datasets[hostname1].data.push({
+            x: timestamp,
+            y: parseInt(value)
+        });
+
+        // Update chart data
+        mailQueueChart.data.labels = labels;
+        mailQueueChart.data.datasets = Object.values(datasets); // Convert object to array
+        mailQueueChart.update();
+
+    };
+
+    socket1.onerror = function(error) {
+        console.error("WebSocket Error for " + serverAddress1 + ": ", error);
+    };
+
+    socket1.onclose = function() {
+        console.log("WebSocket connection closed for " + serverAddress1);
+    };
+
+    sockets.push(socket1);
+}
+
 // Iterate over the serverIpaddresses array and generate server data
 serverIpaddresses1.forEach(function(hostname, index) {
-    servers['server' + (index + 1)] = generateServerData(hostname);
+    connectAndProcess(hostname, index);
 });
 
-// Prepare datasets for Chart.js
-var datasets = Object.values(servers);
+// // start reopen connection
+// function reopenConnections() {
+//     serverIpaddresses1.forEach(function(hostname, index) {
+//         connectAndProcess(hostname, index);
+//     });
+// }
 
-var xValues = datasets[0].data.map(function(dataPoint) {
-    console.log("hahaha -> "+xValues);
-    return dataPoint.x;
-});
+// // Call the reopenConnections function after 3 minutes
+// setTimeout(reopenConnections, 3 * 60 * 1000);
+// // end reopen connection
 
-mailQueueChart();
-function mailQueueChart() {
-
-// Create a new Chart.js instance
 var ctx = document.getElementById('mailQueueChart').getContext('2d');
-
-
-var labels = datasets[0].data.map(function(dataPoint) {
-    return dataPoint.x;
-});
-
 var mailQueueChart = new Chart(ctx, {
     type: 'line',
     data: {
@@ -472,21 +528,21 @@ var mailQueueChart = new Chart(ctx, {
             x: [{
                 type: 'time',
                 time: {
-                    parser: 'DD/MM/YYYY HH:mm:ss', // Custom parser for the format
+                    parser: 'YYYY-MM-DD HH:mm', // Adjust parser for the format
                     unit: 'minute', // Display unit as minute
                     displayFormats: {
                         minute: 'HH:mm' // Format for minute display
                     }
                 },
                 title: {
-                    display: false,
+                    display: true,
                     text: 'Time'
                 }
             }],
             y: [{
                 title: {
                     display: true,
-                    text: 'Mail Count'
+                    text: 'Value'
                 },
                 beginAtZero: true
             }]
@@ -502,10 +558,6 @@ var mailQueueChart = new Chart(ctx, {
         }
     }
 });
-}
-window.onload = function() {
-    mailQueueChart();
-};
 
 @foreach ($serverconfig as $server)
 let serverMailRelay{{$loop->iteration}} = "{{ $server->hostname }}";
@@ -543,7 +595,7 @@ var commands = [
         id: 'statusApache2'
     },
     {
-        command: '/usr/bin/tail -121 /data/collections/spmr/count_mailq.txt'
+        command: '/usr/bin/tail -50 /data/collections/spmr/count_mailq.txt'
     },
 ];
 
@@ -593,19 +645,6 @@ sockets.forEach((socket, index) => {
 
             $('#statusFail2ban' + index).text(outputs[2]);
 
-            // var Fail2banStatus = outputs[2];
-            // var Fail2banAlt;
-            // if(Fail2banStatus == "Fail2ban is running"){
-            //     Fail2banStatus = "Online";
-            //     Fail2banAlt = "Fail2ban is running";
-            // }else{
-            //     Fail2banStatus = "Offline";
-            //     Fail2banAlt = "Postfix is down";
-            // }
-            // var postfixImageSrc = Fail2banStatus === 'Online' ? 'assets/img/demo/online.png' : 'assets/img/demo/offline.png';
-
-            // $('#statusPostfixImage').attr('src', postfixImageSrc).attr('alt', postfixAlt);
-
             $('#statusWebmin' + index).text(outputs[3]);
             var WebminStatus = outputs[3];
             var WebminAlt;
@@ -634,6 +673,7 @@ sockets.forEach((socket, index) => {
                 $('#statusApache2Image'+ index).attr('src', Apache2ImageSrc).attr('alt', Apache2Alt);
 
                 // console.log(outputs[5]);
+                extractOutput(response);
 
     });
 });

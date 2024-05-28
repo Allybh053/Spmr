@@ -47,10 +47,10 @@ class LogOverviewController extends Controller
 
     public function getNewServerData(Request $request)
     {
-        $serverName = $request->serverName;
-        $dummyData = $this->dummyData($serverName);
 
-        return response()->json($dummyData);
+        $serverName = Server::find($request->serverName);
+
+        return response()->json($serverName);
 
     }
 

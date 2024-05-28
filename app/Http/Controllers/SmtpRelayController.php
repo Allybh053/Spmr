@@ -25,6 +25,8 @@ use App\Mail\mailForm;
 use Maatwebsite\Excel\Facades\Excel;
 use App\Http\Controllers\ImportController;
 use Illuminate\Support\Facades\Log;
+use App\Models\HistoryCopyAttachment;
+
 
 
 class SmtpRelayController extends Controller
@@ -430,10 +432,14 @@ class SmtpRelayController extends Controller
                 $files = $request->file('attachment');
 
                 // Get the original name of the file
+                $randomCharacters = substr(str_shuffle(str_repeat($x='0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ', ceil(5/strlen($x)) )),1,5);
+
+                // Get the original name of the file
                 $originalFileName = pathinfo($files->getClientOriginalName(), PATHINFO_FILENAME);
+
                 $currentDateTime = date('dmYHis');
                 $fileExtension = $files->getClientOriginalExtension();
-                $fileName = $originalFileName . '_' . $currentDateTime . '.' . $fileExtension;
+                $fileName = $originalFileName . '_' . $formIds . $currentDateTime . '_' . $randomCharacters . '.' . $fileExtension;
 
                 // Move the uploaded file to the storage directory
                 $files->move(storage_path('../storage/app/attachments'), $fileName);
@@ -619,7 +625,11 @@ class SmtpRelayController extends Controller
         $details = smtp_relay_server::where('form_id', $datasmtp->form_id)
                     ->where('types_req', $datasmtp->types_req)
                     ->get();
-        return view('smtp_relay.view',compact('datasmtp','details'));
+        $attachment = HistoryCopyAttachment::select('sm.upload_copy_attachment','history_copy_attachment.attachment_path')
+        ->leftJoin('smtp_relay_req_form as sm','sm.id','history_copy_attachment.form_id')
+        ->where('sm.id',$datasmtp->id)
+        ->get();
+        return view('smtp_relay.view',compact('datasmtp','details','attachment'));
     }
 
     public function kemaskini(Request $request,$id, $type){
@@ -636,7 +646,12 @@ class SmtpRelayController extends Controller
         $positionsArray = Position::where('status', 1)->get()->toArray();
         $ministriesArray = Ministry::where('status', 1)->get()->toArray();
         $agenciesArray = Agency::where('status', 1)->get()->toArray();
-        return view('smtp_relay.update',compact('formsmtp','details','serversArray','domainsArray','departmentsArray','positionsArray','ministriesArray','agenciesArray'));
+        $attachment = HistoryCopyAttachment::select('sm.upload_copy_attachment','history_copy_attachment.attachment_path')
+        ->leftJoin('smtp_relay_req_form as sm','sm.id','history_copy_attachment.form_id')
+        ->where('sm.id',$id)
+        ->get()
+        ->toArray();
+        return view('smtp_relay.update',compact('formsmtp','details','serversArray','domainsArray','departmentsArray','positionsArray','ministriesArray','agenciesArray','attachment'));
     }
 
     public function kemaskinidata(Request $request,$id){
@@ -644,15 +659,24 @@ class SmtpRelayController extends Controller
 
             // Check if a file was uploaded
         if ($request->hasFile('upload_copy_attachment')) {
+            $relayDetails = SmtpRelayReqForm::where('form_id',$id)->first();
+
+            $historyAttachment = HistoryCopyAttachment::create([
+                'form_id' => $relayDetails->id,
+                'attachment_path' => $relayDetails->upload_copy_attachment,
+            ]);
+
             // Retrieve the uploaded file
             $files = $request->file('upload_copy_attachment');
+
+            $randomCharacters = substr(str_shuffle(str_repeat($x='0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ', ceil(5/strlen($x)) )),1,5);
 
             // Get the original name of the file
             $originalFileName = pathinfo($files->getClientOriginalName(), PATHINFO_FILENAME);
 
             $currentDateTime = date('dmYHis');
             $fileExtension = $files->getClientOriginalExtension();
-            $fileName = $originalFileName . '_' . $currentDateTime . '.' . $fileExtension;
+            $fileName = $originalFileName . '_' . $id . $currentDateTime . '_' . $randomCharacters . '.' . $fileExtension;
 
             // Move the uploaded file to the storage directory
             $files->move(storage_path('../storage/app/attachments'), $fileName);
