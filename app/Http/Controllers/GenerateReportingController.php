@@ -48,6 +48,7 @@ class GenerateReportingController extends Controller
         // Retrieve other inputs from the request
         $serverIds = $request->input('server');
         $input1 = $request->input('ministry');
+        $agency = $request->input('agency');
         $input2Type = $request->input('calendarType');
         $dateType = $request->input('input2');
         $monthType = $request->input('input2_month');
