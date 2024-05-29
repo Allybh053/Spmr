@@ -89,11 +89,67 @@ class DashboardController extends Controller
             return response()->json($responseData);
         }
 
+        $serverListAgencies = [];
+        $listServerAgencies = Server::whereIn('id', $serverIds)->where('status', 1)->orderBy('id', 'asc')->get();
+        foreach ($listServerAgencies as $serverAgencies) {
+            $dataSmtpFormAgencies = SmtpRelayReqForm::select('smtp_relay_req_form.agencies', DB::raw('COUNT(smtp_relay_req_form.agencies) as total_agencies'))
+                ->leftJoin('smtp_relay_server as srs', 'srs.form_id', '=', 'smtp_relay_req_form.form_id')
+                ->where('smtp_relay_req_form.smtp_relay_server', $serverAgencies->hostname)
+                ->where('smtp_relay_req_form.status', 1)
+                ->groupBy('smtp_relay_req_form.agencies')
+                ->orderByDesc('total_agencies') // Order by total agencies count in descending order
+                ->limit(5) // Limit the result to top 5 agencies
+                ->get();
+
+            $agenciesData = [];
+            foreach ($dataSmtpFormAgencies as $data) {
+                $agenciesData[] = [
+                    'agency' => $data->agencies,
+                    'totalAgencies' => $data->total_agencies
+                ];
+            }
+
+            $serverListAgencies[] = [
+                'hostname' => $serverAgencies->hostname,
+                'ipAddress' => $serverAgencies->ipaddress,
+                'agencies' => $agenciesData // Rename 'agencies' to 'topAgencies'
+            ];
+        }
+
+        $serverListMinistry = [];
+        $listServerMinistry = Server::whereIn('id', $serverIds)->where('status', 1)->orderBy('id', 'asc')->get();
+        foreach ($listServerMinistry as $serverMinistry) {
+            $dataSmtpFormMinistry = SmtpRelayReqForm::select('smtp_relay_req_form.smtp_relay_server','smtp_relay_req_form.ministry',DB::raw('COUNT(smtp_relay_req_form.ministry) as total_ministry'))
+            ->leftJoin('smtp_relay_server as srs','srs.form_id','smtp_relay_req_form.form_id')
+            ->where('smtp_relay_req_form.smtp_relay_server',$serverMinistry->hostname)
+            ->where('smtp_relay_req_form.status', 1)
+            ->groupBy('smtp_relay_req_form.smtp_relay_server','smtp_relay_req_form.ministry')
+            ->orderByDesc('total_ministry') // Order by total agencies count in descending order
+            ->limit(5) // Limit the result to top 5 agencies
+            ->get();
+
+            $ministryData = [];
+            foreach ($dataSmtpFormMinistry as $dataMinistry) {
+                $ministryData[] = [
+                    'ministry' => $dataMinistry->ministry,
+                    'totalMinistry' => $dataMinistry->total_ministry
+                ];
+            }
+
+            $serverListMinistry[] = [
+                'hostname' => $serverMinistry->hostname,
+                'ipAddress' => $serverMinistry->ipaddress,
+                'ministry' => $ministryData
+            ];
+
+
+        }
+
             // Pass the data to the view
             return view('dashboard.index', compact(
                 'user', 'role', 'serverconfig', 'serverList', 'filteredMinistries',
                 'filteredDept', 'departmentCounts', 'departmentCounts2', 'limit', 'days','defaultServerId',
-                'totalCountDashboard'));
+                'totalCountDashboard','serverListAgencies','serverListMinistry'));
         }
 
     private function generateDataMinistry($limit = null)
