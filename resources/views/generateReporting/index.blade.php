@@ -46,15 +46,30 @@
                     <div class="row gx-3 mb-3">
                         <div class="col-md-6">
                             <div class="mb-3">
-                                <label class="small mb-1" for="inputAgencies">Ministry/Agency/SUK:</label>
+                                <label class="small mb-1" for="inputMinistry">Ministry:</label>
                                 {{--{!! Form::select('agency', $agency, isset($applicantInfo) ? $applicantInfo->agencies : null,  ['id'=>'agency', 'name'=>'agency', 'class'=>'form-control select2', 'placeholder'=>config('params.dropdown_default')]) !!}--}}
                                 <select class="form-control select2" name="ministry" id="ministry" aria-label="Default select">
-                                    <option selected disabled>Select Ministry/Agency/SUK</option>
+                                    <option selected disabled>Select Ministry</option>
                                     {{--@foreach ($domainsArray as $domain)
                                         <option value="{{ $domain['agencies_name'] }}">{{ $domain['agencies_name'] }}</option>
                                     @endforeach--}}
-                                    @foreach ($allMinistryAgency as $ministryAgency)
-                                        <option value="{{ $ministryAgency }}">{{ $ministryAgency }}</option>
+                                    @foreach ($ministries as $ministry)
+                                        <option value="{{ $ministry }}">{{ $ministry }}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label class="small mb-1" for="inputAgencies">Agency/SUK:</label>
+                                {{--{!! Form::select('agency', $agency, isset($applicantInfo) ? $applicantInfo->agencies : null,  ['id'=>'agency', 'name'=>'agency', 'class'=>'form-control select2', 'placeholder'=>config('params.dropdown_default')]) !!}--}}
+                                <select class="form-control select2" name="agency" id="agency" aria-label="Default select">
+                                    <option selected disabled>Select Agency/SUK</option>
+                                    {{--@foreach ($domainsArray as $domain)
+                                        <option value="{{ $domain['agencies_name'] }}">{{ $domain['agencies_name'] }}</option>
+                                    @endforeach--}}
+                                    @foreach ($agencies as $agency)
+                                        <option value="{{ $agency }}">{{ $agency }}</option>
                                     @endforeach
                                 </select>
                             </div>
@@ -118,7 +133,7 @@
                       </a>
                     </div>--}}
                     <div class="col-xl-6 mb-4">
-                        <a class="card lift h-100" href="#!">
+                        <div class="card lift h-100">
                             <div class="card-body d-flex justify-content-center flex-column">
                                 <div class="d-flex align-items-center justify-content-between">
                                     <div class="me-3">
@@ -132,10 +147,10 @@
                                     {{--<img src="{{asset ('assets/img/illustrations/dash_app.svg')}}" alt="..." style="width: 8rem" />--}}
                                 </div>
                             </div>
-                        </a>
+                        </div>
                     </div>
                     <div class="col-xl-6 mb-4">
-                      <a class="card lift h-100" href="#!">
+                      <div class="card lift h-100">
                         <div class="card-body d-flex justify-content-center flex-column">
                           <div class="d-flex align-items-center justify-content-between">
                             <div class="me-3">
@@ -149,7 +164,7 @@
                             {{--<img src="{{asset ('assets/img/illustrations/dash_domain.svg')}}" alt="..." style="width: 8rem" />--}}
                           </div>
                         </div>
-                      </a>
+                    </div>
                     </div>
                       {{--<div class="col-xl-6 mb-4">
                           <a class="card lift h-100" href="#!">
@@ -877,9 +892,9 @@
                         Swal.close();
 
                         // Update UI with the response data
-                        $('#totalIP').text(response.totalIP || "Not Found");
-                        $('#totalDeactivated').text(response.totalDeactivated || "Not Found");
-                        $('#totalDomain').text(response.totalDomain || "Not Found");
+                        $('#totalIP').text(response.totalIP || "0");
+                        $('#totalDeactivated').text(response.totalDeactivated || "0");
+                        $('#totalDomain').text(response.totalDomain || "0");
 
                         // Add index to each row
                         $.each(response.dataTbl1, function (index, row) {

@@ -34,13 +34,13 @@ class GenerateReportingController extends Controller
 
 
         $ministries = Ministry::where('status', 1)->pluck('name')->toArray();
-        $agencies = Agency::where('status', 1)->pluck('name')->toArray();
+        $agencies = Agency::where('status', 1)->whereNotIn('name',['-'])->pluck('name')->toArray();
         $allMinistryAgency = array_merge($ministries, $agencies);
 
 
         $domainsArray = DomainMinistryAgencies::where('enabled', 1)->get()->toArray();
 
-        return view('generateReporting.index',compact('defaultServerId','serverconfig','domainsArray', 'allMinistryAgency'));
+        return view('generateReporting.index',compact('defaultServerId','serverconfig','domainsArray','ministries' ,'agencies','allMinistryAgency'));
     }
 
     public function search(Request $request)
@@ -184,9 +184,9 @@ class GenerateReportingController extends Controller
 
             } else {
                 //$totalApplications = "Not Found";
-                $totalIpAddr = "Not Found";
-                $totalDeactivated = "Not Found";
-                $totalDomain = "Not Found";
+                $totalIpAddr = "0";
+                $totalDeactivated = "0";
+                $totalDomain = "0";
             }
 
             $valDataTables = $totalDataForm;

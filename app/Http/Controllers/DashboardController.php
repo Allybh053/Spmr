@@ -348,8 +348,7 @@ class DashboardController extends Controller
         $serverSum=[];
         foreach ($listServer as $server) {
             $dataSmtpForm = DB::table('smtp_relay_req_form')
-                ->leftJoin('smtp_relay_server', 'smtp_relay_req_form.id', 'smtp_relay_server.smtpid')
-                ->leftJoin('servers', 'servers.hostname', 'smtp_relay_req_form.smtp_relay_server')
+                ->leftJoin('smtp_relay_server', 'smtp_relay_req_form.form_id', 'smtp_relay_server.form_id')
                 ->where('smtp_relay_req_form.status', 1)
                 ->where('smtp_relay_req_form.smtp_relay_server', $server->hostname)
                 ->count();
@@ -363,7 +362,9 @@ class DashboardController extends Controller
 
             $dataIpBased = DB::table('smtp_relay_req_form')
                 ->where('smtp_relay_req_form.smtp_relay_server', $server->hostname)
-                ->where('smtp_relay_req_form.smtp_relay_auth_method', 1)->get()->count();
+                ->where('smtp_relay_req_form.smtp_relay_auth_method', 1)
+                ->where('smtp_relay_req_form.status', 1)
+                ->count();
 
             $serverSum=[
                 'hostname'=>  $server->hostname,
