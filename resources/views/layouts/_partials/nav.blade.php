@@ -204,7 +204,7 @@
                 @can('monthly_report_view')
                 <a class="nav-link" href="{{ route('monthlyReport.index') }}">
                     <div class="nav-link-icon"><i data-feather="trello"></i></div>
-                    Monthly Report
+                    Ussage Report
                     <div class="sidenav-collapse-arrow"></div>
                 </a>
                 @endcan

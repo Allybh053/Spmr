@@ -16,7 +16,7 @@
                                         <div class="page-header-icon">
                                             <i data-feather="trello"></i>
                                         </div>
-                                        <li class="breadcrumb-item">Monthly Report</li>
+                                        <li class="breadcrumb-item">Ussage Report</li>
                                     </ol>
                                 </nav>
                             </h1>
@@ -76,6 +76,7 @@
                                         <label class="small mb-1" for="calendarType">Filter Type:</label>
                                         <select class="form-control select2" id="calendarType" name="calendarType">
                                             <option selected disabled></option>
+                                            {{-- <option value="range">Date Range</option> --}}
                                             <option value="month">Month</option>
                                             <option value="year">Year</option>
                                         </select>
@@ -274,7 +275,11 @@
                 }
                 selectYearHtml += '</select></div>';
                 $('#calendarInputs').append(selectYearHtml);
-            }  else {
+            }   else if (selectedType === 'range') {
+                var selectRangeHtml = '<div class="row"><div class="col-md-6"><label for="start_date">Start Date:</label><input type="date" class="form-control" name="start_date" id="start_date"></div>';
+                selectRangeHtml += '<div class="col-md-6"><label for="end_date">End Date:</label><input type="date" class="form-control" name="end_date" id="end_date"></div></div>';
+                $('#calendarInputs').append(selectRangeHtml);
+            } else {
                 // to do
             }
         });
@@ -293,11 +298,26 @@
                     }
                 },
                 { data: 'date', name: 'date', class: 'text-center' },
-                { data: 'received', name: 'received', class: 'text-center' },
-                { data: 'delivered', name: 'delivered', class: 'text-center' },
-                { data: 'deferred', name: 'deferred', class: 'text-center' },
-                { data: 'bounced', name: 'bounced', class: 'text-center' },
-                { data: 'rejected', name: 'rejected', class: 'text-center' },
+                { data: 'received', name: 'received', class: 'text-center',
+                render: function (data, type, row) {
+                    return data.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+                } },
+                { data: 'delivered', name: 'delivered', class: 'text-center',
+                render: function (data, type, row) {
+                    return data.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+                } },
+                { data: 'deferred', name: 'deferred', class: 'text-center',
+                render: function (data, type, row) {
+                    return data.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+                } },
+                { data: 'bounced', name: 'bounced', class: 'text-center',
+                render: function (data, type, row) {
+                    return data.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+                } },
+                { data: 'rejected', name: 'rejected', class: 'text-center',
+                render: function (data, type, row) {
+                    return data.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+                } },
             ],
             dom: '<"top"fBl>rt<"bottom"ip>',
             buttons: [
