@@ -78,7 +78,7 @@
                         <div class="d-flex align-items-center justify-content-between">
                             <div class="me-3">
                                 <i class="feather-xl text-green mb-3" data-feather="shield"></i>
-                                <h5>Numbers of Registered SASL</h5>
+                                <h5>Total SASL based (SMTP relay request form registered)</h5>
                                 <div class="inline">
                                     <i class="feather-l text-primary" data-feather="corner-down-right"></i>
                                     <h2 id="totalSASL" style="display: inline-block; margin-left: 5px;">{{$server['totalSasl'] ?? '-'}}</h2>
@@ -98,7 +98,7 @@
                         <div class="d-flex align-items-center justify-content-between">
                             <div class="me-3">
                                 <i class="feather-xl text-green mb-3" data-feather=""></i>
-                                <h5>Total IP Based Registered </h5>
+                                <h5>Total IP based (SMTP relay request form registered)</h5>
                                 <div class="inline">
                                     <i class="feather-l text-primary" data-feather="corner-down-right"></i>
                                     <h2 id="totalIPBased" style="display: inline-block; margin-left: 5px;">{{$server['totalIpBased'] ?? '-'}}</h2>
