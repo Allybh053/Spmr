@@ -70,15 +70,15 @@
                         <thead>
                             <tr>
                                 <th>No.</th>
+                                <th>Date Created</th>
                                 <th>Serial No.</th>
                                 <th>Ticket No.</th>
                                 <th>Types Application</th>
                                 <th>Agency Name</th>
                                 <th>Project Name</th>
-                                <th>Server Mail Relay</th> 
+                                <th>Server Mail Relay</th>
                                 <th>Ip Address</th>
                                 <th>Date Approval</th>
-                                <th>Date Created</th>
                                 <th>Status</th>
                                 <th>Action</th>
                             </tr>
@@ -144,6 +144,7 @@
             },
             columns: [
                 { data: 'DT_RowIndex', name: 'DT_RowIndex', orderable: false, searchable: false, class: 'text-center' },
+                { data: 'created_at', name: 'created_at', class: 'text-center' },
                 { data: 'form_id', name: 'form_id', class: 'text-center' },
                 { data: 'ticket_id', name: 'ticket_number', class: 'text-center' },
                 { data: 'types_req', name: 'types_req', class: 'text-center' },
@@ -152,7 +153,6 @@
                 { data: 'smtp_relay_server', name: 'smtp_relay_server', class: 'text-center' },
                 { data: 'ip_addr_server', name: 'ip_addr_server', class: 'text-center' },
                 { data: 'date_verification_3', name: 'date_verification_3', class: 'text-center' },
-                { data: 'created_at', name: 'created_at', class: 'text-center' },
                 { data: 'status', name: 'status', class: 'text-center' },
                 { data: 'action', name: 'type', class: 'text-center', orderable: false, searchable: false },
             ],

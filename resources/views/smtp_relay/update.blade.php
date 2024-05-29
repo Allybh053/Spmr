@@ -133,7 +133,7 @@
                             <tr>
                                 <th scope="col">System Name</th>
                                 <th scope="col">IP Address</th>
-                                <th scope="col">FQDN System</th>
+                                <th scope="col">Domain System</th>
                                 <th scope="col">Actions</th>
                             </tr>
                         </thead>
@@ -275,6 +275,7 @@
                     <div class="mb-3 col-md-4">
                         <label class=" mb-1" for="date_verification_1">Date:</label>
                         <input class="form-control" type="date" id="date_verification_1" name="date_verification_1" value="{{ old('date_verification_1', date('Y-m-d', strtotime($formsmtp->date_verification_1))) }}">
+                        <span style="color: red"><div id="message"></div></span>
                     </div>
                 </div>
                 <hr>
@@ -287,6 +288,7 @@
                     <div class="col-md-6">
                         <label for="date_verification_2">Date:</label>
                         <input class="form-control" type="date" id="date_verification_2" name="date_verification_2"  value="{{ old('date_verification_2', date('Y-m-d', strtotime($formsmtp->date_verification_2))) }}">
+                        <span style="color: red"><div id="message2"></div></span>
                     </div>
                 </div>
                 <hr>
@@ -319,6 +321,7 @@
                     <div class="mb-3 col-md-4">
                         <label class=" mb-1" for="date_verification_3">Date:</label>
                         <input class="form-control" type="date" id="date_verification_3" name="date_verification_3"  value="{{ old('date_verification_3', date('Y-m-d', strtotime($formsmtp->date_verification_3))) }}">
+                        <span style="color: red"><div id="message3"></div></span>
                     </div>
                 </div>
                 <hr>
@@ -421,25 +424,58 @@
         });
 
 
-    const dateAInput = document.getElementById('applicantdate');
-    const dateBInput = document.getElementById('verifierdate');
-    // const dateCInput = document.getElementById('dateC');
-    const messageDiv = document.getElementById('message');
-    function compareDates() {
-        const dateA = new Date(dateAInput.value);
-        const dateB = new Date(dateBInput.value);
-        // const dateC = new Date(dateCInput.value);
+        const dateAInput = document.getElementById('date_application');
+        const dateBInput = document.getElementById('date_verification_1');
+        const dateCInput = document.getElementById('date_verification_2');
+        const dateDInput = document.getElementById('date_verification_3');
+        const messageDiv = document.getElementById('message');
+        const messageDiv2 = document.getElementById('message2');
+        const messageDiv3 = document.getElementById('message3');
 
-        if (dateB && dateA) {
-            if (dateB < dateA) {
-                messageDiv.textContent = "Date Verifier must be greater than Date Applicant";
+        function compareDates() {
+            var dateA = new Date(dateAInput.value);
+            var dateB = new Date(dateBInput.value);
 
-            } else {
-                messageDiv.textContent = "";
+            if (dateB && dateA) {
+                if (dateB < dateA) {
+                    messageDiv.textContent = "Date Verifier must be greater than Date Applicant";
+                } else {
+                    messageDiv.textContent = "";
+                }
             }
         }
-    }
-    dateBInput.addEventListener('change', compareDates);
+
+        function compareDates2() {
+
+            var dateB = new Date(dateBInput.value);
+            var dateC = new Date(dateCInput.value);
+
+            if (dateB && dateC) {
+                if ( dateC < dateB ) {
+                    messageDiv2.textContent = "Date Helpdesk must be greater than Date Verifier";
+                } else {
+                    messageDiv3.textContent = "";
+                }
+            }
+        }
+
+        function compareDates3() {
+            var dateC = new Date(dateCInput.value);
+            var dateD = new Date(dateDInput.value);
+
+            if (dateD && dateC) {
+                if (dateD < dateC) {
+                    messageDiv3.textContent = "Date Approval must be greater than Date Helpdesk";
+
+                } else {
+                    messageDiv2.textContent = "";
+                }
+            }
+        }
+
+        dateBInput.addEventListener('change', compareDates);
+        dateCInput.addEventListener('change', compareDates2);
+        dateDInput.addEventListener('change', compareDates3);
 
     // dateForm.addEventListener('submit',function(event){
     //     if (!compareDates()){
