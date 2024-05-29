@@ -358,7 +358,9 @@ class DashboardController extends Controller
 
             $dataSasl = DB::table('smtp_relay_req_form')
                 ->where('smtp_relay_req_form.smtp_relay_server', $server->hostname)
-                ->where('smtp_relay_req_form.smtp_relay_auth_method', 2)->get()->count();
+                ->where('smtp_relay_req_form.smtp_relay_auth_method', 2)
+                ->where('smtp_relay_req_form.status', 1)
+                ->count();
 
             $dataIpBased = DB::table('smtp_relay_req_form')
                 ->where('smtp_relay_req_form.smtp_relay_server', $server->hostname)
