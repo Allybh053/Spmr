@@ -80,6 +80,27 @@ class MonthlyReportingController extends Controller
         $valDataJad14 = $queryJad14->get();
 
 
+
+        // Apply formatting
+        $valDataJad2 = $this->formatData($valDataJad2);
+        $valDataJad6 =  $this->formatData($valDataJad6);
+        $valDataJad10 = $this->formatDataEmail($valDataJad10);
+        $valDataJad14 =  $this->formatDataEmail($valDataJad14);
+
+        // this will use for date range
+
+        // ->when($request->date_from != null && $request->date_to != null, function ($query) use ($request) {
+        //     $query->where('transaction_headers.transaction_date', '>=', Carbon::parse($request->date_from)->startOfDay())
+        //         ->where('transaction_headers.transaction_date', '<=', Carbon::parse($request->date_to)->endOfDay());
+        // })
+        // ->when($request->date_from != null && $request->date_to == null, function ($query) use ($request) {
+        //     $query->where('transaction_headers.transaction_date', '>=', Carbon::parse($request->date_from)->startOfDay());
+        // })
+        // ->when($request->date_to != null && $request->date_from == null, function ($query) use ($request) {
+        //     $query->where('transaction_headers.transaction_date', '<=', Carbon::parse($request->date_to)->endOfDay());
+        // })
+
+
         $chartJadual2 = Jadual2::when(isset($serverName) && $serverName != null, function ($query) use ($serverName) {
             $query->where('server', $serverName);
         })
@@ -146,4 +167,27 @@ class MonthlyReportingController extends Controller
         ]);
     }
 
+
+    private function formatData(Collection $data)
+    {
+        return $data->map(function ($item) {
+            $item->received = number_format($item->received);
+            $item->delivered = number_format($item->delivered);
+            $item->deferred = number_format($item->deferred);
+            $item->bounced = number_format($item->bounced);
+            $item->rejected = number_format($item->rejected);
+            return $item;
+        });
+    }
+    private function formatDataEmail(Collection $data)
+    {
+        return $data->map(function ($item) {
+            $item->total_email = number_format($item->total_email);
+            return $item;
+        });
+    }
+
+
 }
+
+
