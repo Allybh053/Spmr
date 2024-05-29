@@ -118,7 +118,7 @@
                                             <div class="d-flex align-items-center justify-content-between">
                                                 <div class="me-3">
                                                     <h5>Total Domain Activated</h5>
-                                                    <span>Updated every 30 minutes</span>
+                                                    <div  class="small text-muted">Updated every 30 minutes</div>
                                                     <div class="inline">
                                                         <i class="feather-l text-primary" data-feather="corner-down-right"></i>
                                                         <h2 id="totalIP" style="display: inline-block; margin-left: 5px;">--</h2>
@@ -134,7 +134,7 @@
                                             <div class="d-flex align-items-center justify-content-between">
                                                 <div class="me-3">
                                                     <h5>Total Domain Deactivated</h5>
-                                                    <span>Updated every 30 minutes</span>
+                                                    <div  class="small text-muted">Updated every 30 minutes</div>
                                                     <div class="inline">
                                                         <i class="feather-l text-primary" data-feather="corner-down-right"></i>
                                                         <h2 id="totalDeactivated" style="display: inline-block; margin-left: 5px;">--</h2>
@@ -150,7 +150,7 @@
                                             <div class="d-flex align-items-center justify-content-between">
                                                 <div class="me-3">
                                                     <h5>Total Domain Registered</h5>
-                                                    <span>Updated every 30 minutes</span>
+                                                    <div  class="small text-muted">Updated every 30 minutes</div>
                                                     <div class="inline">
                                                         <i class="feather-l text-primary" data-feather="corner-down-right"></i>
                                                         <h2 id="totalDomain" style="display: inline-block; margin-left: 5px;">--</h2>
