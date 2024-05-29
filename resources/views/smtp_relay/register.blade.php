@@ -275,7 +275,7 @@
                     </div>
                 </div>
                 <hr>
-                <div class="card-header text-center"><h4 class=" text-primary">Approval MAMPU</h4></div><br>
+                <div class="card-header text-center"><h4 class=" text-primary">Approval JDN</h4></div><br>
                 <div class="mb-3">
                     <label for="approvalname">Approval Name</label>
                     <input class="form-control" id="approvalname" name="approvalname" type="text" placeholder="" value="" required>
