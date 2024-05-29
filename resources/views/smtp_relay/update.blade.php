@@ -290,7 +290,7 @@
                     </div>
                 </div>
                 <hr>
-                <div class="card-header text-center"><h4 class=" text-primary">Approval MAMPU</h4></div><br>
+                <div class="card-header text-center"><h4 class=" text-primary">Approval JDN</h4></div><br>
                 <div class="mb-3">
                     <label for="verifier_3_name">Approval Name</label>
                     <input class="form-control" id="verifier_3_name" name="verifier_3_name" type="text" placeholder="" value="{{ old('verifier_3_name', $formsmtp->verifier_3_name) }}" required>
