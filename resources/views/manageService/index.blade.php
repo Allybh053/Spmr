@@ -20,33 +20,33 @@
   <div class="container-fluid px-4">
       @foreach ($serverconfig as $server)
           <div class="card">
-              <div class="card-header text-center p-5">
+              <div class="card-header text-center p-3">
                   <h5 style="text-align:left;">
                       {{ $server->hostname }}
                       <p>{{ $server->ipaddress }}</p>
                       <input type="hidden" id="hostname" value="{{ $server->hostname }}" />
                   </h5>
               </div>
-              <div class="card-body">
-                  <div class="row  mt-5">
+              <div class="card-body" style="height: 206px;">
+                  <div class="row  mt-1">
                       {{-- Start Loop Server Here --}}
                       <div class="col-xxl-12 ">
                           @php $status = 'Online'; @endphp
                           <div class="card-body mainRealtime" style="min-height: auto; max-height: 800px;overflow-y: auto;">
                               <div class="row">
-                                  <div class="col-xl-6 mb-4 selected-item postfix {{$server->id}}">
-                                      <div class="card h-100">
+                                  <div class="col-xl-4 mb-4 selected-item postfix {{$server->id}}">
+                                      <div class="card h-100" style="height: 79% !important;">
                                           <div class="card-body cardService d-flex justify-content-center flex-column">
                                               <div class="d-flex align-items-center justify-content-between">
                                                   <div class="me-3">
                                                       <h5>Postfix</h5>
                                                   </div>
-                                                  <img id="statusPostfixImage{{ $loop->index }}" src="{{ asset('assets/img/demo/offline.png') }}" alt="Postfix is down" style="width: 5rem">
+                                                  <img id="statusPostfixImage{{ $loop->index }}" src="{{ asset('assets/img/demo/offline.png') }}" alt="Postfix is down" style="width: 3rem">
                                               </div>
                                               <p id="statusPostfix{{ $loop->index }}" style="display: inline-block; margin-left: 5px;">--</p>
                                           </div>
                                           @can('manage_service_update')
-                                              <div class="col-md-6 d-flex justify-content-center" style="padding-left: 150px;padding-bottom: 15px;">
+                                              <div class="col-md-6 d-flex justify-content-center" style="padding-left: 280px;padding-bottom: 15px;margin-top: -54px;">
                                                   <div class="btn-group" role="group" aria-label="Button group with nested dropdown">
                                                       <button type="button" id="postfixStart" class="btn btn-primary" value="{{ $server->hostname }}" onclick="startPostfixServices.call(this)">
                                                           <i class="fas fa-play"></i>
@@ -62,19 +62,19 @@
                                           @endcan
                                             </div>
                                   </div>
-                                  <div class="col-xl-6 mb-4 selected-item apache {{$server->id}}">
-                                      <div class="card h-100">
+                                  <div class="col-xl-4 mb-4 selected-item apache {{$server->id}}">
+                                      <div class="card h-100" style="height: 79% !important;">
                                           <div class="card-body cardService d-flex justify-content-center flex-column">
                                               <div class="d-flex align-items-center justify-content-between">
                                                   <div class="me-3">
                                                       <h5>Apache</h5>
                                                   </div>
-                                                  <img id="statusApache2Image{{ $loop->index }}" src="{{ asset('assets/img/demo/offline.png') }}" alt="Apache2 is down" style="width: 5rem">
+                                                  <img id="statusApache2Image{{ $loop->index }}" src="{{ asset('assets/img/demo/offline.png') }}" alt="Apache2 is down" style="width: 3rem">
                                               </div>
                                               <p id="statusApache2{{ $loop->index }}" style="display: inline-block; margin-left: 5px;">--</p>
                                           </div>
                                           @can('manage_service_update')
-                                              <div class="col-md-6 d-flex justify-content-center" style="padding-left: 150px;padding-bottom: 15px;">
+                                              <div class="col-md-6 d-flex justify-content-center" style="padding-left: 280px;padding-bottom: 15px;margin-top: -54px;">
                                                   <div class="btn-group" role="group" aria-label="Button group with nested dropdown">
                                                       <button type="button" id="apacheStart" class="btn btn-primary" value="{{ $server->hostname }}" onclick="startApacheServices.call(this)">
                                                           <i class="fas fa-play"></i>
@@ -90,19 +90,19 @@
                                           @endcan
                                             </div>
                                   </div>
-                                  <div class="col-xl-6 mb-4 selected-item webmin {{$server->id}}">
-                                      <div class="card h-100">
+                                  <div class="col-xl-4 mb-4 selected-item webmin {{$server->id}}">
+                                      <div class="card h-100" style="height: 79% !important;">
                                           <div class="card-body cardService d-flex justify-content-center flex-column">
                                               <div class="d-flex align-items-center justify-content-between">
                                                   <div class="me-3">
                                                       <h5>Webmin</h5>
                                                   </div>
-                                                  <img id="statusWebminImage{{ $loop->index }}" src="{{ asset('assets/img/demo/offline.png') }}" alt="Webmin is down" style="width: 5rem">
+                                                  <img id="statusWebminImage{{ $loop->index }}" src="{{ asset('assets/img/demo/offline.png') }}" alt="Webmin is down" style="width: 3rem">
                                               </div>
                                               <p id="statusWebmin{{ $loop->index }}" style="display: inline-block; margin-left: 5px;">--</p>
                                           </div>
                                           @can('manage_service_update')
-                                              <div class="col-md-6 d-flex justify-content-center" style="padding-left: 150px;padding-bottom: 15px;">
+                                              <div class="col-md-6 d-flex justify-content-center" style="padding-left: 280px;padding-bottom: 15px;margin-top: -54px;">
                                                   <div class="btn-group" role="group" aria-label="Button group with nested dropdown">
                                                       <button type="button" id="webminStart" class="btn btn-primary" value="{{ $server->hostname }}" onclick="startWebminServices.call(this)">
                                                           <i class="fas fa-play"></i>
