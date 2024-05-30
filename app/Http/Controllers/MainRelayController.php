@@ -147,7 +147,7 @@ class MainRelayController extends Controller
     }
 
     public function submitappForm(Request $request)
-    {
+    {   
         $formData = $request->all();
         $smtp_relay_server = $request->input("smtp_relay_server");
         $access_list = $request->input("access_list");
