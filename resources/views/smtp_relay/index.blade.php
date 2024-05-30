@@ -163,7 +163,13 @@
                 text: 'Copy',
                 title: 'List SMTP Relay Request MyGovUC',
                 exportOptions: {
-                    columns: ':visible'
+                    columns: ':visible',
+                    format: {
+                        body: function (data, row, column, node) {
+                            // Add row number for the first column
+                            return column === 0 ? row + 1 : data;
+                        }
+                    }
                 }
             },
             {
@@ -171,7 +177,13 @@
                 text: 'CSV',
                 title: 'List SMTP Relay Request MyGovUC',
                 exportOptions: {
-                    columns: ':visible'
+                    columns: ':visible',
+                    format: {
+                        body: function (data, row, column, node) {
+                            // Add row number for the first column
+                            return column === 0 ? row + 1 : data;
+                        }
+                    }
                 }
             },
             {
@@ -179,7 +191,13 @@
                 text: 'Excel',
                 title: 'List SMTP Relay Request MyGovUC',
                 exportOptions: {
-                    columns: ':visible'
+                    columns: ':visible',
+                    format: {
+                        body: function (data, row, column, node) {
+                            // Add row number for the first column
+                            return column === 0 ? row + 1 : data;
+                        }
+                    }
                 }
             },
             {
@@ -187,7 +205,13 @@
                 text: 'PDF',
                 title: 'List SMTP Relay Request MyGovUC',
                 exportOptions: {
-                    columns: ':visible'
+                    columns: ':visible',
+                    format: {
+                        body: function (data, row, column, node) {
+                            // Add row number for the first column
+                            return column === 0 ? row + 1 : data;
+                        }
+                    }
                 }
             },
             {
@@ -195,7 +219,13 @@
                 text: 'Print',
                 title: 'List SMTP Relay Request MyGovUC',
                 exportOptions: {
-                    columns: ':visible'
+                    columns: ':visible',
+                    format: {
+                        body: function (data, row, column, node) {
+                            // Add row number for the first column
+                            return column === 0 ? row + 1 : data;
+                        }
+                    }
                 }
             }
         ],

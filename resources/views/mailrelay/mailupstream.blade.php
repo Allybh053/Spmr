@@ -321,7 +321,13 @@ $(document).ready(function () {
                 text: 'Copy',
                 title: 'List of Domain Registered',
                 exportOptions: {
-                    columns: ':visible'
+                    columns: ':visible',
+                    format: {
+                        body: function (data, row, column, node) {
+                            // Add row number for the first column
+                            return column === 0 ? row + 1 : data;
+                        }
+                    }
                 }
             },
             {
@@ -329,7 +335,13 @@ $(document).ready(function () {
                 text: 'CSV',
                 title: 'List of Domain Registered',
                 exportOptions: {
-                    columns: ':visible'
+                    columns: ':visible',
+                    format: {
+                        body: function (data, row, column, node) {
+                            // Add row number for the first column
+                            return column === 0 ? row + 1 : data;
+                        }
+                    }
                 }
             },
             {
@@ -337,7 +349,13 @@ $(document).ready(function () {
                 text: 'Excel',
                 title: 'List of Domain Registered',
                 exportOptions: {
-                    columns: ':visible'
+                    columns: ':visible',
+                    format: {
+                        body: function (data, row, column, node) {
+                            // Add row number for the first column
+                            return column === 0 ? row + 1 : data;
+                        }
+                    }
                 }
             },
             {
@@ -345,7 +363,13 @@ $(document).ready(function () {
                 text: 'PDF',
                 title: 'List of Domain Registered',
                 exportOptions: {
-                    columns: ':visible'
+                    columns: ':visible',
+                    format: {
+                        body: function (data, row, column, node) {
+                            // Add row number for the first column
+                            return column === 0 ? row + 1 : data;
+                        }
+                    }
                 }
             },
             {
@@ -353,7 +377,13 @@ $(document).ready(function () {
                 text: 'Print',
                 title: 'List of Domain Registered',
                 exportOptions: {
-                    columns: ':visible'
+                    columns: ':visible',
+                    format: {
+                        body: function (data, row, column, node) {
+                            // Add row number for the first column
+                            return column === 0 ? row + 1 : data;
+                        }
+                    }
                 }
             }
         ],
