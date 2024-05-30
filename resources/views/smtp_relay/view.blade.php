@@ -101,6 +101,7 @@
                     <label for="justification">Justification</label>
                     <p>{{ $datasmtp->req_justifications}}</p>
                 </div>
+                @if ($datasmtp->smtp_relay_auth_method == 1)
                 <div class="mb-3">
                     <label for="authmethod">Mail Relay Authentication Method</label>
                     <p>
@@ -108,8 +109,10 @@
                             IP Based Authentication Relay
                         @else
                             Username/Password Authentication Relay
-                        @endif</p>
+                        @endif
+                    </p>
                 </div>
+                @endif
                 <div class="mb-3">
                     <label for="mailrelay">Server Mail Relay</label>
                     <p>{{ $datasmtp->smtp_relay_server ?? 'Not Available' }}</p>
