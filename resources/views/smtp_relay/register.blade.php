@@ -568,11 +568,11 @@
 
                 if (selectedValuetype_req == 1) {
                     // Construct your command
-                    command = `grep -q '^${ipAddress}' /opt/cluster/postfix/access_list && echo "IP address exists"`;
+                    command = `grep -q '^${ipAddress}' /opt/cluster/postfix/access_list && echo "IP address already Registered!"`;
                 }
                 if (selectedValuetype_req == 2) {
                     // Construct your command
-                    command = `grep -q '^#${ipAddress}' /opt/cluster/postfix/access_list && echo "IP address already terminated!"`;
+                    command = `grep -q '^#${ipAddress}' /opt/cluster/postfix/access_list && echo "IP address already Terminated!"`;
                 }
 
                 // Send the command through the WebSocket if it's not empty
