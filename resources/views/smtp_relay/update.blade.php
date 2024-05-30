@@ -401,14 +401,20 @@
 
                 socket.addEventListener('message', (event) => {
                     const response = event.data;
-                    console.log(response);
-                        if (response.includes('IP address already Registered!')) {
-                            $('#resultContainer').html(response);
-                        } else if (response.includes('IP address already Terminated!')) {
+                    if (selectedValuetype_req == 1) {
+                    if (response.includes('IP address already Registered!')) {
                             $('#resultContainer').html(response);
                         } else {
                             $('#resultContainer').empty();
                         }
+                    }
+                    if (selectedValuetype_req == 2) {
+                    if (response.includes('IP address already Terminated!')) {
+                            $('#resultContainer').html(response);
+                        } else {
+                            $('#resultContainer').empty();
+                        }
+                    }
 
                     socket.close();
                 });
