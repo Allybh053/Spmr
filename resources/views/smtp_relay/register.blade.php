@@ -585,12 +585,9 @@
             socket.addEventListener('message', (event) => {
                 const response = event.data;
                 //console.log(response);
-                if (response.includes('IP address exists')) {
+                if (response.includes('IP address already Registered!')) {
                     $('#resultContainer').html(response);
-                } else {
-                    $('#resultContainer').empty();
-                }
-                if (response.includes('IP address already terminated!')) {
+                } else if (response.includes('IP address already terminated!')) {
                     $('#resultContainer').html(response);
                 } else {
                     $('#resultContainer').empty();
