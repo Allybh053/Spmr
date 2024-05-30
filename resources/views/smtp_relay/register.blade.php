@@ -552,63 +552,63 @@
     });
 
 
-    $('#dynamic-inputs-container').on('input', '#ipaddress', function() {
-        var type_req = document.getElementById("type_req");
-        var selectBox = document.getElementById("mailrelay");
-        var selectedValue = selectBox.options[selectBox.selectedIndex].value;
-        var selectedValuetype_req = type_req.options[type_req.selectedIndex].value;
-        var ipAddress = $(this).val();
+    $(document).on('input', '#dynamic-inputs-container input#ipaddress', function() {
+            var type_req = document.getElementById("type_req");
+            var selectBox = document.getElementById("mailrelay");
+            var selectedValue = selectBox.value;
+            var selectedValuetype_req = type_req.value;
+            var ipAddress = $(this).val();
 
-        if (/^(?:[0-9]{1,3}\.){3}[0-9]{1,3}$/.test(ipAddress)) {
-            const serverAddress = 'wss://spmr.mygovuc.gov.my/' + selectedValue;
-            const socket = new WebSocket(serverAddress);
+            if (/^(?:[0-9]{1,3}\.){3}[0-9]{1,3}$/.test(ipAddress)) {
+                const serverAddress = 'wss://spmr.mygovuc.gov.my/' + selectedValue;
+                const socket = new WebSocket(serverAddress);
 
-            socket.addEventListener('open', (event) => {
-                let command = '';
+                socket.addEventListener('open', (event) => {
+                    let command = '';
 
-                if (selectedValuetype_req == 1) {
-                    // Construct your command
-                    command = `grep -q '^${ipAddress}' /opt/cluster/postfix/access_list && echo "IP address already Registered!"`;
-                }
-                if (selectedValuetype_req == 2) {
-                    // Construct your command
-                    command = `grep -q '^#${ipAddress}' /opt/cluster/postfix/access_list && echo "IP address already Terminated!"`;
-                }
+                    if (selectedValuetype_req == 1) {
+                        command = `grep -q '^${ipAddress}' /opt/cluster/postfix/access_list && echo "IP address already Registered!"`;
+                    }
+                    if (selectedValuetype_req == 2) {
+                        command = `grep -q '^#${ipAddress}' /opt/cluster/postfix/access_list && echo "IP address already Terminated!"`;
+                    }
 
-                // Send the command through the WebSocket if it's not empty
-                if (command) {
-                    //console.log(command);
-                    socket.send(command);
-                }
-            });
+                    if (command) {
+                        socket.send(command);
+                    }
+                });
 
-            socket.addEventListener('message', (event) => {
-                const response = event.data;
-                //console.log(response);
-                if (response.includes('IP address already Registered!')) {
-                    $('#resultContainer').html(response);
-                } else if (response.includes('IP address already Terminated!')) {
-                    $('#resultContainer').html(response);
-                } else {
-                    $('#resultContainer').empty();
-                }
+                socket.addEventListener('message', (event) => {
+                    const response = event.data;
+                    if (selectedValuetype_req == 1) {
+                    if (response.includes('IP address already Registered!')) {
+                            $('#resultContainer').html(response);
+                        } else {
+                            $('#resultContainer').empty();
+                        }
+                    }
+                    if (selectedValuetype_req == 2) {
+                    if (response.includes('IP address already Terminated!')) {
+                            $('#resultContainer').html(response);
+                        } else {
+                            $('#resultContainer').empty();
+                        }
+                    }
+                    socket.close();
+                });
 
-                // socket.close();
-            });
+                socket.addEventListener('error', (error) => {
+                    console.error("WebSocket error observed:", error);
+                });
 
-            socket.addEventListener('error', (error) => {
-                //console.error("WebSocket error observed:", error);
-            });
-
-            socket.addEventListener('close', (event) => {
-                //console.log("connection closed");
-                socket.close();
-            });
-        } else {
-            // Clear result container if input is invalid
-            $('#resultContainer').empty();
-        }
-    });
+                socket.addEventListener('close', (event) => {
+                    console.log("WebSocket connection closed");
+                });
+            } else {
+                // Clear result container if input is invalid
+                $('#resultContainer').empty();
+            }
+        });
 
 
     function typeChange() {
