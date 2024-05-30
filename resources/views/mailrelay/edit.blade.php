@@ -42,7 +42,8 @@
                     </div>
                     <div class="col-md-4">
                         <label for="mailbox">Auth Method</label>
-                        <p class="text-primary">@if ($smtpreq->smtp_relay_auth_method == 1)
+                        <p class="text-primary">
+                        @if ($smtpreq->smtp_relay_auth_method == 1)
                             IP Based Authentication Relay
                         @else
                             Username/Password Authentication Relay
@@ -215,9 +216,15 @@
                         // Adjust the key names based on your actual data structure
                         const ipAddress = smtpMailServer.ip_addr_server;
                         const formIds = smtpMailServer.form_id;
-                        // Construct your command
-                        command = `grep -q '^${ipAddress} ' /opt/cluster/postfix/access_list; && sed -i 's/^${ipAddress} .*/#${ipAddress} #${formIds}:/' /opt/cluster/postfix/access_list; || echo '#${ipAddress} #${formIds}:' >> /opt/cluster/postfix/access_list;`;
-                        // command = "grep -q '^10.10.10.14 ' /opt/cluster/postfix/access_list && sed -i 's/^10.10.10.14 .*/#10.10.10.14 #aabbccddee:/' /opt/cluster/postfix/access_list || echo '#10.10.10.14 #aabbccddee:' >> /opt/cluster/postfix/access_list";
+                        // Construct your command.. take the ip address, replace it with # infront then if not found add new line with #infront the ip address
+                        // pakai ni command = `grep -q '^${ipAddress} ' /opt/cluster/postfix/access_list; && sed 's/^${ipAddress} .*/#${ipAddress} #${formIds}:/' /opt/cluster/postfix/access_list; || echo '#${ipAddress} #${formIds}:' >> /opt/cluster/postfix/access_list;`;
+                        // command = "grep -q '^10.10.10.14 ' /opt/cluster/postfix/access_list && sed -i 's/^10.10.10.14 .*/#10.10.10.14 #aabbccddee:/' /opt/cluster/postfix/access_list || echo '#10.10.10.14 #aabbccddee:' >> /opt/cluster/postfix/access_list"; //hardcode
+                        command = `
+                                    grep -q '^${ipAddress} ' /opt/cluster/postfix/access_list && \
+                                    sed 's/^${ipAddress} .*/#${ipAddress}' /opt/cluster/postfix/access_list > /opt/cluster/postfix/access_list.tmp && \
+                                    mv /opt/cluster/postfix/access_list.tmp /opt/cluster/postfix/access_list || \
+                                    echo '#${ipAddress} #${formIds}:' >> /opt/cluster/postfix/access_list
+                                `;
                     }
                     // Send the command through the WebSocket if it's not empty
                     if (command) {
@@ -233,7 +240,7 @@
                             timer: 6000, // 6 seconds
                             willClose: () => {
                                 // You can add any action you want to perform when the alert is about to close
-                                console.log('The alert is closing');
+                                //console.log('The alert is closing');
                             }
                         });
 
@@ -246,9 +253,9 @@
                 const response = event.data;
 
                 if (response.includes('Failed')) {
-                    console.log("Failed to send command");
+                    //console.log("Failed to send command");
                 } else {
-                    console.log("Successfully sent command");
+                    console.log(response);
                 }
 
                 // Close the socket after processing the response
@@ -256,12 +263,12 @@
             });
 
             socket.addEventListener('error', (error) => {
-                console.error("WebSocket error observed:", error);
+                //console.error("WebSocket error observed:", error);
                 socket.close();
             });
 
             socket.addEventListener('close', (event) => {
-                console.log("WebSocket connection closed");
+                //console.log("WebSocket connection closed");
             });
         }
 
@@ -282,7 +289,7 @@ $('#submitBtn').click(function(event) {
             timer: 6000, // 6 seconds
             willClose: () => {
                 // You can add any action you want to perform when the alert is about to close
-                console.log('The alert is closing');
+                //console.log('The alert is closing');
             }
         });
         // Send AJAX request
@@ -294,7 +301,7 @@ $('#submitBtn').click(function(event) {
                 'X-CSRF-TOKEN': '{{ csrf_token() }}' // Add CSRF token header
             },
             success: function(response) {
-                console.log(response);
+                //console.log(response);
                 toggleInputs();
                 window.location.href = "{{ route('smtp_relay.smtp_relay_req') }}?message=" + response.message;
             },

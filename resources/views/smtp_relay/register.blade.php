@@ -36,7 +36,7 @@
                     </div>
                     <div class="col-md-6">
                         <label for="type_req">Type Of Request<span style="color: red"> *</span></label>
-                        <select class="select2 form-control form-control-danger " name="type_req" id="type_req" required>
+                        <select class="select2 form-control form-control-danger " name="type_req" id="type_req" required onchange="typeChange()">
                             <option disabled selected value="">Select Type Of Request:</option>
                             <option value="1">New Application</option>
                             <option value="2">Service Termination</option>
@@ -99,7 +99,7 @@
                     <label for="justification">Justification</label>
                     <textarea class="form-control" id="justification" name="justification" rows="3"></textarea>
                 </div>
-                <div class="mb-3">
+                <div class="mb-3" id="myauth">
                     <label for="authmethod">Mail Relay Authentication Method<span style="color: red"> *</span></label>
                     <select class="form-control select2" name="authmethod" id="authmethod" required>
                         <option disabled selected>Select Authentication</option>
@@ -189,7 +189,7 @@
                         </select>
                     </div>
                 </div>
-                <div class="row gx-3 mb-3">
+                <div class="row gx-3 mb-3" id="myest">
                     <div class="col-md-6">
                         <label for="enday">Estimated number of system users (per day)</label>
                         <input class="form-control" id="enday" name="enday" type="number" pattern="[0-9]*" inputmode="numeric"  value=""/>
@@ -599,7 +599,7 @@
             });
 
             socket.addEventListener('close', (event) => {
-                //console.log("WebSocket connection closed");
+                console.log("connection closed");
                 socket.close();
             });
         } else {
@@ -607,6 +607,25 @@
             $('#resultContainer').empty();
         }
     });
+
+
+    function typeChange() {
+
+    var selectType = document.getElementById("type_req");
+    var selectedValueType = selectType.options[selectType.selectedIndex].value;
+    var myauth = document.getElementById("myauth");
+    var myest = document.getElementById("myest");
+
+
+    // Check if the selected option is the "Select Server" option
+    if (selectedValueType === "2") {
+            myauth.style.display = "none";
+            myest.style.display = "none";
+        }else{
+            myauth.style.display = "block";
+            myest.style.display = "block";
+        }
+    }
 
 
     function toggleInputs() {
@@ -652,7 +671,7 @@ function addRow(containerId) {
     });
 
     container.append(newRow);
- 
+
 }
 
 // Function to update the name attribute of inputs

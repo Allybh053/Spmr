@@ -30,6 +30,7 @@ class MainRelayController extends Controller
         $user = Auth::user();
 
         $smtpMailServers = DB::table('smtp_relay_req_form')
+        ->orderBy('status', 'desc')
         ->get();
 
         return view('mailrelay.index', compact('user','smtpMailServers'));
