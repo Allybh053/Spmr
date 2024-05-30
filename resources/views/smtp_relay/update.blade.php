@@ -401,9 +401,10 @@
 
                 socket.addEventListener('message', (event) => {
                     const response = event.data;
+                    console.log(response);
                         if (response.includes('IP address already Registered!')) {
                             $('#resultContainer').html(response);
-                        } else if (response.includes('IP address already terminated!')) {
+                        } else if (response.includes('IP address already Terminated!')) {
                             $('#resultContainer').html(response);
                         } else {
                             $('#resultContainer').empty();
