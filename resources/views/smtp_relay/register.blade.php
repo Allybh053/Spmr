@@ -383,7 +383,6 @@
             if (dateD && dateC) {
                 if (dateD < dateC) {
                     messageDiv3.textContent = "Date Approval must be greater than Date Helpdesk";
-
                 } else {
                     messageDiv2.textContent = "";
                 }
@@ -569,29 +568,30 @@
 
                 if (selectedValuetype_req == 1) {
                     // Construct your command
-                    command = `grep -q '^${ipAddress} ' /opt/cluster/postfix/access_list && echo "IP address exists"`;
+                    command = `grep -q '^${ipAddress}' /opt/cluster/postfix/access_list && echo "IP address exists"`;
                 }
                 if (selectedValuetype_req == 2) {
                     // Construct your command
-                    command = `grep -q '^#${ipAddress} ' /opt/cluster/postfix/access_list && echo "IP address exists"`;
+                    command = `grep -q '^#${ipAddress}' /opt/cluster/postfix/access_list && echo "IP address exists"`;
                 }
 
                 // Send the command through the WebSocket if it's not empty
                 if (command) {
+                    //console.log(command);
                     socket.send(command);
                 }
             });
 
             socket.addEventListener('message', (event) => {
                 const response = event.data;
-
+                //console.log(response);
                 if (response.includes('IP address exists')) {
                     $('#resultContainer').html(response);
                 } else {
-                    //console.log("Successfully sent command");
+                    $('#resultContainer').empty();
                 }
 
-                socket.close();
+                // socket.close();
             });
 
             socket.addEventListener('error', (error) => {
@@ -599,7 +599,7 @@
             });
 
             socket.addEventListener('close', (event) => {
-                console.log("connection closed");
+                //console.log("connection closed");
                 socket.close();
             });
         } else {

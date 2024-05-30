@@ -160,7 +160,7 @@
                                 </th>
                             </tr>
                         </tfoot>
-                        <p id="resultContainer"></p>
+                        <strong><p style="color: red;" id="resultContainer"></p></strong>
                     </table>
                 </div>
 
@@ -404,7 +404,7 @@
                     if (response.includes('IP address exists')) {
                         $('#resultContainer').html(response);
                     } else {
-                        console.log("Successfully sent command");
+                        $('#resultContainer').empty();
                     }
                     socket.close();
                 });
@@ -642,43 +642,43 @@
     });
     });
 
-    $('#dynamic-inputs-container').on('input', '#ip_addr_server', function() {
+    // $('#dynamic-inputs-container').on('input', '#ip_addr_server', function() {
 
-        var type_req = document.getElementById("types_req");
-        var selectBox = document.getElementById("smtp_relay_server");
-        var selectedValue = selectBox.options[selectBox.selectedIndex].value;
-        var selectedValuetype_req = type_req.options[type_req.selectedIndex].value;
-        var ipAddress = $(this).val();
+    //     var type_req = document.getElementById("types_req");
+    //     var selectBox = document.getElementById("smtp_relay_server");
+    //     var selectedValue = selectBox.options[selectBox.selectedIndex].value;
+    //     var selectedValuetype_req = type_req.options[type_req.selectedIndex].value;
+    //     var ipAddress = $(this).val();
 
-        if (/^(?:[0-9]{1,3}\.){3}[0-9]{1,3}$/.test(ipAddress)) {
-            // Send AJAX request
-            $.ajax({
-                type: 'POST',
-                url: '{{ route("check.ip.address") }}', // Replace with your route name
-                data: {
-                    '_token': '{{ csrf_token() }}',
-                    'tableSpmr': [{
-                        'ipaddress': ipAddress
-                    }],
-                    'selectedValue': selectedValue,
-                    'selectedValuetype_req': selectedValuetype_req
-                },
-                success: function(response) {
-                    console.log(response);
-                    $('#resultContainer').html(response);
+    //     if (/^(?:[0-9]{1,3}\.){3}[0-9]{1,3}$/.test(ipAddress)) {
+    //         // Send AJAX request
+    //         $.ajax({
+    //             type: 'POST',
+    //             url: '{{ route("check.ip.address") }}', // Replace with your route name
+    //             data: {
+    //                 '_token': '{{ csrf_token() }}',
+    //                 'tableSpmr': [{
+    //                     'ipaddress': ipAddress
+    //                 }],
+    //                 'selectedValue': selectedValue,
+    //                 'selectedValuetype_req': selectedValuetype_req
+    //             },
+    //             success: function(response) {
+    //                 //console.log(response);
+    //                 $('#resultContainer').html(response);
 
-                },
-                error: function(xhr, status, error) {
-                    console.error(xhr.responseText);
-                }
-            });
+    //             },
+    //             error: function(xhr, status, error) {
+    //                 console.error(xhr.responseText);
+    //             }
+    //         });
 
-        }else {
-            // Clear result container if input is invalid
-            $('#resultContainer').empty();
-        }
+    //     }else {
+    //         // Clear result container if input is invalid
+    //         $('#resultContainer').empty();
+    //     }
 
-    });
+    // });
 
     document.addEventListener('DOMContentLoaded', function() {
         // The smtpPort value passed from PHP to JavaScript

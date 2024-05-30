@@ -195,7 +195,7 @@
             var selectedValue = selectBox.value;
 
             const smtpMailServers = @json($smtpMailServers);
-                        console.log(smtpMailServers);
+                        //console.log(smtpMailServers);
             const serverAddress = 'wss://spmr.mygovuc.gov.my/' + selectedValue;
 
             const socket = new WebSocket(serverAddress);
@@ -228,6 +228,7 @@
                     }
                     // Send the command through the WebSocket if it's not empty
                     if (command) {
+                        console.log(command);
                         socket.send(command);
 
                         Swal.fire({
