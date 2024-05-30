@@ -36,7 +36,7 @@
                     </div>
                     <div class="col-md-6">
                         <label for="type_req">Type Of Request<span style="color: red"> *</span></label>
-                        <select class="select2 form-control form-control-danger " name="type_req" id="type_req" required>
+                        <select class="select2 form-control form-control-danger " name="type_req" id="type_req" required onchange="typeChange()">
                             <option disabled selected value="">Select Type Of Request:</option>
                             <option value="1">New Application</option>
                             <option value="2">Service Termination</option>
@@ -99,7 +99,7 @@
                     <label for="justification">Justification</label>
                     <textarea class="form-control" id="justification" name="justification" rows="3"></textarea>
                 </div>
-                <div class="mb-3">
+                <div class="mb-3" id="myauth">
                     <label for="authmethod">Mail Relay Authentication Method<span style="color: red"> *</span></label>
                     <select class="form-control select2" name="authmethod" id="authmethod" required>
                         <option disabled selected>Select Authentication</option>
@@ -122,7 +122,7 @@
                             <tr>
                                 <th scope="col">System Name<span style="color: red"> *</span></th>
                                 <th scope="col">IP Address<span style="color: red"> *</span></th>
-                                <th scope="col">FQDN System<span style="color: red"> *</span></th>
+                                <th scope="col">Domain System<span style="color: red"> *</span></th>
                                 <th scope="col">Action</th>
                             </tr>
                         </thead>
@@ -189,7 +189,7 @@
                         </select>
                     </div>
                 </div>
-                <div class="row gx-3 mb-3">
+                <div class="row gx-3 mb-3" id="myest">
                     <div class="col-md-6">
                         <label for="enday">Estimated number of system users (per day)</label>
                         <input class="form-control" id="enday" name="enday" type="number" pattern="[0-9]*" inputmode="numeric"  value=""/>
@@ -271,11 +271,11 @@
                     <div class="col-md-6">
                         <label for="officerdate">Date:</label>
                         <input class="form-control" type="date" id="officerdate" name="officerdate"><br>
-                        <span style="color: red"><div id="message3"></div></span>
+                        <span style="color: red"><div id="message2"></div></span>
                     </div>
                 </div>
                 <hr>
-                <div class="card-header text-center"><h4 class=" text-primary">Approval MAMPU</h4></div><br>
+                <div class="card-header text-center"><h4 class=" text-primary">Approval JDN</h4></div><br>
                 <div class="mb-3">
                     <label for="approvalname">Approval Name</label>
                     <input class="form-control" id="approvalname" name="approvalname" type="text" placeholder="" value="" required>
@@ -302,14 +302,14 @@
                     <div class="mb-3 col-md-4">
                         <label class=" mb-1" for="approvaldate">Date:<span style="color: red"> *</span></label>
                         <input class="form-control" type="date" id="approvaldate" name="approvaldate" required><br>
-                        <span style="color: red"><div id="message2"></div></span>
+                        <span style="color: red"><div id="message3"></div></span>
                     </div>
                 </div>
                 <hr>
 
                 <div class="mb-3">
-                    <label for="attachment">Upload Attachment</label>
-                    <input class="form-control btn-outline-primary" type="file" name="attachment" accept=".pdf"/>
+                    <label for="attachment">Upload Attachment<span style="color: red"> *</span></label>
+                    <input class="form-control btn-outline-primary" type="file" name="attachment" accept=".pdf" required/>
                     <span class="text-xs text-danger">Upload File format .pdf</span>
                 </div>
                 <hr>
@@ -341,46 +341,10 @@
 
     $(document).ready(function() {
 
-            // // Initialize select2 on all elements with the class 'select2'
-            // $('.select2').select2({
-            //     tags: true,
-            //     createTag: function (params) {
-            //         return {
-            //             id: params.term,
-            //             text: params.term,
-            //             newOption: true
-            //         };
-            //     },
-            //     insertTag: function (data, tag) {
-            //         data.push(tag);
-            //     }
-            // });
-
-            // // Automatically select the user input
-            // $('.select2').on('select2:open', function() {
-            //     var selectElement = $(this);
-            //     var searchField = $('.select2-search__field');
-
-            //     searchField.off('input').on('input', function() {
-            //         var userInput = $(this).val().trim();
-            //         if (userInput !== '') {
-            //             var optionExists = selectElement.find("option[value='" + userInput + "']").length;
-            //             if (!optionExists) {
-            //                 var newOption = new Option(userInput, userInput, true, true);
-            //                 selectElement.append(newOption).trigger('change');
-            //             } else {
-            //                 selectElement.val(userInput).trigger('change');
-            //             }
-            //         }
-            //     });
-            // });
-
-
-
         const dateAInput = document.getElementById('applicantdate');
         const dateBInput = document.getElementById('verifierdate');
-        const dateCInput = document.getElementById('approvaldate');
-        const dateDInput = document.getElementById('officerdate');
+        const dateCInput = document.getElementById('officerdate');
+        const dateDInput = document.getElementById('approvaldate');
         const messageDiv = document.getElementById('message');
         const messageDiv2 = document.getElementById('message2');
         const messageDiv3 = document.getElementById('message3');
@@ -388,41 +352,37 @@
         function compareDates() {
             var dateA = new Date(dateAInput.value);
             var dateB = new Date(dateBInput.value);
-            // const dateC = new Date(dateCInput.value);
 
             if (dateB && dateA) {
                 if (dateB < dateA) {
                     messageDiv.textContent = "Date Verifier must be greater than Date Applicant";
-
                 } else {
                     messageDiv.textContent = "";
                 }
             }
         }
-        function compareDates3() {
-            var dateA = new Date(dateAInput.value);
-            var dateD = new Date(dateDInput.value);
-            // const dateC = new Date(dateCInput.value);
 
-            if (dateD && dateA) {
-                if ( dateD < dateA) {
-                    messageDiv3.textContent = "Date Helpdesk must be greater than Date Applicant";
+        function compareDates2() {
 
+            var dateB = new Date(dateBInput.value);
+            var dateC = new Date(dateCInput.value);
+
+            if (dateB && dateC) {
+                if ( dateC < dateB ) {
+                    messageDiv2.textContent = "Date Helpdesk must be greater than Date Verifier";
                 } else {
                     messageDiv3.textContent = "";
                 }
             }
         }
 
-        function compareDates2() {
-            var dateA = new Date(dateBInput.value);
+        function compareDates3() {
             var dateC = new Date(dateCInput.value);
-            // const dateC = new Date(dateCInput.value);
+            var dateD = new Date(dateDInput.value);
 
-            if (dateC && dateA) {
-                if (dateC < dateA) {
-                    messageDiv2.textContent = "Date Approval must be greater than Date Verifier";
-
+            if (dateD && dateC) {
+                if (dateD < dateC) {
+                    messageDiv3.textContent = "Date Approval must be greater than Date Helpdesk";
                 } else {
                     messageDiv2.textContent = "";
                 }
@@ -592,61 +552,80 @@
     });
 
 
-
     $('#dynamic-inputs-container').on('input', '#ipaddress', function() {
-    var type_req = document.getElementById("type_req");
-    var selectBox = document.getElementById("mailrelay");
-    var selectedValue = selectBox.options[selectBox.selectedIndex].value;
-    var selectedValuetype_req = type_req.options[type_req.selectedIndex].value;
-    var ipAddress = $(this).val();
+        var type_req = document.getElementById("type_req");
+        var selectBox = document.getElementById("mailrelay");
+        var selectedValue = selectBox.options[selectBox.selectedIndex].value;
+        var selectedValuetype_req = type_req.options[type_req.selectedIndex].value;
+        var ipAddress = $(this).val();
 
-    if (/^(?:[0-9]{1,3}\.){3}[0-9]{1,3}$/.test(ipAddress)) {
-        const serverAddress = 'wss://spmr.mygovuc.gov.my/' + selectedValue;
-        const socket = new WebSocket(serverAddress);
+        if (/^(?:[0-9]{1,3}\.){3}[0-9]{1,3}$/.test(ipAddress)) {
+            const serverAddress = 'wss://spmr.mygovuc.gov.my/' + selectedValue;
+            const socket = new WebSocket(serverAddress);
 
-        socket.addEventListener('open', (event) => {
-            let command = '';
+            socket.addEventListener('open', (event) => {
+                let command = '';
 
-            if (selectedValuetype_req == 1) {
-                // Construct your command
-                command = `grep -q '^${ipAddress} ' /opt/cluster/postfix/access_list && echo "IP address exists"`;
-            }
-            if (selectedValuetype_req == 2) {
-                // Construct your command
-                command = `grep -q '^#${ipAddress} ' /opt/cluster/postfix/access_list && echo "IP address exists"`;
-            }
+                if (selectedValuetype_req == 1) {
+                    // Construct your command
+                    command = `grep -q '^${ipAddress}' /opt/cluster/postfix/access_list && echo "IP address exists"`;
+                }
+                if (selectedValuetype_req == 2) {
+                    // Construct your command
+                    command = `grep -q '^#${ipAddress}' /opt/cluster/postfix/access_list && echo "IP address exists"`;
+                }
 
-            // Send the command through the WebSocket if it's not empty
-            if (command) {
-                socket.send(command);
-            }
-        });
+                // Send the command through the WebSocket if it's not empty
+                if (command) {
+                    //console.log(command);
+                    socket.send(command);
+                }
+            });
 
-        socket.addEventListener('message', (event) => {
-            const response = event.data;
+            socket.addEventListener('message', (event) => {
+                const response = event.data;
+                //console.log(response);
+                if (response.includes('IP address exists')) {
+                    $('#resultContainer').html(response);
+                } else {
+                    $('#resultContainer').empty();
+                }
 
-            if (response.includes('IP address exists')) {
-                $('#resultContainer').html(response);
-            } else {
-                console.log("Successfully sent command");
-            }
+                // socket.close();
+            });
 
-            socket.close();
-        });
+            socket.addEventListener('error', (error) => {
+                //console.error("WebSocket error observed:", error);
+            });
 
-        socket.addEventListener('error', (error) => {
-            console.error("WebSocket error observed:", error);
-        });
+            socket.addEventListener('close', (event) => {
+                //console.log("connection closed");
+                socket.close();
+            });
+        } else {
+            // Clear result container if input is invalid
+            $('#resultContainer').empty();
+        }
+    });
 
-        socket.addEventListener('close', (event) => {
-            console.log("WebSocket connection closed");
-            socket.close();
-        });
-    } else {
-        // Clear result container if input is invalid
-        $('#resultContainer').empty();
+
+    function typeChange() {
+
+    var selectType = document.getElementById("type_req");
+    var selectedValueType = selectType.options[selectType.selectedIndex].value;
+    var myauth = document.getElementById("myauth");
+    var myest = document.getElementById("myest");
+
+
+    // Check if the selected option is the "Select Server" option
+    if (selectedValueType === "2") {
+            myauth.style.display = "none";
+            myest.style.display = "none";
+        }else{
+            myauth.style.display = "block";
+            myest.style.display = "block";
+        }
     }
-});
 
 
     function toggleInputs() {
@@ -691,19 +670,8 @@ function addRow(containerId) {
         $(this).val(''); // Optionally, clear input values
     });
 
-    // Find the select element inside the cloned row and update its name
-    //var selectElement = newRow.find('select');
-    //var nameAttr = selectElement.attr('name');
-    //selectElement.attr('name', updateNameAttribute(nameAttr));
-
-    // Append the cloned row to the container
     container.append(newRow);
 
-    // Initialize Select2 for the cloned dropdown
-    /*selectElement.select2({
-        allowClear: true,
-        tags: true,
-    });*/
 }
 
 // Function to update the name attribute of inputs

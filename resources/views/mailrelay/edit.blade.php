@@ -42,11 +42,14 @@
                     </div>
                     <div class="col-md-4">
                         <label for="mailbox">Auth Method</label>
-                        <p class="text-primary">@if ($smtpreq->smtp_relay_auth_method == 1)
+                        <p class="text-primary">
+                        @if ($smtpreq->smtp_relay_auth_method == 1)
                             IP Based Authentication Relay
-                        @else
+                        @endif
+                        @if ($smtpreq->smtp_relay_auth_method == 2)
                             Username/Password Authentication Relay
-                        @endif</p>
+                        @endif
+                        </p>
                     </div>
                     <!-- Form Group (mailbox)-->
                     <div class="col-md-4">
@@ -69,24 +72,24 @@
                     <!-- Form Group (mail from)-->
                     <div class="col-md-4">
                         <label for="emailaddfrom">SMTP Username</label>
-                        @if ($smtpreq->smtp_relay_auth_method == 2)
+                        {{-- @if ($smtpreq->smtp_relay_auth_method == 2) --}}
                         <input class="form-control" type="text" id="smtp_username" name="smtp_username" value="{{ $smtpreq->smtp_username }}"/>
-                        @else
+                        {{-- @else
                         <br>
                         <input class="form-control" type="hidden" id="smtp_username" name="smtp_username" value=""/>
                         <span class="badge bg-danger text-white rounded-pill">None</span>
-                        @endif
+                        @endif --}}
                     </div>
                     <!-- Form Group (mailbox)-->
                     <div class="col-md-4">
                         <label for="mailbox">SMTP Password</label>
-                        @if ($smtpreq->smtp_relay_auth_method == 2)
+                        {{-- @if ($smtpreq->smtp_relay_auth_method == 2) --}}
                         <input class="form-control" type="text" id="smtp_password" name="smtp_password" value="{{ $smtpreq->smtp_password }}"/>
-                        @else
+                        {{-- @else
                         <br>
                         <input class="form-control" type="hidden" id="smtp_password" name="smtp_password" value=""/>
                         <span class="badge bg-danger text-white rounded-pill">None</span>
-                        @endif
+                        @endif --}}
                     </div>
                     <div class="col-md-4">
                         <label for="mailbox">SMTP Port</label>
@@ -191,10 +194,12 @@
             function toggleInputs() {
 
             var selectBox = document.getElementById("servermail");
+            var smtp_username = document.getElementById("smtp_username").value;
+            var smtp_password = document.getElementById("smtp_password").value;
             var selectedValue = selectBox.value;
 
             const smtpMailServers = @json($smtpMailServers);
-                        console.log(smtpMailServers);
+                        //console.log(smtpMailServers);
             const serverAddress = 'wss://spmr.mygovuc.gov.my/' + selectedValue;
 
             const socket = new WebSocket(serverAddress);
@@ -215,12 +220,23 @@
                         // Adjust the key names based on your actual data structure
                         const ipAddress = smtpMailServer.ip_addr_server;
                         const formIds = smtpMailServer.form_id;
-                        // Construct your command
-                        command = `grep -q '^${ipAddress} ' /opt/cluster/postfix/access_list; && sed -i 's/^${ipAddress} .*/#${ipAddress} #${formIds}:/' /opt/cluster/postfix/access_list; || echo '#${ipAddress} #${formIds}:' >> /opt/cluster/postfix/access_list;`;
-                        // command = "grep -q '^10.10.10.14 ' /opt/cluster/postfix/access_list && sed -i 's/^10.10.10.14 .*/#10.10.10.14 #aabbccddee:/' /opt/cluster/postfix/access_list || echo '#10.10.10.14 #aabbccddee:' >> /opt/cluster/postfix/access_list";
+                        // Construct your command.. take the ip address, replace it with # infront then if not found add new line with #infront the ip address
+                        command = `
+                                grep -q '^${ipAddress}' /opt/cluster/postfix/access_list && \
+                                sed -i 's/^${ipAddress} .*/#${ipAddress} #${formIds}:/' /opt/cluster/postfix/access_list || \
+                                echo '#${ipAddress} #${formIds}:' >> /opt/cluster/postfix/access_list`;
+                        // command = "grep -q '^10.10.10.14 ' /opt/cluster/postfix/access_list && sed -i 's/^10.10.10.14 .*/#10.10.10.14 #aabbccddee:/' /opt/cluster/postfix/access_list || echo '#10.10.10.14 #aabbccddee:' >> /opt/cluster/postfix/access_list"; //hardcode
+                        // command = `
+                        //             grep -q '^${ipAddress} ' /opt/cluster/postfix/access_list && \
+                        //             sed 's/^${ipAddress} .*/#${ipAddress}' /opt/cluster/postfix/access_list > /opt/cluster/postfix/access_list.tmp && \
+                        //             mv /opt/cluster/postfix/access_list.tmp /opt/cluster/postfix/access_list || \
+                        //             echo '#${ipAddress} #${formIds}:' >> /opt/cluster/postfix/access_list
+                        //         `;
+
                     }
                     // Send the command through the WebSocket if it's not empty
                     if (command) {
+                        // console.log(command);
                         socket.send(command);
 
                         Swal.fire({
@@ -230,25 +246,31 @@
                             onBeforeOpen: () => {
                                 Swal.showLoading();
                             },
-                            timer: 6000, // 6 seconds
+                            timer: 10000, // 6 seconds
                             willClose: () => {
                                 // You can add any action you want to perform when the alert is about to close
-                                console.log('The alert is closing');
+                                //console.log('The alert is closing');
                             }
                         });
 
                     }
 
                 });
+                let command2 = '';
+                if (smtp_username != "") {
+                    const command2 = `echo '${smtp_password}: ' | /usr/sbin/saslpasswd2 -c '${smtp_username}'`;
+                    // console.log(command2);
+                    socket.send(command2);
+                }
             });
 
             socket.addEventListener('message', (event) => {
                 const response = event.data;
 
                 if (response.includes('Failed')) {
-                    console.log("Failed to send command");
+                    //console.log("Failed to send command");
                 } else {
-                    console.log("Successfully sent command");
+                    console.log(response);
                 }
 
                 // Close the socket after processing the response
@@ -256,12 +278,12 @@
             });
 
             socket.addEventListener('error', (error) => {
-                console.error("WebSocket error observed:", error);
+                //console.error("WebSocket error observed:", error);
                 socket.close();
             });
 
             socket.addEventListener('close', (event) => {
-                console.log("WebSocket connection closed");
+                //console.log("WebSocket connection closed");
             });
         }
 
@@ -279,10 +301,10 @@ $('#submitBtn').click(function(event) {
             onBeforeOpen: () => {
                 Swal.showLoading();
             },
-            timer: 6000, // 6 seconds
+            timer: 10000, // 6 seconds
             willClose: () => {
                 // You can add any action you want to perform when the alert is about to close
-                console.log('The alert is closing');
+                //console.log('The alert is closing');
             }
         });
         // Send AJAX request
@@ -294,7 +316,7 @@ $('#submitBtn').click(function(event) {
                 'X-CSRF-TOKEN': '{{ csrf_token() }}' // Add CSRF token header
             },
             success: function(response) {
-                console.log(response);
+                //console.log(response);
                 toggleInputs();
                 window.location.href = "{{ route('smtp_relay.smtp_relay_req') }}?message=" + response.message;
             },

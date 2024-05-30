@@ -105,7 +105,7 @@
                     <label for="req_justifications">Justification</label>
                     <textarea class="form-control" id="req_justifications" name="req_justifications" rows="3">{{ old('req_justifications', $formsmtp->req_justifications) }}</textarea>
                 </div>
-                <div class="mb-3">
+                <div class="mb-3" @if ($formsmtp->types_req == 2) style="display: none;" @endif>
                     <label for="smtp_relay_auth_method">Mail Relay Authentication Method</label>
                     <select class="form-control select2" name="smtp_relay_auth_method" id="smtp_relay_auth_method" required>
                         <option value="{{ old('smtp_relay_auth_method', $formsmtp->smtp_relay_auth_method) }}">
@@ -133,7 +133,7 @@
                             <tr>
                                 <th scope="col">System Name</th>
                                 <th scope="col">IP Address</th>
-                                <th scope="col">FQDN System</th>
+                                <th scope="col">Domain System</th>
                                 <th scope="col">Actions</th>
                             </tr>
                         </thead>
@@ -160,7 +160,7 @@
                                 </th>
                             </tr>
                         </tfoot>
-                        <p id="resultContainer"></p>
+                        <strong><p style="color: red;" id="resultContainer"></p></strong>
                     </table>
                 </div>
 
@@ -204,7 +204,7 @@
                         </select>
                     </div>
                 </div>
-                <div class="row gx-3 mb-3">
+                <div class="row gx-3 mb-3" @if ($formsmtp->types_req == 2) style="display: none;" @endif>
                     <div class="col-md-6">
                         <label for="est_no_system_users_per_day">Estimated number of system users (per day)</label>
                         <input class="form-control" id="est_no_system_users_per_day" name="est_no_system_users_per_day" type="number" pattern="[0-9]*" inputmode="numeric"  value="{{ old('est_no_system_users_per_day', $formsmtp->est_no_system_users_per_day) }}"/>
@@ -275,6 +275,7 @@
                     <div class="mb-3 col-md-4">
                         <label class=" mb-1" for="date_verification_1">Date:</label>
                         <input class="form-control" type="date" id="date_verification_1" name="date_verification_1" value="{{ old('date_verification_1', date('Y-m-d', strtotime($formsmtp->date_verification_1))) }}">
+                        <span style="color: red"><div id="message"></div></span>
                     </div>
                 </div>
                 <hr>
@@ -287,10 +288,11 @@
                     <div class="col-md-6">
                         <label for="date_verification_2">Date:</label>
                         <input class="form-control" type="date" id="date_verification_2" name="date_verification_2"  value="{{ old('date_verification_2', date('Y-m-d', strtotime($formsmtp->date_verification_2))) }}">
+                        <span style="color: red"><div id="message2"></div></span>
                     </div>
                 </div>
                 <hr>
-                <div class="card-header text-center"><h4 class=" text-primary">Approval MAMPU</h4></div><br>
+                <div class="card-header text-center"><h4 class=" text-primary">Approval JDN</h4></div><br>
                 <div class="mb-3">
                     <label for="verifier_3_name">Approval Name</label>
                     <input class="form-control" id="verifier_3_name" name="verifier_3_name" type="text" placeholder="" value="{{ old('verifier_3_name', $formsmtp->verifier_3_name) }}" required>
@@ -319,6 +321,7 @@
                     <div class="mb-3 col-md-4">
                         <label class=" mb-1" for="date_verification_3">Date:</label>
                         <input class="form-control" type="date" id="date_verification_3" name="date_verification_3"  value="{{ old('date_verification_3', date('Y-m-d', strtotime($formsmtp->date_verification_3))) }}">
+                        <span style="color: red"><div id="message3"></div></span>
                     </div>
                 </div>
                 <hr>
@@ -401,7 +404,7 @@
                     if (response.includes('IP address exists')) {
                         $('#resultContainer').html(response);
                     } else {
-                        console.log("Successfully sent command");
+                        $('#resultContainer').empty();
                     }
                     socket.close();
                 });
@@ -421,25 +424,58 @@
         });
 
 
-    const dateAInput = document.getElementById('applicantdate');
-    const dateBInput = document.getElementById('verifierdate');
-    // const dateCInput = document.getElementById('dateC');
-    const messageDiv = document.getElementById('message');
-    function compareDates() {
-        const dateA = new Date(dateAInput.value);
-        const dateB = new Date(dateBInput.value);
-        // const dateC = new Date(dateCInput.value);
+        const dateAInput = document.getElementById('date_application');
+        const dateBInput = document.getElementById('date_verification_1');
+        const dateCInput = document.getElementById('date_verification_2');
+        const dateDInput = document.getElementById('date_verification_3');
+        const messageDiv = document.getElementById('message');
+        const messageDiv2 = document.getElementById('message2');
+        const messageDiv3 = document.getElementById('message3');
 
-        if (dateB && dateA) {
-            if (dateB < dateA) {
-                messageDiv.textContent = "Date Verifier must be greater than Date Applicant";
+        function compareDates() {
+            var dateA = new Date(dateAInput.value);
+            var dateB = new Date(dateBInput.value);
 
-            } else {
-                messageDiv.textContent = "";
+            if (dateB && dateA) {
+                if (dateB < dateA) {
+                    messageDiv.textContent = "Date Verifier must be greater than Date Applicant";
+                } else {
+                    messageDiv.textContent = "";
+                }
             }
         }
-    }
-    dateBInput.addEventListener('change', compareDates);
+
+        function compareDates2() {
+
+            var dateB = new Date(dateBInput.value);
+            var dateC = new Date(dateCInput.value);
+
+            if (dateB && dateC) {
+                if ( dateC < dateB ) {
+                    messageDiv2.textContent = "Date Helpdesk must be greater than Date Verifier";
+                } else {
+                    messageDiv3.textContent = "";
+                }
+            }
+        }
+
+        function compareDates3() {
+            var dateC = new Date(dateCInput.value);
+            var dateD = new Date(dateDInput.value);
+
+            if (dateD && dateC) {
+                if (dateD < dateC) {
+                    messageDiv3.textContent = "Date Approval must be greater than Date Helpdesk";
+
+                } else {
+                    messageDiv2.textContent = "";
+                }
+            }
+        }
+
+        dateBInput.addEventListener('change', compareDates);
+        dateCInput.addEventListener('change', compareDates2);
+        dateDInput.addEventListener('change', compareDates3);
 
     // dateForm.addEventListener('submit',function(event){
     //     if (!compareDates()){
@@ -606,43 +642,43 @@
     });
     });
 
-    $('#dynamic-inputs-container').on('input', '#ip_addr_server', function() {
+    // $('#dynamic-inputs-container').on('input', '#ip_addr_server', function() {
 
-        var type_req = document.getElementById("types_req");
-        var selectBox = document.getElementById("smtp_relay_server");
-        var selectedValue = selectBox.options[selectBox.selectedIndex].value;
-        var selectedValuetype_req = type_req.options[type_req.selectedIndex].value;
-        var ipAddress = $(this).val();
+    //     var type_req = document.getElementById("types_req");
+    //     var selectBox = document.getElementById("smtp_relay_server");
+    //     var selectedValue = selectBox.options[selectBox.selectedIndex].value;
+    //     var selectedValuetype_req = type_req.options[type_req.selectedIndex].value;
+    //     var ipAddress = $(this).val();
 
-        if (/^(?:[0-9]{1,3}\.){3}[0-9]{1,3}$/.test(ipAddress)) {
-            // Send AJAX request
-            $.ajax({
-                type: 'POST',
-                url: '{{ route("check.ip.address") }}', // Replace with your route name
-                data: {
-                    '_token': '{{ csrf_token() }}',
-                    'tableSpmr': [{
-                        'ipaddress': ipAddress
-                    }],
-                    'selectedValue': selectedValue,
-                    'selectedValuetype_req': selectedValuetype_req
-                },
-                success: function(response) {
-                    console.log(response);
-                    $('#resultContainer').html(response);
+    //     if (/^(?:[0-9]{1,3}\.){3}[0-9]{1,3}$/.test(ipAddress)) {
+    //         // Send AJAX request
+    //         $.ajax({
+    //             type: 'POST',
+    //             url: '{{ route("check.ip.address") }}', // Replace with your route name
+    //             data: {
+    //                 '_token': '{{ csrf_token() }}',
+    //                 'tableSpmr': [{
+    //                     'ipaddress': ipAddress
+    //                 }],
+    //                 'selectedValue': selectedValue,
+    //                 'selectedValuetype_req': selectedValuetype_req
+    //             },
+    //             success: function(response) {
+    //                 //console.log(response);
+    //                 $('#resultContainer').html(response);
 
-                },
-                error: function(xhr, status, error) {
-                    console.error(xhr.responseText);
-                }
-            });
+    //             },
+    //             error: function(xhr, status, error) {
+    //                 console.error(xhr.responseText);
+    //             }
+    //         });
 
-        }else {
-            // Clear result container if input is invalid
-            $('#resultContainer').empty();
-        }
+    //     }else {
+    //         // Clear result container if input is invalid
+    //         $('#resultContainer').empty();
+    //     }
 
-    });
+    // });
 
     document.addEventListener('DOMContentLoaded', function() {
         // The smtpPort value passed from PHP to JavaScript

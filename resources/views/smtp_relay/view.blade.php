@@ -101,6 +101,7 @@
                     <label for="justification">Justification</label>
                     <p>{{ $datasmtp->req_justifications}}</p>
                 </div>
+                @if ($datasmtp->smtp_relay_auth_method == 1)
                 <div class="mb-3">
                     <label for="authmethod">Mail Relay Authentication Method</label>
                     <p>
@@ -108,8 +109,10 @@
                             IP Based Authentication Relay
                         @else
                             Username/Password Authentication Relay
-                        @endif</p>
+                        @endif
+                    </p>
                 </div>
+                @endif
                 <div class="mb-3">
                     <label for="mailrelay">Server Mail Relay</label>
                     <p>{{ $datasmtp->smtp_relay_server ?? 'Not Available' }}</p>
@@ -121,7 +124,7 @@
                                 <th scope="col">No.</th>
                                 <th scope="col">System Name</th>
                                 <th scope="col">IP Address</th>
-                                <th scope="col">FQDN Sistem</th>
+                                <th scope="col">Domain Sistem</th>
                             </tr>
                         </thead>
                         <tbody id="dynamic-inputs-container">
@@ -239,7 +242,7 @@
                     </div>
                 </div>
                 <hr>
-                <div class="card-header text-center"><h4 class=" text-primary">Approval MAMPU</h4></div><br>
+                <div class="card-header text-center"><h4 class=" text-primary">Approval JDN</h4></div><br>
                 <div class="mb-3">
                     <label for="approvalname">Approval Name</label>
                     <p>{{ $datasmtp->verifier_3_name}}</p>
@@ -261,10 +264,11 @@
                 <hr>
                 <div class="mb-3">
                     <label for="attachement">Attachement</label><br>
+
+                    @if ($datasmtp->upload_copy_attachment)
+                    <a href="{{ route('smtp_relay.viewPdf', ['filename' => $datasmtp->upload_copy_attachment]) }}" target="_blank">{{ $datasmtp->upload_copy_attachment }}</a><br>
+                    @endif
                     @foreach ($attachment as $attachments)
-                        @if ($attachments->upload_copy_attachment)
-                            <a href="{{ route('smtp_relay.viewPdf', ['filename' => $attachments->upload_copy_attachment]) }}" target="_blank">{{ $attachments->upload_copy_attachment }}</a><br>
-                        @endif
                         @if ($attachments->attachment_path)
                             <a href="{{ route('smtp_relay.viewPdf', ['filename' => $attachments->attachment_path]) }}" target="_blank">{{ $attachments->attachment_path }}</a><br>
                         @endif

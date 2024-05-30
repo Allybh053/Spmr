@@ -107,35 +107,65 @@
                 extend: 'copy',
                 text: 'Copy',
                 exportOptions: {
-                    columns: ':visible'
+                    columns: ':visible',
+                    format: {
+                        body: function (data, row, column, node) {
+                            // Add row number for the first column
+                            return column === 0 ? row + 1 : data;
+                        }
+                    }
                 }
             },
             {
                 extend: 'csv',
                 text: 'CSV',
                 exportOptions: {
-                    columns: ':visible'
+                    columns: ':visible',
+                    format: {
+                        body: function (data, row, column, node) {
+                            // Add row number for the first column
+                            return column === 0 ? row + 1 : data;
+                        }
+                    }
                 }
             },
             {
                 extend: 'excel',
                 text: 'Excel',
                 exportOptions: {
-                    columns: ':visible'
+                    columns: ':visible',
+                    format: {
+                        body: function (data, row, column, node) {
+                            // Add row number for the first column
+                            return column === 0 ? row + 1 : data;
+                        }
+                    }
                 }
             },
             {
                 extend: 'pdf',
                 text: 'PDF',
                 exportOptions: {
-                    columns: ':visible'
+                    columns: ':visible',
+                    format: {
+                        body: function (data, row, column, node) {
+                            // Add row number for the first column
+                            return column === 0 ? row + 1 : data;
+                        }
+                    }
                 }
             },
             {
                 extend: 'print',
                 text: 'Print',
                 exportOptions: {
-                    columns: ':visible'
+                    columns: ':visible',
+                    format: {
+                        body: function (data, row, column, node) {
+                            // Add row number for the first column
+                            return column === 0 ? row + 1 : data;
+                        }
+                    }
                 }
             }
         ]
@@ -160,35 +190,65 @@
                 extend: 'copy',
                 text: 'Copy',
                 exportOptions: {
-                    columns: ':visible'
+                    columns: ':visible',
+                    format: {
+                        body: function (data, row, column, node) {
+                            // Add row number for the first column
+                            return column === 0 ? row + 1 : data;
+                        }
+                    }
                 }
             },
             {
                 extend: 'csv',
                 text: 'CSV',
                 exportOptions: {
-                    columns: ':visible'
+                    columns: ':visible',
+                    format: {
+                        body: function (data, row, column, node) {
+                            // Add row number for the first column
+                            return column === 0 ? row + 1 : data;
+                        }
+                    }
                 }
             },
             {
                 extend: 'excel',
                 text: 'Excel',
                 exportOptions: {
-                    columns: ':visible'
+                    columns: ':visible',
+                    format: {
+                        body: function (data, row, column, node) {
+                            // Add row number for the first column
+                            return column === 0 ? row + 1 : data;
+                        }
+                    }
                 }
             },
             {
                 extend: 'pdf',
                 text: 'PDF',
                 exportOptions: {
-                    columns: ':visible'
+                    columns: ':visible',
+                    format: {
+                        body: function (data, row, column, node) {
+                            // Add row number for the first column
+                            return column === 0 ? row + 1 : data;
+                        }
+                    }
                 }
             },
             {
                 extend: 'print',
                 text: 'Print',
                 exportOptions: {
-                    columns: ':visible'
+                    columns: ':visible',
+                    format: {
+                        body: function (data, row, column, node) {
+                            // Add row number for the first column
+                            return column === 0 ? row + 1 : data;
+                        }
+                    }
                 }
             }
         ],

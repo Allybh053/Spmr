@@ -19,6 +19,7 @@ use App\Models\DomainServer;
 use App\Models\RoleServer;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\File;
+use App\Models\HistoryCopyAttachment;
 
 
 class MainRelayController extends Controller
@@ -29,6 +30,7 @@ class MainRelayController extends Controller
         $user = Auth::user();
 
         $smtpMailServers = DB::table('smtp_relay_req_form')
+        ->orderBy('status', 'desc')
         ->get();
 
         return view('mailrelay.index', compact('user','smtpMailServers'));
@@ -116,7 +118,8 @@ class MainRelayController extends Controller
         $details = smtp_relay_server::where('form_id', $datasmtp->form_id)
                     ->where('types_req', $datasmtp->types_req)
                     ->get();
-        return view('smtp_relay.view',compact('datasmtp','details'));
+        $attachment = HistoryCopyAttachment::select('sm.upload_copy_attachment','history_copy_attachment.attachment_path');
+        return view('smtp_relay.view',compact('datasmtp','details','attachment'));
     }
 
     public function submitrejForm(Request $request){
