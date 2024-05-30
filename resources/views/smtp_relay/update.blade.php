@@ -105,7 +105,7 @@
                     <label for="req_justifications">Justification</label>
                     <textarea class="form-control" id="req_justifications" name="req_justifications" rows="3">{{ old('req_justifications', $formsmtp->req_justifications) }}</textarea>
                 </div>
-                <div class="mb-3">
+                <div class="mb-3" @if ($formsmtp->types_req == 2) style="display: none;" @endif>
                     <label for="smtp_relay_auth_method">Mail Relay Authentication Method</label>
                     <select class="form-control select2" name="smtp_relay_auth_method" id="smtp_relay_auth_method" required>
                         <option value="{{ old('smtp_relay_auth_method', $formsmtp->smtp_relay_auth_method) }}">
@@ -204,7 +204,7 @@
                         </select>
                     </div>
                 </div>
-                <div class="row gx-3 mb-3">
+                <div class="row gx-3 mb-3" @if ($formsmtp->types_req == 2) style="display: none;" @endif>
                     <div class="col-md-6">
                         <label for="est_no_system_users_per_day">Estimated number of system users (per day)</label>
                         <input class="form-control" id="est_no_system_users_per_day" name="est_no_system_users_per_day" type="number" pattern="[0-9]*" inputmode="numeric"  value="{{ old('est_no_system_users_per_day', $formsmtp->est_no_system_users_per_day) }}"/>
