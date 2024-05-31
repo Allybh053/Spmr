@@ -386,11 +386,11 @@
 
                     if (selectedValuetype_req == 1) {
                         // Construct your command
-                        command = `grep -q '^${ipAddress} ' /opt/cluster/postfix/access_list && echo "IP address exists"`;
+                        command = `grep -q '^${ipAddress} ' /opt/cluster/postfix/access_list && echo "IP address already Registered!"`;
                     }
                     if (selectedValuetype_req == 2) {
                         // Construct your command
-                        command = `grep -q '^#${ipAddress} ' /opt/cluster/postfix/access_list && echo "IP address exists"`;
+                        command = `grep -q '^#${ipAddress} ' /opt/cluster/postfix/access_list && echo "IP address already Terminated!"`;
                     }
 
                     // Send the command through the WebSocket if it's not empty
@@ -401,11 +401,21 @@
 
                 socket.addEventListener('message', (event) => {
                     const response = event.data;
-                    if (response.includes('IP address exists')) {
-                        $('#resultContainer').html(response);
-                    } else {
-                        $('#resultContainer').empty();
+                    if (selectedValuetype_req == 1) {
+                    if (response.includes('IP address already Registered!')) {
+                            $('#resultContainer').html(response);
+                        } else {
+                            $('#resultContainer').empty();
+                        }
                     }
+                    if (selectedValuetype_req == 2) {
+                    if (response.includes('IP address already Terminated!')) {
+                            $('#resultContainer').html(response);
+                        } else {
+                            $('#resultContainer').empty();
+                        }
+                    }
+
                     socket.close();
                 });
 

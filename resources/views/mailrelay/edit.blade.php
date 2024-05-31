@@ -40,7 +40,7 @@
                         <p class="text-primary">{{ $smtpreq->smtp_relay_server }}</p>
                         <input type="hidden" id="servermail" name="servermail" value="{{ $smtpreq->smtp_relay_server }}">
                     </div>
-                    <div class="col-md-4">
+                    <div class="col-md-4" @if($smtpreq->types_req === 2) style="display: none;" @endif>
                         <label for="mailbox">Auth Method</label>
                         <p class="text-primary">
                         @if ($smtpreq->smtp_relay_auth_method == 1)
@@ -70,7 +70,7 @@
                 @csrf
                 <div class="row gx-3 mb-3">
                     <!-- Form Group (mail from)-->
-                    <div class="col-md-4">
+                    <div class="col-md-4" @if($smtpreq->types_req === 2) style="display: none;" @endif>
                         <label for="emailaddfrom">SMTP Username</label>
                         {{-- @if ($smtpreq->smtp_relay_auth_method == 2) --}}
                         <input class="form-control" type="text" id="smtp_username" name="smtp_username" value="{{ $smtpreq->smtp_username }}"/>
@@ -81,7 +81,7 @@
                         @endif --}}
                     </div>
                     <!-- Form Group (mailbox)-->
-                    <div class="col-md-4">
+                    <div class="col-md-4" @if($smtpreq->types_req === 2) style="display: none;" @endif>
                         <label for="mailbox">SMTP Password</label>
                         {{-- @if ($smtpreq->smtp_relay_auth_method == 2) --}}
                         <input class="form-control" type="text" id="smtp_password" name="smtp_password" value="{{ $smtpreq->smtp_password }}"/>
