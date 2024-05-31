@@ -296,37 +296,60 @@
     }
     return color;
 }
+const serverListAgencies = @json($serverListAgencies);
 
-        const serverListAgencies = @json($serverListAgencies);
+serverListAgencies.forEach((server, index) => {
+    const ctx = document.getElementById(`chart-${index}`).getContext('2d');
+    const labels = server.agencies.map(item => item.agency);
 
-        serverListAgencies.forEach((server, index) => {
-            const ctx = document.getElementById(`chart-${index}`).getContext('2d');
-            const labels = server.agencies.map(item => item.agency);
-            const data = server.agencies.map(item => item.totalAgencies);
+    const datasets = server.agencies.map((item, i) => ({
+        label: item.agency,
+        data: labels.map((label, j) => j === i ? item.totalAgencies : 0),
+        backgroundColor: getRandomColor(),
+        borderColor: getRandomColor(),
+        borderWidth: 1,
+        barPercentage: 1.0, // Controls the width of the bar relative to the category width
+        categoryPercentage: 0.5// Controls the width of the category slot
+    }));
 
-            const datasets = labels.map((label, i) => ({
-                label: label,
-                data: [data[i]],
-                backgroundColor: getRandomColor(),
-                borderColor: getRandomColor(),
-                borderWidth: 1
-            }));
-
-            new Chart(ctx, {
-                type: 'bar',
-                data: {
-                    labels: labels,
-                    datasets: datasets
+    new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: labels,
+            datasets: datasets
+        },
+        options: {
+            scales: {
+                y: {
+                    beginAtZero: true
                 },
-                options: {
-                    scales: {
-                        y: {
-                            beginAtZero: true
-                        }
+                x: {
+                    grid: {
+                        display: false
+                    },
+                    ticks: {
+                        autoSkip: false,
+                        maxRotation: 90,
+                        minRotation: 90
                     }
                 }
-            });
-        })
+            },
+            responsive: true,
+            plugins: {
+                legend: {
+                    position: 'top', // Show legend at the top
+                },
+                title: {
+                    display: true,
+                    text: 'Agency Data'
+                }
+            }
+        }
+    });
+});
+
+
+
 
 
 
