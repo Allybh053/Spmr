@@ -170,7 +170,7 @@
                 </div>
                 @endif
                 @php
-                $canViewReport = Gate::check('generate_report_view') || Gate::check('monthly_report_view');
+                $canViewReport = Gate::check('agencies_report_view') || Gate::check('usage_report_view');
                 @endphp
                 @if ($canViewReport)
                 <div class="sidenav-menu-heading">Report Management</div>
@@ -194,17 +194,17 @@
                     </nav>
                 </div>--}}
 
-                @can('generate_report_view')
+                @can('agencies_report_view')
                 <a class="nav-link" href="{{ route('generateReport.index') }}">
                     <div class="nav-link-icon"><i data-feather="trello"></i></div>
                     Agencies Report
                     <div class="sidenav-collapse-arrow"></div>
                 </a>
                 @endcan
-                @can('monthly_report_view')
+                @can('usage_report_view')
                 <a class="nav-link" href="{{ route('monthlyReport.index') }}">
                     <div class="nav-link-icon"><i data-feather="trello"></i></div>
-                    Ussage Report
+                    Usage Report
                     <div class="sidenav-collapse-arrow"></div>
                 </a>
                 @endcan

@@ -8,6 +8,226 @@
     </div>
   </div>
 </header>
+@push('css')
+<style>
+
+.chart-single {
+
+width: 100%;
+margin: 30px auto 0;
+display: block;
+max-width: 480px;
+color:#4A4A4A;
+
+ /* Small Devices, Tablets */
+  @media only screen and (min-width : 768px) {
+    max-width: 768px;
+  }
+
+  /* Medium Devices, Desktops */
+  @media only screen and (min-width : 992px) {
+      max-width:992px;
+  }
+
+  /* Large Devices, Wide Screens */
+  @media only screen and (min-width : 1200px) {
+    max-width: 906px;
+  }
+
+/* y-axis values */
+.numbers {
+  margin: 0;
+  padding: 0;
+  display: inline-block;
+  float: left;
+
+  li {
+    text-align: right;
+    padding-right: 8px;
+    list-style: none;
+    position: relative;
+    left:0px;
+    height: 33px;
+    top: -9px;
+  }
+}
+.bars {
+  max-width: 257px;
+  width: 96%;
+  display: inline-block;
+  padding: 0;
+  margin: 0;
+  background-image:linear-gradient(top, rgba(0, 0, 0, 0.3) 3%, transparent 2%);
+   background-image:-webkit-linear-gradient(top, rgba(0, 0, 0, 0.3) 3%, transparent 2%);
+  background-image:-moz-linear-gradient(top, rgba(0, 0, 0, 0.3) 3%, transparent 2%);
+  background-size: 100% 33px;
+  background-position: left top;
+  font-size: 12px;
+
+ /* Extra Small Devices, Phones */
+  @media only screen and (min-width : 480px) {
+    max-width: 320px;
+  }
+   /* Small Devices, Tablets */
+   @media only screen and (min-width : 768px) {
+    max-width: 564px;
+  }
+  /* Medium Devices, Desktops and Large devices */
+  @media only screen and (min-width : 992px) and (max-width: 1200px) {
+     max-width: 901px;
+  }
+   @media only screen and (min-width : 1200px) {
+     max-width: 906px;
+  }
+
+  /* set height of bar using data-percentage attribute */
+
+    [data-percentage="100"]{
+      height: 100%;
+     }
+     [data-percentage="98"]{
+      height:98%;
+     }
+     [data-percentage="99"]{
+      height:99%;
+     }
+     [data-percentage="93"]{
+      height: 93%;
+     }
+       [data-percentage="95"]{
+      height: 95%;
+     }
+     [data-percentage="96"]{
+      height:96%;
+     }
+   [data-percentage="97"]{
+      height:97%;
+     }
+    [data-numbers^="(n="] {
+       text-align: left;
+    }
+
+  li {
+  display: block;
+  width: 8%;
+  height: 331px;
+  margin: 0;
+  text-align: center;
+  position: relative;
+  margin-right: 10.2%;
+  float: left;
+    &:last-of-type{
+      margin:0;
+    }
+    &:first-of-type{
+      margin-left: 1%;
+    }
+
+    .bar {
+      display: block;
+      width: 100%;
+      background-image: linear-gradient(10deg, #E25625 50%, #E25A25 58%, #E26724 67%, #E17C23 75%, #E19A21 84%, #E0BF1E 100%);
+        background-image: -webkit-linear-gradient(10deg, #E25625 50%, #E25A25 58%, #E26724 67%, #E17C23 75%, #E19A21 84%, #E0BF1E 100%);
+        background-image: -moz-linear-gradient(10deg, #E25625 50%, #E25A25 58%, #E26724 67%, #E17C23 75%, #E19A21 84%, #E0BF1E 100%);
+      position: absolute;
+      bottom: 0;
+
+        /* numbers inside the bar */
+        &:before {
+          position: absolute;
+          content: attr(data-numbers);
+          transform: rotate(-90deg);
+          transform-origin: 100% 100%;
+          width: 100%;
+          bottom: 9%;
+          right: 1px;
+
+           @media only screen and  (min-width: 768px){
+             bottom: 17%;
+            right: 4px;
+          }
+
+           @media only screen and  (min-width: 992px){
+             bottom: 24%;
+            right: 4px;
+          }
+           @media only screen and  (min-width: 1200px) {
+             bottom: 24%;
+             right: 4px;
+          }
+        }
+    }
+
+/* x-axis percentage values */
+    span {
+      width: 100%;
+      position: absolute;
+      bottom: -2em;
+      left: 0;
+      text-align: center;
+      font-weight: bold;
+      font-size: 9px;
+
+       @media only screen and (min-width : 768px) and (max-width: 1200px) {
+       font-size: 12px;
+
+      }
+      @media only screen and (min-width :1200px){
+       font-size: 12px;
+
+      }
+
+    }
+
+    .percentage{
+      width: 100%;
+      position: absolute;
+      top: -26px;
+      left: 0;
+      text-align: center;
+      font-weight: normal;
+      font-size: 14px;
+      sup{
+        font-size: 66%;
+      }
+    }
+  }
+}
+
+}
+
+
+.indication{
+padding-bottom: 20px;
+ ul{
+  li{
+    display: inline-block;
+      .box{
+        height:19px;
+        width: 42px;
+        margin: 0 5px 0 0;
+        vertical-align: top;
+        display: inline-block;
+      }
+
+
+    .orange{
+
+      background: linear-gradient(-90deg, #E25625 50%, #E25A25 58%, #E26724 67%, #E17C23 75%, #E19A21 84%, #E0BF1E 100%);
+    }
+    .gray{
+
+      background: linear-gradient(360deg, #A7A9AC 10%, #D1D3D4 100%);
+      margin: 0 5px 0 20px;
+     }
+  }
+ }
+}
+
+
+
+</style>
+@endpush
 <!-- Main page content-->
 <div class="container-xl px-4 mt-n10">
   <!-- <a class="card card-icon lift lift-sm mb-4" href="#"><div class="row"><div class="col-auto card-icon-aside bg-primary"><i class="text-white-50" data-feather="server"></i></div><div class="col"><div class="card-body py-4">
@@ -183,7 +403,35 @@
                     <div class="mb-4">
                         <h6>{{ $server['hostname'] }}</h6>
                         <p>{{ $server['ipAddress'] }}</p>
-                        <canvas id="chart-{{ $loop->index }}"  width="729" height="217"></canvas>
+
+                        <div class="container">
+                            <div class="chart-single">
+
+                                <ul class="numbers">
+                                  <li>100</li>
+                                  <li></li>
+                                  <li>80</li>
+                                  <li></li>
+                                  <li>60</li>
+                                  <li></li>
+                                  <li>40</li>
+                                  <li></li>
+                                  <li>20</li>
+                                  <li></li>
+                                  <li>0</li>
+
+                                </ul>
+
+                                <ul class="bars">
+                                    @foreach ($server['agencies'] as $agency)
+                                  <li><div data-percentage="{{ $agency['totalAgencies'] }}" data-numbers="" class="bar"></div><span>{{ $agency['agency'] }}</span><span class="percentage">{{ $agency['totalAgencies'] }}<sup>%</sup></span></li>
+                                  @endforeach
+                                </ul>
+
+
+                              </div>
+                        </div>
+                        {{-- <canvas id="chart-{{ $loop->index }}"  width="729" height="217"></canvas> --}}
                     </div>
                 @endforeach
             </div>
@@ -216,6 +464,37 @@
         </div>
     </div>
     @endcan
+
+<div class="container">
+    <div class="chart-single">
+
+        <ul class="numbers">
+          <li>100</li>
+          <li></li>
+          <li>80</li>
+          <li></li>
+          <li>60</li>
+          <li></li>
+          <li>40</li>
+          <li></li>
+          <li>20</li>
+          <li></li>
+          <li>0</li>
+
+        </ul>
+
+        <ul class="bars">
+          <li><div data-percentage="99" data-numbers="" class="bar"></div><span>KKM</span><span class="percentage">99<sup>%</sup></span></li>
+          <li><div data-percentage="100" data-numbers="" class="bar"></div><span>KKM</span><span class="percentage">100<sup>%</sup></span></li>
+          <li><div data-percentage="98" data-numbers=""  class="bar"></div><span>KKM</span><span class="percentage">98<sup>%</sup></span></li>
+          <li><div data-percentage="100" data-numbers="" class="bar"></div><span>KKM</span><span class="percentage">100<sup>%</sup></span></li>
+          <li><div data-percentage="100" data-numbers="" class="bar"></div><span>KKM</span><span class="percentage">100<sup>%</sup></span></li>
+        </ul>
+
+
+      </div>
+</div>
+
     {{--@can('top_5_list_ministry')
     <div class="col-xxl-12 mb-4">
         <div class="card" style="height: 500px; overflow-y: auto;">
@@ -393,67 +672,65 @@
         return color;
     }
 
-    const serverListAgencies = @json($serverListAgencies);
+//     const serverListAgencies = @json($serverListAgencies);
 
-    serverListAgencies.forEach((server, index) => {
-        const chartId = `chart-${index}`;
-        const canvasElement = document.getElementById(chartId);
+// serverListAgencies.forEach((server, index) => {
+//     const chartId = `chart-${index}`;
+//     const canvasElement = document.getElementById(chartId);
 
-        // Ensure the canvas element exists
-        if (!canvasElement) {
-            console.error(`Canvas element with id ${chartId} not found.`);
-            return;
-        }
+//     // Ensure the canvas element exists
+//     if (!canvasElement) {
+//         console.error(`Canvas element with id ${chartId} not found.`);
+//         return;
+//     }
 
-        const ctx = canvasElement.getContext('2d');
-        const labels = server.agencies.map(item => item.agency);
+//     const ctx = canvasElement.getContext('2d');
+//     const labels = server.agencies.map(item => item.agency);
+//     const datasets = server.agencies.map((item, i) => ({
+//         label: item.agency,
+//         data: labels.map((label, j) => j === i ? item.totalAgencies : 0),
+//         backgroundColor: getRandomColor(),
+//         borderColor: getRandomColor(),
+//         borderWidth: 1,
+//     }));
 
-        const datasets = server.agencies.map((item, i) => ({
-            label: item.agency,
-            data: labels.map((label, j) => j === i ? item.totalAgencies : 0),
-            backgroundColor: getRandomColor(),
-            borderColor: getRandomColor(),
-            borderWidth: 1,
-            barPercentage: 1.0,
-            categoryPercentage: 0.5
-        }));
-
-        new Chart(ctx, {
-            type: 'bar',
-            data: {
-                labels: labels,
-                datasets: datasets
-            },
-            scales: {
-                y: {
-                    ticks: {
-                        beginAtZero: true
-                    }
-                },
-                x: {
-                    display: false, // Hide x-axis
-                    gridLines: {
-                        display: false
-                    },
-                    ticks: {
-                        display: false // Ensure ticks are also hidden
-                    }
-                }
-            },
-                responsive: true,
-                plugins: {
-                    legend: {
-                        display: true // Hide legend
-                    },
-                    title: {
-                        display: true,
-                        text: 'Agency Data'
-                    }
-                }
-
-        });
-    });
-
+//     new Chart(ctx, {
+//         type: 'bar',
+//         data: {
+//             labels: labels,
+//             datasets: datasets
+//         },
+//         options: {
+//             plugins: {
+//                 legend: {
+//                     display: true, // Show legend
+//                     position: 'bottom' // Position legend at the bottom
+//                 },
+//                 tooltip: {
+//                     callbacks: {
+//                         label: function(context) {
+//                             return context.dataset.label + ': ' + context.parsed.y;
+//                         }
+//                     }
+//                 }
+//             },
+//             scales: {
+//                 y: {
+//                     ticks: {
+//                         beginAtZero: true
+//                     }
+//                 },
+//                 x: {
+//                     ticks: {
+//                     autoSkip: false,
+//                     maxRotation: 45,
+//                     minRotation: 45
+//                 }
+//                 }
+//             }
+//         }
+//     });
+// });
 
 
 
