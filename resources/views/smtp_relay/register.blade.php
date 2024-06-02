@@ -553,6 +553,7 @@
 
 
     $(document).on('input', '#dynamic-inputs-container input#ipaddress', function() {
+            var submitButton = document.getElementById("submit");
             var type_req = document.getElementById("type_req");
             var selectBox = document.getElementById("mailrelay");
             var selectedValue = selectBox.value;
@@ -583,15 +584,19 @@
                     if (selectedValuetype_req == 1) {
                     if (response.includes('IP address already Registered!')) {
                             $('#resultContainer').html(response);
+                            submitButton.style.display = "none";
                         } else {
                             $('#resultContainer').empty();
+                            submitButton.style.display = "block";
                         }
                     }
                     if (selectedValuetype_req == 2) {
                     if (response.includes('IP address already Terminated!')) {
                             $('#resultContainer').html(response);
+                            submitButton.style.display = "none";
                         } else {
                             $('#resultContainer').empty();
+                            submitButton.style.display = "block";
                         }
                     }
                     socket.close();
