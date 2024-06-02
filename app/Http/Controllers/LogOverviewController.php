@@ -19,8 +19,10 @@ class LogOverviewController extends Controller
     {
         $user = Auth::user();
         $role = $user->roles->isNotEmpty() ? $user->roles->pluck('name')->first() : null;
-        $serverIds = RoleServer::whereIn('role_id', $user->roles->pluck('id')->all())
-            ->pluck('server_id');
+        $serverIds = RoleServer::whereIn('role_servers.role_id', $user->roles->pluck('id')->all())
+        ->leftJoin('servers','servers.id','role_servers.server_id')
+        ->where('servers.status',1)
+        ->pluck('server_id');
 
         $defaultServerId = $serverIds->min();
 

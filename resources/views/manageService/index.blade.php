@@ -18,19 +18,120 @@
   </header>
   <!-- Main page content-->
   <div class="container-fluid px-4">
-      @foreach ($serverconfig as $server)
+      {{-- @foreach ($serverconfig as $server) --}}
           <div class="card">
-              <div class="card-header text-center p-3">
+              {{-- <div class="card-header text-center p-3">
                   <h5 style="text-align:left;">
                       {{ $server->hostname }}
                       <p>{{ $server->ipaddress }}</p>
                       <input type="hidden" id="hostname" value="{{ $server->hostname }}" />
                   </h5>
-              </div>
-              <div class="card-body" style="height: 206px;">
-                  <div class="row  mt-1">
+              </div> --}}
+              <div class="card-body">
+                <div class="table-responsive">
+                    <div style="width: 100%; overflow-x: auto;">
+                    <table id="spmrDatatable" class="display table table-striped table-bordered" cellspacing="0" width="60%">
+                        @foreach ($serverconfig as $server)
+                        @php
+                            $col = (auth()->user()->can('manage_service_update')) ? 3 : 2;
+                        @endphp
+                        <thead>
+                            @if($loop->index != 0)
+                            <tr><th colspan="2">&nbsp;</th></tr>@endif
+                            <tr  style="background-color: rgb(197, 204, 210);">
+                                <th colspan="{{ $col }}">
+                                    <h5 style="text-align:left;">
+                                        {{ $server['hostname']}}
+                                        <p>{{ $server['ipaddress'] }}</p>
+                                    </h5>
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                                <tr class="postfix {{$server->id}}">
+                                    <th width="25%"><a class="mService" href="{{ route('manageService.index', ['server_id' => $server->id, 'server_type' => 'postfix']) }}">
+                                        <h6><b>Postfix</b></h6>
+                                    </a></th>
+                                    <td width="35%"><h6 id="statusPostfix{{ $loop->index }}">--</h6></td>
+                                    @can('manage_service_update')
+                                    <td>
+
+                                        <div class="btn-group" role="group" aria-label="Button group with nested dropdown">
+                                            <button type="button" id="postfixStart" class="btn btn-primary" value="{{ $server->hostname }}" onclick="startPostfixServices.call(this)">
+                                                <i class="fas fa-play"></i>
+                                            </button>
+                                            <button type="button" id="postfixStop" class="btn btn-danger" value="{{ $server->hostname }}" onclick="stopPostfixServices.call(this)">
+                                                <i class="fas fa-stop"></i>
+                                            </button>
+                                            <button type="button" id="postfixRestart" class="btn btn-warning" value="{{ $server->hostname }}" onclick="restartPostfixServices.call(this)">
+                                                <i class="fas fa-redo"></i>
+                                            </button>
+                                        </div>
+                                    </td>
+
+                                    @endcan
+                                </tr>
+                                <tr class="apache {{$server->id}}">
+                                    <th width="25%"><a class="mService" href="{{ route('manageService.index', ['server_id' => $server->id , 'server_type' => 'apache']) }}">
+                                        <h6><b>Apache</b></h6>
+                                        </a>
+                                    </th>
+                                    <td width="35%"><h6 id="statusApache2{{ $loop->index }}">--</h6></td>
+                                    @can('manage_service_update')
+                                    <td>
+
+                                        <div class="btn-group" role="group" aria-label="Button group with nested dropdown">
+                                            <button type="button" id="apacheStart" class="btn btn-primary" value="{{ $server->hostname }}" onclick="startApacheServices.call(this)">
+                                                <i class="fas fa-play"></i>
+                                            </button>
+                                            <button type="button" id="apacheStop" class="btn btn-danger" value="{{ $server->hostname }}" onclick="stopApacheServices.call(this)">
+                                                <i class="fas fa-stop"></i>
+                                            </button>
+                                            <button type="button" id="apacheRestart" class="btn btn-warning" value="{{ $server->hostname }}" onclick="restartApacheServices.call(this)">
+                                                <i class="fas fa-redo"></i>
+                                            </button>
+                                        </div>
+
+                                    </td>
+                                    @endcan
+                                </tr>
+                                <tr class="webmin {{$server->id}}">
+                                    <th width="25%"><a class="mService" href="{{ route('manageService.index', ['server_id' => $server->id, 'server_type' => 'webmin']) }}">
+                                        <h6><b>Webmin</b></h6>
+                                    </a></th>
+                                    <td width="35%"><h6 id="statusWebmin{{ $loop->index }}">--</h6></td>
+                                    @can('manage_service_update')
+                                    <td>
+
+                                        <div class="btn-group" role="group" aria-label="Button group with nested dropdown">
+                                            <button type="button" id="webminStart" class="btn btn-primary" value="{{ $server->hostname }}" onclick="startWebminServices.call(this)">
+                                                <i class="fas fa-play"></i>
+                                            </button>
+                                            <button type="button" id="webminStop" class="btn btn-danger" value="{{ $server->hostname }}" onclick="stopWebminServices.call(this)">
+                                                <i class="fas fa-stop"></i>
+                                            </button>
+                                            <button type="button" id="webminRestart" class="btn btn-warning" value="{{ $server->hostname }}" onclick="restartWebminServices.call(this)">
+                                                <i class="fas fa-redo"></i>
+                                            </button>
+                                        </div>
+
+                                    </td>
+                                    @endcan
+                                </tr>
+                        </tbody>
+                        @endforeach
+                    </table>
+                    </div>
+                </div>
+
+
+
+
+
+
+                  {{-- <div class="row  mt-1">
                       {{-- Start Loop Server Here --}}
-                      <div class="col-xxl-12 ">
+                      {{-- <div class="col-xxl-12 ">
                           @php $status = 'Online'; @endphp
                           <div class="card-body mainRealtime" style="min-height: auto; max-height: 800px;overflow-y: auto;">
                               <div class="row">
@@ -120,14 +221,14 @@
                                   </div>
                               </div>
                           </div>
-                      </div>
+                      </div> --}}
 
                       {{-- End Loop Server Here --}}
-                  </div>
+                  {{-- </div>  --}}
               </div>
           </div>
           <br>
-      @endforeach
+      {{-- @endforeach --}}
   </div>
 </main>
 @endsection
