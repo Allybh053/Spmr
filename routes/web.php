@@ -321,8 +321,7 @@ Route::group(['middleware' => ['auth', 'nocache']], function () {
 
     Route::get('/lang/{locale}', [LanguageController::class, 'switchLang'])->name('lang.switch');
 
-
-
+    Route::post('/getAgencies', [GenerateReportingController::class, 'getAgencies'])->name('get-agencies-by-report');
 
 
 });

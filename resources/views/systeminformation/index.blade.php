@@ -30,39 +30,34 @@
                 </div>
                 <div class="card-body">
                     <div class="list-group list-group-flush medium">
-                        <a class="list-group-item list-group-item-action" href="#!">
+                        <div class="list-group-item list-group-item-action">
                             <i class="text-blue me-2" data-feather="chevrons-right"></i>
-                            System Time : {{ now()->utc() }}
-                        </a>
-                        <a class="list-group-item list-group-item-action" href="#!">
+                            System Time : {{ now() }}
+                        </div>
+                        <div class="list-group-item list-group-item-action">
                             <i class="text-blue me-2" data-feather="chevrons-right"></i>
                             Hostname : {{ gethostname() }}
-                        </a>
-                        <a class="list-group-item list-group-item-action" href="#!">
+                        </div>
+                        <div class="list-group-item list-group-item-action">
                             <i class="text-blue me-2" data-feather="chevrons-right"></i>
-                            Client IPv4 Address: {{ request()->ip() }}
-                        </a>
-                        <a class="list-group-item list-group-item-action" href="#!">
+                            Client IPv4 Address: <span id="ipv4-address">Fetching...</span>
+                        </div>
+                        <div class="list-group-item list-group-item-action">
                             <i class="text-blue me-2" data-feather="chevrons-right"></i>
-                            Client IPv6 Address:
-                            @if(isset($_SERVER['SERVER_ADDR_IPV6']))
-                                {{ $_SERVER['SERVER_ADDR_IPV6'] }}
-                            @else
-                                <span class="text-danger">Not Available</span>
-                            @endif
-                        </a>
-                        <a class="list-group-item list-group-item-action" href="#!">
+                            Client IPv6 Address: <span id="ipv6-address">Fetching...</span>
+                        </div>
+                        <div class="list-group-item list-group-item-action">
                             <i class="text-blue me-2" data-feather="chevrons-right"></i>
                             DNS Servers:<hr>
                             @php
                                 $dnsServers = exec("cat /etc/resolv.conf | grep nameserver | awk '{print $2}'");
                                 echo $dnsServers ?: '-> <span class="text-danger">Not Available</span>';
                             @endphp
-                        </a>
-                        <a class="list-group-item list-group-item-action" href="#!">
+                        </div>
+                        <div class="list-group-item list-group-item-action">
                             <i class="text-blue me-2" data-feather="chevrons-right"></i>
                             PostgreSQL Database: {{ config('database.connections.pgsql.database') }}
-                        </a>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -74,43 +69,47 @@
                 </div>
                 <div class="card-body">
                     <div class="list-group list-group-flush medium">
-                        <a class="list-group-item list-group-item-action" href="#!">
+                        <div class="list-group-item list-group-item-action">
+                            <i class="text-blue me-2" data-feather="chevrons-right"></i>
+                            SPMR Version: Version 1.0
+                        </div>
+                        <div class="list-group-item list-group-item-action">
                             <i class="text-blue me-2" data-feather="chevrons-right"></i>
                             Environment: {{ app()->environment() }}
-                        </a>
-                        <a class="list-group-item list-group-item-action" href="#!">
+                        </div>
+                        <div class="list-group-item list-group-item-action">
                             <i class="text-blue me-2" data-feather="chevrons-right"></i>
                             URL: {{ config('app.url') }}
-                        </a>
-                        <a class="list-group-item list-group-item-action" href="#!">
+                        </div>
+                        <div class="list-group-item list-group-item-action">
                             <i class="text-blue me-2" data-feather="chevrons-right"></i>
                             Application Key: <br>-> {{ config('app.key') }}
-                        </a>
-                        <a class="list-group-item list-group-item-action" href="#!">
+                        </div>
+                        <div class="list-group-item list-group-item-action">
                             <i class="text-blue me-2" data-feather="chevrons-right"></i>
                             Laravel Framework Version : {{ app()->version() }}
-                        </a>
-                        <a class="list-group-item list-group-item-action" href="#!">
+                        </div>
+                        <div class="list-group-item list-group-item-action">
                             <i class="text-blue me-2" data-feather="chevrons-right"></i>
                             PHP Version: {{ phpversion() }}
-                        </a>
-                        <a class="list-group-item list-group-item-action" href="#!">
+                        </div>
+                        <div class="list-group-item list-group-item-action">
                             <i class="text-blue me-2" data-feather="chevrons-right"></i>
                             Application Version: {{ trim(shell_exec('git describe --tags --abbrev=0')) ?: 'Not Available' }}
-                        </a>
-                        <a class="list-group-item list-group-item-action" href="#!">
+                        </div>
+                        <div class="list-group-item list-group-item-action">
                             <i class="text-blue me-2" data-feather="chevrons-right"></i>
                             Composer Version: {{ trim(shell_exec('composer --version')) ?: 'Not Available' }}
-                        </a>
-                        <a class="list-group-item list-group-item-action" href="#!">
+                        </div>
+                        <div class="list-group-item list-group-item-action">
                             <i class="text-blue me-2" data-feather="chevrons-right"></i>
                             Git Version:
                             @php
                                 $gitVersion = shell_exec('git --version');
                                 echo $gitVersion ?: 'Not Available';
                             @endphp
-                        </a>
-                        <a class="list-group-item list-group-item-action" href="#!">
+                        </div>
+                        <div class="list-group-item list-group-item-action">
                             <i class="text-blue me-2" data-feather="chevrons-right"></i>
                             Last Commit Information:<br>->
                             @php
@@ -118,15 +117,15 @@
                                 echo $lastCommit ?: 'Not Available';
                             @endphp <br>
 
-                        </a>
-                        <a class="list-group-item list-group-item-action" href="#!">
+                        </div>
+                        <div class="list-group-item list-group-item-action">
                             <i class="text-blue me-2" data-feather="chevrons-right"></i>
                             Database Connection: {{ config('database.default') }}
-                        </a>
-                        <a class="list-group-item list-group-item-action" href="#!">
+                        </div>
+                        <div cldivss="list-group-item list-group-item-action">
                             <i class="text-blue me-2" data-feather="chevrons-right"></i>
                             PostgreSQL Version: <br>-> {{ DB::select("SELECT version();")[0]->version }}
-                        </a>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -136,3 +135,27 @@
 
 </main>
 @endsection
+@push('script')
+<script>
+    // Fetch IP addresses using ipapi.co
+    fetch('https://ipapi.co/json/')
+        .then(response => response.json())
+        .then(data => {
+            if (data.ip) {
+                document.getElementById('ipv4-address').innerText = data.ip;
+            } else {
+                document.getElementById('ipv4-address').innerText = 'Not Available';
+            }
+
+            if (data.ip6) {
+                document.getElementById('ipv6-address').innerText = data.ip6;
+            } else {
+                document.getElementById('ipv6-address').innerText = 'Not Available';
+            }
+        })
+        .catch(() => {
+            document.getElementById('ipv4-address').innerText = 'Not Available';
+            document.getElementById('ipv6-address').innerText = 'Not Available';
+        });
+</script>
+@endpush
