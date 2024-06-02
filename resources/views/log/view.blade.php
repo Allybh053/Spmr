@@ -124,7 +124,7 @@
                     @php
                     use Carbon\Carbon;
 
-                        $currentDate = Carbon::now()->format('d/m/Y');
+                        $currentDate = Carbon::now()->subDay()->format('d/m/Y');
                     @endphp
                     <div class="row">
                         <div class="col-lg-6">
@@ -146,7 +146,7 @@
                                         </table>
                                     </div>
                                 </div>
-                                <div class="card-footer small text-muted">Updated {{ $currentDate }}</div>
+                                <div class="card-footer small text-muted">Updated Yesterday {{ $currentDate }}</div>
                             </div>
                         </div>
 
@@ -169,7 +169,7 @@
                                         </table>
                                     </div>
                                 </div>
-                                <div class="card-footer small text-muted">Updated {{ $currentDate }}</div>
+                                <div class="card-footer small text-muted">Updated Yesterday {{ $currentDate }}</div>
                             </div>
                         </div>
                     </div>
@@ -196,7 +196,7 @@
                                         </table>
                                     </div>
                                 </div>
-                                <div class="card-footer small text-muted">Updated {{ $currentDate }}</div>
+                                <div class="card-footer small text-muted">Updated Yesterday {{ $currentDate }}</div>
                             </div>
                         </div>
                     </div>

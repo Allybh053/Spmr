@@ -18,18 +18,69 @@
 
 
 <!-- Start Loop By Server Here -->
-    @foreach ($totalCountDashboard as $server)
+    {{-- @foreach ($totalCountDashboard as $server) --}}
   <div class="row mb-4">
     <div class="col-xxl-12">
       <div class="card">
-        <div class="card-header text-center p-3">
+        {{-- <div class="card-header text-center p-3">
           <h5 style="text-align:left;">
               {{ $server['hostname']}}
               <p>{{ $server['ipAddress'] }}</p>
-          </h5>
-        </div>
+          </h5> --}}
+        {{-- </div> --}}
         <div class="card-body">
-          <div class="row">
+
+            <div class="table-responsive">
+                <div style="width: 100%; overflow-x: auto; height: 355px;">
+                <table id="spmrDatatable" class="display table table-striped table-bordered" cellspacing="0" width="60%">
+                    @foreach ($totalCountDashboard as $server)
+                    <thead>
+                        @if($loop->index != 0)
+                        <tr><th colspan="2">&nbsp;</th></tr>@endif
+                        <tr  style="background-color: rgb(197, 204, 210);">
+                            <th colspan="2">
+                                <h5 style="text-align:left;">
+                                    {{ $server['hostname']}}
+                                    <p>{{ $server['ipAddress'] }}</p>
+                                </h5>
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @can('total_application_registered')
+                            <tr>
+                                <th width="45%"><h6><b>Total Application Registered</b></h6></th>
+                                <td width="15%"><h6>{{$server['totalApplicationRegistered'] ?? '0'}}</h6></td>
+                            </tr>
+                        @endcan
+                        @can('total_domain_registered')
+                            <tr>
+                                <th width="45%"><h6><b>Total Domain Registered</b></h6>
+                                    <div  class="small text-muted">Updated every 30 minutes</div>
+                                </th>
+                                <td width="15%"><h6>{{$server['totalDomain'] ?? '0'}}</h6></td>
+                            </tr>
+                        @endcan
+                        @can('number_of_registered_sasl')
+                            <tr>
+                                <th width="45%"><h6><b>Total SASL based (SMTP relay request form registered)</b></h6></th>
+                                <td width="15%"><h6>{{$server['totalSasl'] ?? '0'}}</h6></td>
+                            </tr>
+                        @endcan
+                        @can('total_ip_based_registered')
+                            <tr>
+                                <th width="45%"><h6><b>Total IP based (SMTP relay request form registered)</b></h6></th>
+                                <td width="15%"><h6>{{$server['totalIpBased'] ?? '0'}}</h6></td>
+                            </tr>
+                        @endcan
+                    </tbody>
+                    @endforeach
+                </table>
+                </div>
+            </div>
+
+
+          {{-- <div class="row">
             @can('total_application_registered')
             <div class="col-xl-4 mb-6" style="margin-right: -11%;">
                 <div class="card h-100" style="width: 64%;">
@@ -109,15 +160,15 @@
                     </div>
                 </div>
             </div>
-            @endcan
+            @endcan --}}
 
 
-          </div>
+          {{-- </div> --}}
         </div>
       </div>
     </div>
   </div>
-    @endforeach
+    {{-- @endforeach --}}
 <!-- End Loop By Server Here -->
 
   <div class="row mb-4">
@@ -153,8 +204,8 @@
                         <tbody>
                             @foreach ($serverconfig as $index => $server)
                                 <tr>
-                                    <th width="45%">{{ $server->hostname }}</th>
-                                    <td id="mailQueueCount{{ $index }}"  width="15%">--</td>
+                                    <th width="45%"><h6>{{ $server->hostname }}</h6></th>
+                                    <td id="mailQueueCount{{ $index }}"  width="15%"><h6>--</h6></td>
                                 </tr>
                             @endforeach
                         </tbody>
@@ -223,12 +274,57 @@
 @can('realtime_service_status')
 <div class="row  mt-5">
     <div class="col-xxl-12">
-      <div class="card" style="height: 641px;">
+      <div class="card">
         <div class="card-header text-center p-3">
           <h5>RealTime Service Status</h5> @php $status = 'Online'; @endphp
         </div>
         {{--<div class="card-body mainRealtime" style="min-height: auto; max-height: 800px;overflow-y: auto;">--}}
         <div class="card-body mainRealtime"  style="overflow-y: auto;">
+
+            <div class="table-responsive">
+                <div style="width: 100%; overflow-x: auto; height: 355px;">
+                <table id="spmrDatatable" class="display table table-striped table-bordered" cellspacing="0" width="60%">
+                    @foreach ($serverconfig as $server)
+                    <thead>
+                        @if($loop->index != 0)
+                        <tr><th colspan="2">&nbsp;</th></tr>@endif
+                        <tr  style="background-color: rgb(197, 204, 210);">
+                            <th colspan="2">
+                                <h5 style="text-align:left;">
+                                    {{ $server['hostname']}}
+                                    <p>{{ $server['ipAddress'] }}</p>
+                                </h5>
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                            <tr>
+                                <th width="25%"><a class="mService" href="{{ route('manageService.index', ['server_id' => $server->id, 'server_type' => 'postfix']) }}">
+                                    <h6><b>Postfix</b></h6>
+                                </a></th>
+                                <td width="35%"><h6 id="statusPostfix{{ $loop->index }}">--</h6></td>
+                            </tr>
+                            <tr>
+                                <th width="25%"><a class="mService" href="{{ route('manageService.index', ['server_id' => $server->id , 'server_type' => 'apache']) }}">
+                                    <h6><b>Apache</b></h6>
+                                    </a>
+                                </th>
+                                <td width="35%"><h6 id="statusApache2{{ $loop->index }}">--</h6></td>
+                            </tr>
+                            <tr>
+                                <th width="25%"><a class="mService" href="{{ route('manageService.index', ['server_id' => $server->id, 'server_type' => 'webmin']) }}">
+                                    <h6><b>Webmin</b></h6>
+                                </a></th>
+                                <td width="35%"><h6 id="statusWebmin{{ $loop->index }}">--</h6></td>
+                            </tr>
+                    </tbody>
+                    @endforeach
+                </table>
+                </div>
+            </div>
+
+
+{{--
             @foreach ($serverconfig as $server)
                     <h5>{{ $server->hostname }}</h5>
                     <div class="card-body">
@@ -275,7 +371,7 @@
                         </div>
                     </div>
 
-            @endforeach
+            @endforeach --}}
         </div>
       </div>
     </div>
@@ -287,66 +383,79 @@
 @push('script')
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.4/Chart.min.js" crossorigin="anonymous"></script>
 <script>
-    document.addEventListener('DOMContentLoaded', function () {
-        function getRandomColor() {
-    var letters = '0123456789ABCDEF';
-    var color = '#';
-    for (var i = 0; i < 6; i++) {
-        color += letters[Math.floor(Math.random() * 16)];
+  document.addEventListener('DOMContentLoaded', function () {
+    function getRandomColor() {
+        var letters = '0123456789ABCDEF';
+        var color = '#';
+        for (var i = 0; i < 6; i++) {
+            color += letters[Math.floor(Math.random() * 16)];
+        }
+        return color;
     }
-    return color;
-}
-const serverListAgencies = @json($serverListAgencies);
 
-serverListAgencies.forEach((server, index) => {
-    const ctx = document.getElementById(`chart-${index}`).getContext('2d');
-    const labels = server.agencies.map(item => item.agency);
+    const serverListAgencies = @json($serverListAgencies);
 
-    const datasets = server.agencies.map((item, i) => ({
-        label: item.agency,
-        data: labels.map((label, j) => j === i ? item.totalAgencies : 0),
-        backgroundColor: getRandomColor(),
-        borderColor: getRandomColor(),
-        borderWidth: 1,
-        barPercentage: 1.0, // Controls the width of the bar relative to the category width
-        categoryPercentage: 0.5// Controls the width of the category slot
-    }));
+    serverListAgencies.forEach((server, index) => {
+        const chartId = `chart-${index}`;
+        const canvasElement = document.getElementById(chartId);
 
-    new Chart(ctx, {
-        type: 'bar',
-        data: {
-            labels: labels,
-            datasets: datasets
-        },
-        options: {
+        // Ensure the canvas element exists
+        if (!canvasElement) {
+            console.error(`Canvas element with id ${chartId} not found.`);
+            return;
+        }
+
+        const ctx = canvasElement.getContext('2d');
+        const labels = server.agencies.map(item => item.agency);
+
+        const datasets = server.agencies.map((item, i) => ({
+            label: item.agency,
+            data: labels.map((label, j) => j === i ? item.totalAgencies : 0),
+            backgroundColor: getRandomColor(),
+            borderColor: getRandomColor(),
+            borderWidth: 1,
+            barPercentage: 1.0,
+            categoryPercentage: 0.5
+        }));
+
+        new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: labels,
+                datasets: datasets
+            },
             scales: {
                 y: {
-                    beginAtZero: true
+                    ticks: {
+                        beginAtZero: true
+                    }
                 },
                 x: {
-                    grid: {
+                    display: false, // Hide x-axis
+                    gridLines: {
                         display: false
                     },
                     ticks: {
-                        autoSkip: false,
-                        maxRotation: 90,
-                        minRotation: 90
+                        display: false // Ensure ticks are also hidden
                     }
                 }
             },
-            responsive: true,
-            plugins: {
-                legend: {
-                    position: 'top', // Show legend at the top
-                },
-                title: {
-                    display: true,
-                    text: 'Agency Data'
+                responsive: true,
+                plugins: {
+                    legend: {
+                        display: true // Hide legend
+                    },
+                    title: {
+                        display: true,
+                        text: 'Agency Data'
+                    }
                 }
-            }
-        }
+
+        });
     });
-});
+
+
+
 
 
 
@@ -749,47 +858,47 @@ sockets.forEach((socket, index) => {
 
             $('#statusPostfix' + index).text(outputs[1]);
 
-            var postfixStatus = outputs[1];
-            var postfixAlt;
-            if(postfixStatus == "Postfix is running"){
-                postfixStatus = "Online";
-                postfixAlt = "Postfix is running";
-            }else{
-                postfixStatus = "Offline";
-                postfixAlt = "Postfix is down";
-            }
-            var postfixImageSrc = postfixStatus === 'Online' ? 'assets/img/demo/online.png' : 'assets/img/demo/offline.png';
+            // var postfixStatus = outputs[1];
+            // var postfixAlt;
+            // if(postfixStatus == "Postfix is running"){
+            //     postfixStatus = "Online";
+            //     postfixAlt = "Postfix is running";
+            // }else{
+            //     postfixStatus = "Offline";
+            //     postfixAlt = "Postfix is down";
+            // }
+            // var postfixImageSrc = postfixStatus === 'Online' ? 'assets/img/demo/online.png' : 'assets/img/demo/offline.png';
 
-            $('#statusPostfixImage'+ index).attr('src', postfixImageSrc).attr('alt', postfixAlt);
+            // $('#statusPostfixImage'+ index).attr('src', postfixImageSrc).attr('alt', postfixAlt);
 
             $('#statusFail2ban' + index).text(outputs[2]);
 
             $('#statusWebmin' + index).text(outputs[3]);
-            var WebminStatus = outputs[3];
-            var WebminAlt;
-            if(WebminStatus == "Webmin is running"){
-                WebminStatus = "Online";
-                WebminAlt = "Webmin is running";
-            }else{
-                WebminStatus = "Offline";
-                WebminAlt = "Webmin is down";
-            }
-            var WebminImageSrc = WebminStatus === 'Online' ? 'assets/img/demo/online.png' : 'assets/img/demo/offline.png';
-            $('#statusWebminImage'+ index).attr('src', WebminImageSrc).attr('alt', WebminAlt);
+            // var WebminStatus = outputs[3];
+            // var WebminAlt;
+            // if(WebminStatus == "Webmin is running"){
+            //     WebminStatus = "Online";
+            //     WebminAlt = "Webmin is running";
+            // }else{
+            //     WebminStatus = "Offline";
+            //     WebminAlt = "Webmin is down";
+            // }
+            // var WebminImageSrc = WebminStatus === 'Online' ? 'assets/img/demo/online.png' : 'assets/img/demo/offline.png';
+            // $('#statusWebminImage'+ index).attr('src', WebminImageSrc).attr('alt', WebminAlt);
 
             $('#statusApache2' + index).text(outputs[4]);
 
-            var Apache2Status = outputs[4];
-                var Apache2Alt;
-                if(Apache2Status == "Apache2 is running"){
-                    Apache2Status = "Online";
-                    Apache2Alt = "Apache2 is running";
-                }else{
-                    Apache2Status = "Offline";
-                    Apache2Alt = "Apache2 is down";
-                }
-                var Apache2ImageSrc = Apache2Status === 'Online' ? 'assets/img/demo/online.png' : 'assets/img/demo/offline.png';
-                $('#statusApache2Image'+ index).attr('src', Apache2ImageSrc).attr('alt', Apache2Alt);
+            // var Apache2Status = outputs[4];
+            //     var Apache2Alt;
+            //     if(Apache2Status == "Apache2 is running"){
+            //         Apache2Status = "Online";
+            //         Apache2Alt = "Apache2 is running";
+            //     }else{
+            //         Apache2Status = "Offline";
+            //         Apache2Alt = "Apache2 is down";
+            //     }
+            //     var Apache2ImageSrc = Apache2Status === 'Online' ? 'assets/img/demo/online.png' : 'assets/img/demo/offline.png';
+            //     $('#statusApache2Image'+ index).attr('src', Apache2ImageSrc).attr('alt', Apache2Alt);
 
                 // console.log(outputs[5]);
                 extractOutput(response);

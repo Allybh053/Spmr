@@ -59,6 +59,15 @@
                                 </select>
                             </div>
                         </div>
+                        {{-- <div class="col-md-6">
+                            <div class="mb-3">
+                                <label class="small mb-1" for="inputAgencies">Agency/SUK:</label>
+                                <select class="form-control select2" name="agency" id="agency" aria-label="Default select" disable>
+                                    <option selected disabled>Select Agency/SUK</option>
+
+                                </select>
+                            </div>
+                        </div> --}}
                         <div class="col-md-6">
                             <div class="mb-3">
                                 <label class="small mb-1" for="inputAgencies">Agency/SUK:</label>
@@ -401,6 +410,32 @@
             $('#calendarInputs').append('<div class="col-md-6"><label for="input2">Calendar:</label><input type="date" class="form-control" name="input2" placeholder="Calendar"></div>');
         }
     });
+
+       // document.getElementById('ministry').addEventListener('change', function() {
+    //     var ministry = this.value;
+    //     var agencySelect = document.getElementById('agency');
+
+    //     // Clear existing options
+    //     agencySelect.innerHTML = '<option selected disabled>Select Agency/SUK</option>';
+
+    //     // Enable the agency select
+    //     agencySelect.disabled = false;
+
+    //     // Fetch agencies based on the selected ministry
+    //     fetch('/getAgencies?ministry=' + ministry)
+    //         .then(response => response.json())
+    //         .then(data => {
+    //             data.forEach(agency => {
+    //                 var option = document.createElement("option");
+    //                 option.text = agency.name;
+    //                 option.value = agency.id; // or whatever unique identifier you have
+    //                 agencySelect.appendChild(option);
+    //             });
+    //         })
+    //         .catch(error => {
+    //             console.error('Error:', error);
+    //         });
+    // });
 
         // Initialize DataTable
         var table2 = $('#listAgencyDomain').DataTable({
@@ -873,7 +908,7 @@
                         $('#totalIP').text(response.totalIP || "0");
                         $('#totalDeactivated').text(response.totalDeactivated || "0");
                         $('#totalDomain').text(response.totalDomain || "0");
-console.log(response);
+
                         // Combining iteration over both tables
                             $.each([response.dataTbl1, response.dataTbl2], function (tableIndex, dataTable) {
                                 $.each(dataTable, function (index, row) {

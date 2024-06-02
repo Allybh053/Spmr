@@ -22,11 +22,12 @@ class ActivityLogController extends Controller
         $activityLogs = ActivityLog::orderBy('created_at', 'desc')->get();
 
         // Merge audit logs and activity logs into a single collection
-        $logs = $auditLogs->merge($activityLogs);
+        $logs = $auditLogs->union($activityLogs);
 
         // Sort the merged logs by created_at timestamp
         $logsPaginated = $logs->sortByDesc('created_at')->values();
      
+
         // Assuming you want to pass the logs to a view named 'activityLog.index'
         return view('activityLog.index', compact('logsPaginated'));
     }

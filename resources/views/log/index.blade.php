@@ -58,6 +58,29 @@
     <script>
         let dataHostDom = [];
         $(document).ready(function() {
+            $.ajax({
+                    type: 'POST',
+                    url: '{!! route('log.api.getServerName') !!}',
+                    data: {serverName: $('#serverName').val()},
+                    success: function(response) {
+                        // Handle the response from the controller
+                        //console.log(response);
+
+                        $('#card-title-header').text(response.hostname);
+                        $('#ip-address').text(response.ipaddress);
+
+                        //Websocket connections
+
+                        let hostname = response.hostname;
+                        // const serverAddress = 'wss://' + hostname + '/wss/';
+                        websocket(hostname);
+                  },
+                  error: function(xhr, status, error) {
+                    console.error(xhr.responseText);
+                    }
+                });
+
+         // form submit
             $('#searching').click(function(e) {
                 e.preventDefault();
                 var formData = $('#searchForm').serialize();
@@ -74,12 +97,29 @@
                         $('#ip-address').text(response.ipaddress);
 
                         //Websocket connections
-                        let sockets = [];
+
                         let hostname = response.hostname;
                         // const serverAddress = 'wss://' + hostname + '/wss/';
-                        const serverAddress = 'wss://spmr.mygovuc.gov.my/' + hostname;
+                        websocket(hostname);
+
+
+
+
+                  },
+                    error: function(xhr, status, error) {
+                        // Handle errors
+                        //console.error(xhr.responseText);
+                    }
+                });
+            });
+
+
+            function websocket(hostname){
+                let sockets = [];
+
+                const serverAddress = 'wss://spmr.mygovuc.gov.my/' + hostname;
                         const socket = new WebSocket(serverAddress);
-                        console.log(socket);
+
                         sockets.push(socket);
 
                         sockets.forEach((socket, index) => {
@@ -95,11 +135,14 @@
                                 '/usr/bin/tail -1 /data/collections/spmr/PostfixSMTPDtimedOut.txt',
                                 '/usr/bin/tail -1 /data/collections/spmr/PostfixBounceNondeliveryNotification.txt',
                                 '/usr/bin/bash /opt/scripts/spmr/grand-totals-received.sh',
-                                '/usr/bin/bash /opt/scripts/spmr/grand-totals-deffered.sh',
                                 '/usr/bin/bash /opt/scripts/spmr/grand-totals-delivered.sh',
+                                '/usr/bin/bash /opt/scripts/spmr/grand-totals-deffered.sh',
                                 '/usr/bin/bash /opt/scripts/spmr/grand-totals-bounced.sh',
-                                '/usr/bin/bash /opt/scripts/spmr/grand-totals-recipients.sh',
+                                '/usr/bin/bash /opt/scripts/spmr/grand-totals-rejected.sh',
+                                '/usr/bin/bash /opt/scripts/spmr/grand-totals-senders.sh',
                                 '/usr/bin/bash /opt/scripts/spmr/grand-totals-sending-hosts.sh',
+                                '/usr/bin/bash /opt/scripts/spmr/grand-totals-recipients.sh',
+                                '/usr/bin/bash /opt/scripts/spmr/grand-totals-recipient-hosts.sh',
                                 '/usr/bin/bash /opt/scripts/spmr/host-domain-messages-received.sh',
                                 '/usr/bin/bash /opt/scripts/spmr/per-hour-traffic-summary.sh',
                             ];
@@ -131,101 +174,112 @@
                                 trafficSumTableData(outputs);
                             });
                         }
+            }
 
 
+            function getGrandTotals(outputs){
 
-                        function getGrandTotals(outputs){
+            // Append grand totals to another table
+            var grandTotalTableBody = document.getElementById('grandTotalTable');
 
-                            // Append grand totals to another table
-                            var grandTotalTableBody = document.getElementById('grandTotalTable');
+            // Clear existing rows in grand total table
+            grandTotalTableBody.innerHTML = '';
 
-                            // Clear existing rows in grand total table
-                            grandTotalTableBody.innerHTML = '';
+            var labels = ['received', 'delivered','deferred',  'bounced','rejected' ,'senders','sending hosts/domains','recipients', 'recipient hosts/domains'];
+            var grandTotals = [outputs[6], outputs[7], outputs[8],outputs[9], outputs[10], outputs[11], outputs[12], outputs[13], outputs[14]];
 
-                            var labels = ['received', 'deferred', 'delivered', 'bounced', 'recipients', 'sending hosts/domains'];
-                            var grandTotals = [outputs[6], outputs[7], outputs[8],outputs[9], outputs[10], outputs[11]];
+            // Format numbers in grandTotals array
+            var formattedGrandTotals = grandTotals.map(function(total) {
+                    return numberWithCommas(total);
+                });
 
-                            // Create rows for grand totals
-                            for (var i = 0; i < labels.length; i++) {
-                                var grandTotalRow = document.createElement('tr');
+                // Create rows for grand totals
+                for (var i = 0; i < labels.length; i++) {
+                    var grandTotalRow = document.createElement('tr');
 
-                                var labelCell = document.createElement('td');
-                                var grandTotalCell = document.createElement('td');
+                    var labelCell = document.createElement('td');
+                    var grandTotalCell = document.createElement('td');
 
-                                labelCell.textContent = labels[i];
-                                grandTotalCell.textContent = grandTotals[i];
+                    labelCell.textContent = labels[i];
+                    grandTotalCell.textContent = formattedGrandTotals[i];
 
-                                grandTotalRow.appendChild(labelCell);
-                                grandTotalRow.appendChild(grandTotalCell);
+                    grandTotalRow.appendChild(labelCell);
+                    grandTotalRow.appendChild(grandTotalCell);
 
-                                grandTotalTableBody.appendChild(grandTotalRow);
+                    grandTotalTableBody.appendChild(grandTotalRow);
+                }
+            }
+
+            function getDomain(outputs) {
+                var regexFormat = /^\d+,[^,]+,.+$/; // Regular expression to match format "number,number,string"
+
+                    // Filter outputs to get elements matching the format
+                    var filteredOutputs = outputs.filter(function(output) {
+                        return regexFormat.test(output);
+                    });
+
+                    // Get the tbody element by its ID
+                    var tableBody = document.getElementById('tableHostDomSum');
+
+                    // Clear existing rows
+                    tableBody.innerHTML = '';
+
+                    // Create a row for each filtered output
+                    for (var i = 0; i < filteredOutputs.length; i++) {
+                        var row = document.createElement('tr');
+                        var columns = filteredOutputs[i].split(',');
+
+                        for (var j = 0; j < columns.length; j++) {
+                            var cell = document.createElement('td');
+                            if (j === 0) { // Format the first column (assumed to be a number)
+                                cell.textContent = numberWithCommas(columns[j]);
+                            } else {
+                                cell.textContent = columns[j];
                             }
+                            row.appendChild(cell);
                         }
 
-                        function getDomain(outputs) {
-                                var regexFormat = /^\d+,\d+,.+$/; // Regular expression to match format "number,number,string"
-
-                                // Filter outputs to get elements matching the format
-                                var filteredOutputs = outputs.filter(function(output) {
-                                    return regexFormat.test(output);
-                                });
-
-                                // Get the tbody element by its ID
-                                var tableBody = document.getElementById('tableHostDomSum');
-
-                                // Clear existing rows
-                                tableBody.innerHTML = '';
-
-                                // Create a row for each filtered output
-                                for (var i = 0; i < filteredOutputs.length; i++) {
-                                    var row = document.createElement('tr');
-                                    var columns = filteredOutputs[i].split(',');
-
-                                    for (var j = 0; j < columns.length; j++) {
-                                        var cell = document.createElement('td');
-                                        cell.textContent = columns[j];
-                                        row.appendChild(cell);
-                                    }
-
-                                    tableBody.appendChild(row);
-                                }
-                            }
-
-                            function trafficSumTableData(outputs) {
-                                // Get the tbody element by its ID
-                                var tableBody = document.getElementById('tableTrafficSum');
-
-                                // Clear existing rows
-                                tableBody.innerHTML = '';
-
-                                var regex = /^\d{4}-\d{4}/; // Regular expression to match format "0000-0000"
-                                var filteredTrafficSum = outputs.filter(function(output) {
-                                    return regex.test(output);
-                                });
-
-                                // Create a row for each filtered output
-                                for (var i = 0; i < filteredTrafficSum.length; i++) {
-                                    var outputParts = filteredTrafficSum[i].split(','); // Split the string into parts
-                                    var row = document.createElement('tr');
-
-                                    // Create cells for each part
-                                    for (var j = 0; j < outputParts.length; j++) {
-                                        var cell = document.createElement('td');
-                                        cell.textContent = outputParts[j];
-                                        row.appendChild(cell);
-                                    }
-
-                                    // Append the row to the table body
-                                    tableBody.appendChild(row);
-                                }
-                            }
-                  },
-                    error: function(xhr, status, error) {
-                        // Handle errors
-                        //console.error(xhr.responseText);
+                        tableBody.appendChild(row);
                     }
+
+            }
+
+            function trafficSumTableData(outputs) {
+                // Get the tbody element by its ID
+                var tableBody = document.getElementById('tableTrafficSum');
+
+                // Clear existing rows
+                tableBody.innerHTML = '';
+
+                var regex = /^\d{4}-\d{4}/; // Regular expression to match format "0000-0000"
+                var filteredTrafficSum = outputs.filter(function(output) {
+                    return regex.test(output);
                 });
-            });
+
+                // Create a row for each filtered output
+                for (var i = 0; i < filteredTrafficSum.length; i++) {
+                    var outputParts = filteredTrafficSum[i].split(','); // Split the string into parts
+                    var row = document.createElement('tr');
+
+                    for (var j = 0; j < outputParts.length; j++) {
+                            var cell = document.createElement('td');
+                            if (j != 0) { // Format the first column (assumed to be a number)
+                                cell.textContent = numberWithCommas(outputParts[j]);
+                            } else {
+                                cell.textContent = outputParts[j];
+                            }
+                            row.appendChild(cell);
+                        }
+
+                    // Append the row to the table body
+                    tableBody.appendChild(row);
+                }
+            }
+
+            function numberWithCommas(x) {
+                return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+            }
+
         });
     </script>
 

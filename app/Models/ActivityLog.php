@@ -8,7 +8,7 @@ use App\Models\User;
 
 class ActivityLog extends Model
 {
-    
+
     use HasFactory;
 
     protected $fillable = [
@@ -16,6 +16,10 @@ class ActivityLog extends Model
         'activity_type',
         'ip_address',
         'user_agent',
+        'action',
+        'url',
+        'method',
+        'input'
     ];
 
     public function user()

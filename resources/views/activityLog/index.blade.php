@@ -42,11 +42,13 @@
                                 <tr>
                                     <th style="width: 10%;">User</th>
                                     <th style="width: 10%;">Activity Type</th>
+                                    <th>Action</th>
                                     <th style="width: 10%;">Ip Address</th>
                                     <th style="width: 15%;">User Agent</th>
                                     <th style="width: 10%;">Modul</th>
                                     <th style="width: 15%;">Old Data</th>
                                     <th style="width: 15%;">New Data</th>
+                                    <th>Activity</th>
                                     <th style="width: 10%;">Created At</th>
                                 </tr>
                                 </thead>
@@ -55,6 +57,7 @@
                                     <tr>
                                         <td>{{ $log->user ? $log->user->username : 'Guest' }}</td>
                                         <td>{{ $log->activity_type ?? $log->event}}</td>
+                                        <td>{{ $log->action }}</td>
                                         <td>{{ $log->ip_address }}</td>
                                         <td style="white-space: pre-line;">{{ $log->user_agent }}</td>
                                         <td>{{ $log->url }}</td>
@@ -63,6 +66,12 @@
                                         </td>
                                         <td class="scrollable-column">
                                             {{ $log->new_values }}
+                                        </td>
+                                        <td>
+                                            <div style="height: 165px; overflow:auto;">
+                                                {{ $log->input }}
+                                            </div>
+
                                         </td>
                                         <td><pre>{{ $log->created_at->format('d/m/Y h:i:s A')  }}</pre></td>
                                     </tr>
@@ -99,7 +108,7 @@ var table = $('#spmrDatatable').DataTable({
     columnDefs: [
         { type: 'date-uk', targets: ['dd/mm/yyyy'] },
         {
-            targets: [5, 6], // Assuming columns containing JSON data are the 6th and 7th columns
+            targets: [6, 7], // Assuming columns containing JSON data are the 6th and 7th columns
             render: function(data, type, row, meta) {
                 if (!data) {
                     return ''; // Return empty string if data is null
@@ -127,7 +136,7 @@ var table = $('#spmrDatatable').DataTable({
             }
         }
     ],
-    order: [[7, 'asc']],
+    order: [[9, 'asc']],
     drawCallback: function(settings) {
             // Reinitialize Feather icons
             if (typeof feather !== 'undefined') {

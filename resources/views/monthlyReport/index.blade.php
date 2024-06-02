@@ -16,7 +16,7 @@
                                         <div class="page-header-icon">
                                             <i data-feather="trello"></i>
                                         </div>
-                                        <li class="breadcrumb-item">Ussage Report</li>
+                                        <li class="breadcrumb-item">Usage Report</li>
                                     </ol>
                                 </nav>
                             </h1>

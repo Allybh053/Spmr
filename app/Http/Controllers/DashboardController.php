@@ -28,8 +28,10 @@ class DashboardController extends Controller
         $user = Auth::user();
         $role = $user->roles->isNotEmpty() ? $user->roles->pluck('name')->first() : null;
        // Fetch server IDs associated with the user's roles
-        $serverIds = RoleServer::whereIn('role_id', $user->roles->pluck('id')->all())
-        ->pluck('server_id');
+       $serverIds = RoleServer::whereIn('role_servers.role_id', $user->roles->pluck('id')->all())
+       ->leftJoin('servers','servers.id','role_servers.server_id')
+       ->where('servers.status',1)
+       ->pluck('server_id');
 
         $defaultServerId = $serverIds->min();
 
@@ -357,12 +359,14 @@ class DashboardController extends Controller
                 ->where('mailrouting.server', $server->hostname)->get()->count();
 
             $dataSasl = DB::table('smtp_relay_req_form')
+                ->leftJoin('smtp_relay_server as smr','smr.form_id','smtp_relay_req_form.form_id')
                 ->where('smtp_relay_req_form.smtp_relay_server', $server->hostname)
                 ->where('smtp_relay_req_form.smtp_relay_auth_method', 2)
                 ->where('smtp_relay_req_form.status', 1)
                 ->count();
 
             $dataIpBased = DB::table('smtp_relay_req_form')
+                ->leftJoin('smtp_relay_server as smr','smr.form_id','smtp_relay_req_form.form_id')
                 ->where('smtp_relay_req_form.smtp_relay_server', $server->hostname)
                 ->where('smtp_relay_req_form.smtp_relay_auth_method', 1)
                 ->where('smtp_relay_req_form.status', 1)
