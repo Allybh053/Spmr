@@ -89,12 +89,16 @@
                     </div>
                     <div class="col-md-6">
                         <label for="dept_div_unit">Department/Division/Unit</label>
+                        {{-- @if ($formsmtp->types_req == 1) --}}
+                        <input class="form-control" id="dept_div_unit" name="dept_div_unit" value="{{ old('dept_div_unit', $formsmtp->dept_div_unit) }}"/>
+                        {{-- @else
                         <select class="form-control select2" name="dept_div_unit" id="dept_div_unit" aria-label="Default select">
                             <option value="{{ old('dept_div_unit', $formsmtp->dept_div_unit) }}">{{ old('dept_div_unit', $formsmtp->dept_div_unit) }}</option>
                             @foreach ($departmentsArray as $department)
                             <option value="{{ $department['name'] }}">{{ $department['name'] }}</option>
                             @endforeach
                         </select>
+                        @endif --}}
                     </div>
                 </div>
                 <div class="mb-3">
@@ -105,9 +109,9 @@
                     <label for="req_justifications">Justification</label>
                     <textarea class="form-control" id="req_justifications" name="req_justifications" rows="3">{{ old('req_justifications', $formsmtp->req_justifications) }}</textarea>
                 </div>
-                <div class="mb-3" @if ($formsmtp->types_req == 2) style="display: none;" @endif>
+                <div class="mb-3">
                     <label for="smtp_relay_auth_method">Mail Relay Authentication Method</label>
-                    <select class="form-control select2" name="smtp_relay_auth_method" id="smtp_relay_auth_method" required>
+                    <select class="form-control select2" name="smtp_relay_auth_method" id="smtp_relay_auth_method" @if ($formsmtp->types_req == 1) required @endif>
                         <option value="{{ old('smtp_relay_auth_method', $formsmtp->smtp_relay_auth_method) }}">
                         @if ($formsmtp->smtp_relay_auth_method == 1)
                             IP Based Authentication Relay
@@ -204,7 +208,7 @@
                         </select>
                     </div>
                 </div>
-                <div class="row gx-3 mb-3" @if ($formsmtp->types_req == 2) style="display: none;" @endif>
+                <div class="row gx-3 mb-3">
                     <div class="col-md-6">
                         <label for="est_no_system_users_per_day">Estimated number of system users (per day)</label>
                         <input class="form-control" id="est_no_system_users_per_day" name="est_no_system_users_per_day" type="number" pattern="[0-9]*" inputmode="numeric"  value="{{ old('est_no_system_users_per_day', $formsmtp->est_no_system_users_per_day) }}"/>
@@ -224,23 +228,29 @@
                 <div class="row col-12">
                     <div class="mb-3 col-md-4">
                         <label class=" mb-1" for="applicant_position">Applicant's Position:</label>
+                        {{-- @if ($formsmtp->types_req == 1) --}}
+                        <input class="form-control" id="applicant_position" name="applicant_position" value="{{ old('applicant_position', $formsmtp->applicant_position) }}"/>
+                        {{-- @else
                         <select class="form-control select2" name="applicant_position" id="applicant_position" aria-label="Default select">
                             <option value="{{ old('applicant_position', $formsmtp->applicant_position) }}">{{ old('applicant_position', $formsmtp->applicant_position) }}</option>
-                            {{--<option value="Penolong Pengarah F44">Penolong Pengarah F44</option>--}}
                             @foreach ($positionsArray as $position)
                                 <option value="{{ $position['name'] }}">{{ $position['name'] }}</option>
                             @endforeach
                         </select>
+                        @endif --}}
                     </div>
                     <div class="mb-3 col-md-4">
                         <label class=" mb-1" for="applicant_dept_div">Applicant's Department / Division:</label>
+                        {{-- @if ($formsmtp->types_req == 1) --}}
+                        <input class="form-control" id="applicant_dept_div" name="applicant_dept_div" value="{{ old('applicant_dept_div', $formsmtp->applicant_dept_div) }}"/>
+                        {{-- @else
                         <select class="form-control select2" name="applicant_dept_div" id="applicant_dept_div" aria-label="Default select">
                             <option value="{{ old('applicant_dept_div', $formsmtp->applicant_dept_div) }}">{{ old('applicant_dept_div', $formsmtp->applicant_dept_div) }}</option>
-                            {{--<option value="Jabatan Audit Negara/Bahagian Teknologi Maklumat">Jabatan Audit Negara/Bahagian Teknologi Maklumat</option>--}}
                             @foreach ($departmentsArray as $department)
                                 <option value="{{ $department['name'] }}">{{ $department['name'] }}</option>
                             @endforeach
                         </select>
+                        @endif --}}
                     </div>
                     <div class="mb-3 col-md-4">
                         <label class=" mb-1" for="date_application">Date:</label>
@@ -256,21 +266,29 @@
                 <div class="row col-12">
                     <div class="mb-3 col-md-4">
                         <label class=" mb-1" for="verifier_1_position">Verifier Position:</label>
+                        {{-- @if ($formsmtp->types_req == 1) --}}
+                        <input class="form-control" id="dept_div_unit" name="dept_div_unit" value="{{ old('dept_div_unit', $formsmtp->dept_div_unit) }}"/>
+                        {{-- @else
                         <select class="form-control select2" name="verifier_1_position" id="verifier_1_position" aria-label="Default select">
                             <option value="{{ old('verifier_1_position', $formsmtp->verifier_1_position) }}">{{ old('verifier_1_position', $formsmtp->verifier_1_position) }}</option>
                             @foreach ($positionsArray as $position)
                                 <option value="{{ $position['name'] }}">{{ $position['name'] }}</option>
                             @endforeach
                         </select>
+                        @endif --}}
                     </div>
                     <div class="mb-3 col-md-4">
                         <label class=" mb-1" for="verifier_1_dept_div">Verifier Department / Division:</label>
+                        {{-- @if ($formsmtp->types_req == 1) --}}
+                        <input class="form-control" id="verifier_1_dept_div" name="verifier_1_dept_div" value="{{ old('verifier_1_dept_div', $formsmtp->verifier_1_dept_div) }}"/>
+                        {{-- @else
                         <select class="form-control select2" name="verifier_1_dept_div" id="verifier_1_dept_div" aria-label="Default select">
                             <option value="{{ old('verifier_1_dept_div', $formsmtp->verifier_1_dept_div) }}">{{ old('verifier_1_dept_div', $formsmtp->verifier_1_dept_div) }}</option>
                             @foreach ($departmentsArray as $department)
                                 <option value="{{ $department['name'] }}">{{ $department['name'] }}</option>
                             @endforeach
                         </select>
+                        @endif --}}
                     </div>
                     <div class="mb-3 col-md-4">
                         <label class=" mb-1" for="date_verification_1">Date:</label>
@@ -300,23 +318,29 @@
                 <div class="row col-12">
                     <div class="mb-3 col-md-4">
                         <label class=" mb-1" for="verifier_3_position">Approval Position</label>
+                        {{-- @if ($formsmtp->types_req == 1) --}}
+                        <input class="form-control" id="verifier_3_position" name="verifier_3_position" value="{{ old('verifier_3_position', $formsmtp->verifier_3_position) }}"/>
+                        {{-- @else
                         <select class="form-control select2" name="verifier_3_position" id="verifier_3_position" aria-label="Default select">
                             <option value="{{ old('verifier_3_position', $formsmtp->verifier_3_position) }}">{{ old('verifier_3_position', $formsmtp->verifier_3_position) }}</option>
-                            {{--<option value="PPK MAMPU">PPK MAMPU</option>--}}
                             @foreach ($positionsArray as $position)
                                 <option value="{{ $position['name'] }}">{{ $position['name'] }}</option>
                             @endforeach
                         </select>
+                        @endif --}}
                     </div>
                     <div class="mb-3 col-md-4">
                         <label class=" mb-1" for="verifier_3_dept_div">Approval Department / Division:</label>
+                        {{-- @if ($formsmtp->types_req == 1) --}}
+                        <input class="form-control" id="verifier_3_dept_div" name="verifier_3_dept_div" value="{{ old('verifier_3_dept_div', $formsmtp->verifier_3_dept_div) }}"/>
+                        {{-- @else
                         <select class="form-control select2" name="verifier_3_dept_div" id="verifier_3_dept_div" aria-label="Default select">
                             <option value="{{ old('verifier_3_dept_div', $formsmtp->verifier_3_dept_div) }}">{{ old('verifier_3_dept_div', $formsmtp->verifier_3_dept_div) }}</option>
-                            {{--<option value="Pasukan Projek MyGovUC">Pasukan Projek MyGovUC</option>--}}
                             @foreach ($departmentsArray as $department)
                                 <option value="{{ $department['name'] }}">{{ $department['name'] }}</option>
                             @endforeach
                         </select>
+                        @endif --}}
                     </div>
                     <div class="mb-3 col-md-4">
                         <label class=" mb-1" for="date_verification_3">Date:</label>
@@ -341,7 +365,7 @@
                 </div><hr>
                 <a class="btn btn-danger me-2 my-1" type="button" href="{{ route('smtp_relay.smtp_relay_req')}}">Cancel</a>
                 @can('smtp_mail_relay_update')
-                <button class="btn btn-primary me-2 my-1" type="submit">Update Request Form</button>
+                <button class="btn btn-primary me-2 my-1" id="submit" name="submit" type="submit">Update Request Form</button>
                 @endcan
                 </form>
             </div>
@@ -375,6 +399,7 @@
             var selectedValue = selectBox.options[selectBox.selectedIndex].value;
             var selectedValuetype_req = type_req.options[type_req.selectedIndex].value;
             var ipAddress = $(this).val();
+            var submitBtn = document.getElementById("submit");
 
 
             if (/^(?:[0-9]{1,3}\.){3}[0-9]{1,3}$/.test(ipAddress)) {
@@ -386,11 +411,12 @@
 
                     if (selectedValuetype_req == 1) {
                         // Construct your command
-                        command = `grep -q '^${ipAddress} ' /opt/cluster/postfix/access_list && echo "IP address already Registered!"`;
+                        command = `grep -q '^${ipAddress}' /opt/cluster/postfix/access_list && echo "IP address already Registered!"`;
                     }
                     if (selectedValuetype_req == 2) {
                         // Construct your command
-                        command = `grep -q '^#${ipAddress} ' /opt/cluster/postfix/access_list && echo "IP address already Terminated!"`;
+                        command = `grep -q '^#${ipAddress}' /opt/cluster/postfix/access_list && echo "IP address already Terminated!" || (grep -q '^${ipAddress}' /opt/cluster/postfix/access_list || echo "IP address not Registered to Terminate!")`;
+                        // command = `grep -q '^#${ipAddress}' /opt/cluster/postfix/access_list && echo "IP address already Terminated!"`;
                     }
 
                     // Send the command through the WebSocket if it's not empty
@@ -410,10 +436,16 @@
                     }
                     if (selectedValuetype_req == 2) {
                     if (response.includes('IP address already Terminated!')) {
-                            $('#resultContainer').html(response);
-                        } else {
-                            $('#resultContainer').empty();
-                        }
+                        $('#resultContainer').html(response);
+                        submitBtn.disabled = true;
+                    } else if (response.includes('IP address not Registered to Terminate!')) {
+                        $('#resultContainer').html(response);
+                        submitBtn.disabled = true;
+                    } else {
+                        const messages = "IP Address not Registered to Terminate";
+                        $('#resultContainer').empty();
+                        submitBtn.disabled = false;
+                    }
                     }
 
                     socket.close();
@@ -486,13 +518,6 @@
         dateBInput.addEventListener('change', compareDates);
         dateCInput.addEventListener('change', compareDates2);
         dateDInput.addEventListener('change', compareDates3);
-
-    // dateForm.addEventListener('submit',function(event){
-    //     if (!compareDates()){
-    //         event.preventDefault();
-    //         messageDiv.textContent = "Please correct the Dates before submitting";
-    //     }
-    // });
 
     $(".select2").select2();
 
@@ -651,44 +676,6 @@
         }
     });
     });
-
-    // $('#dynamic-inputs-container').on('input', '#ip_addr_server', function() {
-
-    //     var type_req = document.getElementById("types_req");
-    //     var selectBox = document.getElementById("smtp_relay_server");
-    //     var selectedValue = selectBox.options[selectBox.selectedIndex].value;
-    //     var selectedValuetype_req = type_req.options[type_req.selectedIndex].value;
-    //     var ipAddress = $(this).val();
-
-    //     if (/^(?:[0-9]{1,3}\.){3}[0-9]{1,3}$/.test(ipAddress)) {
-    //         // Send AJAX request
-    //         $.ajax({
-    //             type: 'POST',
-    //             url: '{{ route("check.ip.address") }}', // Replace with your route name
-    //             data: {
-    //                 '_token': '{{ csrf_token() }}',
-    //                 'tableSpmr': [{
-    //                     'ipaddress': ipAddress
-    //                 }],
-    //                 'selectedValue': selectedValue,
-    //                 'selectedValuetype_req': selectedValuetype_req
-    //             },
-    //             success: function(response) {
-    //                 //console.log(response);
-    //                 $('#resultContainer').html(response);
-
-    //             },
-    //             error: function(xhr, status, error) {
-    //                 console.error(xhr.responseText);
-    //             }
-    //         });
-
-    //     }else {
-    //         // Clear result container if input is invalid
-    //         $('#resultContainer').empty();
-    //     }
-
-    // });
 
     document.addEventListener('DOMContentLoaded', function() {
         // The smtpPort value passed from PHP to JavaScript

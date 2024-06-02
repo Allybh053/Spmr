@@ -2,7 +2,7 @@
 @section('content')
     <main>
         <header class="page-header page-header-compact page-header-light border-bottom bg-white mb-4">
-            <div class="container-xl px-4">
+            <div class="container-fluid px-4">
                 <div class="page-header-content">
                     <div class="row align-items-center justify-content-between pt-3">
                         <div class="col-auto mb-3">
@@ -15,7 +15,7 @@
                 </div>
             </div>
         </header>
-        <div class="container-xl px-4">
+        <div class="container-fluid px-4">
             <div class="card mb-4">
                 <div class="card-header">
                     <div class="row align-items-center">
@@ -28,6 +28,19 @@
                     <form method="POST" action="{{ route('agency.saveupdateagency', ['id' => $agency->id]) }}">
                         @csrf
                         @method('PUT')
+                        <div class="mb-3">
+                            <label for="name">Ministry Code</label>
+                            <select class="form-control select2" name="ministry" id="ministry" required>
+                                <option value="{{ $ministry1->id }}">{{ $ministry1->name }}</option>
+                                @foreach ($ministry as $ministry)
+                                <option value="{{ $ministry['id'] }}">{{ $ministry['name'] }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label for="name">Agency Code Name</label>
+                            <input class="form-control" id="code_name" name="code_name" type="text" placeholder="" value="{{ $agency->code_name }}" required>
+                        </div>
                         <div class="mb-3">
                             <label for="name">Agency Name</label>
                             <input class="form-control" id="name" name="name" type="text" placeholder="" value="{{ $agency->name }}" required>

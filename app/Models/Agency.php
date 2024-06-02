@@ -14,7 +14,7 @@ class Agency extends Model implements Auditable
 
     protected $table = 'agencies';
 
-    protected $fillable = ['name', 'remark', 'status'];
+    protected $fillable = ['name', 'remark', 'status','code_name','ministry'];
 
     protected $casts = [
         'status' => 'integer',

@@ -181,7 +181,7 @@
             <input type="hidden" id="smtp_relay_server" name="smtp_relay_server" value="{{ $smtpreq->smtp_relay_server }}"/>
             <input type="hidden" id="verifier_2_name" name="verifier_2_name" value="{{ $smtpreq->verifier_2_name }}"/>
                     <div class="card-body"  style="text-align: center;">
-                        <button class="btn btn-danger me-2 my-1" type="button" name="rejectBtn" id="rejectBtn" hidden>Reject Request</button>
+                        <button class="btn btn-danger me-2 my-1" type="button" name="rejectBtn" id="rejectBtn">Reject Request</button>
                         <button class="btn btn-primary me-2 my-1" type="button" name="submitBtn" id="submitBtn">Submit Approval</button>
                     </div>
             </div>
@@ -225,14 +225,6 @@
                                 grep -q '^${ipAddress}' /opt/cluster/postfix/access_list && \
                                 sed -i 's/^${ipAddress} .*/#${ipAddress} #${formIds}:/' /opt/cluster/postfix/access_list || \
                                 echo '#${ipAddress} #${formIds}:' >> /opt/cluster/postfix/access_list`;
-                        // command = "grep -q '^10.10.10.14 ' /opt/cluster/postfix/access_list && sed -i 's/^10.10.10.14 .*/#10.10.10.14 #aabbccddee:/' /opt/cluster/postfix/access_list || echo '#10.10.10.14 #aabbccddee:' >> /opt/cluster/postfix/access_list"; //hardcode
-                        // command = `
-                        //             grep -q '^${ipAddress} ' /opt/cluster/postfix/access_list && \
-                        //             sed 's/^${ipAddress} .*/#${ipAddress}' /opt/cluster/postfix/access_list > /opt/cluster/postfix/access_list.tmp && \
-                        //             mv /opt/cluster/postfix/access_list.tmp /opt/cluster/postfix/access_list || \
-                        //             echo '#${ipAddress} #${formIds}:' >> /opt/cluster/postfix/access_list
-                        //         `;
-
                     }
                     // Send the command through the WebSocket if it's not empty
                     if (command) {

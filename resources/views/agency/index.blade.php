@@ -2,7 +2,7 @@
 @section('content')
     <main>
         <header class="page-header page-header-compact page-header-light border-bottom bg-white mb-4">
-            <div class="container-xl px-4">
+            <div class="container-fluid px-4">
                 <div class="page-header-content">
                     <div class="row align-items-center justify-content-between pt-3">
                         <div class="col-auto mb-3">
@@ -15,7 +15,7 @@
                 </div>
             </div>
         </header>
-        <div class="container-xl px-4">
+        <div class="container-fluid px-4">
             @if(session('success'))
             <script>
                 document.addEventListener('DOMContentLoaded', function () {
@@ -49,6 +49,7 @@
                         <thead>
                             <tr>
                                 <th>No</th>
+                                <th>Agency Code Name</th>
                                 <th>Name</th>
                                 <th>Remark</th>
                                 <th>Status</th>
@@ -60,6 +61,7 @@
                              @foreach ($agencies as $agency)
                             <tr>
                                 <td>{{ $loop->iteration }}.</td>
+                                <td>{{ $agency->code_name }}</td>
                                 <td>{{ $agency->name }}</td>
                                 <td>{{ $agency->remark }}</td>
                                 <td>

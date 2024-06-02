@@ -14,7 +14,7 @@ class Ministry extends Model  implements Auditable
 
     protected $table = 'ministrys';
 
-    protected $fillable = ['name', 'remark', 'status'];
+    protected $fillable = ['name', 'remark', 'status','code_name'];
 
     protected $casts = [
         'status' => 'integer',

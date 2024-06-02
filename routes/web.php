@@ -100,7 +100,7 @@ Route::group(['middleware' => ['auth', 'nocache']], function () {
         Route::post('/check-ip-address', [MainRelayController::class, 'checkIpAddress'])->name('check.ip.address');
         Route::get('/mailupstream', [MainRelayController::class, 'mailupstream'])->name('mailrelay.mailupstream');
         Route::get('/detail/{id}/{type}', [MainRelayController::class, 'view'])->name('mailrelay.edit');
-        Route::get('/reject/{id}', [MainRelayController::class, 'reject'])->name('mailrelay.reject');
+        // Route::get('/reject/{id}', [MainRelayController::class, 'reject'])->name('mailrelay.reject');
         Route::post('/submit-form', [MainRelayController::class, 'submitappForm'])->name('mailrelay.form');
         Route::post('/submit-rej-form', [MainRelayController::class, 'submitrejForm'])->name('mailrelay.reject');
 
@@ -124,7 +124,7 @@ Route::group(['middleware' => ['auth', 'nocache']], function () {
         Route::post('/form_application_smtp_relay/delete/{id}/{ip}/{idapp}', [SmtpRelayController::class, 'delete'])->name('smtp_relay.delete');
         Route::post('/form_application_smtp_relay/datatable', [SmtpRelayController::class, 'datatable'])->name('smtp_relay.datatable');
 
-        //code sidi
+        Route::get('/agency/{ministry}',[SmtpRelayController::class, 'getAgency']);
         Route::get('/register', [SmtpRelayController::class, 'daftar'])->name('smtp_relay.daftar');
         Route::post('/saving', [SmtpRelayController::class, 'saving'])->name('smtp_relay.saving');
         Route::get('/view/{id}/{type}', [SmtpRelayController::class, 'papar'])->name('smtp_relay.view');
