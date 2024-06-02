@@ -399,6 +399,7 @@
             var selectedValue = selectBox.options[selectBox.selectedIndex].value;
             var selectedValuetype_req = type_req.options[type_req.selectedIndex].value;
             var ipAddress = $(this).val();
+            var submitBtn = document.getElementById("submit");
 
 
             if (/^(?:[0-9]{1,3}\.){3}[0-9]{1,3}$/.test(ipAddress)) {

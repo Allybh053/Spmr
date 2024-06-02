@@ -37,55 +37,28 @@ class MainRelayController extends Controller
     }
     public function checkIpAddress(Request $request)
     {
+        // Get the IP address from the request
+        $ipAddress = $request->input('ipAddress');
+        $mailrelay = $request->input('mailrelay');
+        $type_req = $request->input('type_req');
 
-        // // Get the IP address from the request
-        // $ipAddress = $request->input('tableSpmr.0.ipaddress');
-        // $selectedValuetype_req = $request->input('selectedValuetype_req');
-        // $selectedValue = $request->input('selectedValue');
-        // //think how to add identify
-        // // if ($selectedValue == $selectedValue){
-        // $filePath = storage_path($selectedValue.'/postfix/access_list'); //root : root permission denied
-        // // }else{
-        // //     //
-        // // }
+        $result = DB::select("
+            SELECT srs.*
+            FROM smtp_relay_req_form srrf
+            JOIN smtp_relay_server srs ON srrf.id = srs.smtpid
+            WHERE srrf.smtp_relay_server = ?
+              AND srrf.status = 0
+              AND srs.ip_addr_server = ?
+              AND srs.types_req = ?
+        ", [$mailrelay, $ipAddress, $type_req]);
 
-        // try {
-        //     // Check the IP address in the database
-        //     $count = smtp_relay_server::where('ip_addr_server', $ipAddress)
-        //                                ->where('types_req', $selectedValuetype_req)
-        //                                ->count();
 
-        //     if ($count > 0) {
-        //         if ($selectedValuetype_req == 1) {
-        //             return "<span style='color: red'>The IP address $ipAddress already exists in the system.</span>";
-        //         } elseif ($selectedValuetype_req == 2) {
-        //             return "<span style='color: red'>The IP address $ipAddress already terminated in the system.</span>";
-        //         }
-        //     }
-
-        //     // Read the file content and check the IP address in the file
-        //     $fileContent = file_get_contents($filePath);
-        //     $lines = explode("\n", $fileContent);
-
-        //     foreach ($lines as $line) {
-        //         $trimmed_line = trim($line);
-
-        //         if ($selectedValuetype_req == 1) {
-        //             // Check if the line matches the IP address exactly
-        //             $file_ip = trim(explode('#', $trimmed_line)[0]);
-        //             if ($file_ip === $ipAddress) {
-        //                 return "<span style='color: red'>The IP address $ipAddress already existed in the Server Access List.</span>";
-        //             }
-        //         } elseif ($selectedValuetype_req == 2) {
-        //             // Check if the line starts with '#' followed by the IP address
-        //             if (strpos($trimmed_line, "#$ipAddress") === 0) {
-        //                 return "<span style='color: red'>The IP address $ipAddress already terminated in the Server Access List.</span>";
-        //             }
-        //         }
-        //     }
-        // } catch (\Exception $e) {
-        //     return "Error 404! :No such file or directory!" . $e->getMessage();
-        // }
+        if (count($result) > 0) {
+            $form_id = $result[0]->form_id;
+            return response()->json(['exists' => true, 'message' => 'IP address found in Pending Listing Request Form, Serial Number '.$form_id]);
+        } else {
+            //return response()->json(['exists' => false, 'message' => 'IP address not found in the database']);
+        }
     }
 
 

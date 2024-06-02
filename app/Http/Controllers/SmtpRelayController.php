@@ -401,6 +401,8 @@ class SmtpRelayController extends Controller
             ->send(new MailForm($request));
 
             return redirect()->route('smtp_relay.smtp_relay_req')->with('success', 'Form added successfully');
+            // return redirect()->route('smtp_relay.smtp_relay_req')->with('message', 'Form added successfully');
+
 
         } else if ( $type_reqs == 2 || $type_reqs == 3 ){
 
@@ -884,7 +886,7 @@ class SmtpRelayController extends Controller
 
     public function getAgency($ministry){
 
-        $agency = Agency::where('code_name', $ministry)->pluck('name', 'id');
+        $agency = Agency::where('ministry', $ministry)->pluck('name', 'id');
         return response()->json($agency);
 
     }

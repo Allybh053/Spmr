@@ -67,7 +67,7 @@
                     <select class="form-control select2" name="ministry" id="ministry" required>
                         <option selected disabled>Select Ministry</option>
                         @foreach ($ministriesArray as $ministry)
-                        <option value="{{ $ministry['name'] }}" data-code="{{ $ministry['code_name'] }}">{{ $ministry['name'] }}</option>
+                        <option value="{{ $ministry['name'] }}" data-code="{{ $ministry['id'] }}">{{ $ministry['name'] }}</option>
                         @endforeach
                     </select>
                 </div>
@@ -146,6 +146,7 @@
                             </tr>
                         </tfoot>
                         <strong><p style="color: red;" id="resultContainer"></p></strong>
+                        <strong><p style="color: red;" id="resultContainer2"></p></strong>
                     </table>
                 </div>
 
@@ -320,7 +321,25 @@
 <script src="https://ajax.aspnetcdn.com/ajax/jquery.validate/1.19.2/jquery.validate.min.js"></script>
 
 <script>
+    // document.getElementById('formserver').addEventListener('submit', function(event) {
+    //     event.preventDefault(); // Prevent the default form submission
 
+    //     // Display a confirmation dialog using SweetAlert
+    //     Swal.fire({
+    //         title: 'Confirm Submission',
+    //         text: 'Are you sure you want to submit the form?',
+    //         icon: 'warning',
+    //         showCancelButton: true,
+    //         confirmButtonText: 'Yes, submit!',
+    //         cancelButtonText: 'No, cancel',
+    //         reverseButtons: true
+    //     }).then((result) => {
+    //         if (result.isConfirmed) {
+    //             // Proceed with form submission if the user confirms
+    //             this.form.submit();
+    //         }
+    //     });
+    // });
     // function typeChange() {
 
     // var selectType = document.getElementById("type_req");
@@ -436,7 +455,7 @@
                 if ( dateC < dateB ) {
                     messageDiv2.textContent = "Date Helpdesk must be greater than Date Verifier";
                 } else {
-                    messageDiv3.textContent = "";
+                    messageDiv2.textContent = "";
                 }
             }
         }
@@ -449,7 +468,7 @@
                 if (dateD < dateC) {
                     messageDiv3.textContent = "Date Approval must be greater than Date Helpdesk";
                 } else {
-                    messageDiv2.textContent = "";
+                    messageDiv3.textContent = "";
                 }
             }
         }
@@ -616,7 +635,6 @@
         });
     });
 
-
     $(document).on('input', '#dynamic-inputs-container input#ipaddress', function() {
             var type_req = document.getElementById("type_req");
             var selectBox = document.getElementById("mailrelay");
@@ -624,6 +642,26 @@
             var selectedValuetype_req = type_req.value;
             var ipAddress = $(this).val();
             var submitBtn = document.getElementById("submit");
+            var submitBtn2 = document.getElementById("submit");
+
+            $.ajax({
+                    url: '/mailrelay/check-ip-address',
+                    method: 'POST',
+                    contentType: 'application/json',
+                    data: JSON.stringify({ ipAddress: ipAddress, mailrelay: selectedValue,type_req: selectedValuetype_req}),
+                    success: function(response) {
+                        if (response.exists) {
+                            // console.log(response);
+                            $('#resultContainer2').html(response.message);
+                            submitBtn2.disabled = true;
+                        } else {
+                            // console.log(response);
+                            $('#resultContainer2').empty();
+                            submitBtn2.disabled = false;
+                        }
+                    }
+            });
+
 
             if (/^(?:[0-9]{1,3}\.){3}[0-9]{1,3}$/.test(ipAddress)) {
                 const serverAddress = 'wss://spmr.mygovuc.gov.my/' + selectedValue;
@@ -637,7 +675,6 @@
                     }
                     if (selectedValuetype_req == 2) {
                         command = `grep -q '^#${ipAddress}' /opt/cluster/postfix/access_list && echo "IP address already Terminated!" || (grep -q '^${ipAddress}' /opt/cluster/postfix/access_list || echo "IP address not Registered to Terminate!")`;
-                        // command = `grep -q '^#${ipAddress}' /opt/cluster/postfix/access_list && echo "IP address already Terminated!"`;
                     }
 
                     if (command) {
@@ -649,23 +686,27 @@
                     const response = event.data;
                     if (selectedValuetype_req == 1) {
                     if (response.includes('IP address already Registered!')) {
-                            $('#resultContainer').html(response);
                             submitBtn.disabled = true;
+                            $('#resultContainer').html(response);
                         } else {
-                            $('#resultContainer').empty();
                             submitBtn.disabled = false;
+                            $('#resultContainer').empty();
                         }
                     }
                     if (selectedValuetype_req == 2) {
                     if (response.includes('IP address already Terminated!')) {
-                        $('#resultContainer').html(response);
                         submitBtn.disabled = true;
-                    } else if (response.includes('IP address not Registered to Terminate!')) {
                         $('#resultContainer').html(response);
-                        submitBtn.disabled = true;
                     } else {
                         $('#resultContainer').empty();
                         submitBtn.disabled = false;
+                    }
+                    if (response.includes('IP address not Registered to Terminate!')) {
+                        submitBtn.disabled = true;
+                        $('#resultContainer').html(response);
+                    } else {
+                        submitBtn.disabled = false;
+                        $('#resultContainer').empty();
                     }
                     }
                     socket.close();
@@ -680,8 +721,8 @@
                 });
             } else {
                 // Clear result container if input is invalid
-                $('#resultContainer').empty();
                 submitBtn.disabled = false;
+                $('#resultContainer').empty();
             }
         });
 
@@ -742,6 +783,6 @@ function updateNameAttribute(nameAttr, newIndex) {
     // Replace the index in the name attribute
     return nameAttr.replace('[' + currentIndex + ']', '[' + newIndex + ']');
 }
-
+ 
 </script>
 @endpush
