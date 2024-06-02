@@ -124,7 +124,7 @@ Route::group(['middleware' => ['auth', 'nocache']], function () {
         Route::post('/form_application_smtp_relay/delete/{id}/{ip}/{idapp}', [SmtpRelayController::class, 'delete'])->name('smtp_relay.delete');
         Route::post('/form_application_smtp_relay/datatable', [SmtpRelayController::class, 'datatable'])->name('smtp_relay.datatable');
 
-        //code sidi
+        Route::get('/agency/{ministry}',[SmtpRelayController::class, 'getAgency']);
         Route::get('/register', [SmtpRelayController::class, 'daftar'])->name('smtp_relay.daftar');
         Route::post('/saving', [SmtpRelayController::class, 'saving'])->name('smtp_relay.saving');
         Route::get('/view/{id}/{type}', [SmtpRelayController::class, 'papar'])->name('smtp_relay.view');

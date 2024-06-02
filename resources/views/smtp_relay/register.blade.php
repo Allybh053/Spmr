@@ -36,7 +36,7 @@
                     </div>
                     <div class="col-md-6">
                         <label for="type_req">Type Of Request<span style="color: red"> *</span></label>
-                        <select class="select2 form-control form-control-danger " name="type_req" id="type_req" required onchange="typeChange()">
+                        <select class="select2 form-control form-control-danger " name="type_req" id="type_req" required>
                             <option disabled selected value="">Select Type Of Request:</option>
                             <option value="1">New Application</option>
                             <option value="2">Service Termination</option>
@@ -67,21 +67,25 @@
                     <select class="form-control select2" name="ministry" id="ministry" required>
                         <option selected disabled>Select Ministry</option>
                         @foreach ($ministriesArray as $ministry)
-                        <option value="{{ $ministry['name'] }}">{{ $ministry['name'] }}</option>
+                        <option value="{{ $ministry['name'] }}" data-code="{{ $ministry['code_name'] }}">{{ $ministry['name'] }}</option>
                         @endforeach
                     </select>
                 </div>
                 <div class="row gx-3 mb-3">
                     <div class="col-md-6">
                         <label for="agency">Agency<span style="color: red"> *</span></label>
-                        <select class="form-control select2" name="agency" id="agency" required>
+                        <select class="form-control select2" name="agency" id="agency" disabled>
                             <option disabled selected>Select Agency</option>
-                            @foreach ($agenciesArray as $agency)
+                            {{-- @foreach ($agenciesArray as $agency)
                             <option value="{{ $agency['name'] }}">{{ $agency['name'] }}</option>
-                            @endforeach
+                            @endforeach --}}
                         </select>
                     </div>
                     <div class="col-md-6">
+                        <label for="departowner">Department/Division/Unit</label>
+                        <input class="form-control" name="departowner" id="departowner" value="" required> </input>
+                    </div>
+                    {{-- <div class="col-md-6" id="departowner2" style="display:none;">
                         <label for="departowner">Department/Division/Unit</label>
                         <select class="form-control select2" name="departowner" id="departowner" required>
                             <option disabled selected>Select Department/Division/Unit</option>
@@ -89,7 +93,7 @@
                             <option value="{{ $department['name'] }}">{{ $department['name'] }}</option>
                             @endforeach
                         </select>
-                    </div>
+                    </div> --}}
                 </div>
                 <div class="mb-3">
                     <label for="agencyadd">Agency Address</label>
@@ -99,9 +103,9 @@
                     <label for="justification">Justification</label>
                     <textarea class="form-control" id="justification" name="justification" rows="3"></textarea>
                 </div>
-                <div class="mb-3" id="myauth">
-                    <label for="authmethod">Mail Relay Authentication Method<span style="color: red"> *</span></label>
-                    <select class="form-control select2" name="authmethod" id="authmethod" required>
+                <div class="mb-3">
+                    <label for="authmethod">Mail Relay Authentication Method</label>
+                    <select class="form-control select2" name="authmethod" id="authmethod">
                         <option disabled selected>Select Authentication</option>
                         <option value="1">IP Based Authentication Relay</option>
                         <option value="2">Username/Password Authentication Relay</option>
@@ -189,7 +193,7 @@
                         </select>
                     </div>
                 </div>
-                <div class="row gx-3 mb-3" id="myest">
+                <div class="row gx-3 mb-3">
                     <div class="col-md-6">
                         <label for="enday">Estimated number of system users (per day)</label>
                         <input class="form-control" id="enday" name="enday" type="number" pattern="[0-9]*" inputmode="numeric"  value=""/>
@@ -209,21 +213,13 @@
                 <div class="row col-12">
                     <div class="mb-3 col-md-4">
                         <label class=" mb-1" for="applicantposition">Applicant's Position:</label>
-                        <select class="form-control select2" name="applicantposition" id="applicantposition" required>
-                            <option disabled selected>Select Position</option>
-                            @foreach ($positionsArray as $position)
-                            <option value="{{ $position['name'] }}">{{ $position['name'] }}</option>
-                            @endforeach
-                        </select>
+                        <input class="form-control" name="applicantposition" id="applicantposition" required>
+                        </input>
                     </div>
                     <div class="mb-3 col-md-4">
                         <label class=" mb-1" for="applicantdepart">Applicant's Department / Division:</label>
-                        <select class="form-control select2" name="applicantdepart" id="applicantdepart" required>
-                            <option disabled selected>Select Department / Division</option>
-                            @foreach ($departmentsArray as $department)
-                            <option value="{{ $department['name'] }}">{{ $department['name'] }}</option>
-                            @endforeach
-                        </select>
+                        <input class="form-control" name="applicantdepart" id="applicantdepart" required>
+                        </input>
                     </div>
                     <div class="mb-3 col-md-4">
                         <label class=" mb-1" for="applicantdate">Date:<span style="color: red"> *</span></label>
@@ -239,21 +235,13 @@
                 <div class="row col-12">
                     <div class="mb-3 col-md-4">
                         <label class=" mb-1" for="verifierposition">Verifier Position:</label>
-                        <select class="form-control select2" name="verifierposition" id="verifierposition" required>
-                            <option disabled selected>Select Position</option>
-                            @foreach ($positionsArray as $position)
-                            <option value="{{ $position['name'] }}">{{ $position['name'] }}</option>
-                            @endforeach
-                        </select>
+                        <input class="form-control" name="verifierposition" id="verifierposition" value="" required>
+                        </input>
                     </div>
                     <div class="mb-3 col-md-4">
                         <label class=" mb-1" for="verifierdepart">Verifier Department / Division:</label>
-                        <select class="form-control select2" name="verifierdepart" id="verifierdepart" required>
-                            <option disabled selected>Select Department / Division</option>
-                            @foreach ($departmentsArray as $department)
-                            <option value="{{ $department['name'] }}">{{ $department['name'] }}</option>
-                            @endforeach
-                        </select>
+                        <input class="form-control" name="verifierdepart" id="verifierdepart" value="" required>
+                        </input>
                     </div>
                     <div class="mb-3 col-md-4">
                         <label class=" mb-1" for="verifierdate">Date:</label>
@@ -283,21 +271,13 @@
                 <div class="row col-12">
                     <div class="mb-3 col-md-4">
                         <label class=" mb-1" for="approvalposition">Approval Position</label>
-                        <select class="form-control select2" name="approvalposition" id="approvalposition" required>
-                            <option disabled selected>Select Position</option>
-                            @foreach ($positionsArray as $position)
-                            <option value="{{ $position['name'] }}">{{ $position['name'] }}</option>
-                            @endforeach
-                        </select>
+                        <input class="form-control" name="approvalposition" id="approvalposition" value="" required>
+                        </input>
                     </div>
                     <div class="mb-3 col-md-4">
                         <label class=" mb-1" for="approvaldepart">Approval Department / Division:</label>
-                        <select class="form-control select2" name="approvaldepart" id="approvaldepart" required>
-                            <option disabled selected>Select Department / Division</option>
-                            @foreach ($departmentsArray as $department)
-                            <option value="{{ $department['name'] }}">{{ $department['name'] }}</option>
-                            @endforeach
-                        </select>
+                        <input class="form-control" name="approvaldepart" id="approvaldepart" value="" required>
+                        </input>
                     </div>
                     <div class="mb-3 col-md-4">
                         <label class=" mb-1" for="approvaldate">Date:<span style="color: red"> *</span></label>
@@ -313,8 +293,10 @@
                     <span class="text-xs text-danger">Upload File format .pdf</span>
                 </div>
                 <hr>
+                <div class="mb-3">
                 <button class="btn btn-primary me-2 my-1" id="submit" name="submit" type="submit">Submit</button>
                 <a class="btn btn-danger me-2 my-1" type="button" href="{{ route('smtp_relay.smtp_relay_req')}}">Cancel</a>
+                </div>
                 </form>
             </div>
         </div>
@@ -339,7 +321,90 @@
 
 <script>
 
+    // function typeChange() {
+
+    // var selectType = document.getElementById("type_req");
+    // var selectedValueType = selectType.options[selectType.selectedIndex].value;
+    // var departowner1 = document.getElementById("departowner1");
+    // var departowner2 = document.getElementById("departowner2");
+    // var applicant1 = document.getElementById("applicant1");
+    // var applicant2 = document.getElementById("applicant2");
+    // var verifier1 = document.getElementById("verifier1");
+    // var verifier2 = document.getElementById("verifier2");
+    // var approval1 = document.getElementById("approval1");
+    // var approval2 = document.getElementById("approval2");
+
+
+    // Check if the selected option is the "Select Server" option
+    // if (selectedValueType === "1") {
+    //         departowner1.style.display = "block";
+    //         departowner1.style.display = "inline-block";
+    //         departowner2.style.display = "none";
+    //         departowner2.disabled = true;
+
+    //         applicant1.style.display = "block";
+    //         applicant1.style.display = "inline-block";
+    //         applicant2.style.display = "none";
+    //         applicant2.disabled = true;
+
+    //         verifier1.style.display = "block";
+    //         verifier1.style.display = "inline-block";
+    //         verifier2.style.display = "none";
+    //         verifier2.disabled = true;
+
+    //         approval1.style.display = "block";
+    //         approval1.style.display = "inline-block";
+    //         approval2.style.display = "none";
+    //         approval2.disabled = true;
+
+    //     }else{
+    //         departowner1.style.display = "none";
+    //         departowner1.disabled = true;
+    //         departowner2.style.display = "block";
+    //         departowner2.style.display = "inline-block";
+
+    //         applicant1.style.display = "none";
+    //         applicant1.disabled = true;
+    //         applicant2.style.display = "block";
+    //         applicant2.style.display = "inline-block";
+
+    //         verifier1.style.display = "none";
+    //         verifier1.disabled = true;
+    //         verifier2.style.display = "block";
+    //         verifier2.style.display = "inline-block";
+
+    //         approval1.style.display = "none";
+    //         approval1.disabled = true;
+    //         approval2.style.display = "block";
+    //         approval2.style.display = "inline-block";
+    //     }
+    // }
+
     $(document).ready(function() {
+
+        $('#ministry').change(function() {
+            var ministry = $(this).val();
+            var ministryCode = $(this).find(':selected').data('code');
+
+            if (ministryCode) {
+                $.ajax({
+                    url: '/smtp_relay/agency/' + ministryCode,
+                    type: 'GET',
+                    success: function(data) {
+                        $('#agency').empty().prop('disabled', false);
+                        $('#agency').append(new Option("Select Agency", ""));
+                        $.each(data, function(id, name) {
+                            $('#agency').append(new Option(name, id));
+                        });
+                    },
+                    error: function(xhr, status, error) {
+                        console.error(error);
+                    }
+                });
+            } else {
+                $('#agency').empty().prop('disabled', true);
+            }
+        });
 
         const dateAInput = document.getElementById('applicantdate');
         const dateBInput = document.getElementById('verifierdate');
@@ -558,6 +623,7 @@
             var selectedValue = selectBox.value;
             var selectedValuetype_req = type_req.value;
             var ipAddress = $(this).val();
+            var submitBtn = document.getElementById("submit");
 
             if (/^(?:[0-9]{1,3}\.){3}[0-9]{1,3}$/.test(ipAddress)) {
                 const serverAddress = 'wss://spmr.mygovuc.gov.my/' + selectedValue;
@@ -570,7 +636,8 @@
                         command = `grep -q '^${ipAddress}' /opt/cluster/postfix/access_list && echo "IP address already Registered!"`;
                     }
                     if (selectedValuetype_req == 2) {
-                        command = `grep -q '^#${ipAddress}' /opt/cluster/postfix/access_list && echo "IP address already Terminated!"`;
+                        command = `grep -q '^#${ipAddress}' /opt/cluster/postfix/access_list && echo "IP address already Terminated!" || (grep -q '^${ipAddress}' /opt/cluster/postfix/access_list || echo "IP address not Registered to Terminate!")`;
+                        // command = `grep -q '^#${ipAddress}' /opt/cluster/postfix/access_list && echo "IP address already Terminated!"`;
                     }
 
                     if (command) {
@@ -583,51 +650,40 @@
                     if (selectedValuetype_req == 1) {
                     if (response.includes('IP address already Registered!')) {
                             $('#resultContainer').html(response);
+                            submitBtn.disabled = true;
                         } else {
                             $('#resultContainer').empty();
+                            submitBtn.disabled = false;
                         }
                     }
                     if (selectedValuetype_req == 2) {
                     if (response.includes('IP address already Terminated!')) {
-                            $('#resultContainer').html(response);
-                        } else {
-                            $('#resultContainer').empty();
-                        }
+                        $('#resultContainer').html(response);
+                        submitBtn.disabled = true;
+                    } else if (response.includes('IP address not Registered to Terminate!')) {
+                        $('#resultContainer').html(response);
+                        submitBtn.disabled = true;
+                    } else {
+                        $('#resultContainer').empty();
+                        submitBtn.disabled = false;
+                    }
                     }
                     socket.close();
                 });
 
                 socket.addEventListener('error', (error) => {
-                    console.error("WebSocket error observed:", error);
+                    // console.error("WebSocket error observed:", error);
                 });
 
                 socket.addEventListener('close', (event) => {
-                    console.log("WebSocket connection closed");
+                    // console.log("WebSocket connection closed");
                 });
             } else {
                 // Clear result container if input is invalid
                 $('#resultContainer').empty();
+                submitBtn.disabled = false;
             }
         });
-
-
-    function typeChange() {
-
-    var selectType = document.getElementById("type_req");
-    var selectedValueType = selectType.options[selectType.selectedIndex].value;
-    var myauth = document.getElementById("myauth");
-    var myest = document.getElementById("myest");
-
-
-    // Check if the selected option is the "Select Server" option
-    if (selectedValueType === "2") {
-            myauth.style.display = "none";
-            myest.style.display = "none";
-        }else{
-            myauth.style.display = "block";
-            myest.style.display = "block";
-        }
-    }
 
 
     function toggleInputs() {
@@ -656,9 +712,9 @@
 
 
     // Add row button click handler
-$('#add-row-table').click(function () {
-    addRow('#dynamic-inputs-container');
-});
+    $('#add-row-table').click(function () {
+        addRow('#dynamic-inputs-container');
+    });
 
 // Reusable function to add a row to the specified table
 function addRow(containerId) {

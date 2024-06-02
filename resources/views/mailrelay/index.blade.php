@@ -73,7 +73,7 @@
                                     <span class="badge bg-red text-white rounded-pill">Pending</span>
                                 @endif
                             </td>
-                            <td> {{ \Carbon\Carbon::parse($smtpMailServer->created_at)->format('d-m-Y') }}</td>
+                            <td> {{ \Carbon\Carbon::parse($smtpMailServer->created_at)->format('d-m-Y h:i:s') }}</td>
                             <td>
                             @can('manage_mail_relay_view')
                                 <a class="btn btn-datatable btn-icon me-2 text-blue" title="View Detail" href="{{ route('smtp_relay.view', ['id' => $smtpMailServer->id]) }}"><i data-feather="plus"></i></a>

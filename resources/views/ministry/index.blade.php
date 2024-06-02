@@ -49,6 +49,7 @@
                         <thead>
                             <tr>
                                 <th>No</th>
+                                <th>Code Name</th>
                                 <th>Name</th>
                                 <th>Remark</th>
                                 <th>Status</th>
@@ -60,6 +61,7 @@
                              @foreach ($ministrys as $ministry)
                             <tr>
                                 <td>{{ $loop->iteration }}.</td>
+                                <td>{{ $ministry->code_name }}</td>
                                 <td>{{ $ministry->name }}</td>
                                 <td>{{ $ministry->remark }}</td>
                                 <td>

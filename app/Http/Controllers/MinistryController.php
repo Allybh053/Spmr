@@ -29,12 +29,14 @@ class MinistryController extends Controller
     public function saveupdateministry(Request $request, $id)
     {
         $request->validate([
+            'code_name' => 'nullable|string',
             'name' => 'required|string',
             'remark' => 'nullable|string',
             'status' => 'required|in:0,1',
         ]);
         $position = Ministry::findOrFail($id);
         $position->update([
+            'code_name' => $request->input('code_name'),
             'name' => $request->input('name'),
             'remark' => $request->input('remark'),
             'status' => $request->input('status'),
@@ -45,6 +47,7 @@ class MinistryController extends Controller
     public function savingministry(Request $request)
     {
         $position = Ministry::create([
+            'code_name' => $request->input('code_name'),
             'name' => $request->input('name'),
             'remark' => $request->input('remark'),
             'status' => $request->input('status'),

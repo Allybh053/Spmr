@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Agency;
+use App\Models\Ministry;
 
 class AgencyController extends Controller
 {
@@ -15,12 +16,14 @@ class AgencyController extends Controller
 
     public function addagency()
     {
-        return view('agency.addagency');
+        $ministry = Ministry::get();
+        return view('agency.addagency', compact('ministry'));
     }
 
     public function savingagency(Request $request)
     {
         $agency = Agency::create([
+            'code_name' => $request->input('code_name'),
             'name' => $request->input('name'),
             'remark' => $request->input('remark'),
             'status' => $request->input('status'),
@@ -33,19 +36,22 @@ class AgencyController extends Controller
     public function updateagency($id)
     {
         $agency = Agency::findOrFail($id);
+        $ministry = Ministry::get();
 
-        return view('agency.updateagency', compact('agency'));
+        return view('agency.updateagency', compact('agency','ministry'));
     }
 
     public function saveupdateagency(Request $request, $id)
     {
         $request->validate([
             'name' => 'required|string',
+            'code_name' => 'nullable|string',
             'remark' => 'nullable|string',
             'status' => 'required|in:0,1',
         ]);
         $agency = Agency::findOrFail($id);
         $agency->update([
+            'code_name' => $request->input('code_name'),
             'name' => $request->input('name'),
             'remark' => $request->input('remark'),
             'status' => $request->input('status'),

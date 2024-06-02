@@ -29,6 +29,15 @@
                         @csrf
                         @method('PUT')
                         <div class="mb-3">
+                            <label for="name">Ministry Code</label>
+                            <select class="form-control select2" name="code_name" id="code_name" required>
+                                <option value="{{ $agency->code_name }}">{{ $agency->code_name }}</option>
+                                @foreach ($ministry as $ministry)
+                                <option value="{{ $ministry['code_name'] }}">{{ $ministry['name'] }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+                        <div class="mb-3">
                             <label for="name">Agency Name</label>
                             <input class="form-control" id="name" name="name" type="text" placeholder="" value="{{ $agency->name }}" required>
                         </div>

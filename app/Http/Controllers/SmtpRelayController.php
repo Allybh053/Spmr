@@ -121,18 +121,18 @@ class SmtpRelayController extends Controller
             })
             ->addColumn('date_verification_3', function ($row) {
                 $date = Carbon::parse($row['date_verification_3']);
-                return $date->format('d/m/Y');
+                return $date->format('d/m/Y h:m:s');
             })
             ->addColumn('created_at', function ($row) {
                 $date = $row['created_at'];
-                return $date->format('d/m/Y');
+                return $date->format('d/m/Y h:m:s');
             })
             ->addColumn('updated_at', function ($row) {
                 // Parse the date string using DateTime class
                 $date = $row['updated_at'];
 
                 // Format the date in the desired format
-                return $date->format('d/m/Y');
+                return $date->format('d/m/Y h:m:s');
             })
             ->addColumn('status', function ($row) {
                 //return $row['status']; value 0 is pending, 1 done created and 2 rejected
@@ -880,6 +880,13 @@ class SmtpRelayController extends Controller
 
         // Return the PDF file with appropriate headers
         return response()->file($path);
+    }
+
+    public function getAgency($ministry){
+
+        $agency = Agency::where('code_name', $ministry)->pluck('name', 'id');
+        return response()->json($agency);
+
     }
 
 }
