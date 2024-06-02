@@ -284,6 +284,7 @@
                                         <th>SMTP Relay Authentication Method</th>
                                         <th>SMTP Port</th>
                                         <th>SMTP Username</th>
+                                        <th>Ip Address</th>
                                         <th>Date Approval</th>
                                     </tr>
                                     </thead>
@@ -306,6 +307,7 @@
                                         <th>Project Name</th>
                                         <th>SMTP Relay Authentication Method</th>
                                         <th>SMTP Port</th>
+                                        <th>Ip Address</th>
                                         <th>Date Approval</th>
                                     </tr>
                                     </thead>
@@ -565,26 +567,14 @@
                 {
                     data: 'types_req',
                     name: 'types_req',
-                    class: 'text-center',
-                    render: function(data, type, row) {
-                        // Define options based on the integer value of types_req
-                        switch (data) {
-                            case 1:
-                                return 'New Application';
-                            case 2:
-                                return 'Service Termination';
-                            case 3:
-                                return 'Onboarding Agency';
-                            default:
-                                return 'Unknown';
-                        }
-                    }
+                    class: 'text-center'
                 },
                 { data: 'agencies', name: 'agencies', class: 'text-center' },
                 { data: 'project_name', name: 'project_name', class: 'text-center' },
                 { data: 'smtp_relay_auth_method', name: 'smtp_relay_auth_method', class: 'text-center' },
                 { data: 'smtp_port', name: 'smtp_port', class: 'text-center' },
                 { data: 'smtp_username', name: 'smtp_username', class: 'text-center' },
+                { data: 'ip_addr_server', name: 'ip_addr_server', class: 'text-center' },
                 {
                     data: 'date_verification_3',
                     name: 'date_verification_3',
@@ -669,25 +659,13 @@
                 {
                     data: 'types_req',
                     name: 'types_req',
-                    class: 'text-center',
-                    render: function(data, type, row) {
-                        // Define options based on the integer value of types_req
-                        switch (data) {
-                            case 1:
-                                return 'New Application';
-                            case 2:
-                                return 'Service Termination';
-                            case 3:
-                                return 'Onboarding Agency';
-                            default:
-                                return 'Unknown';
-                        }
-                    }
+                    class: 'text-center'
                 },
                 { data: 'agencies', name: 'agencies', class: 'text-center' },
                 { data: 'project_name', name: 'project_name', class: 'text-center' },
                 { data: 'smtp_relay_auth_method', name: 'smtp_relay_auth_method', class: 'text-center' },
                 { data: 'smtp_port', name: 'smtp_port', class: 'text-center' },
+                { data: 'ip_addr_server', name: 'ip_addr_server', class: 'text-center' },
                 {
                     data: 'date_verification_3',
                     name: 'date_verification_3',
@@ -895,83 +873,83 @@
                         $('#totalIP').text(response.totalIP || "0");
                         $('#totalDeactivated').text(response.totalDeactivated || "0");
                         $('#totalDomain').text(response.totalDomain || "0");
+console.log(response);
+                        // Combining iteration over both tables
+                            $.each([response.dataTbl1, response.dataTbl2], function (tableIndex, dataTable) {
+                                $.each(dataTable, function (index, row) {
+                                    row['DT_RowIndex'] = index + 1;
 
-                        // Add index to each row
-                        $.each(response.dataTbl1, function (index, row) {
-                            row['DT_RowIndex'] = index + 1;
-                            switch (row['smtp_relay_auth_method']) {
-                                case 1:
-                                    row['smtp_relay_auth_method'] = 'IP Based Authentication Relay';
-                                    break;
-                                case 2:
-                                    row['smtp_relay_auth_method'] = 'Username/Password Authentication Relay';
-                                    break;
-                            }
-                            switch (row['smtp_port']) {
-                                case 0:
-                                    row['smtp_port'] = 'Not Answered';
-                                    break;
-                                case 1:
-                                    row['smtp_port'] = '25/tcp';
-                                    break;
-                                case 2:
-                                    row['smtp_port'] = '465/tcp';
-                                    break;
-                                case 3:
-                                    row['smtp_port'] = '587/tcp';
-                                    break;
-                                case 4:
-                                    row['smtp_port'] = '25/tcp & 465/tcp';
-                                    break;
-                                case 5:
-                                    row['smtp_port'] = '25/tcp & 587/tcp';
-                                    break;
-                                case 6:
-                                    row['smtp_port'] = '465/tcp & 587/tcp';
-                                    break;
-                                case 7:
-                                    row['smtp_port'] = 'All';
-                                    break;
-                            }
-                        });
+                                    // Determine the prefix for the switch statements based on the table index
+                                    var prefix = (tableIndex === 0) ? "Request" : "RequestIp";
+                                    var typ_req = "Request"+row['types_req'];
+                                    // Switch statement for 'types_req'
+                                    switch (typ_req) {
+                                        case "Request1":
+                                            row['types_req'] = 'New Application';
+                                            break;
+                                        case "Request2":
+                                            row['types_req'] = 'Service Termination';
+                                            break;
+                                        case "Request3":
+                                            row['types_req'] = 'Onboarding Agency';
+                                            break;
+                                        default:
+                                            console.log("Unknown types_req:", row['types_req']);
+                                            row['types_req'] = 'Unknown';
+                                    }
 
-                        $.each(response.dataTbl2, function (index, row) {
-                            row['DT_RowIndex'] = index + 1;
-                            switch (row['smtp_relay_auth_method']) {
-                                case 1:
-                                    row['smtp_relay_auth_method'] = 'IP Based Authentication Relay';
-                                    break;
-                                case 2:
-                                    row['smtp_relay_auth_method'] = 'Username/Password Authentication Relay';
-                                    break;
-                            }
-                            switch (row['smtp_port']) {
-                                case 0:
-                                    row['smtp_port'] = 'Not Answered';
-                                    break;
-                                case 1:
-                                    row['smtp_port'] = '25/tcp';
-                                    break;
-                                case 2:
-                                    row['smtp_port'] = '465/tcp';
-                                    break;
-                                case 3:
-                                    row['smtp_port'] = '587/tcp';
-                                    break;
-                                case 4:
-                                    row['smtp_port'] = '25/tcp & 465/tcp';
-                                    break;
-                                case 5:
-                                    row['smtp_port'] = '25/tcp & 587/tcp';
-                                    break;
-                                case 6:
-                                    row['smtp_port'] = '465/tcp & 587/tcp';
-                                    break;
-                                case 7:
-                                    row['smtp_port'] = 'All';
-                                    break;
-                            }
-                        });
+                                    // Switch statement for 'smtp_relay_auth_method'
+                                    switch (row['smtp_relay_auth_method']) {
+                                        case 1:
+                                            row['smtp_relay_auth_method'] = 'IP Based Authentication Relay';
+                                            break;
+                                        case 2:
+                                            row['smtp_relay_auth_method'] = 'Username/Password Authentication Relay';
+                                            break;
+                                        default:
+                                            console.log("Unknown smtp_relay_auth_method:", row['smtp_relay_auth_method']);
+                                            row['smtp_relay_auth_method'] = '';
+                                    }
+
+                                    // Switch statement for 'smtp_port'
+                                    switch (row['smtp_port']) {
+                                        case 0:
+                                            row['smtp_port'] = 'Not Answered';
+                                            break;
+                                        case 1:
+                                            row['smtp_port'] = '25/tcp';
+                                            break;
+                                        case 2:
+                                            row['smtp_port'] = '465/tcp';
+                                            break;
+                                        case 3:
+                                            row['smtp_port'] = '587/tcp';
+                                            break;
+                                        case 4:
+                                            row['smtp_port'] = '25/tcp & 465/tcp';
+                                            break;
+                                        case 5:
+                                            row['smtp_port'] = '25/tcp & 587/tcp';
+                                            break;
+                                        case 6:
+                                            row['smtp_port'] = '465/tcp & 587/tcp';
+                                            break;
+                                        case 7:
+                                            row['smtp_port'] = 'All';
+                                            break;
+                                        default:
+                                            console.log("Unknown smtp_port:", row['smtp_port']);
+                                            row['smtp_port'] = '';
+                                    }
+
+                                    console.log('After switch:', row);
+                                });
+                            });
+
+                            // Drawing the tables
+                            table.clear().rows.add(response.dataTbl1).draw();
+                            table4.clear().rows.add(response.dataTbl2).draw();
+
 
                         $.each(response.data2, function (index, row) {
                             row['DT_RowIndex2'] = index + 1;
@@ -983,9 +961,7 @@
                             row['types_req'] = row['types_req'] === 2 ? 'Activated' : 'Deactivated';
                         });
 
-                        // Clear existing data and add new data to the DataTable
-                        table.clear().rows.add(response.dataTbl1).draw();
-                        table4.clear().rows.add(response.dataTbl2).draw();
+
                         table2.clear().rows.add(response.data2).draw();
                         table3.clear().rows.add(response.data3).draw();
 

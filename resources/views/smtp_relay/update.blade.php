@@ -386,11 +386,11 @@
 
                     if (selectedValuetype_req == 1) {
                         // Construct your command
-                        command = `grep -q '^${ipAddress} ' /opt/cluster/postfix/access_list && echo "IP address already Registered!"`;
+                        command = `grep -q '^${ipAddress}' /opt/cluster/postfix/access_list && echo "IP address already Registered!"`;
                     }
                     if (selectedValuetype_req == 2) {
                         // Construct your command
-                        command = `grep -q '^#${ipAddress} ' /opt/cluster/postfix/access_list && echo "IP address already Terminated!"`;
+                        command = `grep -q '^#${ipAddress}' /opt/cluster/postfix/access_list && echo "IP address already Terminated!"`;
                     }
 
                     // Send the command through the WebSocket if it's not empty
@@ -486,13 +486,6 @@
         dateBInput.addEventListener('change', compareDates);
         dateCInput.addEventListener('change', compareDates2);
         dateDInput.addEventListener('change', compareDates3);
-
-    // dateForm.addEventListener('submit',function(event){
-    //     if (!compareDates()){
-    //         event.preventDefault();
-    //         messageDiv.textContent = "Please correct the Dates before submitting";
-    //     }
-    // });
 
     $(".select2").select2();
 
@@ -651,44 +644,6 @@
         }
     });
     });
-
-    // $('#dynamic-inputs-container').on('input', '#ip_addr_server', function() {
-
-    //     var type_req = document.getElementById("types_req");
-    //     var selectBox = document.getElementById("smtp_relay_server");
-    //     var selectedValue = selectBox.options[selectBox.selectedIndex].value;
-    //     var selectedValuetype_req = type_req.options[type_req.selectedIndex].value;
-    //     var ipAddress = $(this).val();
-
-    //     if (/^(?:[0-9]{1,3}\.){3}[0-9]{1,3}$/.test(ipAddress)) {
-    //         // Send AJAX request
-    //         $.ajax({
-    //             type: 'POST',
-    //             url: '{{ route("check.ip.address") }}', // Replace with your route name
-    //             data: {
-    //                 '_token': '{{ csrf_token() }}',
-    //                 'tableSpmr': [{
-    //                     'ipaddress': ipAddress
-    //                 }],
-    //                 'selectedValue': selectedValue,
-    //                 'selectedValuetype_req': selectedValuetype_req
-    //             },
-    //             success: function(response) {
-    //                 //console.log(response);
-    //                 $('#resultContainer').html(response);
-
-    //             },
-    //             error: function(xhr, status, error) {
-    //                 console.error(xhr.responseText);
-    //             }
-    //         });
-
-    //     }else {
-    //         // Clear result container if input is invalid
-    //         $('#resultContainer').empty();
-    //     }
-
-    // });
 
     document.addEventListener('DOMContentLoaded', function() {
         // The smtpPort value passed from PHP to JavaScript
