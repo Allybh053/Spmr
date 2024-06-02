@@ -30,6 +30,11 @@
                 @csrf
 
                 <div class="mb-3">
+                    <label for="name">Ministry Code Name</label>
+                    <input class="form-control" id="code_name" name="code_name" type="text" placeholder="" value="" required>
+                </div>
+
+                <div class="mb-3">
                     <label for="name">Ministry Name</label>
                     <input class="form-control" id="name" name="name" type="text" placeholder="" value="" required>
                 </div>
@@ -41,8 +46,8 @@
                     <label for="status">Status</label>
                     <select class="form-control select2" name="status" id="status" required>
                         <option selected disabled>Select Status</option>
-                        <option value="1">Active</option>
-                        <option value="2">In Active</option>
+                        <option value="1" selected>Active</option>
+                        <option value="2">Inactive</option>
                     </select>
                 </div>
                 <div class="mb-3 text-center">
@@ -56,4 +61,9 @@
             </div>
         </div>
     </main>
+    <style>
+        label {
+            font-weight: bold;
+        }
+    </style>
 @endsection

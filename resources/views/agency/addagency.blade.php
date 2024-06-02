@@ -30,6 +30,15 @@
                 @csrf
 
                 <div class="mb-3">
+                    <label for="name">Ministry Name</label>
+                    <select class="form-control select2" name="code_name" id="code_name" required>
+                        <option disabled selected>Select Ministry</option>
+                        @foreach ($ministry as $ministry)
+                        <option value="{{ $ministry['code_name'] }}">{{ $ministry['name'] }}</option>
+                        @endforeach
+                    </select>
+                </div>
+                <div class="mb-3">
                     <label for="name">Agency Name</label>
                     <input class="form-control" id="name" name="name" type="text" placeholder="" value="" required>
                 </div>
@@ -40,8 +49,7 @@
                 <div class="mb-3">
                     <label for="status">Status</label>
                     <select class="form-control select2" name="status" id="status" required>
-                        <option selected disabled>Select Status</option>
-                        <option value="1">Active</option>
+                        <option value="1" selected>Active</option>
                         <option value="2">In Active</option>
                     </select>
                 </div>
@@ -56,4 +64,17 @@
             </div>
         </div>
     </main>
+
+    <style>
+        label {
+            font-weight: bold;
+        }
+    </style>
 @endsection
+@push('script')
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+<link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+<script src="https://ajax.aspnetcdn.com/ajax/jquery.validate/1.19.2/jquery.validate.min.js"></script>
+@endpush

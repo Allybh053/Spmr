@@ -167,7 +167,7 @@
 function handleEmailChange() {
     const emailInput = document.getElementById('email');
     let emailValue = emailInput.value;
-    emailValue = emailValue.replace(/[@._-]/g, '');
+    emailValue = emailValue.replace(/[_-]/g, '');
 
     const usernameInput = document.getElementById('username');
     usernameInput.value = emailValue;

@@ -880,4 +880,11 @@ class SmtpRelayController extends Controller
         return response()->file($path);
     }
 
+    public function getAgency($ministry){
+
+        $agency = Agency::where('code_name', $ministry)->pluck('name', 'id');
+        return response()->json($agency);
+
+    }
+
 }
