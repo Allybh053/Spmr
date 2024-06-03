@@ -167,31 +167,42 @@ class RoleController extends Controller
 
         // Check if the role exists
         if ($role) {
-            // Capture the role's attributes for auditing before deleting it
-            $oldValues = $role->getAttributes();
+            // Check if there are any users assigned to this role
+            $usersWithRole = $role->users()->count();
 
-            // Delete the role
-            $role->delete();
+            if ($usersWithRole > 0) {
+                // Users are assigned to this role, prevent deletion
+                return response()->json(['error' => '1', 'message' => 'Cannot delete role. Users are assigned to it.'], 404);
+            } else {
+                // No users are assigned to this role, proceed with deletion
+                // Capture the role's attributes for auditing before deleting it
+                $oldValues = $role->getAttributes();
 
-            // Create an audit log for the deletion
-            $audit = new Audit();
-            $audit->auditable_type = Role::class;
-            $audit->auditable_id = $request->id;
-            $audit->user_id = Auth::user()->id;
-            $audit->old_values = json_encode($oldValues);
-            $audit->new_values = null; // Since the role is deleted, there are no new values
-            $audit->event = 'deleted';
-            $audit->url = $request->fullUrl();
-            $audit->ip_address = $request->ip();
-            $audit->user_agent = $request->userAgent();
-            $audit->tags = json_encode(['manual-audit']);
-            $audit->save();
+                // Delete the role
+                $role->delete();
 
-            return response()->json(['success' => '1', 'redirect' => route('setup.role.index'), 'message' => 'Role deleted successfully.']);
+                // Create an audit log for the deletion
+                $audit = new Audit();
+                $audit->auditable_type = Role::class;
+                $audit->auditable_id = $request->id;
+                $audit->user_id = Auth::user()->id;
+                $audit->old_values = json_encode($oldValues);
+                $audit->new_values = null; // Since the role is deleted, there are no new values
+                $audit->event = 'deleted';
+                $audit->url = $request->fullUrl();
+                $audit->ip_address = $request->ip();
+                $audit->user_agent = $request->userAgent();
+                $audit->tags = json_encode(['manual-audit']);
+                $audit->save();
+
+                return response()->json(['success' => '1', 'redirect' => route('setup.role.index'), 'message' => 'Role deleted successfully.']);
+            }
+        } else {
+            // Role does not exist
+            return response()->json(['error' => '1', 'message' => 'Role not found.'], 404);
         }
 
-        // If the role does not exist, return an error response
-        return response()->json(['error' => '1', 'message' => 'Role not found.'], 404);
+
     }
 
     private function clearCacheAndAutoload()
