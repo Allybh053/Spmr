@@ -49,6 +49,7 @@
                         <thead>
                             <tr>
                                 <th>No</th>
+                                <th>Ministry Name</th>
                                 <th>Agency Code Name</th>
                                 <th>Name</th>
                                 <th>Remark</th>
@@ -61,6 +62,7 @@
                              @foreach ($agencies as $agency)
                             <tr>
                                 <td>{{ $loop->iteration }}.</td>
+                                <td>{{ $agency->ministry_name }}</td>
                                 <td>{{ $agency->code_name }}</td>
                                 <td>{{ $agency->name }}</td>
                                 <td>{{ $agency->remark }}</td>

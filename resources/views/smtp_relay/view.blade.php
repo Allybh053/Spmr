@@ -81,12 +81,12 @@
                 </div>
                 <div class="mb-3">
                     <label for="ministry">Ministry</label>
-                    <p>{{ $datasmtp->ministry }}</p>
+                    <p>{{ $datasmtp->ministry_name }}</p>
                 </div>
                 <div class="row gx-3 mb-3">
                     <div class="col-md-6">
                         <label for="agency">Agency</label>
-                        <p>{{ $datasmtp->agencies}}</p>
+                        <p>{{ $datasmtp->agencies_name}}</p>
                     </div>
                     <div class="col-md-6">
                         <label for="departowner">Department/Division/Unit</label>

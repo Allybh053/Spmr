@@ -87,7 +87,14 @@ class MainRelayController extends Controller
     }
 
     public function papar($id, $type){
-        $datasmtp = SmtpRelayReqForm::where('id', $id)->where('types_req', $type)->first();
+
+        $datasmtp = SmtpRelayReqForm::select('smtp_relay_req_form.*','ministrys.name as ministry_name','agencies.name as agencies_name')
+        ->leftJoin('ministrys','ministrys.id','smtp_relay_req_form.ministry')
+        ->leftJoin('agencies','agencies.id','smtp_relay_req_form.agencies')
+        ->where('smtp_relay_req_form.id', $id)
+        ->where('smtp_relay_req_form.types_req', $type)
+        ->first();
+
         $details = smtp_relay_server::where('form_id', $datasmtp->form_id)
                     ->where('types_req', $datasmtp->types_req)
                     ->get();

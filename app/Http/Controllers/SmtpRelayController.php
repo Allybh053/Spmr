@@ -64,8 +64,9 @@ class SmtpRelayController extends Controller
         //     ->leftJoin('smtp_relay_server', 'smtp_relay_req_form.form_id', '=', 'smtp_relay_server.form_id');
 
 
-        $query = smtp_relay_server::select('smtp_relay_req_form.updated_at as updated_at','smtp_relay_req_form.form_id as formA', 'smtp_relay_req_form.ticket_id', 'smtp_relay_req_form.agencies', 'smtp_relay_req_form.project_name', 'smtp_relay_req_form.smtp_relay_server', 'smtp_relay_req_form.date_verification_3', 'smtp_relay_server.types_req as typeB', 'smtp_relay_server.ip_addr_server','smtp_relay_server.id as detailID', 'smtp_relay_server.smtpid','smtp_relay_server.created_at as created_at', 'smtp_relay_server.server_name', 'smtp_relay_req_form.status as status')
+        $query = smtp_relay_server::select('smtp_relay_req_form.updated_at as updated_at','smtp_relay_req_form.form_id as formA', 'smtp_relay_req_form.ticket_id', 'agencies.name as agencies', 'smtp_relay_req_form.project_name', 'smtp_relay_req_form.smtp_relay_server', 'smtp_relay_req_form.date_verification_3', 'smtp_relay_server.types_req as typeB', 'smtp_relay_server.ip_addr_server','smtp_relay_server.id as detailID', 'smtp_relay_server.smtpid','smtp_relay_server.created_at as created_at', 'smtp_relay_server.server_name', 'smtp_relay_req_form.status as status')
                 ->leftJoin('smtp_relay_req_form', 'smtp_relay_req_form.id', '=', 'smtp_relay_server.smtpid')
+                ->leftJoin('agencies','agencies.id','agencies.id')
                 ->orderby('smtp_relay_req_form.status','asc')
                 ->orderBy('created_at', 'desc');
 
@@ -635,10 +636,21 @@ class SmtpRelayController extends Controller
     }
 
     public function papar($id, $type){
-        $datasmtp = SmtpRelayReqForm::where('form_id', $id)->where('types_req', $type)->first();
+
+
+        $datasmtp = SmtpRelayReqForm::select('smtp_relay_req_form.*','ministrys.name as ministry_name','agencies.name as agencies_name')
+        ->leftJoin('ministrys','ministrys.id','smtp_relay_req_form.ministry')
+        ->leftJoin('agencies','agencies.id','smtp_relay_req_form.agencies')
+        ->where('form_id', $id)
+        ->where('types_req', $type)
+        ->first();
+
+
         $details = smtp_relay_server::where('form_id', $datasmtp->form_id)
                     ->where('types_req', $datasmtp->types_req)
                     ->get();
+
+
         $attachment = HistoryCopyAttachment::select('sm.upload_copy_attachment','history_copy_attachment.attachment_path')
         ->leftJoin('smtp_relay_req_form as sm','sm.id','history_copy_attachment.form_id')
         ->where('sm.id',$datasmtp->id)
@@ -647,14 +659,20 @@ class SmtpRelayController extends Controller
     }
 
     public function kemaskini(Request $request,$id, $type){
+
         $user = Auth::user();
-        $formsmtp = SmtpRelayReqForm::find($id);
+        $formsmtp = SmtpRelayReqForm::select('smtp_relay_req_form.*','ministrys.name as ministry_name','agencies.name as agencies_name')
+        ->leftJoin('ministrys','ministrys.id','smtp_relay_req_form.ministry')
+        ->leftJoin('agencies','agencies.id','smtp_relay_req_form.agencies')
+        ->where('smtp_relay_req_form.id', $id)
+        ->first();
+        //find($id);
         $details = smtp_relay_server::where('form_id', '=', $formsmtp->form_id)->where('types_req',$type)->get();
         $serversArray = Server::leftJoin('role_servers as rs','servers.id','rs.server_id')
         ->where('rs.role_id',$user->roles->pluck('id')->first())
         ->where('servers.status',1)
         ->orderBy('servers.id', 'asc')->get()->toArray();
-        //$domainsArray = DomainMinistryAgencies::take(10)->get()->toArray();
+
         $domainsArray = DomainMinistryAgencies::where('enabled', 1)->get()->toArray();
         $departmentsArray = Department::where('status', 1)->get()->toArray();
         $positionsArray = Position::where('status', 1)->get()->toArray();
