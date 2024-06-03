@@ -34,7 +34,20 @@
         </header>
         <!-- Main page content-->
         <div class="container-fluid px-4">
-            @if(request()->has('success'))
+            @if(session('success'))
+            <script>
+                document.addEventListener('DOMContentLoaded', function() {
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Success!',
+                        text: '{{ session('success') }}',
+                        showConfirmButton: false,
+                        timer: 2500 // milliseconds
+                    });
+                });
+            </script>
+            @endif
+            {{-- @if(request()->has('success'))
             <script>
                 document.addEventListener('DOMContentLoaded', function () {
                     Swal.fire({
@@ -46,7 +59,7 @@
                     });
                 });
             </script>
-            @endif
+            @endif --}}
             <div class="card">
                  <div class="card-header">List SMTP Relay Request MyGovUC</div>
                 <div class="card-body">
