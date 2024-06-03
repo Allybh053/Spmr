@@ -23,7 +23,7 @@
                                 <div class="card shadow-lg border-0 rounded-lg mt-5">
                                     {{--<div class="card-header justify-content-center text-center"><h3 class="fw-light my-4">SPMR</h3></div>--}}
                                     <div class="card-header justify-content-center text-center">
-                                        <img class="img-fluid" src="{{ asset('assets/img/mygovuc3.0.png') }}" alt="MyGovUC 3.0">
+                                        <img class="img-fluid" src="{{ asset('assets/img/mygovuc-logo.png') }}" alt="MyGovUC" style="width: 431px; height: auto;">
                                         <h3 class="my-4"><b>SISTEM PENGURUSAN MAIL RELAY <span>(SPMR)</span></b></h3>
                                     </div>
                                     <div class="card-body">
