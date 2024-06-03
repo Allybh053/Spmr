@@ -31,9 +31,13 @@
                         <div class="mb-3">
                             <label for="name">Ministry Code</label>
                             <select class="form-control select2" name="ministry" id="ministry" required>
-                                <option value="{{ $ministry1->id }}">{{ $ministry1->name }}</option>
+                                @if(isset($ministry1->id))
+                                    <option value="{{ $ministry1->id }}">{{ $ministry1->name }}</option>
+                                @else
+                                    <option value="">Select Ministry</option>
+                                @endif
                                 @foreach ($ministry as $ministry)
-                                <option value="{{ $ministry['id'] }}">{{ $ministry['name'] }}</option>
+                                <option value="{{ $ministry->id }}">{{ $ministry->name }}</option>
                                 @endforeach
                             </select>
                         </div>
