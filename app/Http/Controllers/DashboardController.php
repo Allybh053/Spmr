@@ -94,16 +94,20 @@ class DashboardController extends Controller
         $serverListAgencies = [];
         $listServerAgencies = Server::whereIn('id', $serverIds)->where('status', 1)->orderBy('id', 'asc')->get();
         foreach ($listServerAgencies as $serverAgencies) {
-            $dataSmtpFormAgencies = SmtpRelayReqForm::select('smtp_relay_req_form.agencies','agencies.code_name','agencies.name', DB::raw('COUNT(smtp_relay_req_form.agencies) as total_agencies'))
-                ->leftJoin('smtp_relay_server as srs', 'srs.form_id', '=', 'smtp_relay_req_form.form_id')
-                ->leftJoin('agencies','agencies.id','smtp_relay_req_form.agencies')
-                ->where('smtp_relay_req_form.smtp_relay_server', $serverAgencies->hostname)
-                ->where('smtp_relay_req_form.status', 1)
-                ->groupBy('smtp_relay_req_form.agencies','agencies.code_name','agencies.name')
-                ->orderByDesc('total_agencies') // Order by total agencies count in descending order
-                ->limit(5) // Limit the result to top 5 agencies
-                ->get();
-
+            $dataSmtpFormAgencies = SmtpRelayReqForm::select(
+                DB::raw('COALESCE(agencies.code_name::text, ministrys.code_name) as code_name'),
+        DB::raw('COALESCE(agencies.name::text, ministrys.name) as name'),
+        DB::raw('COUNT(COALESCE(smtp_relay_req_form.agencies::bigint, ministrys.id)) as total_agencies')
+    )
+            ->leftJoin('smtp_relay_server as srs', 'srs.form_id', '=', 'smtp_relay_req_form.form_id')
+            ->leftJoin('agencies', 'agencies.id',  DB::raw('CAST(smtp_relay_req_form.agencies AS bigint)'))
+            ->leftJoin('ministrys', 'ministrys.id',   DB::raw('CAST(smtp_relay_req_form.ministry AS bigint)'))// Left join with ministry table
+            ->where('smtp_relay_req_form.smtp_relay_server', $serverAgencies->hostname)
+            ->where('smtp_relay_req_form.status', 1)
+            ->groupBy('agencies.code_name', 'ministrys.code_name', 'agencies.name', 'ministrys.name') // Specify table aliases for code_name and name columns
+            ->orderByDesc('total_agencies') // Order by total agencies count in descending order
+            ->limit(5) // Limit the result to top 5 agencies
+            ->get();
             $agenciesData = [];
             foreach ($dataSmtpFormAgencies as $data) {
                 $agenciesData[] = [
