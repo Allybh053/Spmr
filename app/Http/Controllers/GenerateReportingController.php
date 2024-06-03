@@ -16,6 +16,7 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\File;
 use function Laravel\Prompts\search;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\DB;
 
 class GenerateReportingController extends Controller
 {
@@ -63,8 +64,9 @@ class GenerateReportingController extends Controller
         $serverMailRelay = Server::find($serverIds);
         $serverName = $serverMailRelay->hostname;
 
-        $dataSmtpFormIpActive = SmtpRelayReqForm::select('smtp_relay_req_form.*', 'smr.*')
+        $dataSmtpFormIpActive = SmtpRelayReqForm::select('smtp_relay_req_form.*', 'smr.*','agencies.name as agenciesName')
                                 ->leftJoin('smtp_relay_server as smr','smr.form_id','smtp_relay_req_form.form_id')
+                                ->leftJoin('agencies','agencies.id',DB::raw('CAST(smtp_relay_req_form.agencies AS bigint)'))
                                 ->when(isset($calendarType) && $calendarType == 'date', function ($query) use ($dateType) {
                                     $timestamp = strtotime($dateType);
                                     $formattedDate = date("Y-m-d H:i:s", $timestamp);
@@ -98,13 +100,14 @@ class GenerateReportingController extends Controller
                                 })
                                 ->where('smtp_relay_req_form.status', 1)
                                 ->where('smtp_relay_req_form.smtp_relay_server', $serverName)
-                                ->where('smtp_relay_req_form.smtp_relay_auth_method', 1)
+                                ->where('smr.types_req', 1)
                                 ->get();
 
         $dataSmtpFormIpActiveCount = $dataSmtpFormIpActive->count();
 
-        $dataSmtpFormIpDeactive = SmtpRelayReqForm::select('smtp_relay_req_form.*', 'smr.*')
+        $dataSmtpFormIpDeactive = SmtpRelayReqForm::select('smtp_relay_req_form.*', 'smr.*','agencies.name as agenciesName')
                                     ->leftJoin('smtp_relay_server as smr','smr.form_id','smtp_relay_req_form.form_id')
+                                    ->leftJoin('agencies','agencies.id',DB::raw('CAST(smtp_relay_req_form.agencies AS bigint)'))
                                     ->when(isset($calendarType) && $calendarType == 'date', function ($query) use ($dateType) {
                                         $timestamp = strtotime($dateType);
                                         $formattedDate = date("Y-m-d H:i:s", $timestamp);
@@ -138,14 +141,15 @@ class GenerateReportingController extends Controller
                                     })
                                     ->where('smtp_relay_req_form.status', 1)
                                     ->where('smtp_relay_req_form.smtp_relay_server', $serverName)
-                                    ->where('smtp_relay_req_form.smtp_relay_auth_method', 2)
+                                    ->where('smr.types_req', 2)
                                     ->get();
 
         $dataSmtpFormIpDeactiveCount = $dataSmtpFormIpDeactive->count();
 
 
-        $dataSmtpFormSasl = SmtpRelayReqForm::select('smtp_relay_req_form.*', 'smr.*')
+        $dataSmtpFormSasl = SmtpRelayReqForm::select('smtp_relay_req_form.*', 'smr.*','agencies.name as agenciesName')
                             ->leftJoin('smtp_relay_server as smr','smr.form_id','smtp_relay_req_form.form_id')
+                            ->leftJoin('agencies','agencies.id',DB::raw('CAST(smtp_relay_req_form.agencies AS bigint)'))
                             ->when(isset($calendarType) && $calendarType == 'date', function ($query) use ($dateType) {
                                 $timestamp = strtotime($dateType);
                                 $formattedDate = date("Y-m-d H:i:s", $timestamp);
@@ -182,8 +186,9 @@ class GenerateReportingController extends Controller
                             ->where('smtp_relay_req_form.smtp_relay_auth_method', 2)
                             ->get();
 
-        $dataSmtpFormIpBased = SmtpRelayReqForm::select('smtp_relay_req_form.*', 'smr.*')
+        $dataSmtpFormIpBased = SmtpRelayReqForm::select('smtp_relay_req_form.*', 'smr.*','agencies.name as agenciesName')
                             ->leftJoin('smtp_relay_server as smr','smr.form_id','smtp_relay_req_form.form_id')
+                            ->leftJoin('agencies','agencies.id',DB::raw('CAST(smtp_relay_req_form.agencies AS bigint)'))
                             ->when(isset($calendarType) && $calendarType == 'date', function ($query) use ($dateType) {
                                 $timestamp = strtotime($dateType);
                                 $formattedDate = date("Y-m-d H:i:s", $timestamp);

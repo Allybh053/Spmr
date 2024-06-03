@@ -456,7 +456,7 @@
                         return meta.row + 1; // This will render the index starting from 1
                     }
                 },
-                { data: 'agencies', name: 'agencies', class: 'text-center' },
+                { data: 'agenciesName', name: 'agenciesName', class: 'text-center' },
                 { data: 'project_name', name: 'project_name', class: 'text-center' },
                 { data: 'server_name', name: 'server_name', class: 'text-center' },
                 { data: 'ip_addr_server', name: 'ip_addr_server', class: 'text-center' },
@@ -529,7 +529,7 @@
                         return meta.row + 1; // This will render the index starting from 1
                     }
                 },
-                { data: 'agencies', name: 'agencies', class: 'text-center' },
+                { data: 'agenciesName', name: 'agenciesName', class: 'text-center' },
                 { data: 'project_name', name: 'project_name', class: 'text-center' },
                 { data: 'server_name', name: 'server_name', class: 'text-center' },
                 { data: 'ip_addr_server', name: 'ip_addr_server', class: 'text-center' },
@@ -608,7 +608,7 @@
                     name: 'types_req',
                     class: 'text-center'
                 },
-                { data: 'agencies', name: 'agencies', class: 'text-center' },
+                { data: 'agenciesName', name: 'agenciesName', class: 'text-center' },
                 { data: 'project_name', name: 'project_name', class: 'text-center' },
                 { data: 'smtp_relay_auth_method', name: 'smtp_relay_auth_method', class: 'text-center' },
                 { data: 'smtp_port', name: 'smtp_port', class: 'text-center' },
@@ -700,7 +700,7 @@
                     name: 'types_req',
                     class: 'text-center'
                 },
-                { data: 'agencies', name: 'agencies', class: 'text-center' },
+                { data: 'agenciesName', name: 'agenciesName', class: 'text-center' },
                 { data: 'project_name', name: 'project_name', class: 'text-center' },
                 { data: 'smtp_relay_auth_method', name: 'smtp_relay_auth_method', class: 'text-center' },
                 { data: 'smtp_port', name: 'smtp_port', class: 'text-center' },
