@@ -129,7 +129,8 @@
                             <th style="width: 5px;">No</th>
                             <th>System Name</th>
                             <th>IP Address</th>
-                            <th>FQDN System</th>
+                            <th>Domain System</th>
+                            <th>MailFrom</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -139,6 +140,7 @@
                             <td>{{ $smtpMailServer -> server_name}}</td>
                             <td>{{ $smtpMailServer -> ip_addr_server }}</td>
                             <td>{{ $smtpMailServer -> fqdn_server }}</td>
+                            <td>{{ $smtpMailServer -> mailfrom }}</td>
                         </tr>
                         @endforeach
                     </tbody>

@@ -138,6 +138,7 @@
                                 <th scope="col">System Name</th>
                                 <th scope="col">IP Address</th>
                                 <th scope="col">Domain System</th>
+                                <th scope="col">MailFrom</th>
                                 <th scope="col">Actions</th>
                             </tr>
                         </thead>
@@ -152,6 +153,7 @@
                                     </td>
                                     <td><input type="text" name="tableSpmr[{{ $loop->index }}][ip_addr_server]" id="ip_addr_server" value="{{ old('tableSpmr.' . $loop->index . '.ip_addr_server', $detail->ip_addr_server) }}" class="form-control" required /></td>
                                     <td><input type="text" name="tableSpmr[{{ $loop->index }}][fqdn_server]" id="fqdn_server" value="{{ old('tableSpmr.' . $loop->index . '.fqdn_server', $detail->fqdn_server) }}" class="form-control" required /></td>
+                                    <td><input type="text" name="tableSpmr[{{ $loop->index }}][mailfrom]" id="mailfrom" value="{{ old('tableSpmr.' . $loop->index . '.mailfrom', $detail->mailfrom) }}" class="form-control" required /></td>
                                     <td hidden><input type="text" name="tableSpmr[{{ $loop->index }}][deactivated]" id="deactivated" value="{{ old('tableSpmr.' . $loop->index . '.deactivated', $detail->deactivated) }}" class="form-control" /></td>
                                     <td><button class="btn btn-danger remove-row"><i class="me-1" data-feather="minus"></i>Remove</button></td>
                                 </tr>
@@ -159,7 +161,7 @@
                         </tbody>
                         <tfoot>
                             <tr>
-                                <th colspan="4" style="text-align: right;">
+                                <th colspan="5" style="text-align: right;">
                                     <button id="add-row-table" type="button" class="btn btn-primary "><i class="me-1" data-feather="plus"></i>Add</button>
                                 </th>
                             </tr>
@@ -190,7 +192,7 @@
                     </div>
                 </div>
                 <div class="row gx-3 mb-3">
-                    <div class="col-md-6">
+                    <div class="col-md-6" hidden @disabled(true)>
                         <label for="mailfrom_email_addr">Email Address System (MAILFROM)</label>
                         <input class="form-control" id="mailfrom_email_addr" name="mailfrom_email_addr" type="text" value="{{ old('mailfrom_email_addr', $formsmtp->mailfrom_email_addr) }}" required/>
                     </div>

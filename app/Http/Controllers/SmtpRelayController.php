@@ -236,62 +236,62 @@ class SmtpRelayController extends Controller
                 $fileName = null;
             }
 
-            $ministry = $request->input('ministry');
-            $agency = $request->input('agency');
+            // $ministry = $request->input('ministry');
+            // $agency = $request->input('agency');
 
-            $existingMinistry = Ministry::where('name', $ministry)->first();
-            if (!$existingMinistry) {
-                Ministry::create([
-                    'name' => $ministry,
-                    'status'=> 1, // You need to provide the domain name here
-                ]);
-            }
+            // $existingMinistry = Ministry::where('name', $ministry)->first();
+            // if (!$existingMinistry) {
+            //     Ministry::create([
+            //         'name' => $ministry,
+            //         'status'=> 1, // You need to provide the domain name here
+            //     ]);
+            // }
 
-            $existingagency = Agency::where('name', $agency)->first();
-            if (!$existingagency) {
-                Agency::create([
-                    'name' => $agency,
-                    'status'=> 1, // You need to provide the domain name here
-                ]);
-            }
+            // $existingagency = Agency::where('name', $agency)->first();
+            // if (!$existingagency) {
+            //     Agency::create([
+            //         'name' => $agency,
+            //         'status'=> 1, // You need to provide the domain name here
+            //     ]);
+            // }
 
-            $departowner = $request->input('departowner');
-            $existingdepartonwer = Department::where('name', $departowner)->first();
-            if(!$existingdepartonwer){
-                Department::create(['name'=>$departowner, 'status'=>1]);
-            }
-            $applicantdepart = $request->input('applicantdepart');
-            $existingapplicantdepart = Department::where('name', $applicantdepart)->first();
-            if(!$existingapplicantdepart){
-                Department::create(['name'=>$applicantdepart, 'status'=>1]);
-            }
-            $verifierdepart = $request->input('verifierdepart');
-            $existingverifierdepart = Department::where('name', $verifierdepart)->first();
-            if(!$existingverifierdepart){
-                Department::create(['name'=>$verifierdepart, 'status'=>1]);
-            }
-            $approvaldepart = $request->input('approvaldepart');
-            $existingapprovaldepart = Department::where('name', $approvaldepart)->first();
-            if(!$existingapprovaldepart){
-                Department::create(['name'=>$approvaldepart, 'status'=>1]);
-            }
+            // $departowner = $request->input('departowner');
+            // $existingdepartonwer = Department::where('name', $departowner)->first();
+            // if(!$existingdepartonwer){
+            //     Department::create(['name'=>$departowner, 'status'=>1]);
+            // }
+            // $applicantdepart = $request->input('applicantdepart');
+            // $existingapplicantdepart = Department::where('name', $applicantdepart)->first();
+            // if(!$existingapplicantdepart){
+            //     Department::create(['name'=>$applicantdepart, 'status'=>1]);
+            // }
+            // $verifierdepart = $request->input('verifierdepart');
+            // $existingverifierdepart = Department::where('name', $verifierdepart)->first();
+            // if(!$existingverifierdepart){
+            //     Department::create(['name'=>$verifierdepart, 'status'=>1]);
+            // }
+            // $approvaldepart = $request->input('approvaldepart');
+            // $existingapprovaldepart = Department::where('name', $approvaldepart)->first();
+            // if(!$existingapprovaldepart){
+            //     Department::create(['name'=>$approvaldepart, 'status'=>1]);
+            // }
 
-            $applicantposition = $request->input('applicantposition');
-            $existingapplicantposition = Position::where('name', $applicantposition)->first();
-            if(!$existingapplicantposition){
-                Position::create(['name'=>$applicantposition, 'status'=>1]);
-            }
-            $verifierposition = $request->input('verifierposition');
-            $existingverifierposition = Position::where('name', $verifierposition)->first();
-            if(!$existingverifierposition){
-                Position::create(['name'=>$verifierposition, 'status'=>1]);
-            }
+            // $applicantposition = $request->input('applicantposition');
+            // $existingapplicantposition = Position::where('name', $applicantposition)->first();
+            // if(!$existingapplicantposition){
+            //     Position::create(['name'=>$applicantposition, 'status'=>1]);
+            // }
+            // $verifierposition = $request->input('verifierposition');
+            // $existingverifierposition = Position::where('name', $verifierposition)->first();
+            // if(!$existingverifierposition){
+            //     Position::create(['name'=>$verifierposition, 'status'=>1]);
+            // }
 
-            $approvalposition =$request->input('approvalposition');
-            $existingapprovalposition = Position::where('name', $approvalposition)->first();
-            if(!$existingapprovalposition){
-                Position::create(['name'=>$approvalposition, 'status'=>1]);
-            }
+            // $approvalposition =$request->input('approvalposition');
+            // $existingapprovalposition = Position::where('name', $approvalposition)->first();
+            // if(!$existingapprovalposition){
+            //     Position::create(['name'=>$approvalposition, 'status'=>1]);
+            // }
 
             // Create the user with the validated data
             $formdata = SmtpRelayReqForm::create([
@@ -337,6 +337,7 @@ class SmtpRelayController extends Controller
             $serverNames = $request->input('server_name');
             $ipAddresses = $request->input('ipaddress');
             $domains = $request->input('domain');
+            $mailfroms = $request->input('mailfrom');
             $nombor = $request->input('form_id');
             $deactivated = 0;
             $smtpid = $formdata->id;
@@ -353,6 +354,7 @@ class SmtpRelayController extends Controller
                         $ipAddress = $row['ipaddress'] ?? null;
                         $domain = $row['domain'] ?? null;
                         $deactivated = $row['deactivated'] ?? null;
+                        $mailfrom = $row['mailfrom'] ?? null;
 
                         // Create combined data array
                         $combinedData[] = [
@@ -362,7 +364,8 @@ class SmtpRelayController extends Controller
                             'fqdn_server' => $domain,
                             'deactivated' => 0,
                             'types_req' => 1,
-                            'smtpid' => $smtpid
+                            'smtpid' => $smtpid,
+                            'mailfrom' => $mailfrom
                         ];
                     }
                 }
@@ -375,6 +378,7 @@ class SmtpRelayController extends Controller
                         $ipAddress = $row['ipaddress'] ?? null;
                         $domain = $row['domain'] ?? null;
                         $deactivated = $row['deactivated'] ?? null;
+                        $mailfrom = $row['mailfrom'] ?? null;
 
                         // Create combined data array
                         $combinedData[] = [
@@ -384,7 +388,8 @@ class SmtpRelayController extends Controller
                             'fqdn_server' => $domain,
                             'deactivated' => 0,
                             'types_req' => 1,
-                            'smtpid' => $smtpid
+                            'smtpid' => $smtpid,
+                            'mailfrom' => $mailfrom
                         ];
                     }
                 }
@@ -453,62 +458,62 @@ class SmtpRelayController extends Controller
                 $fileName = null;
             }
 
-            $ministry = $request->input('ministry');
-            $agency = $request->input('agency');
+            // $ministry = $request->input('ministry');
+            // $agency = $request->input('agency');
 
-            $existingMinistry = Ministry::where('name', $ministry)->first();
-            if (!$existingMinistry) {
-                Ministry::create([
-                    'name' => $ministry,
-                    'status'=> 1,
-                ]);
-            }
+            // $existingMinistry = Ministry::where('name', $ministry)->first();
+            // if (!$existingMinistry) {
+            //     Ministry::create([
+            //         'name' => $ministry,
+            //         'status'=> 1,
+            //     ]);
+            // }
 
-            $existingagency = Agency::where('name', $agency)->first();
-            if (!$existingagency) {
-                Agency::create([
-                    'name' => $agency,
-                    'status'=> 1,
-                ]);
-            }
+            // $existingagency = Agency::where('name', $agency)->first();
+            // if (!$existingagency) {
+            //     Agency::create([
+            //         'name' => $agency,
+            //         'status'=> 1,
+            //     ]);
+            // }
 
-            $departowner = $request->input('departowner');
-            $existingdepartonwer = Department::where('name', $departowner)->first();
-            if(!$existingdepartonwer){
-                Department::create(['name'=>$departowner, 'status'=>1]);
-            }
-            $applicantdepart = $request->input('applicantdepart');
-            $existingapplicantdepart = Department::where('name', $applicantdepart)->first();
-            if(!$existingapplicantdepart){
-                Department::create(['name'=>$applicantdepart, 'status'=>1]);
-            }
-            $verifierdepart = $request->input('verifierdepart');
-            $existingverifierdepart = Department::where('name', $verifierdepart)->first();
-            if(!$existingverifierdepart){
-                Department::create(['name'=>$verifierdepart, 'status'=>1]);
-            }
-            $approvaldepart = $request->input('approvaldepart');
-            $existingapprovaldepart = Department::where('name', $approvaldepart)->first();
-            if(!$existingapprovaldepart){
-                Department::create(['name'=>$approvaldepart, 'status'=>1]);
-            }
+            // $departowner = $request->input('departowner');
+            // $existingdepartonwer = Department::where('name', $departowner)->first();
+            // if(!$existingdepartonwer){
+            //     Department::create(['name'=>$departowner, 'status'=>1]);
+            // }
+            // $applicantdepart = $request->input('applicantdepart');
+            // $existingapplicantdepart = Department::where('name', $applicantdepart)->first();
+            // if(!$existingapplicantdepart){
+            //     Department::create(['name'=>$applicantdepart, 'status'=>1]);
+            // }
+            // $verifierdepart = $request->input('verifierdepart');
+            // $existingverifierdepart = Department::where('name', $verifierdepart)->first();
+            // if(!$existingverifierdepart){
+            //     Department::create(['name'=>$verifierdepart, 'status'=>1]);
+            // }
+            // $approvaldepart = $request->input('approvaldepart');
+            // $existingapprovaldepart = Department::where('name', $approvaldepart)->first();
+            // if(!$existingapprovaldepart){
+            //     Department::create(['name'=>$approvaldepart, 'status'=>1]);
+            // }
 
-            $applicantposition = $request->input('applicantposition');
-            $existingapplicantposition = Position::where('name', $applicantposition)->first();
-            if(!$existingapplicantposition){
-                Position::create(['name'=>$applicantposition, 'status'=>1]);
-            }
-            $verifierposition = $request->input('verifierposition');
-            $existingverifierposition = Position::where('name', $verifierposition)->first();
-            if(!$existingverifierposition){
-                Position::create(['name'=>$verifierposition, 'status'=>1]);
-            }
+            // $applicantposition = $request->input('applicantposition');
+            // $existingapplicantposition = Position::where('name', $applicantposition)->first();
+            // if(!$existingapplicantposition){
+            //     Position::create(['name'=>$applicantposition, 'status'=>1]);
+            // }
+            // $verifierposition = $request->input('verifierposition');
+            // $existingverifierposition = Position::where('name', $verifierposition)->first();
+            // if(!$existingverifierposition){
+            //     Position::create(['name'=>$verifierposition, 'status'=>1]);
+            // }
 
-            $approvalposition =$request->input('approvalposition');
-            $existingapprovalposition = Position::where('name', $approvalposition)->first();
-            if(!$existingapprovalposition){
-                Position::create(['name'=>$approvalposition, 'status'=>1]);
-            }
+            // $approvalposition =$request->input('approvalposition');
+            // $existingapprovalposition = Position::where('name', $approvalposition)->first();
+            // if(!$existingapprovalposition){
+            //     Position::create(['name'=>$approvalposition, 'status'=>1]);
+            // }
 
             $formdata = SmtpRelayReqForm::create([
                 'form_id'=> $formIds,
@@ -553,6 +558,7 @@ class SmtpRelayController extends Controller
             $serverNames = $request->input('server_name');
             $ipAddresses = $request->input('ipaddress');
             $domains = $request->input('domain');
+            $mailfroms = $request->input('mailfrom');
             $nombor = $formIds;
             $deactivated = 0;
             $jenis = $request->input('type_req');
@@ -570,6 +576,7 @@ class SmtpRelayController extends Controller
                         $ipAddress = $row['ipaddress'] ?? null;
                         $domain = $row['domain'] ?? null;
                         $deactivated = $row['deactivated'] ?? null;
+                        $mailfrom = $row['mailfrom'] ?? null;
 
                         // Create combined data array
                         $combinedData[] = [
@@ -579,6 +586,7 @@ class SmtpRelayController extends Controller
                             'fqdn_server' => $domain,
                             'deactivated' => 0,
                             'types_req' => $jenis,
+                            'mailfrom' => $mailfrom,
                             'smtpid' => $smtpid,
                         ];
                     }
@@ -602,6 +610,7 @@ class SmtpRelayController extends Controller
                             'fqdn_server' => $domain,
                             'deactivated' => 0,
                             'types_req' => $jenis,
+                            'mailfrom' => $mailfrom,
                             'smtpid' => $smtpid,
                         ];
                     }
@@ -690,43 +699,44 @@ class SmtpRelayController extends Controller
             $fileName = null;
         }
 
-        $departowner = $request->input('dept_div_unit');
-        $existingdepartonwer = Department::where('name', $departowner)->first();
-        if(!$existingdepartonwer){
-            Department::create(['name'=>$departowner, 'status'=>1]);
-        }
-        $applicantdepart = $request->input('applicant_dept_div');
-        $existingapplicantdepart = Department::where('name', $applicantdepart)->first();
-        if(!$existingapplicantdepart){
-            Department::create(['name'=>$applicantdepart, 'status'=>1]);
-        }
-        $verifierdepart = $request->input('verifier_1_dept_div');
-        $existingverifierdepart = Department::where('name', $verifierdepart)->first();
-        if(!$existingverifierdepart){
-            Department::create(['name'=>$verifierdepart, 'status'=>1]);
-        }
-        $approvaldepart = $request->input('verifier_3_dept_div');
-        $existingapprovaldepart = Department::where('name', $approvaldepart)->first();
-        if(!$existingapprovaldepart){
-            Department::create(['name'=>$approvaldepart, 'status'=>1]);
-        }
+        // $departowner = $request->input('dept_div_unit');
+        // $existingdepartonwer = Department::where('name', $departowner)->first();
+        // if(!$existingdepartonwer){
+        //     Department::create(['name'=>$departowner, 'status'=>1]);
+        // }
+        // $applicantdepart = $request->input('applicant_dept_div');
+        // $existingapplicantdepart = Department::where('name', $applicantdepart)->first();
+        // if(!$existingapplicantdepart){
+        //     Department::create(['name'=>$applicantdepart, 'status'=>1]);
+        // }
+        // $verifierdepart = $request->input('verifier_1_dept_div');
+        // $existingverifierdepart = Department::where('name', $verifierdepart)->first();
+        // if(!$existingverifierdepart){
+        //     Department::create(['name'=>$verifierdepart, 'status'=>1]);
+        // }
+        // $approvaldepart = $request->input('verifier_3_dept_div');
+        // $existingapprovaldepart = Department::where('name', $approvaldepart)->first();
+        // if(!$existingapprovaldepart){
+        //     Department::create(['name'=>$approvaldepart, 'status'=>1]);
+        // }
 
-        $applicantposition = $request->input('applicant_position');
-        $existingapplicantposition = Position::where('name', $applicantposition)->first();
-        if(!$existingapplicantposition){
-            Position::create(['name'=>$applicantposition, 'status'=>1]);
-        }
-        $verifierposition = $request->input('verifier_1_position');
-        $existingverifierposition = Position::where('name', $verifierposition)->first();
-        if(!$existingverifierposition){
-            Position::create(['name'=>$verifierposition, 'status'=>1]);
-        }
+        // $applicantposition = $request->input('applicant_position');
+        // $existingapplicantposition = Position::where('name', $applicantposition)->first();
+        // if(!$existingapplicantposition){
+        //     Position::create(['name'=>$applicantposition, 'status'=>1]);
+        // }
+        // $verifierposition = $request->input('verifier_1_position');
+        // $existingverifierposition = Position::where('name', $verifierposition)->first();
+        // if(!$existingverifierposition){
+        //     Position::create(['name'=>$verifierposition, 'status'=>1]);
+        // }
 
-        $approvalposition =$request->input('verifier_3_position');
-        $existingapprovalposition = Position::where('name', $approvalposition)->first();
-        if(!$existingapprovalposition){
-            Position::create(['name'=>$approvalposition, 'status'=>1]);
-        }
+        // $approvalposition =$request->input('verifier_3_position');
+        // $existingapprovalposition = Position::where('name', $approvalposition)->first();
+        // if(!$existingapprovalposition){
+        //     Position::create(['name'=>$approvalposition, 'status'=>1]);
+        // }
+
         // Update the main form data
         $formdata = $request->only([
             'ticket_id', 'types_req', 'project_name', 'system_owner_name', 'owner_email_addr', 'owner_phone_number',
@@ -772,6 +782,7 @@ class SmtpRelayController extends Controller
             $existingServer->ip_addr_server = $row['ip_addr_server'];
             $existingServer->server_name = $row['server_name'];
             $existingServer->fqdn_server = $row['fqdn_server'];
+            $existingServer->mailfrom = $row['mailfrom'];
             $existingServer->deactivated = 0; // Set deactivated to 0 if IP address exists
             $existingServer->updated_at = now();
             $existingServer->save();
@@ -789,6 +800,7 @@ class SmtpRelayController extends Controller
                     'ip_addr_server' => $row['ip_addr_server'],
                     'types_req' => $types_req,
                     'fqdn_server' => $row['fqdn_server'],
+                    'mailfrom' => $row['mailfrom'],
                     'deactivated' => 0,
                     'smtpid' => $getid,
                     'created_at' => now(),
