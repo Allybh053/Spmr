@@ -53,36 +53,35 @@
                                     {{--@foreach ($domainsArray as $domain)
                                         <option value="{{ $domain['agencies_name'] }}">{{ $domain['agencies_name'] }}</option>
                                     @endforeach--}}
-                                    @foreach ($ministries as $ministry)
-                                        <option value="{{ $ministry }}">{{ $ministry }}</option>
-                                    @endforeach
+
+                                    @foreach ($ministries as $code => $name)
+                                    <option value="{{ $code }}">{{ $name }}</option>
+                                @endforeach
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label class="small mb-1" for="inputAgencies">Agency/SUK:</label>
+                                <select class="form-control select2" name="agency" id="agency" aria-label="Default select" disabled>
+                                    <option selected disabled>Select Agency/SUK</option>
+
                                 </select>
                             </div>
                         </div>
                         {{-- <div class="col-md-6">
                             <div class="mb-3">
                                 <label class="small mb-1" for="inputAgencies">Agency/SUK:</label>
-                                <select class="form-control select2" name="agency" id="agency" aria-label="Default select" disable>
-                                    <option selected disabled>Select Agency/SUK</option>
-
-                                </select>
-                            </div>
-                        </div> --}}
-                        <div class="col-md-6">
-                            <div class="mb-3">
-                                <label class="small mb-1" for="inputAgencies">Agency/SUK:</label>
                                 {{--{!! Form::select('agency', $agency, isset($applicantInfo) ? $applicantInfo->agencies : null,  ['id'=>'agency', 'name'=>'agency', 'class'=>'form-control select2', 'placeholder'=>config('params.dropdown_default')]) !!}--}}
-                                <select class="form-control select2" name="agency" id="agency" aria-label="Default select">
-                                    <option selected disabled>Select Agency/SUK</option>
-                                    {{--@foreach ($domainsArray as $domain)
-                                        <option value="{{ $domain['agencies_name'] }}">{{ $domain['agencies_name'] }}</option>
-                                    @endforeach--}}
-                                    @foreach ($agencies as $agency)
+                                {{-- <select class="form-control select2" name="agency" id="agency" aria-label="Default select">
+                                    <option selected disabled>Select Agency/SUK</option> --}}
+
+                                    {{-- @foreach ($agencies as $agency)
                                         <option value="{{ $agency }}">{{ $agency }}</option>
                                     @endforeach
                                 </select>
-                            </div>
-                        </div>
+                            </div> --}}
+                        {{-- </div>  --}}
                         <div class="col-md-6">
                             <div class="mb-3" id="calendarSelect">
                                 <label class="small mb-1" for="calendarType">Filter Type:</label>
@@ -411,31 +410,36 @@
         }
     });
 
-       // document.getElementById('ministry').addEventListener('change', function() {
-    //     var ministry = this.value;
-    //     var agencySelect = document.getElementById('agency');
+    $('#ministry').on('change', function() {
+    var selectedValue = $(this).val();
+    var agencySelect = document.getElementById('agency');
 
-    //     // Clear existing options
-    //     agencySelect.innerHTML = '<option selected disabled>Select Agency/SUK</option>';
+    // Clear existing options
+    agencySelect.innerHTML = '<option selected disabled>Select Agency/SUK</option>';
 
-    //     // Enable the agency select
-    //     agencySelect.disabled = false;
+    // Enable the agency select
+    agencySelect.disabled = false;
 
-    //     // Fetch agencies based on the selected ministry
-    //     fetch('/getAgencies?ministry=' + ministry)
-    //         .then(response => response.json())
-    //         .then(data => {
-    //             data.forEach(agency => {
-    //                 var option = document.createElement("option");
-    //                 option.text = agency.name;
-    //                 option.value = agency.id; // or whatever unique identifier you have
-    //                 agencySelect.appendChild(option);
-    //             });
-    //         })
-    //         .catch(error => {
-    //             console.error('Error:', error);
-    //         });
-    // });
+    // Fetch agencies based on the selected ministry using jQuery's ajax method
+    $.ajax({
+        url: '/getAgencies',
+        type: 'POST',
+        data: { ministry: selectedValue },
+        success: function(data) {
+            data.forEach(function(agency) {
+                var option = document.createElement("option");
+                option.text = agency.name;
+                option.value = agency.id; // or whatever unique identifier you have
+                agencySelect.appendChild(option);
+            });
+        },
+        error: function(error) {
+            console.error('Error:', error);
+        }
+    });
+});
+
+
 
         // Initialize DataTable
         var table2 = $('#listAgencyDomain').DataTable({

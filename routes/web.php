@@ -266,7 +266,7 @@ Route::group(['middleware' => ['auth', 'nocache']], function () {
 
     Route::group(['prefix' => 'generate-report'], function () {
         Route::get('/', [GenerateReportingController::class, 'index'])->name('generateReport.index')
-        ->middleware('auth.resource:generate_report_view');
+        ->middleware('auth.resource:agencies_report_view');
         Route::get('/getServer', [GenerateReportingController::class, 'api'])->name('generateReport.api');
         Route::get('/index/searching', [GenerateReportingController::class, 'search'])->name('generateReport.index.search');
     });
@@ -310,7 +310,7 @@ Route::group(['middleware' => ['auth', 'nocache']], function () {
 
     Route::group(['prefix' => 'monthly-report'], function () {
         Route::get('/', [MonthlyReportingController::class, 'index'])->name('monthlyReport.index')
-        ->middleware('auth.resource:monthly_report_view');
+        ->middleware('auth.resource:usage_report_view');
         Route::get('/getServer', [MonthlyReportingController::class, 'api'])->name('monthlyReport.api');
         Route::post('/index/searching', [MonthlyReportingController::class, 'search'])->name('monthlyReport.index.search');
     });

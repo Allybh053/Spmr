@@ -323,9 +323,7 @@
                 </div>
             </div>
 
-
-{{--
-            @foreach ($serverconfig as $server)
+            {{-- @foreach ($serverconfig as $server)
                     <h5>{{ $server->hostname }}</h5>
                     <div class="card-body">
                         <div class="row">
@@ -858,47 +856,47 @@ sockets.forEach((socket, index) => {
 
             $('#statusPostfix' + index).text(outputs[1]);
 
-            // var postfixStatus = outputs[1];
-            // var postfixAlt;
-            // if(postfixStatus == "Postfix is running"){
-            //     postfixStatus = "Online";
-            //     postfixAlt = "Postfix is running";
-            // }else{
-            //     postfixStatus = "Offline";
-            //     postfixAlt = "Postfix is down";
-            // }
-            // var postfixImageSrc = postfixStatus === 'Online' ? 'assets/img/demo/online.png' : 'assets/img/demo/offline.png';
+            var postfixStatus = outputs[1];
+            var postfixAlt;
+            if(postfixStatus == "Postfix is running"){
+                postfixStatus = "Online";
+                postfixAlt = "Postfix is running";
+            }else{
+                postfixStatus = "Offline";
+                postfixAlt = "Postfix is down";
+            }
+            var postfixImageSrc = postfixStatus === 'Online' ? 'assets/img/demo/online.png' : 'assets/img/demo/offline.png';
 
-            // $('#statusPostfixImage'+ index).attr('src', postfixImageSrc).attr('alt', postfixAlt);
+            $('#statusPostfixImage'+ index).attr('src', postfixImageSrc).attr('alt', postfixAlt);
 
             $('#statusFail2ban' + index).text(outputs[2]);
 
             $('#statusWebmin' + index).text(outputs[3]);
-            // var WebminStatus = outputs[3];
-            // var WebminAlt;
-            // if(WebminStatus == "Webmin is running"){
-            //     WebminStatus = "Online";
-            //     WebminAlt = "Webmin is running";
-            // }else{
-            //     WebminStatus = "Offline";
-            //     WebminAlt = "Webmin is down";
-            // }
-            // var WebminImageSrc = WebminStatus === 'Online' ? 'assets/img/demo/online.png' : 'assets/img/demo/offline.png';
-            // $('#statusWebminImage'+ index).attr('src', WebminImageSrc).attr('alt', WebminAlt);
+            var WebminStatus = outputs[3];
+            var WebminAlt;
+            if(WebminStatus == "Webmin is running"){
+                WebminStatus = "Online";
+                WebminAlt = "Webmin is running";
+            }else{
+                WebminStatus = "Offline";
+                WebminAlt = "Webmin is down";
+            }
+            var WebminImageSrc = WebminStatus === 'Online' ? 'assets/img/demo/online.png' : 'assets/img/demo/offline.png';
+            $('#statusWebminImage'+ index).attr('src', WebminImageSrc).attr('alt', WebminAlt);
 
             $('#statusApache2' + index).text(outputs[4]);
 
-            // var Apache2Status = outputs[4];
-            //     var Apache2Alt;
-            //     if(Apache2Status == "Apache2 is running"){
-            //         Apache2Status = "Online";
-            //         Apache2Alt = "Apache2 is running";
-            //     }else{
-            //         Apache2Status = "Offline";
-            //         Apache2Alt = "Apache2 is down";
-            //     }
-            //     var Apache2ImageSrc = Apache2Status === 'Online' ? 'assets/img/demo/online.png' : 'assets/img/demo/offline.png';
-            //     $('#statusApache2Image'+ index).attr('src', Apache2ImageSrc).attr('alt', Apache2Alt);
+            var Apache2Status = outputs[4];
+                var Apache2Alt;
+                if(Apache2Status == "Apache2 is running"){
+                    Apache2Status = "Online";
+                    Apache2Alt = "Apache2 is running";
+                }else{
+                    Apache2Status = "Offline";
+                    Apache2Alt = "Apache2 is down";
+                }
+                var Apache2ImageSrc = Apache2Status === 'Online' ? 'assets/img/demo/online.png' : 'assets/img/demo/offline.png';
+                $('#statusApache2Image'+ index).attr('src', Apache2ImageSrc).attr('alt', Apache2Alt);
 
                 // console.log(outputs[5]);
                 extractOutput(response);

@@ -36,14 +36,14 @@ class GenerateReportingController extends Controller
         ->pluck('hostname', 'id');
 
 
-        $ministries = Ministry::where('status', 1)->pluck('name')->toArray();
-        $agencies = Agency::where('status', 1)->whereNotIn('name',['-'])->pluck('name')->toArray();
-        $allMinistryAgency = array_merge($ministries, $agencies);
+        $ministries = Ministry::where('status', 1)->pluck('name','code_name');
+        // $agencies = Agency::where('status', 1)->whereNotIn('name',['-'])->pluck('name')->toArray();
+        // $allMinistryAgency = array_merge($ministries, $agencies);
 
 
         $domainsArray = DomainMinistryAgencies::where('enabled', 1)->get()->toArray();
 
-        return view('generateReporting.index',compact('defaultServerId','serverconfig','domainsArray','ministries' ,'agencies','allMinistryAgency'));
+        return view('generateReporting.index',compact('defaultServerId','serverconfig','domainsArray','ministries'));
     }
 
     public function search(Request $request)
@@ -305,11 +305,11 @@ class GenerateReportingController extends Controller
     }
 
 
-    // public function getAgencies(Request $request) {
-    //     $ministry = $request->input('ministry');
-    //     $agencies = Agency::where('ministry', $ministry)->where('status', 1)->where('name', '!=', '-')->get();
-    //     return response()->json($agencies);
-    // }
+    public function getAgencies(Request $request) {
+        $ministry = $request->input('ministry');
+        $agencies = Agency::where('ministry', $ministry)->where('status', 1)->where('name', '!=', '-')->get();
+        return response()->json($agencies);
+    }
 
 
 
