@@ -10,7 +10,9 @@ class AgencyController extends Controller
 {
     public function index()
     {
-        $agencies = Agency::get();
+        $agencies = Agency::select('agencies.*','ministrys.name as ministry_name')
+        ->leftJoin('ministrys','ministrys.id','agencies.ministry')
+        ->get();
         return view('agency.index', compact('agencies'));
     }
 
