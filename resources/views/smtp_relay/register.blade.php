@@ -767,6 +767,7 @@ function updateNameAttribute(nameAttr, newIndex) {
 
 
 document.getElementById('submit').addEventListener('click', function() {
+    if ($("#formserver").valid()) {
             // Show the SweetAlert "Loading..." message
             Swal.fire({
                 title: 'Loading...',
@@ -778,6 +779,8 @@ document.getElementById('submit').addEventListener('click', function() {
                     document.getElementById('formserver').submit();
                 }
             });
+        }
+
         });
 </script>
 @endpush

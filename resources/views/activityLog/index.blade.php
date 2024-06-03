@@ -27,7 +27,7 @@
                 </div>
             </div>
         </header>
-        <div class="container-xl px-4 mt-4">
+        <div class="container-fluid px-4 mt-4">
             <div class="row">
                 <div class="col-xl-12">
                     <!-- Account details card-->
