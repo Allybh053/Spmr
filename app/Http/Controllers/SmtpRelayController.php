@@ -602,6 +602,7 @@ class SmtpRelayController extends Controller
                         $ipAddress = $row['ipaddress'] ?? null;
                         $domain = $row['domain'] ?? null;
                         $deactivated = $row['deactivated'] ?? null;
+                        $mailfrom = $row['mailfrom'] ?? null;
 
                         // Create combined data array
                         $combinedData[] = [
