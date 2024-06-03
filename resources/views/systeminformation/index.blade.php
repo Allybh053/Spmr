@@ -32,7 +32,7 @@
                     <div class="list-group list-group-flush medium">
                         <div class="list-group-item list-group-item-action">
                             <i class="text-blue me-2" data-feather="chevrons-right"></i>
-                            System Time : {{ now() }}
+                            System Time : {{ now()->toDateTimeString() }}
                         </div>
                         <div class="list-group-item list-group-item-action">
                             <i class="text-blue me-2" data-feather="chevrons-right"></i>
