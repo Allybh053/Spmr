@@ -1,4 +1,4 @@
-<footer class="footer-admin mt-auto footer-light">
+<footer class="footer-admin mt-auto footer-dark">
                     <div class="container-fluid px-4">
                         <div class="row">
                             <div class="col-md-6 small">Copyright &copy; SPMR System {{ date('Y') }}</div>
