@@ -36,7 +36,7 @@ class GenerateReportingController extends Controller
         ->pluck('hostname', 'id');
 
 
-        $ministries = Ministry::where('status', 1)->pluck('name','code_name');
+        $ministries = Ministry::where('status', 1)->pluck('name','id');
         // $agencies = Agency::where('status', 1)->whereNotIn('name',['-'])->pluck('name')->toArray();
         // $allMinistryAgency = array_merge($ministries, $agencies);
 

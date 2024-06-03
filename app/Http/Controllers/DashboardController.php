@@ -94,8 +94,9 @@ class DashboardController extends Controller
         $serverListAgencies = [];
         $listServerAgencies = Server::whereIn('id', $serverIds)->where('status', 1)->orderBy('id', 'asc')->get();
         foreach ($listServerAgencies as $serverAgencies) {
-            $dataSmtpFormAgencies = SmtpRelayReqForm::select('smtp_relay_req_form.agencies', DB::raw('COUNT(smtp_relay_req_form.agencies) as total_agencies'))
+            $dataSmtpFormAgencies = SmtpRelayReqForm::select('smtp_relay_req_form.agencies','agencies.name', DB::raw('COUNT(smtp_relay_req_form.agencies) as total_agencies'))
                 ->leftJoin('smtp_relay_server as srs', 'srs.form_id', '=', 'smtp_relay_req_form.form_id')
+                ->leftJoin('agencies','agencies.id','smtp_relay_req_form.agencies')
                 ->where('smtp_relay_req_form.smtp_relay_server', $serverAgencies->hostname)
                 ->where('smtp_relay_req_form.status', 1)
                 ->groupBy('smtp_relay_req_form.agencies')
@@ -107,6 +108,7 @@ class DashboardController extends Controller
             foreach ($dataSmtpFormAgencies as $data) {
                 $agenciesData[] = [
                     'agency' => $data->agencies,
+                    'agencies_name' => $data->name,
                     'totalAgencies' => $data->total_agencies
                 ];
             }
