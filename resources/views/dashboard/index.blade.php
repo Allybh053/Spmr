@@ -404,11 +404,11 @@
         }
 
         const ctx = canvasElement.getContext('2d');
-        const labels = server.agencies.map(item => item.agency);
+        const labels = server.agencies.map(item => item.agency); // Using 'agency' for x-axis labels
 
-        const datasets = server.agencies.map((item, i) => ({
-            label: item.agency,
-            data: labels.map((label, j) => j === i ? item.totalAgencies : 0),
+        const datasets = server.agencies.map(item => ({
+            label: item.agencies_name, // Using 'agencies_name' for legend
+            data: labels.map((label, j) => label === item.agency ? item.totalAgencies : 0),
             backgroundColor: getRandomColor(),
             borderColor: getRandomColor(),
             borderWidth: 1,

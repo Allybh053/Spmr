@@ -11,6 +11,10 @@ return new class extends Migration
      */
     public function up(): void
     {
+        DB::statement('ALTER TABLE smtp_relay_req_form ALTER COLUMN agencies TYPE integer USING (COALESCE(NULLIF(agencies, \'\'), \'0\')::integer)');
+
+        DB::statement('ALTER TABLE smtp_relay_req_form ALTER COLUMN ministry TYPE integer USING (COALESCE(NULLIF(ministry, \'\'), \'0\')::integer)');
+
         Schema::table('smtp_relay_req_form', function (Blueprint $table) {
             $table->integer('agencies')->nullable(false)->change();
             $table->integer('ministry')->nullable(false)->change();
