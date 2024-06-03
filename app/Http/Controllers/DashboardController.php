@@ -365,14 +365,14 @@ class DashboardController extends Controller
                 ->where('mailrouting.server', $server->hostname)->get()->count();
 
             $dataSasl = DB::table('smtp_relay_req_form')
-                ->leftJoin('smtp_relay_server as smr','smr.form_id','smtp_relay_req_form.form_id')
+                // ->leftJoin('smtp_relay_server as smr','smr.form_id','smtp_relay_req_form.form_id')
                 ->where('smtp_relay_req_form.smtp_relay_server', $server->hostname)
                 ->where('smtp_relay_req_form.smtp_relay_auth_method', 2)
                 ->where('smtp_relay_req_form.status', 1)
                 ->count();
 
             $dataIpBased = DB::table('smtp_relay_req_form')
-                ->leftJoin('smtp_relay_server as smr','smr.form_id','smtp_relay_req_form.form_id')
+                // ->leftJoin('smtp_relay_server as smr','smr.form_id','smtp_relay_req_form.form_id')
                 ->where('smtp_relay_req_form.smtp_relay_server', $server->hostname)
                 ->where('smtp_relay_req_form.smtp_relay_auth_method', 1)
                 ->where('smtp_relay_req_form.status', 1)
