@@ -125,6 +125,7 @@
                                 <th scope="col">System Name</th>
                                 <th scope="col">IP Address</th>
                                 <th scope="col">Domain Sistem</th>
+                                <th scope="col">MailFrom</th>
                             </tr>
                         </thead>
                         <tbody id="dynamic-inputs-container">
@@ -134,6 +135,7 @@
                               <td><p>{{ $detail -> server_name}}</p></td>
                               <td><p>{{ $detail -> ip_addr_server}}</p></td>
                               <td><p>{{ $detail -> fqdn_server}}</p></td>
+                              <td><p>{{ $detail -> mailfrom}}</p></td>
                             </tr>
                             @endforeach
                         </tbody>
@@ -162,7 +164,7 @@
                     </div>
                 </div>
                 <div class="row gx-3 mb-3">
-                    <div class="col-md-6">
+                    <div class="col-md-6" hidden @disabled(true)>
                         <label for="emailaddfrom">Email Address System (MAILFROM)</label>
                         <p>{{ $datasmtp->mailfrom_email_addr}}</p>
                     </div>

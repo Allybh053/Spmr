@@ -127,6 +127,7 @@
                                 <th scope="col">System Name<span style="color: red"> *</span></th>
                                 <th scope="col">IP Address<span style="color: red"> *</span></th>
                                 <th scope="col">Domain System<span style="color: red"> *</span></th>
+                                <th scope="col">MailFrom<span style="color: red"> *</span></th>
                                 <th scope="col">Action</th>
                             </tr>
                         </thead>
@@ -135,12 +136,13 @@
                                 <td><input type="text" name="tableSpmr[0][server_name]" id="server_name" value="" class="form-control" required disabled/></td>
                                 <td><input type="text" name="tableSpmr[0][ipaddress]" id="ipaddress" value="" class="form-control" required disabled/></td>
                                 <td><input type="text" name="tableSpmr[0][domain]" id="domain" value="" class="form-control" required disabled/></td>
+                                <td><input type="text" name="tableSpmr[0][mailfrom]" id="mailfrom" value="" class="form-control" required disabled/></td>
                                 <td><button class="btn btn-danger remove-row"><i class="me-1" data-feather="minus"></i>Remove</button></td>
                             </tr>
                         </tbody>
                         <tfoot>
                             <tr>
-                                <th colspan="4" style="text-align: right;">
+                                <th colspan="5" style="text-align: right;">
                                     <button id="add-row-table" type="button" class="btn btn-primary "><i class="me-1" data-feather="plus"></i>Add</button>
                                 </th>
                             </tr>
@@ -180,7 +182,7 @@
                     </div>
                 </div>
                 <div class="row gx-3 mb-3">
-                    <div class="col-md-6">
+                    <div class="col-md-6" hidden @disabled(true)>
                         <label for="emailaddfrom">Email Address System (MAILFROM)<span style="color: red"> *</span></label>
                         <input class="form-control" id="emailaddfrom" name="emailaddfrom" type="text" value="" required/>
                     </div>
