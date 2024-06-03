@@ -19,6 +19,7 @@ class DatabaseSeeder extends Seeder
 
        // Run your seeders
        //$this->call(ServerSeeder::class);
+       $this->call(AclSeeder::class);
        $this->call(RolePermissionSeeder::class);
     //    $this->call(DomainMinistryAgenciesSeeder::class);
 
