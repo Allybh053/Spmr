@@ -96,9 +96,9 @@ class DashboardController extends Controller
         foreach ($listServerAgencies as $serverAgencies) {
             $dataSmtpFormAgencies = SmtpRelayReqForm::select(
                 DB::raw('COALESCE(agencies.code_name::text, ministrys.code_name) as code_name'),
-        DB::raw('COALESCE(agencies.name::text, ministrys.name) as name'),
-        DB::raw('COUNT(COALESCE(smtp_relay_req_form.agencies::bigint, ministrys.id)) as total_agencies')
-    )
+                DB::raw('COALESCE(agencies.name::text, ministrys.name) as name'),
+                DB::raw('COUNT(COALESCE(smtp_relay_req_form.agencies::bigint, ministrys.id)) as total_agencies')
+            )
             ->leftJoin('smtp_relay_server as srs', 'srs.form_id', '=', 'smtp_relay_req_form.form_id')
             ->leftJoin('agencies', 'agencies.id',  DB::raw('CAST(smtp_relay_req_form.agencies AS bigint)'))
             ->leftJoin('ministrys', 'ministrys.id',   DB::raw('CAST(smtp_relay_req_form.ministry AS bigint)'))// Left join with ministry table
