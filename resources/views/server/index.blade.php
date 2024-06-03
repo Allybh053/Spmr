@@ -85,9 +85,9 @@
                                     <div class="mb-3" hidden>
                                         <label class="small mb-1" for="inputNotificationEmail">SSH key Path : {{ $dataserver->sshkey}}</label>
                                     </div>
-                                    <div class="mb-3">
-                                        <label class="small mb-1" for="inputNotificationEmail">Created At : {{ $dataserver->created_at->format('d/m/Y')}}</label>
-                                    </div>
+                                    {{-- <div class="mb-3">
+                                        <label class="small mb-1" for="inputNotificationEmail">Updated At : {{ $dataserver->updated_at->format('d/m/Y h:i:s')}}</label>
+                                    </div> --}}
                                 </div>
                                 <div class="card-footer d-flex align-items-center justify-content-between small">
                                     @can('server_update')
