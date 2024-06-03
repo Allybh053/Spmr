@@ -695,13 +695,11 @@
                     }
                     if (selectedValuetype_req == 2) {
                     if (response.includes('IP address already Terminated!')) {
+                        console.log(response);
                         submitBtn.disabled = true;
                         $('#resultContainer').html(response);
-                    } else {
-                        $('#resultContainer').empty();
-                        submitBtn.disabled = false;
-                    }
-                    if (response.includes('IP address not Registered to Terminate!')) {
+                    } else if (response.includes('IP address not Registered to Terminate!')) {
+                        console.log(response);
                         submitBtn.disabled = true;
                         $('#resultContainer').html(response);
                     } else {
@@ -783,6 +781,6 @@ function updateNameAttribute(nameAttr, newIndex) {
     // Replace the index in the name attribute
     return nameAttr.replace('[' + currentIndex + ']', '[' + newIndex + ']');
 }
- 
+
 </script>
 @endpush
