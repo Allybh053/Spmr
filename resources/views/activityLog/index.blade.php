@@ -122,7 +122,7 @@ var table = $('#spmrDatatable').DataTable({
         { extend: 'print', text: 'Print', exportOptions: { columns: ':visible' } }
     ],
     columnDefs: [
-        { type: 'date-uk', targets: ['dd/mm/yyyy'] },
+        { type: 'date-uk', targets: [9] },
         {
             targets: [6, 7], // Assuming columns containing JSON data are the 6th and 7th columns
             render: function(data, type, row, meta) {
@@ -152,7 +152,7 @@ var table = $('#spmrDatatable').DataTable({
             }
         }
     ],
-    order: [[9, 'desc']],
+    order: [[9, 'asc']],
     drawCallback: function(settings) {
             // Reinitialize Feather icons
             if (typeof feather !== 'undefined') {

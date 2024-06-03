@@ -81,7 +81,7 @@ $(document).on("click", "#deleteRoles", function (e) {
 
         if (confirmed) {
             swal.fire({
-                title: 'Are You SUre?',
+                title: 'Are You Sure?',
                 text: "Roles Information will be DELETED.",
                 icon: 'warning',
                 showCancelButton: true,
@@ -124,11 +124,47 @@ $(document).on("click", "#deleteRoles", function (e) {
                         },
                         error: function (xhr, status) {
                             toggleLoader();
-                            swal.fire({
-                                title: "Error",
-                                text: "Server Error",
-                                icon: "error"
-                            });
+                            var response = xhr.responseJSON;
+
+                            if ($.isEmptyObject(response.errors)) {
+                                var message = response.message;
+
+                                if (!message.length && response.exception) {
+                                    message = response.exception;
+                                }
+
+                                swal.fire("Warning", message, "warning");
+                            }
+                            else {
+                                swal.fire('Warning', 'Invalid Information.', 'warning');
+
+                                $.each(response.errors, function (key, message) {
+                                    if (key.indexOf('.') !== -1) {
+
+                                        var splits = key.split('.');
+
+                                        key = '';
+
+                                        $.each(splits, function (i, val) {
+                                            if (i === 0) {
+                                                key = val;
+                                            }
+                                            else {
+                                                key += '[' + val + ']';
+                                            }
+                                        });
+                                    }
+
+                                    $('[name="' + key + '"]').closest('.form-group').addClass("has-error");
+                                    $('[name="' + key + '"]').addClass("was-validated is-invalid invalid custom-select.is-invalid");
+                                    $('#Valid'+key).empty();
+                                    $('[name="' + key + '"]').closest('.form-group').append("<span id='Valid"+key+"' class=\"help-block\" style='color:red; font-family:Nunito, sans-serif;'>" + message[0] + "</span>");
+                                });
+
+                                $('html, body').animate({
+                                    scrollTop: ($(".has-error").first().offset().top) - 200
+                                }, 500);
+                            }
                         }
                     })
                 }
