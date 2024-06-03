@@ -5,13 +5,14 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Agency;
 use App\Models\Ministry;
+use Illuminate\Support\Facades\DB;
 
 class AgencyController extends Controller
 {
     public function index()
     {
         $agencies = Agency::select('agencies.*','ministrys.name as ministry_name')
-        ->leftJoin('ministrys','ministrys.id','agencies.ministry')
+        ->leftJoin('ministrys','ministrys.id',DB::raw('CAST(agencies.ministry AS bigint)'))
         ->get();
         return view('agency.index', compact('agencies'));
     }

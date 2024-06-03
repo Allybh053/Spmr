@@ -89,7 +89,23 @@
 @endsection
 @push('script')
 <script>
-
+ jQuery.extend(jQuery.fn.dataTable.ext.type.order, {
+            "date-uk-pre": function(a) {
+                if (!a) {
+                    return 0;
+                }
+                var ukDateTime = a.split(' ');
+                var ukDate = ukDateTime[0].split('/');
+                var ukTime = ukDateTime[1] + ' ' + ukDateTime[2];
+                return new Date(ukDate[2], ukDate[1] - 1, ukDate[0], new Date('1970-01-01T' + ukTime).getHours(), new Date('1970-01-01T' + ukTime).getMinutes(), new Date('1970-01-01T' + ukTime).getSeconds());
+            },
+            "date-uk-asc": function(a, b) {
+                return a - b;
+            },
+            "date-uk-desc": function(a, b) {
+                return b - a;
+            }
+        });
 
 // Initialize DataTable with custom sorting for date column
 var table = $('#spmrDatatable').DataTable({
@@ -136,7 +152,7 @@ var table = $('#spmrDatatable').DataTable({
             }
         }
     ],
-    order: [[9, 'asc']],
+    order: [[9, 'desc']],
     drawCallback: function(settings) {
             // Reinitialize Feather icons
             if (typeof feather !== 'undefined') {
