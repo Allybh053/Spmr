@@ -639,8 +639,8 @@ class SmtpRelayController extends Controller
 
 
         $datasmtp = SmtpRelayReqForm::select('smtp_relay_req_form.*','ministrys.name as ministry_name','agencies.name as agencies_name')
-        ->leftJoin('ministrys','ministrys.id','smtp_relay_req_form.ministry')
-        ->leftJoin('agencies','agencies.id','smtp_relay_req_form.agencies')
+        ->leftJoin('ministrys','ministrys.id',DB::raw('CAST(smtp_relay_req_form.ministry AS bigint)'))
+        ->leftJoin('agencies','agencies.id',DB::raw('CAST(smtp_relay_req_form.agencies AS bigint)'))
         ->where('form_id', $id)
         ->where('types_req', $type)
         ->first();
@@ -662,8 +662,8 @@ class SmtpRelayController extends Controller
 
         $user = Auth::user();
         $formsmtp = SmtpRelayReqForm::select('smtp_relay_req_form.*','ministrys.name as ministry_name','agencies.name as agencies_name')
-        ->leftJoin('ministrys','ministrys.id','smtp_relay_req_form.ministry')
-        ->leftJoin('agencies','agencies.id','smtp_relay_req_form.agencies')
+        ->leftJoin('ministrys','ministrys.id',DB::raw('CAST(smtp_relay_req_form.ministry AS bigint)'))
+        ->leftJoin('agencies','agencies.id',DB::raw('CAST(smtp_relay_req_form.agencies AS bigint)'))
         ->where('smtp_relay_req_form.id', $id)
         ->first();
         //find($id);
