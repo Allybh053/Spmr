@@ -32,8 +32,9 @@
                 </div>
             </div>
         </header>
-        <div class="container-fluid px-4 mb-4">
-            @if(request()->has('message'))
+        <!-- Main page content-->
+        <div class="container-fluid px-4">
+            @if(request()->has('success'))
             <script>
                 document.addEventListener('DOMContentLoaded', function () {
                     Swal.fire({
@@ -41,27 +42,11 @@
                         title: 'Message',
                         text: '{{ request()->get('message') }}',
                         showConfirmButton: false,
-                        timer: 3000  // Automatically close after 3 seconds
+                        timer: 5000  // Automatically close after 3 seconds
                     });
                 });
             </script>
             @endif
-        </div>
-
-
-            <!-- add choose by server then show this searchong by server -->
-
-
-
-        <!-- Main page content-->
-        <div class="container-fluid px-4">
-            {{-- @if(session('success'))
-                <div class="alert alert-primary alert-dismissible fade show" role="alert">
-                    <h5 class="alert-heading">Message</h5>
-                    {{ session('success') }}
-                    <button class="btn-close" type="button" data-bs-dismiss="alert" aria-label="Close"></button>
-                </div>
-            @endif --}}
             <div class="card">
                  <div class="card-header">List SMTP Relay Request MyGovUC</div>
                 <div class="card-body">

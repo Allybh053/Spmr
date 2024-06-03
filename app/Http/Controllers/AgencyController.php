@@ -23,6 +23,7 @@ class AgencyController extends Controller
     public function savingagency(Request $request)
     {
         $agency = Agency::create([
+            'ministry' => $request->input('ministry'),
             'code_name' => $request->input('code_name'),
             'name' => $request->input('name'),
             'remark' => $request->input('remark'),
@@ -36,14 +37,18 @@ class AgencyController extends Controller
     public function updateagency($id)
     {
         $agency = Agency::findOrFail($id);
+
+        $ministry1 = Ministry::where('id',$agency->ministry)->first();
+
         $ministry = Ministry::get();
 
-        return view('agency.updateagency', compact('agency','ministry'));
+        return view('agency.updateagency', compact('agency','ministry','ministry1'));
     }
 
     public function saveupdateagency(Request $request, $id)
     {
         $request->validate([
+            'ministry' => 'nullable|string',
             'name' => 'required|string',
             'code_name' => 'nullable|string',
             'remark' => 'nullable|string',
@@ -51,6 +56,7 @@ class AgencyController extends Controller
         ]);
         $agency = Agency::findOrFail($id);
         $agency->update([
+            'ministry' => $request->input('ministry'),
             'code_name' => $request->input('code_name'),
             'name' => $request->input('name'),
             'remark' => $request->input('remark'),

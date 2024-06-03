@@ -46,12 +46,6 @@
                     <div class="row gx-3 mb-3">
                         <div class="col-md-6">
                             <label class="small mb-1" for="serverconfig">Server Name:</label>
-                            {{--<select id="serverconfig" name="serverconfig" class="form-control select2">
-                                <option value="">Select an option</option>
-                                @foreach ($serverconfig as $server)
-                                    <option value="{{ $server->id }}">{{ $server->hostname }}</option>
-                                @endforeach
-                            </select>--}}
 
                             {!! Form::select('server', $serverconfig,  $defaultServerId ?? 1,  ['id'=>'server', 'name'=>'server', 'class'=>'form-control select2', 'placeholder'=>config('params.dropdown_default')]) !!}
                             <p class="card-text mt-1 mb-1" id="ipAddress"></p>
@@ -67,44 +61,6 @@
             </div>
         </div>
             <hr>
-        {{--<div class="card">
-            <div class="card-body">
-                <table id="datatablesSimple1" class="table">
-                    <thead>
-                        <tr>
-                            <th>No</th>
-                            <th>Domain Name</th>
-                            <th>SMTP</th>
-                            <th>Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @isset($serverdetail)
-                            @foreach ($serverdetail as $data)
-                            <tr>
-                                <td>{{ $loop->iteration }}</td>
-                                <td>{{ $data->name }}</td>
-                                <td>{{ $data->smtp }}</td>
-                                <td>
-                                    <button type="submit" class="btn btn-datatable btn-icon text-danger btn-transparent" title="Delete User"><i data-feather="trash-2"></i></button>
-                                </td>
-                            </tr>
-                            @endforeach
-                        @else
-                            <tr>
-                                <td colspan="3">No data available</td>
-                            </tr>
-                        @endisset
-
-                    </tbody>
-                </table>
-            </div>
-            <hr>
-            <div class="card-body">
-                <label class="small mb-1" for="serverconfig">Terminal</label>
-                <div id="shell-in-a-box"></div>
-            </div>
-        </div>--}}
 
         {{--ROMIE CODE--}}
             <div class="row mb-4 mt-4">
@@ -204,95 +160,210 @@
 @push('script')
 <script>
 
-/*SIDI CODE*/
-/*
-        // Make AJAX request to fetch Shell In A Box session
-        fetch('{{ route('shell-in-a-box') }}')
-        .then(response => response.text())
-        .then(data => {
-            // console.log(data);
-            // Update the content on your page
-            document.getElementById('shell-in-a-box').innerHTML = data;
-        })
-        .catch(error => {
-            console.error('Error fetching Shell In A Box session:', error);
-        });
+// /*ROMIE CODE*/
+// $(document).ready(function () {
 
-    (function ($) {
-        var table = $('#datatablesSimple1').DataTable({
-            processing: true,
-            serverSide: false,
-            ordering: true,
-            lengthMenu: [ [10, 25, 50, -1], [10, 25, 50, "All"] ],
-            dom: '<"top"fBl>rt<"bottom"ip>',
-            buttons: [
-                {
-                    extend: 'copy',
-                    text: 'Copy',
-                    exportOptions: {
-                        columns: ':visible'
-                    }
-                },
-                {
-                    extend: 'csv',
-                    text: 'CSV',
-                    exportOptions: {
-                        columns: ':visible'
-                    }
-                },
-                {
-                    extend: 'excel',
-                    text: 'Excel',
-                    exportOptions: {
-                        columns: ':visible'
-                    }
-                },
-                {
-                    extend: 'pdf',
-                    text: 'PDF',
-                    exportOptions: {
-                        columns: ':visible'
-                    }
-                },
-                {
-                    extend: 'print',
-                    text: 'Print',
-                    exportOptions: {
-                        columns: ':visible'
-                    }
-                }
-            ]
-        });
+//     // Event listener for select change
+//     $('#server').on('change', function() {
+//         var selectedServerId = $(this).val();
 
-        // Adjust positioning of search input and export buttons
-        $('.dataTables_filter').addClass('d-inline-block mr-2'); // Make search input inline
-        $('.dt-buttons').appendTo('.dataTables_filter'); // Append export buttons to search container
-    })(jQuery);
+//         // AJAX request to fetch data based on the selected server ID
+//         $.ajax({
+//             url: "{!! route('mailrelay.api') !!}",
+//             method: 'GET',
+//             data: {
+//                 serverId: selectedServerId
+//             },
+//             success: function(response) {
+//                 // Handle success response and update UI
+//                 //console.log(response);
+//             },
+//             error: function(xhr, status, error) {
+//                 // Handle error
+//                 //console.error(xhr.responseText);
+//             }
+//         });
+//     });
 
-*/
+//     var tableMailRoute = $('#listDomain').DataTable({
+//         ordering: true,
+//         columns: [
+//             {
+//                 data: null,
+//                 name: 'DT_RowIndex2',
+//                 orderable: false,
+//                 searchable: false,
+//                 class: 'text-center',
+//                 render: function (data, type, row, meta) {
+//                     return meta.row + 1; // This will render the index starting from 1
+//                 }
+//             },
+//             { data: 'source', name: 'source', class: 'text-center' },
+//             /*{ data: 'destination', name: 'destination', class: 'text-center' },*/
+//             { data: 'status', name: 'status', class: 'text-center' },
+//         ],
+//         dom: '<"top"fBl>rt<"bottom"ip>',
+//         buttons: [
+//             {
+//                 extend: 'copy',
+//                 text: 'Copy',
+//                 title: 'List of Domain Registered',
+//                 exportOptions: {
+//                     columns: ':visible',
+//                     format: {
+//                         body: function (data, row, column, node) {
+//                             // Add row number for the first column
+//                             return column === 0 ? row + 1 : data;
+//                         }
+//                     }
+//                 }
+//             },
+//             {
+//                 extend: 'csv',
+//                 text: 'CSV',
+//                 title: 'List of Domain Registered',
+//                 exportOptions: {
+//                     columns: ':visible',
+//                     format: {
+//                         body: function (data, row, column, node) {
+//                             // Add row number for the first column
+//                             return column === 0 ? row + 1 : data;
+//                         }
+//                     }
+//                 }
+//             },
+//             {
+//                 extend: 'excel',
+//                 text: 'Excel',
+//                 title: 'List of Domain Registered',
+//                 exportOptions: {
+//                     columns: ':visible',
+//                     format: {
+//                         body: function (data, row, column, node) {
+//                             // Add row number for the first column
+//                             return column === 0 ? row + 1 : data;
+//                         }
+//                     }
+//                 }
+//             },
+//             {
+//                 extend: 'pdf',
+//                 text: 'PDF',
+//                 title: 'List of Domain Registered',
+//                 exportOptions: {
+//                     columns: ':visible',
+//                     format: {
+//                         body: function (data, row, column, node) {
+//                             // Add row number for the first column
+//                             return column === 0 ? row + 1 : data;
+//                         }
+//                     }
+//                 }
+//             },
+//             {
+//                 extend: 'print',
+//                 text: 'Print',
+//                 title: 'List of Domain Registered',
+//                 exportOptions: {
+//                     columns: ':visible',
+//                     format: {
+//                         body: function (data, row, column, node) {
+//                             // Add row number for the first column
+//                             return column === 0 ? row + 1 : data;
+//                         }
+//                     }
+//                 }
+//             }
+//         ],
+//         data: [], // Initialize with empty data
+//         drawCallback: function(settings) {
+//             var api = this.api();
+//             api.column(0, {search:'applied', order:'applied'}).nodes().each(function(cell, i) {
+//                 cell.innerHTML = i + 1;
+//             });
+//         }
+//     });
+//     $('.dataTables_filter', tableMailRoute.table().container()).addClass('d-inline-block mr-2').append($('.dt-buttons', tableMailRoute.table().container()));
 
 
-/*ROMIE CODE*/
+//     $('#searchForm').submit(function (e) {
+//         e.preventDefault();
+
+//         var formData = $(this).serialize();
+//         if (formData === 'server=') {
+//             alert("Please Choose Server in options field.");
+//         } else {
+//             let timerInterval;
+
+//             Swal.fire({
+//                 title: "Please wait...",
+//                 //html: "Please wait...",
+//                 timerProgressBar: true,
+//                 didOpen: () => {
+//                     Swal.showLoading();
+//                     const timer = Swal.getPopup().querySelector("b");
+//                     timerInterval = setInterval(() => {
+//                         if (timer) {
+//                             timer.textContent = `${Swal.getTimerLeft()}`;
+//                         }
+//                     }, 100)
+//                 },
+//                 willClose: () => {
+//                     clearInterval(timerInterval);
+//                 }
+//             });
+
+//             $.ajax({
+//                 type: 'GET',
+//                 url: "{{ route('mailrelay.index.search') }}",
+//                 data: formData,
+//                 success: function (response) {
+//                     // Hide the SweetAlert timer
+//                     Swal.close();
+
+//                     // Update UI with the response data
+//                     $('#totalIP').text(response.totalDomainActivated || "0");
+//                     $('#totalDeactivated').text(response.totalDomainDeactivated || "0");
+//                     $('#totalDomain').text(response.totalDomainRegistered || "0");
+
+//                     // Add index to each row for jadual2
+//                     $.each(response.dataMailRoute, function (index, row) {
+//                         row['DT_RowIndex'] = index + 1;
+//                         row['status'] = row['status'] ===  true? 'Activated' : 'Deactivated';
+//                     });
+//                     // Clear existing data and add new data to the DataTable
+//                     tableMailRoute.clear().rows.add(response.dataMailRoute).draw();
+
+//                 },
+//                 error: function (error) {
+//                     // Hide the SweetAlert timer
+//                     Swal.close();
+
+//                     // Handle the error
+//                     console.log(error);
+//                 }
+//             });
+//         }
+//     });
+
+
+// });
+
+
 $(document).ready(function () {
-
     // Event listener for select change
     $('#server').on('change', function() {
         var selectedServerId = $(this).val();
-
         // AJAX request to fetch data based on the selected server ID
         $.ajax({
             url: "{!! route('mailrelay.api') !!}",
             method: 'GET',
-            data: {
-                serverId: selectedServerId
-            },
+            data: { serverId: selectedServerId },
             success: function(response) {
                 // Handle success response and update UI
-                //console.log(response);
             },
             error: function(xhr, status, error) {
                 // Handle error
-                //console.error(xhr.responseText);
             }
         });
     });
@@ -311,7 +382,6 @@ $(document).ready(function () {
                 }
             },
             { data: 'source', name: 'source', class: 'text-center' },
-            /*{ data: 'destination', name: 'destination', class: 'text-center' },*/
             { data: 'status', name: 'status', class: 'text-center' },
         ],
         dom: '<"top"fBl>rt<"bottom"ip>',
@@ -324,7 +394,6 @@ $(document).ready(function () {
                     columns: ':visible',
                     format: {
                         body: function (data, row, column, node) {
-                            // Add row number for the first column
                             return column === 0 ? row + 1 : data;
                         }
                     }
@@ -338,7 +407,6 @@ $(document).ready(function () {
                     columns: ':visible',
                     format: {
                         body: function (data, row, column, node) {
-                            // Add row number for the first column
                             return column === 0 ? row + 1 : data;
                         }
                     }
@@ -352,7 +420,6 @@ $(document).ready(function () {
                     columns: ':visible',
                     format: {
                         body: function (data, row, column, node) {
-                            // Add row number for the first column
                             return column === 0 ? row + 1 : data;
                         }
                     }
@@ -366,7 +433,6 @@ $(document).ready(function () {
                     columns: ':visible',
                     format: {
                         body: function (data, row, column, node) {
-                            // Add row number for the first column
                             return column === 0 ? row + 1 : data;
                         }
                     }
@@ -380,14 +446,13 @@ $(document).ready(function () {
                     columns: ':visible',
                     format: {
                         body: function (data, row, column, node) {
-                            // Add row number for the first column
                             return column === 0 ? row + 1 : data;
                         }
                     }
                 }
             }
         ],
-        data: [], // Initialize with empty data
+        data: [],
         drawCallback: function(settings) {
             var api = this.api();
             api.column(0, {search:'applied', order:'applied'}).nodes().each(function(cell, i) {
@@ -395,21 +460,17 @@ $(document).ready(function () {
             });
         }
     });
+
     $('.dataTables_filter', tableMailRoute.table().container()).addClass('d-inline-block mr-2').append($('.dt-buttons', tableMailRoute.table().container()));
 
-
-    $('#searchForm').submit(function (e) {
-        e.preventDefault();
-
-        var formData = $(this).serialize();
+    function submitSearchForm() {
+        var formData = $('#searchForm').serialize();
         if (formData === 'server=') {
             alert("Please Choose Server in options field.");
         } else {
             let timerInterval;
-
             Swal.fire({
                 title: "Please wait...",
-                //html: "Please wait...",
                 timerProgressBar: true,
                 didOpen: () => {
                     Swal.showLoading();
@@ -418,7 +479,7 @@ $(document).ready(function () {
                         if (timer) {
                             timer.textContent = `${Swal.getTimerLeft()}`;
                         }
-                    }, 100)
+                    }, 500);
                 },
                 willClose: () => {
                     clearInterval(timerInterval);
@@ -430,41 +491,32 @@ $(document).ready(function () {
                 url: "{{ route('mailrelay.index.search') }}",
                 data: formData,
                 success: function (response) {
-                    // Hide the SweetAlert timer
                     Swal.close();
-
-                    // Update UI with the response data
                     $('#totalIP').text(response.totalDomainActivated || "0");
                     $('#totalDeactivated').text(response.totalDomainDeactivated || "0");
                     $('#totalDomain').text(response.totalDomainRegistered || "0");
 
-                    // Add index to each row for jadual2
                     $.each(response.dataMailRoute, function (index, row) {
                         row['DT_RowIndex'] = index + 1;
-                        row['status'] = row['status'] ===  true? 'Activated' : 'Deactivated';
+                        row['status'] = row['status'] === true ? 'Activated' : 'Deactivated';
                     });
-                    // Clear existing data and add new data to the DataTable
                     tableMailRoute.clear().rows.add(response.dataMailRoute).draw();
-
                 },
                 error: function (error) {
-                    // Hide the SweetAlert timer
                     Swal.close();
-
-                    // Handle the error
                     console.log(error);
                 }
             });
         }
+    }
+
+    $('#searchForm').submit(function (e) {
+        e.preventDefault();
+        submitSearchForm();
     });
 
-
-
-
-
-
+    // Call the function on page load
+    submitSearchForm();
 });
-
-
 </script>
 @endpush

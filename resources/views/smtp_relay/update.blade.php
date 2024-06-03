@@ -73,7 +73,7 @@
                     <select class="form-control select2" name="ministry" id="ministry">
                         <option value="{{ old('ministry', $formsmtp->ministry) }}">{{ old('ministry', $formsmtp->ministry) }}</option>
                         @foreach ($ministriesArray as $ministry)
-                        <option value="{{ $ministry['name'] }}">{{ $ministry['name'] }}</option>
+                        <option value="{{ $ministry['name'] }}" data-code="{{ $ministry['id'] }}">{{ $ministry['name'] }}</option>
                         @endforeach
                     </select>
                 </div>
@@ -82,9 +82,9 @@
                         <label for="agencies">Agency</label>
                         <select class="form-control select2" name="agencies" id="agencies" aria-label="Default select">
                             <option value="{{ old('agencies', $formsmtp->agencies) }}">{{ old('agencies', $formsmtp->agencies) }}</option>
-                            @foreach ($agenciesArray as $agency)
+                            {{-- @foreach ($agenciesArray as $agency)
                             <option value="{{ $agency['name'] }}">{{ $agency['name'] }}</option>
-                            @endforeach
+                            @endforeach --}}
                         </select>
                     </div>
                     <div class="col-md-6">
@@ -138,6 +138,7 @@
                                 <th scope="col">System Name</th>
                                 <th scope="col">IP Address</th>
                                 <th scope="col">Domain System</th>
+                                <th scope="col">MailFrom</th>
                                 <th scope="col">Actions</th>
                             </tr>
                         </thead>
@@ -152,6 +153,7 @@
                                     </td>
                                     <td><input type="text" name="tableSpmr[{{ $loop->index }}][ip_addr_server]" id="ip_addr_server" value="{{ old('tableSpmr.' . $loop->index . '.ip_addr_server', $detail->ip_addr_server) }}" class="form-control" required /></td>
                                     <td><input type="text" name="tableSpmr[{{ $loop->index }}][fqdn_server]" id="fqdn_server" value="{{ old('tableSpmr.' . $loop->index . '.fqdn_server', $detail->fqdn_server) }}" class="form-control" required /></td>
+                                    <td><input type="text" name="tableSpmr[{{ $loop->index }}][mailfrom]" id="mailfrom" value="{{ old('tableSpmr.' . $loop->index . '.mailfrom', $detail->mailfrom) }}" class="form-control" required /></td>
                                     <td hidden><input type="text" name="tableSpmr[{{ $loop->index }}][deactivated]" id="deactivated" value="{{ old('tableSpmr.' . $loop->index . '.deactivated', $detail->deactivated) }}" class="form-control" /></td>
                                     <td><button class="btn btn-danger remove-row"><i class="me-1" data-feather="minus"></i>Remove</button></td>
                                 </tr>
@@ -159,7 +161,7 @@
                         </tbody>
                         <tfoot>
                             <tr>
-                                <th colspan="4" style="text-align: right;">
+                                <th colspan="5" style="text-align: right;">
                                     <button id="add-row-table" type="button" class="btn btn-primary "><i class="me-1" data-feather="plus"></i>Add</button>
                                 </th>
                             </tr>
@@ -190,7 +192,7 @@
                     </div>
                 </div>
                 <div class="row gx-3 mb-3">
-                    <div class="col-md-6">
+                    <div class="col-md-6" hidden @disabled(true)>
                         <label for="mailfrom_email_addr">Email Address System (MAILFROM)</label>
                         <input class="form-control" id="mailfrom_email_addr" name="mailfrom_email_addr" type="text" value="{{ old('mailfrom_email_addr', $formsmtp->mailfrom_email_addr) }}" required/>
                     </div>
@@ -391,6 +393,29 @@
 
 <script>
     $(document).ready(function() {
+        $('#ministry').change(function() {
+            var ministry = $(this).val();
+            var ministryCode = $(this).find(':selected').data('code');
+
+            if (ministryCode) {
+                $.ajax({
+                    url: '/smtp_relay/agency/' + ministryCode,
+                    type: 'GET',
+                    success: function(data) {
+                        //$('#agencies').empty().prop('disabled', false);
+                        $('#agencies').append(new Option("Select Agency", ""));
+                        $.each(data, function(id, name) {
+                            $('#agencies').append(new Option(name, name));
+                        });
+                    },
+                    error: function(xhr, status, error) {
+                        console.error(error);
+                    }
+                });
+            } else {
+                //$('#agency').empty().prop('disabled', true);
+            }
+        });
 
         $('#dynamic-inputs-container').on('input', '#ip_addr_server', function() {
             var type_req = document.getElementById("types_req");
@@ -399,6 +424,7 @@
             var selectedValue = selectBox.options[selectBox.selectedIndex].value;
             var selectedValuetype_req = type_req.options[type_req.selectedIndex].value;
             var ipAddress = $(this).val();
+            var submitBtn = document.getElementById("submit");
 
 
             if (/^(?:[0-9]{1,3}\.){3}[0-9]{1,3}$/.test(ipAddress)) {
@@ -763,5 +789,18 @@ function updateNameAttribute(containerId, nameAttr) {
     // Replace the index in the name attribute
     return nameAttr.replace('[' + currentIndex + ']', '[' + newIndex + ']');
 }
+document.getElementById('submit').addEventListener('click', function() {
+            // Show the SweetAlert "Loading..." message
+            Swal.fire({
+                title: 'Loading...',
+                text: 'Please wait while we process your request.',
+                allowOutsideClick: false,
+                didOpen: () => {
+                    Swal.showLoading();
+                    // Submit the form after the SweetAlert is shown
+                    document.getElementById('formserver').submit();
+                }
+            });
+        });
 </script>
 @endpush

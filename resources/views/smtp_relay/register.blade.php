@@ -67,7 +67,7 @@
                     <select class="form-control select2" name="ministry" id="ministry" required>
                         <option selected disabled>Select Ministry</option>
                         @foreach ($ministriesArray as $ministry)
-                        <option value="{{ $ministry['name'] }}" data-code="{{ $ministry['code_name'] }}">{{ $ministry['name'] }}</option>
+                        <option value="{{ $ministry['name'] }}" data-code="{{ $ministry['id'] }}">{{ $ministry['name'] }}</option>
                         @endforeach
                     </select>
                 </div>
@@ -127,6 +127,7 @@
                                 <th scope="col">System Name<span style="color: red"> *</span></th>
                                 <th scope="col">IP Address<span style="color: red"> *</span></th>
                                 <th scope="col">Domain System<span style="color: red"> *</span></th>
+                                <th scope="col">MailFrom<span style="color: red"> *</span></th>
                                 <th scope="col">Action</th>
                             </tr>
                         </thead>
@@ -135,17 +136,19 @@
                                 <td><input type="text" name="tableSpmr[0][server_name]" id="server_name" value="" class="form-control" required disabled/></td>
                                 <td><input type="text" name="tableSpmr[0][ipaddress]" id="ipaddress" value="" class="form-control" required disabled/></td>
                                 <td><input type="text" name="tableSpmr[0][domain]" id="domain" value="" class="form-control" required disabled/></td>
+                                <td><input type="text" name="tableSpmr[0][mailfrom]" id="mailfrom" value="" class="form-control" required disabled/></td>
                                 <td><button class="btn btn-danger remove-row"><i class="me-1" data-feather="minus"></i>Remove</button></td>
                             </tr>
                         </tbody>
                         <tfoot>
                             <tr>
-                                <th colspan="4" style="text-align: right;">
+                                <th colspan="5" style="text-align: right;">
                                     <button id="add-row-table" type="button" class="btn btn-primary "><i class="me-1" data-feather="plus"></i>Add</button>
                                 </th>
                             </tr>
                         </tfoot>
                         <strong><p style="color: red;" id="resultContainer"></p></strong>
+                        <strong><p style="color: red;" id="resultContainer2"></p></strong>
                     </table>
                 </div>
 
@@ -179,7 +182,7 @@
                     </div>
                 </div>
                 <div class="row gx-3 mb-3">
-                    <div class="col-md-6">
+                    <div class="col-md-6" hidden @disabled(true)>
                         <label for="emailaddfrom">Email Address System (MAILFROM)<span style="color: red"> *</span></label>
                         <input class="form-control" id="emailaddfrom" name="emailaddfrom" type="text" value="" required/>
                     </div>
@@ -313,7 +316,6 @@
 
 @endsection
 @push('script')
-
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
 <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
 <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
@@ -394,7 +396,7 @@
                         $('#agency').empty().prop('disabled', false);
                         $('#agency').append(new Option("Select Agency", ""));
                         $.each(data, function(id, name) {
-                            $('#agency').append(new Option(name, id));
+                            $('#agency').append(new Option(name, name));
                         });
                     },
                     error: function(xhr, status, error) {
@@ -436,7 +438,7 @@
                 if ( dateC < dateB ) {
                     messageDiv2.textContent = "Date Helpdesk must be greater than Date Verifier";
                 } else {
-                    messageDiv3.textContent = "";
+                    messageDiv2.textContent = "";
                 }
             }
         }
@@ -449,7 +451,7 @@
                 if (dateD < dateC) {
                     messageDiv3.textContent = "Date Approval must be greater than Date Helpdesk";
                 } else {
-                    messageDiv2.textContent = "";
+                    messageDiv3.textContent = "";
                 }
             }
         }
@@ -616,7 +618,6 @@
         });
     });
 
-
     $(document).on('input', '#dynamic-inputs-container input#ipaddress', function() {
             var type_req = document.getElementById("type_req");
             var selectBox = document.getElementById("mailrelay");
@@ -624,6 +625,26 @@
             var selectedValuetype_req = type_req.value;
             var ipAddress = $(this).val();
             var submitBtn = document.getElementById("submit");
+            var submitBtn2 = document.getElementById("submit");
+
+            $.ajax({
+                    url: '/mailrelay/check-ip-address',
+                    method: 'POST',
+                    contentType: 'application/json',
+                    data: JSON.stringify({ ipAddress: ipAddress, mailrelay: selectedValue,type_req: selectedValuetype_req}),
+                    success: function(response) {
+                        if (response.exists) {
+                            // console.log(response);
+                            $('#resultContainer2').html(response.message);
+                            submitBtn2.disabled = true;
+                        } else {
+                            // console.log(response);
+                            $('#resultContainer2').empty();
+                            submitBtn2.disabled = false;
+                        }
+                    }
+            });
+
 
             if (/^(?:[0-9]{1,3}\.){3}[0-9]{1,3}$/.test(ipAddress)) {
                 const serverAddress = 'wss://spmr.mygovuc.gov.my/' + selectedValue;
@@ -637,7 +658,6 @@
                     }
                     if (selectedValuetype_req == 2) {
                         command = `grep -q '^#${ipAddress}' /opt/cluster/postfix/access_list && echo "IP address already Terminated!" || (grep -q '^${ipAddress}' /opt/cluster/postfix/access_list || echo "IP address not Registered to Terminate!")`;
-                        // command = `grep -q '^#${ipAddress}' /opt/cluster/postfix/access_list && echo "IP address already Terminated!"`;
                     }
 
                     if (command) {
@@ -649,23 +669,25 @@
                     const response = event.data;
                     if (selectedValuetype_req == 1) {
                     if (response.includes('IP address already Registered!')) {
-                            $('#resultContainer').html(response);
                             submitBtn.disabled = true;
+                            $('#resultContainer').html(response);
                         } else {
-                            $('#resultContainer').empty();
                             submitBtn.disabled = false;
+                            $('#resultContainer').empty();
                         }
                     }
                     if (selectedValuetype_req == 2) {
                     if (response.includes('IP address already Terminated!')) {
-                        $('#resultContainer').html(response);
+                        console.log(response);
                         submitBtn.disabled = true;
+                        $('#resultContainer').html(response);
                     } else if (response.includes('IP address not Registered to Terminate!')) {
-                        $('#resultContainer').html(response);
+                        console.log(response);
                         submitBtn.disabled = true;
+                        $('#resultContainer').html(response);
                     } else {
-                        $('#resultContainer').empty();
                         submitBtn.disabled = false;
+                        $('#resultContainer').empty();
                     }
                     }
                     socket.close();
@@ -680,8 +702,8 @@
                 });
             } else {
                 // Clear result container if input is invalid
-                $('#resultContainer').empty();
                 submitBtn.disabled = false;
+                $('#resultContainer').empty();
             }
         });
 
@@ -743,5 +765,19 @@ function updateNameAttribute(nameAttr, newIndex) {
     return nameAttr.replace('[' + currentIndex + ']', '[' + newIndex + ']');
 }
 
+
+document.getElementById('submit').addEventListener('click', function() {
+            // Show the SweetAlert "Loading..." message
+            Swal.fire({
+                title: 'Loading...',
+                text: 'Please wait while we process your request.',
+                allowOutsideClick: false,
+                didOpen: () => {
+                    Swal.showLoading();
+                    // Submit the form after the SweetAlert is shown
+                    document.getElementById('formserver').submit();
+                }
+            });
+        });
 </script>
 @endpush
