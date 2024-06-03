@@ -67,7 +67,7 @@
                     <select class="form-control select2" name="ministry" id="ministry" required>
                         <option selected disabled>Select Ministry</option>
                         @foreach ($ministriesArray as $ministry)
-                        <option value="{{ $ministry['name'] }}" data-code="{{ $ministry['id'] }}">{{ $ministry['name'] }}</option>
+                        <option value="{{ $ministry['id'] }}" data-code="{{ $ministry['id'] }}">{{ $ministry['name'] }}</option>
                         @endforeach
                     </select>
                 </div>
@@ -396,7 +396,7 @@
                         $('#agency').empty().prop('disabled', false);
                         $('#agency').append(new Option("Select Agency", ""));
                         $.each(data, function(id, name) {
-                            $('#agency').append(new Option(name, name));
+                            $('#agency').append(new Option(name, id));
                         });
                     },
                     error: function(xhr, status, error) {

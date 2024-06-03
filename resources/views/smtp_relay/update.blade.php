@@ -71,9 +71,9 @@
                 <div class="mb-3">
                     <label for="ministry">Ministry</label>
                     <select class="form-control select2" name="ministry" id="ministry">
-                        <option value="{{ old('ministry', $formsmtp->ministry) }}">{{ old('ministry', $formsmtp->ministry) }}</option>
+                        <option value="{{ old('ministry', $formsmtp->ministry) }}">{{ old('ministry', $formsmtp->ministry_name) }}</option>
                         @foreach ($ministriesArray as $ministry)
-                        <option value="{{ $ministry['name'] }}" data-code="{{ $ministry['id'] }}">{{ $ministry['name'] }}</option>
+                        <option value="{{ $ministry['id'] }}" data-code="{{ $ministry['id'] }}">{{ $ministry['name'] }}</option>
                         @endforeach
                     </select>
                 </div>
@@ -81,7 +81,7 @@
                     <div class="col-md-6">
                         <label for="agencies">Agency</label>
                         <select class="form-control select2" name="agencies" id="agencies" aria-label="Default select">
-                            <option value="{{ old('agencies', $formsmtp->agencies) }}">{{ old('agencies', $formsmtp->agencies) }}</option>
+                            <option value="{{ old('agencies', $formsmtp->agencies) }}">{{ old('agencies', $formsmtp->agencies_name) }}</option>
                             {{-- @foreach ($agenciesArray as $agency)
                             <option value="{{ $agency['name'] }}">{{ $agency['name'] }}</option>
                             @endforeach --}}
@@ -405,7 +405,7 @@
                         //$('#agencies').empty().prop('disabled', false);
                         $('#agencies').append(new Option("Select Agency", ""));
                         $.each(data, function(id, name) {
-                            $('#agencies').append(new Option(name, name));
+                            $('#agencies').append(new Option(name, id));
                         });
                     },
                     error: function(xhr, status, error) {
