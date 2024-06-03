@@ -316,32 +316,13 @@
 
 @endsection
 @push('script')
-
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
 <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
 <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
 <script src="https://ajax.aspnetcdn.com/ajax/jquery.validate/1.19.2/jquery.validate.min.js"></script>
 
 <script>
-    // document.getElementById('formserver').addEventListener('submit', function(event) {
-    //     event.preventDefault(); // Prevent the default form submission
 
-    //     // Display a confirmation dialog using SweetAlert
-    //     Swal.fire({
-    //         title: 'Confirm Submission',
-    //         text: 'Are you sure you want to submit the form?',
-    //         icon: 'warning',
-    //         showCancelButton: true,
-    //         confirmButtonText: 'Yes, submit!',
-    //         cancelButtonText: 'No, cancel',
-    //         reverseButtons: true
-    //     }).then((result) => {
-    //         if (result.isConfirmed) {
-    //             // Proceed with form submission if the user confirms
-    //             this.form.submit();
-    //         }
-    //     });
-    // });
     // function typeChange() {
 
     // var selectType = document.getElementById("type_req");
@@ -415,7 +396,7 @@
                         $('#agency').empty().prop('disabled', false);
                         $('#agency').append(new Option("Select Agency", ""));
                         $.each(data, function(id, name) {
-                            $('#agency').append(new Option(name, id));
+                            $('#agency').append(new Option(name, name));
                         });
                     },
                     error: function(xhr, status, error) {
@@ -784,5 +765,19 @@ function updateNameAttribute(nameAttr, newIndex) {
     return nameAttr.replace('[' + currentIndex + ']', '[' + newIndex + ']');
 }
 
+
+document.getElementById('submit').addEventListener('click', function() {
+            // Show the SweetAlert "Loading..." message
+            Swal.fire({
+                title: 'Loading...',
+                text: 'Please wait while we process your request.',
+                allowOutsideClick: false,
+                didOpen: () => {
+                    Swal.showLoading();
+                    // Submit the form after the SweetAlert is shown
+                    document.getElementById('formserver').submit();
+                }
+            });
+        });
 </script>
 @endpush

@@ -34,7 +34,7 @@
         </header>
         <!-- Main page content-->
         <div class="container-fluid px-4">
-            @if(request()->has('message'))
+            @if(request()->has('success'))
             <script>
                 document.addEventListener('DOMContentLoaded', function () {
                     Swal.fire({

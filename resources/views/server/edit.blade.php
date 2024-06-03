@@ -48,6 +48,9 @@
                     <input class="form-control" type="file" name="sshkey" id="sshkey" accept=".pem"/>
                     <span class="text-xs text-danger">Upload File Key format .pem</span>
                 </div>
+                <div class="mb-3">
+                    <label class="small mb-1" for="inputNotificationEmail">Updated At : {{ \Carbon\Carbon::now('Asia/Kuala_Lumpur')->format('d/m/Y h:i:s') }}</label>
+                </div>
                 <button class="btn btn-primary me-2 my-1" type="submit">Submit</button>
                 <a class="btn btn-danger me-2 my-1" type="button" href="{{ route('server.index')}}">Cancel</a>
                 </form>

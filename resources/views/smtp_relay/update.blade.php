@@ -73,7 +73,7 @@
                     <select class="form-control select2" name="ministry" id="ministry">
                         <option value="{{ old('ministry', $formsmtp->ministry) }}">{{ old('ministry', $formsmtp->ministry) }}</option>
                         @foreach ($ministriesArray as $ministry)
-                        <option value="{{ $ministry['name'] }}">{{ $ministry['name'] }}</option>
+                        <option value="{{ $ministry['name'] }}" data-code="{{ $ministry['id'] }}">{{ $ministry['name'] }}</option>
                         @endforeach
                     </select>
                 </div>
@@ -82,9 +82,9 @@
                         <label for="agencies">Agency</label>
                         <select class="form-control select2" name="agencies" id="agencies" aria-label="Default select">
                             <option value="{{ old('agencies', $formsmtp->agencies) }}">{{ old('agencies', $formsmtp->agencies) }}</option>
-                            @foreach ($agenciesArray as $agency)
+                            {{-- @foreach ($agenciesArray as $agency)
                             <option value="{{ $agency['name'] }}">{{ $agency['name'] }}</option>
-                            @endforeach
+                            @endforeach --}}
                         </select>
                     </div>
                     <div class="col-md-6">
@@ -393,6 +393,29 @@
 
 <script>
     $(document).ready(function() {
+        $('#ministry').change(function() {
+            var ministry = $(this).val();
+            var ministryCode = $(this).find(':selected').data('code');
+
+            if (ministryCode) {
+                $.ajax({
+                    url: '/smtp_relay/agency/' + ministryCode,
+                    type: 'GET',
+                    success: function(data) {
+                        //$('#agencies').empty().prop('disabled', false);
+                        $('#agencies').append(new Option("Select Agency", ""));
+                        $.each(data, function(id, name) {
+                            $('#agencies').append(new Option(name, name));
+                        });
+                    },
+                    error: function(xhr, status, error) {
+                        console.error(error);
+                    }
+                });
+            } else {
+                //$('#agency').empty().prop('disabled', true);
+            }
+        });
 
         $('#dynamic-inputs-container').on('input', '#ip_addr_server', function() {
             var type_req = document.getElementById("types_req");
@@ -766,5 +789,18 @@ function updateNameAttribute(containerId, nameAttr) {
     // Replace the index in the name attribute
     return nameAttr.replace('[' + currentIndex + ']', '[' + newIndex + ']');
 }
+document.getElementById('submit').addEventListener('click', function() {
+            // Show the SweetAlert "Loading..." message
+            Swal.fire({
+                title: 'Loading...',
+                text: 'Please wait while we process your request.',
+                allowOutsideClick: false,
+                didOpen: () => {
+                    Swal.showLoading();
+                    // Submit the form after the SweetAlert is shown
+                    document.getElementById('formserver').submit();
+                }
+            });
+        });
 </script>
 @endpush

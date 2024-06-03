@@ -202,75 +202,7 @@
 
 @endsection
 @push('script')
-<script>
-
-/*SIDI CODE*/
-/*
-        // Make AJAX request to fetch Shell In A Box session
-        fetch('{{ route('shell-in-a-box') }}')
-        .then(response => response.text())
-        .then(data => {
-            // console.log(data);
-            // Update the content on your page
-            document.getElementById('shell-in-a-box').innerHTML = data;
-        })
-        .catch(error => {
-            console.error('Error fetching Shell In A Box session:', error);
-        });
-
-    (function ($) {
-        var table = $('#datatablesSimple1').DataTable({
-            processing: true,
-            serverSide: false,
-            ordering: true,
-            lengthMenu: [ [10, 25, 50, -1], [10, 25, 50, "All"] ],
-            dom: '<"top"fBl>rt<"bottom"ip>',
-            buttons: [
-                {
-                    extend: 'copy',
-                    text: 'Copy',
-                    exportOptions: {
-                        columns: ':visible'
-                    }
-                },
-                {
-                    extend: 'csv',
-                    text: 'CSV',
-                    exportOptions: {
-                        columns: ':visible'
-                    }
-                },
-                {
-                    extend: 'excel',
-                    text: 'Excel',
-                    exportOptions: {
-                        columns: ':visible'
-                    }
-                },
-                {
-                    extend: 'pdf',
-                    text: 'PDF',
-                    exportOptions: {
-                        columns: ':visible'
-                    }
-                },
-                {
-                    extend: 'print',
-                    text: 'Print',
-                    exportOptions: {
-                        columns: ':visible'
-                    }
-                }
-            ]
-        });
-
-        // Adjust positioning of search input and export buttons
-        $('.dataTables_filter').addClass('d-inline-block mr-2'); // Make search input inline
-        $('.dt-buttons').appendTo('.dataTables_filter'); // Append export buttons to search container
-    })(jQuery);
-
-*/
-
+<script> 
 
 /*ROMIE CODE*/
 $(document).ready(function () {

@@ -52,6 +52,7 @@ class ServerController extends Controller
             'status' => 0,
             'sshkey' => "null",
             'server_type' => 0,
+            'updated_at' => null,
         ]);
 
         // // Insert primary1name
