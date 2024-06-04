@@ -30,24 +30,6 @@
                 </div>
                 <div class="card-body">
                     <div class="list-group-item list-group-item-action">
-                        Testing: <br>
-
-                        Server Name : {{ request()->server('SERVER_NAME') }} <br>
-                        Server IPv4 : {{ request()->server('SERVER_ADDR') }} <br>
-                        Server IPv6 : {{ request()->server('SERVER_ADDR_IPV6') }} <br>
-
-                        <i class="text-blue me-2" data-feather="chevrons-right"></i>
-                        Server IPv4 Address: <span id="server-ipv4-address">Fetching...</span>
-                    </div>
-                    <div class="list-group-item list-group-item-action">
-                        <i class="text-blue me-2" data-feather="chevrons-right"></i>
-                        Server IPv6 Address: <span id="server-ipv6-address">Fetching...</span>
-                    </div>
-
-
-
-
-
                     <div class="list-group list-group-flush medium">
                         <div class="list-group-item list-group-item-action">
                             <i class="text-blue me-2" data-feather="chevrons-right"></i>
@@ -61,11 +43,11 @@
                             <i class="text-blue me-2" data-feather="chevrons-right"></i>
                             {{-- Client IPv4 Address: <span id="ipv4-address">Fetching...</span> --}}
 
-                            System IPv4 Address: {{ request()->ip() }}
+                            System IPv4 Address: <span id="server-ipv4-address">Fetching...</span>
                         </div>
                         <div class="list-group-item list-group-item-action">
                             <i class="text-blue me-2" data-feather="chevrons-right"></i>
-                            {{-- System IPv6 Address: <span id="ipv6-address">Fetching...</span> --}}
+                            System IPv6 Address: <span id="server-ipv6-address">Fetching...</span>
                         </div>
                         <div class="list-group-item list-group-item-action">
                             <i class="text-blue me-2" data-feather="chevrons-right"></i>
