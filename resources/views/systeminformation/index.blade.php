@@ -41,13 +41,12 @@
                         <div class="list-group-item list-group-item-action">
                             <i class="text-blue me-2" data-feather="chevrons-right"></i>
                             {{-- Client IPv4 Address: <span id="ipv4-address">Fetching...</span> --}}
-                            {{--System IPv4 Address: {{ request()->ip() }}--}}
-                            System IPv4 Address: {{ request()->server('SERVER_ADDR') }}
+
+                            System IPv4 Address: <span id="server-ipv4-address">Fetching...</span>
                         </div>
                         <div class="list-group-item list-group-item-action">
                             <i class="text-blue me-2" data-feather="chevrons-right"></i>
-                            {{-- System IPv6 Address: <span id="ipv6-address">Fetching...</span> --}}
-                            System IPv6 Address: {{ request()->server('SERVER_ADDR_IPV6') }}
+                            System IPv6 Address: <span id="server-ipv6-address">Fetching...</span>
                         </div>
                         <div class="list-group-item list-group-item-action">
                             <i class="text-blue me-2" data-feather="chevrons-right"></i>
