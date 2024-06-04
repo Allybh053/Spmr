@@ -29,7 +29,6 @@
                     System Information
                 </div>
                 <div class="card-body">
-                    <div class="list-group-item list-group-item-action">
                     <div class="list-group list-group-flush medium">
                         <div class="list-group-item list-group-item-action">
                             <i class="text-blue me-2" data-feather="chevrons-right"></i>
@@ -51,10 +50,10 @@
                         </div>
                         <div class="list-group-item list-group-item-action">
                             <i class="text-blue me-2" data-feather="chevrons-right"></i>
-                            DNS Servers:<hr>
+                            DNS Servers:
                             @php
                                 $dnsServers = exec("cat /etc/resolv.conf | grep nameserver | awk '{print $2}'");
-                                echo $dnsServers ?: '-> <span class="text-danger">Not Available</span>';
+                                echo $dnsServers ?: '<span class="text-danger">Not Available</span>';
                             @endphp
                         </div>
                         <div class="list-group-item list-group-item-action">
