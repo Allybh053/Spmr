@@ -323,6 +323,29 @@ Route::group(['middleware' => ['auth', 'nocache']], function () {
 
     Route::post('/getAgencies', [GenerateReportingController::class, 'getAgencies'])->name('get-agencies-by-report');
 
+    Route::get('/get-server-ip', function () {
+        // Get the server's hostname
+        $hostname = gethostname();
+
+        // Get IPv4 and IPv6 addresses
+        $ips = gethostbynamel($hostname);
+        $ipv4 = null;
+        $ipv6 = null;
+
+        foreach ($ips as $ip) {
+            if (filter_var($ip, FILTER_VALIDATE_IP, FILTER_FLAG_IPV4)) {
+                $ipv4 = $ip;
+            }
+            if (filter_var($ip, FILTER_VALIDATE_IP, FILTER_FLAG_IPV6)) {
+                $ipv6 = $ip;
+            }
+        }
+
+        return response()->json([
+            'ipv4' => $ipv4,
+            'ipv6' => $ipv6,
+        ]);
+    });
 
 });
 

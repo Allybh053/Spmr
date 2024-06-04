@@ -29,6 +29,25 @@
                     System Information
                 </div>
                 <div class="card-body">
+                    <div class="list-group-item list-group-item-action">
+                        Testing: <br>
+
+                        Server Name : {{ request()->server('SERVER_NAME') }} <br>
+                        Server IPv4 : {{ request()->server('SERVER_ADDR') }} <br>
+                        Server IPv6 : {{ request()->server('SERVER_ADDR_IPV6') }} <br>
+
+                        <i class="text-blue me-2" data-feather="chevrons-right"></i>
+                        Server IPv4 Address: <span id="server-ipv4-address">Fetching...</span>
+                    </div>
+                    <div class="list-group-item list-group-item-action">
+                        <i class="text-blue me-2" data-feather="chevrons-right"></i>
+                        Server IPv6 Address: <span id="server-ipv6-address">Fetching...</span>
+                    </div>
+
+
+
+
+
                     <div class="list-group list-group-flush medium">
                         <div class="list-group-item list-group-item-action">
                             <i class="text-blue me-2" data-feather="chevrons-right"></i>
@@ -41,11 +60,12 @@
                         <div class="list-group-item list-group-item-action">
                             <i class="text-blue me-2" data-feather="chevrons-right"></i>
                             {{-- Client IPv4 Address: <span id="ipv4-address">Fetching...</span> --}}
+
                             System IPv4 Address: {{ request()->ip() }}
                         </div>
                         <div class="list-group-item list-group-item-action">
                             <i class="text-blue me-2" data-feather="chevrons-right"></i>
-                            System IPv6 Address: <span id="ipv6-address">Fetching...</span>
+                            {{-- System IPv6 Address: <span id="ipv6-address">Fetching...</span> --}}
                         </div>
                         <div class="list-group-item list-group-item-action">
                             <i class="text-blue me-2" data-feather="chevrons-right"></i>
@@ -138,25 +158,25 @@
 @endsection
 @push('script')
 <script>
-    // Fetch IP addresses using ipapi.co
-    fetch('https://ipapi.co/json/')
+    // Fetch server IP addresses using Laravel route
+    fetch('/get-server-ip')
         .then(response => response.json())
         .then(data => {
-            if (data.ip) {
-                document.getElementById('ipv4-address').innerText = data.ip;
+            if (data.ipv4) {
+                document.getElementById('server-ipv4-address').innerText = data.ipv4;
             } else {
-                document.getElementById('ipv4-address').innerText = 'Not Available';
+                document.getElementById('server-ipv4-address').innerText = 'Not Available';
             }
 
-            if (data.ip6) {
-                document.getElementById('ipv6-address').innerText = data.ip6;
+            if (data.ipv6) {
+                document.getElementById('server-ipv6-address').innerText = data.ipv6;
             } else {
-                document.getElementById('ipv6-address').innerText = 'Not Available';
+                document.getElementById('server-ipv6-address').innerText = 'Not Available';
             }
         })
         .catch(() => {
-            document.getElementById('ipv4-address').innerText = 'Not Available';
-            document.getElementById('ipv6-address').innerText = 'Not Available';
+            document.getElementById('server-ipv4-address').innerText = 'Not Available';
+            document.getElementById('server-ipv6-address').innerText = 'Not Available';
         });
 </script>
 @endpush
