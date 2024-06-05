@@ -71,26 +71,28 @@
                             <div class="row gx-3 mb-3">
                                 <div class="col-md-6">
                                     <label class="small mb-1" for="position">Position</label>
-                                    <select class="form-control select2" id="position_id" name="position_id" aria-label="Default select2" required>
+                                    <input class="form-control" id="position_id" name="position_id" type="text" placeholder="" value="{{ old('position_id', $user->position_id) }}" required/>
+                                    {{-- <select class="form-control select2" id="position_id" name="position_id" aria-label="Default select2" required>
                                         <option value="{{ $user->position_id }}" {{ $user->position_id ? 'selected' : '' }}>{{ $user->position_id }}</option>
                                         @foreach ($positions as $position)
                                             <option value="{{ $position->name }}">
                                                 {{ $position->name }}
                                             </option>
                                         @endforeach
-                                    </select>
+                                    </select> --}}
                                 </div>
                                 <!-- Form Group (phone number)-->
                                 <div class="col-md-6">
                                     <label class="small mb-1" for="department">Department</label>
-                                    <select class="form-control select2" id="department_id" name="department_id" aria-label="Default select2" required>
+                                    <input class="form-control" id="department_id" name="department_id" type="text" placeholder="" value="{{ old('department_id', $user->department_id) }}" required/>
+                                    {{-- <select class="form-control select2" id="department_id" name="department_id" aria-label="Default select2" required>
                                         <option value="{{ $user->department_id }}" {{ $user->department_id ? 'selected' : '' }}>{{ $user->department_id }}</option>
                                         @foreach ($departments as $department)
                                             <option value="{{ $department->name }}">
                                                 {{ $department->name }}
                                             </option>
                                         @endforeach
-                                    </select>
+                                    </select> --}}
                                 </div>
                             </div>
                             <!-- Form Row-->
@@ -214,18 +216,18 @@ $(".select2").select2();
             $(this).removeClass('is-invalid');
         }
     });
-    $('#position_id').on('change', function() {
-        var isValid = $(this).valid();
-        if (isValid) {
-            $(this).removeClass('is-invalid');
-        }
-    });
-    $('#department_id').on('change', function() {
-        var isValid = $(this).valid();
-        if (isValid) {
-            $(this).removeClass('is-invalid');
-        }
-    });
+    // $('#position_id').on('change', function() {
+    //     var isValid = $(this).valid();
+    //     if (isValid) {
+    //         $(this).removeClass('is-invalid');
+    //     }
+    // });
+    // $('#department_id').on('change', function() {
+    //     var isValid = $(this).valid();
+    //     if (isValid) {
+    //         $(this).removeClass('is-invalid');
+    //     }
+    // });
 
 function matchCustom(params, data) {
             // If there are no search terms, return all data
@@ -247,16 +249,16 @@ function matchCustom(params, data) {
             return null;
         }
 
-        $('#position_id').select2({
-            matcher: matchCustom,
-            placeholder: 'Select an option',
-            allowClear: true
-        });
-        $('#department_id').select2({
-            matcher: matchCustom,
-            placeholder: 'Select an option',
-            allowClear: true
-        });
+        // $('#position_id').select2({
+        //     matcher: matchCustom,
+        //     placeholder: 'Select an option',
+        //     allowClear: true
+        // });
+        // $('#department_id').select2({
+        //     matcher: matchCustom,
+        //     placeholder: 'Select an option',
+        //     allowClear: true
+        // });
     });
 </script>
 @endpush

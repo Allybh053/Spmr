@@ -2,7 +2,7 @@
 @section('content')
 <main>
     <header class="page-header page-header-compact page-header-light border-bottom bg-white mb-4">
-        <div class="container-xl px-4">
+        <div class="container-fluid px-4">
             <div class="page-header-content">
                 <div class="row align-items-center justify-content-between pt-3">
                     <div class="col-auto mb-3">
@@ -16,7 +16,7 @@
         </div>
     </header>
     <!-- Main page content-->
-    <div class="container-xl px-4 mt-4">
+    <div class="container-fluid px-4 mt-4">
         <!-- Account page navigation-->
         <nav class="nav nav-borders">
             <a class="nav-link active ms-0" href="account-profile.html">Details</a>
@@ -36,7 +36,6 @@
                             <!-- Form Group (username)-->
                             <div class="mb-3">
                                 <label class="small mb-1" for="username">Username (how the name will appear to other users on the site)</label>
-                                {{-- <input class="form-control" id="username" name="username" type="text" placeholder="Enter your username" value="" oninput="this.value = this.value.toLowerCase()" required/> --}}
                                 <input readonly class="form-control" id="username" name="username" type="text" value="" oninput="validateInput(this)" required/>
                                 <span id="errorMessage" style="color: red;"></span>
                             </div>
@@ -84,22 +83,12 @@
                             <div class="row gx-3 mb-3">
                                 <div class="col-md-6">
                                     <label class="small mb-1" for="position">Position</label>
-                                    <select id="position" class="form-control select2" name="position" aria-label="Default select2" required>
-                                        <option selected disabled>Select Position:</option>
-                                        @foreach ($positions as $position)
-                                        <option value="{{ $position->name }}">{{ $position->name }}</option>
-                                        @endforeach
-                                    </select>
+                                    <input class="form-control" id="position" name="position" type="text" placeholder="" value="" required/>
                                 </div>
                                 <!-- Form Group (phone number)-->
                                 <div class="col-md-6">
                                     <label class="small mb-1" for="department">Department</label>
-                                    <select id="department" class="form-control select2" name="department" aria-label="Default select2" required>
-                                        <option selected disabled>Select Department:</option>
-                                        @foreach ($departments as $department)
-                                        <option value="{{ $department->name }}">{{ $department->name }}</option>
-                                        @endforeach
-                                    </select>
+                                    <input class="form-control" id="department" name="department" type="text" placeholder="" value="" required/>
                                 </div>
                             </div>
                             <div class="row gx-3 mb-3">
@@ -209,18 +198,18 @@ $(document).ready(function() {
                 $(this).removeClass('is-invalid');
             }
         });
-        $('#position').on('change', function() {
-            var isValid = $(this).valid();
-            if (isValid) {
-                $(this).removeClass('is-invalid');
-            }
-        });
-        $('#department').on('change', function() {
-            var isValid = $(this).valid();
-            if (isValid) {
-                $(this).removeClass('is-invalid');
-            }
-        });
+        // $('#position').on('change', function() {
+        //     var isValid = $(this).valid();
+        //     if (isValid) {
+        //         $(this).removeClass('is-invalid');
+        //     }
+        // });
+        // $('#department').on('change', function() {
+        //     var isValid = $(this).valid();
+        //     if (isValid) {
+        //         $(this).removeClass('is-invalid');
+        //     }
+        // });
 
     function matchCustom(params, data) {
                 // If there are no search terms, return all data
@@ -242,16 +231,16 @@ $(document).ready(function() {
                 return null;
             }
 
-            $('#position').select2({
-                matcher: matchCustom,
-                placeholder: 'Select an option',
-                allowClear: true
-            });
-            $('#department').select2({
-                matcher: matchCustom,
-                placeholder: 'Select an option',
-                allowClear: true
-            });
+            // $('#position').select2({
+            //     matcher: matchCustom,
+            //     placeholder: 'Select an option',
+            //     allowClear: true
+            // });
+            // $('#department').select2({
+            //     matcher: matchCustom,
+            //     placeholder: 'Select an option',
+            //     allowClear: true
+            // });
         });
 
         function validateInput(input) {
