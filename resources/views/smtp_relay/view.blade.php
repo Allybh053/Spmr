@@ -252,11 +252,11 @@
                 <div class="row col-12">
                     <div class="mb-3 col-md-4">
                         <label class=" mb-1" for="approvalposition">Approval Position</label>
-                        <p>{{ $datasmtp->verifier_3_name}}</p>
+                        <p>{{ $datasmtp->verifier_3_position}}</p>
                     </div>
                     <div class="mb-3 col-md-4">
                         <label class=" mb-1" for="approvaldepart">Approval Department / Division:</label>
-                        <p>{{ $datasmtp->verifier_3_name}}</p>
+                        <p>{{ $datasmtp->verifier_3_dept_div}}</p>
                     </div>
                     <div class="mb-3 col-md-4">
                         <label class=" mb-1" for="approvaldate">Date:</label>
