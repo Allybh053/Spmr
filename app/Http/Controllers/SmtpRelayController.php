@@ -66,10 +66,11 @@ class SmtpRelayController extends Controller
 
         $query = smtp_relay_server::select('smtp_relay_req_form.updated_at as updated_at','smtp_relay_req_form.form_id as formA', 'smtp_relay_req_form.ticket_id', 'agencies.name as agencies', 'smtp_relay_req_form.project_name', 'smtp_relay_req_form.smtp_relay_server', 'smtp_relay_req_form.date_verification_3', 'smtp_relay_server.types_req as typeB', 'smtp_relay_server.ip_addr_server','smtp_relay_server.id as detailID', 'smtp_relay_server.smtpid','smtp_relay_server.created_at as created_at', 'smtp_relay_server.server_name', 'smtp_relay_req_form.status as status')
                 ->leftJoin('smtp_relay_req_form', 'smtp_relay_req_form.id', '=', 'smtp_relay_server.smtpid')
-                ->leftJoin('agencies','agencies.id','agencies.id')
+                //->leftJoin('agencies','agencies.id','agencies.id')
+                ->leftJoin('agencies','agencies.id',DB::raw('CAST(agencies.id AS bigint)'))
                 ->orderby('smtp_relay_req_form.status','asc')
                 ->orderBy('created_at', 'desc');
-
+                //->leftJoin('ministrys','ministrys.id',DB::raw('CAST(agencies.ministry AS bigint)'))
         // Apply filters based on search parameters
         // if (!empty($agency)) {
         //   $query->where('agency_column', $agency); // Replace 'agency_column' with the actual column name for agency in your database table
