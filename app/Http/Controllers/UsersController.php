@@ -36,9 +36,9 @@ class UsersController extends Controller
 			$q->whereNotIn('name', ['Developer','Superadmin']);
 		})->orderBy('username','ASC')->get();
         $roles = Role::whereNotIn('name', ['Developer','Superadmin'])->pluck('name', 'id')->toArray();
-        $departments = Department::where('status',1)->get();
-        $positions = Position::where('status',1)->get();
-        return view('users.usermanagements.create', compact('user','roles','departments','positions'));
+        // $departments = Department::where('status',1)->get();
+        // $positions = Position::where('status',1)->get();
+        return view('users.usermanagements.create', compact('user','roles'));
     }
 
     /**
@@ -69,20 +69,20 @@ class UsersController extends Controller
                 'enabled' => 'required',
             ]);
 
-            $existingPosition = Position::where('name', $validatedData['position'])->first();
-            if (!$existingPosition) {
-                Position::create([
-                    'name' => $validatedData['position'],
-                    'status'=> 1,
-                ]);
-            }
-            $existingDepartment = Department::where('name', $validatedData['department'])->first();
-            if (!$existingDepartment) {
-                Department::create([
-                    'name' => $validatedData['department'],
-                    'status'=> 1,
-                ]);
-            }
+            // $existingPosition = Position::where('name', $validatedData['position'])->first();
+            // if (!$existingPosition) {
+            //     Position::create([
+            //         'name' => $validatedData['position'],
+            //         'status'=> 1,
+            //     ]);
+            // }
+            // $existingDepartment = Department::where('name', $validatedData['department'])->first();
+            // if (!$existingDepartment) {
+            //     Department::create([
+            //         'name' => $validatedData['department'],
+            //         'status'=> 1,
+            //     ]);
+            // }
             $plaintextPassword = $request->input('password');
             // Hash the password
             $hashedPassword = Hash::make($validatedData['password']);
@@ -104,7 +104,7 @@ class UsersController extends Controller
             $this->syncPermissions($request, $user);
 
             // Check if user was created successfully
-             
+
             if ($user) {
                 //Mail::to($user->email)->send(new WelcomeNewUser($user,$plaintextPassword));
                 // Redirect back or to another page
