@@ -56,7 +56,7 @@
     <div class="row">
         <div class="col-xl-12">
             <div class="card">
-                <div class="card-header">PDSA NAME LOOP HERE</div>
+                <div class="card-header">PDSA Putrajaya</div>
                 <div class="card-body">
                     <div class="row col-md-12">
                     @foreach ($dataservers as $dataserver)
@@ -69,7 +69,7 @@
                                         id="flexSwitchCheck{{ $dataserver->id }}"
                                         {{ $dataserver->status == 1 ? 'checked' : '' }}
                                         onclick="updateStatus({{ $dataserver->id }}, this)"/>
-                                        <label class="form-check-label" for="flexSwitchCheck{{ $dataserver->id }}">{{ $dataserver->status == 1 ? 'Active' : 'Disconnected' }}</label>
+                                        <label class="form-check-label" for="flexSwitchCheck{{ $dataserver->id }}">{{ $dataserver->status == 1 ? 'Enable' : 'Disable' }}</label>
                                     </div>
                                 </div>
                                 <div class="card-body">

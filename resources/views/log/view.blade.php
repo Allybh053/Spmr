@@ -136,8 +136,8 @@
                                         <table id="grandTotalsDatatable" class="display table table-striped table-bordered" cellspacing="0" width="100%">
                                             <thead>
                                             <tr>
-                                                <th>Messages</th>
-                                                <th>Grand Totals</th>
+                                                <th>Messages Type</th>
+                                                <th>Counts</th>
                                             </tr>
                                             </thead>
                                             <tbody id="grandTotalTable">
@@ -152,14 +152,14 @@
 
                         <div class="col-lg-6">
                             <div class="card mb-4">
-                                <div class="card-header">Top 10 Host/Domain Summary: Messages Received</div>
+                                <div class="card-header">Top 10 Host/Domain Summary: Senders</div>
                                 <div class="card-body">
                                     <div class="table-responsive">
                                         <table id="spmrDatatable"  class="display table table-striped table-bordered" cellspacing="0" width="100%">
                                             <thead>
                                             <tr>
                                                 <th>Message Count</th>
-                                                <th>Bytes</th>
+                                                <th>Message Size</th>
                                                 <th>Host/Domain</th>
                                             </tr>
                                             </thead>
