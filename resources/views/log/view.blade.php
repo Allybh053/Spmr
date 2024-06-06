@@ -159,7 +159,7 @@
                                             <thead>
                                             <tr>
                                                 <th>Message Count</th>
-                                                <th>Messages Size</th>
+                                                <th>Message Size</th>
                                                 <th>Host/Domain</th>
                                             </tr>
                                             </thead>

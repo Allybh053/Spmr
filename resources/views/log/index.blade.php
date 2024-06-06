@@ -231,7 +231,7 @@
 
                         for (var j = 0; j < columns.length; j++) {
                             var cell = document.createElement('td');
-                            if (j === 0) { // Format the first column (assumed to be a number)
+                            if (j != 0) { // Format the first column (assumed to be a number)
                                 cell.textContent = numberWithCommas(columns[j]);
                             } else {
                                 cell.textContent = columns[j];
