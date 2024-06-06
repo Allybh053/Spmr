@@ -74,26 +74,14 @@
                 <div class="row gx-3 mb-3">
                     <div class="col-md-6">
                         <label for="agency">Agency<span style="color: red"> *</span></label>
-                        <select class="form-control select2" name="agency" id="agency" disabled>
+                        <select class="form-control select2" name="agency" id="agency" disabled required>
                             <option disabled selected>Select Agency</option>
-                            {{-- @foreach ($agenciesArray as $agency)
-                            <option value="{{ $agency['name'] }}">{{ $agency['name'] }}</option>
-                            @endforeach --}}
                         </select>
                     </div>
                     <div class="col-md-6">
                         <label for="departowner">Department/Division/Unit</label>
-                        <input class="form-control" name="departowner" id="departowner" value="" required> </input>
+                        <input class="form-control" name="departowner" id="departowner" value=""> </input>
                     </div>
-                    {{-- <div class="col-md-6" id="departowner2" style="display:none;">
-                        <label for="departowner">Department/Division/Unit</label>
-                        <select class="form-control select2" name="departowner" id="departowner" required>
-                            <option disabled selected>Select Department/Division/Unit</option>
-                            @foreach ($departmentsArray as $department)
-                            <option value="{{ $department['name'] }}">{{ $department['name'] }}</option>
-                            @endforeach
-                        </select>
-                    </div> --}}
                 </div>
                 <div class="mb-3">
                     <label for="agencyadd">Agency Address</label>
@@ -134,7 +122,7 @@
                         <tbody id="dynamic-inputs-container" name="dynamic-inputs-container">
                             <tr class="dynamic-input-row">
                                 <td><input type="text" name="tableSpmr[0][server_name]" id="server_name" value="" class="form-control" required disabled/></td>
-                                <td><input type="text" name="tableSpmr[0][ipaddress]" id="ipaddress" value="" class="form-control" required disabled/></td>
+                                <td><input type="text" name="tableSpmr[0][ipaddress]" id="ipaddress" value="" class="form-control ipaddress-input" required disabled/></td>
                                 <td><input type="text" name="tableSpmr[0][domain]" id="domain" value="" class="form-control" required disabled/></td>
                                 <td><input type="text" name="tableSpmr[0][mailfrom]" id="mailfrom" value="" class="form-control" required disabled/></td>
                                 <td><button class="btn btn-danger remove-row"><i class="me-1" data-feather="minus"></i>Remove</button></td>
@@ -149,6 +137,7 @@
                         </tfoot>
                         <strong><p style="color: red;" id="resultContainer"></p></strong>
                         <strong><p style="color: red;" id="resultContainer2"></p></strong>
+                        <strong><p style="color: red;" id="resultContainer3"></p></strong>
                     </table>
                 </div>
 
@@ -323,66 +312,41 @@
 
 <script>
 
-    // function typeChange() {
-
-    // var selectType = document.getElementById("type_req");
-    // var selectedValueType = selectType.options[selectType.selectedIndex].value;
-    // var departowner1 = document.getElementById("departowner1");
-    // var departowner2 = document.getElementById("departowner2");
-    // var applicant1 = document.getElementById("applicant1");
-    // var applicant2 = document.getElementById("applicant2");
-    // var verifier1 = document.getElementById("verifier1");
-    // var verifier2 = document.getElementById("verifier2");
-    // var approval1 = document.getElementById("approval1");
-    // var approval2 = document.getElementById("approval2");
-
-
-    // Check if the selected option is the "Select Server" option
-    // if (selectedValueType === "1") {
-    //         departowner1.style.display = "block";
-    //         departowner1.style.display = "inline-block";
-    //         departowner2.style.display = "none";
-    //         departowner2.disabled = true;
-
-    //         applicant1.style.display = "block";
-    //         applicant1.style.display = "inline-block";
-    //         applicant2.style.display = "none";
-    //         applicant2.disabled = true;
-
-    //         verifier1.style.display = "block";
-    //         verifier1.style.display = "inline-block";
-    //         verifier2.style.display = "none";
-    //         verifier2.disabled = true;
-
-    //         approval1.style.display = "block";
-    //         approval1.style.display = "inline-block";
-    //         approval2.style.display = "none";
-    //         approval2.disabled = true;
-
-    //     }else{
-    //         departowner1.style.display = "none";
-    //         departowner1.disabled = true;
-    //         departowner2.style.display = "block";
-    //         departowner2.style.display = "inline-block";
-
-    //         applicant1.style.display = "none";
-    //         applicant1.disabled = true;
-    //         applicant2.style.display = "block";
-    //         applicant2.style.display = "inline-block";
-
-    //         verifier1.style.display = "none";
-    //         verifier1.disabled = true;
-    //         verifier2.style.display = "block";
-    //         verifier2.style.display = "inline-block";
-
-    //         approval1.style.display = "none";
-    //         approval1.disabled = true;
-    //         approval2.style.display = "block";
-    //         approval2.style.display = "inline-block";
-    //     }
-    // }
-
     $(document).ready(function() {
+
+    // Function to check for duplicate IP addresses
+    function checkDuplicateIP() {
+        var ipAddresses = [];
+        var isDuplicate = false;
+
+        $('.ipaddress-input').each(function() {
+            var ip = $(this).val();
+            if (ip && ipAddresses.includes(ip)) {
+                isDuplicate = true;
+                var response = "IP address already Keyin in previous row!";
+                $(this).addClass('is-invalid');
+                $('#resultContainer3').html(response);
+            } else {
+                $(this).removeClass('is-invalid');
+                $('#resultContainer3').empty(response);
+                ipAddresses.push(ip);
+            }
+        });
+
+        return isDuplicate;
+    }
+
+    // Event listener for changes to the IP address input fields
+    $(document).on('input', '.ipaddress-input', function() {
+        checkDuplicateIP();
+    });
+
+    // Add event listener for removing rows
+    $(document).on('click', '.remove-row', function() {
+        $(this).closest('tr').remove();
+        checkDuplicateIP(); // Recheck IP addresses after a row is removed
+    });
+
 
         $('#ministry').change(function() {
             var ministry = $(this).val();
@@ -753,6 +717,7 @@ function addRow(containerId) {
     container.append(newRow);
 
 }
+
 
 // Function to update the name attribute of inputs
 function updateNameAttribute(nameAttr, newIndex) {

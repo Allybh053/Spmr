@@ -62,6 +62,7 @@ class SmtpRelayReqForm extends Model  implements Auditable
         'verifier_3_dept_div',
         'date_verification_3',
         'upload_copy_attachment',
+        'status',
 
     ];
 
