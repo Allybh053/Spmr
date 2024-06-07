@@ -17,10 +17,16 @@ class ActivityLogController extends Controller
     {
 
         // Fetch audit logs
-        $auditLogs = AuditLog::orderBy('created_at', 'desc')->get();
+        //$auditLogs = AuditLog::orderBy('created_at', 'desc')->get();
+
+        // Fetch audit logs, limit to 50
+        $auditLogs = AuditLog::orderBy('created_at', 'desc')->take(50)->get();
 
         // Fetch activity logs
-        $activityLogs = ActivityLog::orderBy('created_at', 'desc')->get();
+        //$activityLogs = ActivityLog::orderBy('created_at', 'desc')->get();
+
+        // Fetch activity logs, limit to 50
+        $activityLogs = ActivityLog::orderBy('created_at', 'desc')->take(50)->get();
 
         // Merge audit logs and activity logs into a single collection
         $logs = $auditLogs->merge($activityLogs);
