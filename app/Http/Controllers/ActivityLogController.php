@@ -20,13 +20,31 @@ class ActivityLogController extends Controller
         //$auditLogs = AuditLog::orderBy('created_at', 'desc')->get();
 
         // Fetch audit logs, limit to 50
-        $auditLogs = AuditLog::orderBy('created_at', 'desc')->take(50)->get();
+        $auditLogs = AuditLog::whereNotNull('old_values')
+        ->whereNotNull('new_values')->orderBy('created_at', 'desc')->get();
 
         // Fetch activity logs
         //$activityLogs = ActivityLog::orderBy('created_at', 'desc')->get();
 
         // Fetch activity logs, limit to 50
-        $activityLogs = ActivityLog::orderBy('created_at', 'desc')->take(50)->get();
+        $activityLogs = ActivityLog::whereNotNull('input')
+        ->where('input', '!=', '')
+        ->where('input', '!=', '[]')
+        ->orderBy('created_at', 'desc')
+        ->get();
+
+        function limitWords($string, $wordLimit) {
+            $words = explode(' ', $string);
+            if (count($words) > $wordLimit) {
+                return implode(' ', array_slice($words, 0, $wordLimit)) . '...';
+            }
+            return $string;
+        }
+
+        // Applying the word limit to each log's input
+        foreach ($activityLogs as $log) {
+            $log->input = limitWords($log->input, 50); // Adjust the number 10 to your desired word limit
+        }
 
         // Merge audit logs and activity logs into a single collection
         $logs = $auditLogs->merge($activityLogs);

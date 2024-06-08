@@ -6,12 +6,27 @@ use Illuminate\Http\Request;
 use App\Models\DomainMinistryAgencies;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use App\Models\ActivityLog;
 
 class DomainMinistryAgenciesListController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
         $fqdndata = DomainMinistryAgencies::all();
+
+        ActivityLog::create([
+            'user_id' => Auth::id(),
+            'activity_type' => 'View Domain',
+            'action' => $request->path(),
+            'url' => url()->full(),
+            'method' => $request->method(),
+            'ip_address' => $request->ip(),
+            'input' => json_encode([
+                'view domain' => $fqdndata->take(5)->toArray(),
+                'request' => $request->except(['password']),
+            ]),
+            'user_agent' => $request->userAgent(),
+        ]);
         return view('domain.index', compact('fqdndata'));
     }
 
@@ -32,6 +47,20 @@ class DomainMinistryAgenciesListController extends Controller
             $domain -> enabled = $request->enabled;
             $domain->save();
 
+
+            ActivityLog::create([
+                'user_id' => Auth::id(),
+                'activity_type' => 'New Domain',
+                'action' => $request->path(),
+                'url' => url()->full(),
+                'method' => $request->method(),
+                'ip_address' => $request->ip(),
+                'input' => json_encode([
+                    'new domain' => $domain,
+                    'request' => $request->except(['password']),
+                ]),
+                'user_agent' => $request->userAgent(),
+            ]);
             DB::commit();
             return response()->json([
                 'success' => '1',
@@ -53,9 +82,23 @@ class DomainMinistryAgenciesListController extends Controller
         // Your show logic here
     }
 
-    public function edit(string $id)
+    public function edit(Request $request,string $id)
     {
         $fqdndata = DomainMinistryAgencies::findOrFail($id);
+
+        ActivityLog::create([
+            'user_id' => Auth::id(),
+            'activity_type' => 'View Domain Info by Id',
+            'action' => $request->path(),
+            'url' => url()->full(),
+            'method' => $request->method(),
+            'ip_address' => $request->ip(),
+            'input' => json_encode([
+                'domain' => $fqdndata,
+                'request' => $request->except(['password']),
+            ]),
+            'user_agent' => $request->userAgent(),
+        ]);
 
         return view('domain.edit', compact('fqdndata'));
     }
@@ -74,6 +117,20 @@ class DomainMinistryAgenciesListController extends Controller
             $domain -> updated_at = now();
             $domain->save();
 
+            ActivityLog::create([
+                'user_id' => Auth::id(),
+                'activity_type' => 'Update Domain',
+                'action' => $request->path(),
+                'url' => url()->full(),
+                'method' => $request->method(),
+                'ip_address' => $request->ip(),
+                'input' => json_encode([
+                    'update domain' => $domain,
+                    'request' => $request->except(['password']),
+                ]),
+                'user_agent' => $request->userAgent(),
+            ]);
+
             DB::commit();
             return response()->json([
                 'success' => '1',
@@ -91,8 +148,22 @@ class DomainMinistryAgenciesListController extends Controller
 
     }
 
-    public function delete($id)
+    public function delete(Request $request,$id)
     {
+        ActivityLog::create([
+            'user_id' => Auth::id(),
+            'activity_type' => 'View Domain',
+            'action' => $request->path(),
+            'url' => url()->full(),
+            'method' => $request->method(),
+            'ip_address' => $request->ip(),
+            'input' => json_encode([
+                'delete domain' => DomainMinistryAgencies::findOrFail($id),
+                'request' => $request->except(['password']),
+            ]),
+            'user_agent' => $request->userAgent(),
+        ]);
+
         $domain = DomainMinistryAgencies::find($id);
 
         // Check if the server exists

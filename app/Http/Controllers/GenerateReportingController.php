@@ -17,6 +17,7 @@ use Illuminate\Support\Facades\File;
 use function Laravel\Prompts\search;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
+use App\Models\ActivityLog;
 
 class GenerateReportingController extends Controller
 {
@@ -43,6 +44,20 @@ class GenerateReportingController extends Controller
 
 
         $domainsArray = DomainMinistryAgencies::where('enabled', 1)->get()->toArray();
+
+        ActivityLog::create([
+            'user_id' => Auth::id(),
+            'activity_type' => 'View Agencies Reporting',
+            'action' => $request->path(),
+            'url' => url()->full(),
+            'method' => $request->method(),
+            'ip_address' => $request->ip(),
+            'input' => json_encode([
+                'agency report' => 'Retrieve Default Data For Filter in Agency Reporting',
+                'request' => $request->except(['password']),
+            ]),
+            'user_agent' => $request->userAgent(),
+        ]);
 
         return view('generateReporting.index',compact('defaultServerId','serverconfig','domainsArray','ministries'));
     }
@@ -287,6 +302,20 @@ class GenerateReportingController extends Controller
                 $totalDomain = "0";
             }
         }
+
+        ActivityLog::create([
+            'user_id' => Auth::id(),
+            'activity_type' => 'Searching Agencies Reporting',
+            'action' => $request->path(),
+            'url' => url()->full(),
+            'method' => $request->method(),
+            'ip_address' => $request->ip(),
+            'input' => json_encode([
+                'agency report' => 'Retrieve Data Searching',
+                'request' => $request->except(['password']),
+            ]),
+            'user_agent' => $request->userAgent(),
+        ]);
 
         return response()->json([
             //'data' => $valDataTables,

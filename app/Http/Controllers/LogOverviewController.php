@@ -6,6 +6,7 @@ use App\Models\RoleServer;
 use App\Models\Server;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use App\Models\ActivityLog;
 
 class LogOverviewController extends Controller
 {
@@ -15,7 +16,7 @@ class LogOverviewController extends Controller
      *
      * @return \Illuminate\Contracts\Support\Renderable
      */
-    public function index()
+    public function index(Request $request)
     {
         $user = Auth::user();
         $role = $user->roles->isNotEmpty() ? $user->roles->pluck('name')->first() : null;
@@ -41,6 +42,20 @@ class LogOverviewController extends Controller
             "smtpdTimeOut" => "--",
             "bounced" => "--",
         ];
+
+        ActivityLog::create([
+            'user_id' => Auth::id(),
+            'activity_type' => 'View Server Overview',
+            'action' => $request->path(),
+            'url' => url()->full(),
+            'method' => $request->method(),
+            'ip_address' => $request->ip(),
+            'input' => json_encode([
+                'activity' => 'View Server Overview',
+                'request' => $request->except(['password']),
+            ]),
+            'user_agent' => $request->userAgent(),
+        ]);
 
         return view('log.index',
             compact( 'user', 'role', 'serverName', 'defaultServerId', 'serverData'));

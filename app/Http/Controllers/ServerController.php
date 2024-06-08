@@ -8,16 +8,31 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Spatie\Permission\Models\Role;
 use Illuminate\Support\Facades\DB;
+use App\Models\ActivityLog;
 
 class ServerController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
         $user = Auth::user();
         $dataservers = Server::whereNotNull('status')->orderBy('id', 'asc')->get();
+
+        ActivityLog::create([
+            'user_id' => Auth::id(),
+            'activity_type' => 'View Server',
+            'action' => $request->path(),
+            'url' => url()->full(),
+            'method' => $request->method(),
+            'ip_address' => $request->ip(),
+            'input' => json_encode([
+                'server' => $dataservers->take(5)->toArray(),
+                'request' => $request->except(['password']),
+            ]),
+            'user_agent' => $request->userAgent(),
+        ]);
 
         return view('server.index',compact('dataservers'));
     }
@@ -30,6 +45,20 @@ class ServerController extends Controller
         $server = Server::find($request->id);
         $server->status = $request->status;
         $server->save();
+
+        ActivityLog::create([
+            'user_id' => Auth::id(),
+            'activity_type' => 'Update Server',
+            'action' => $request->path(),
+            'url' => url()->full(),
+            'method' => $request->method(),
+            'ip_address' => $request->ip(),
+            'input' => json_encode([
+                'server' => $server,
+                'request' => $request->except(['password']),
+            ]),
+            'user_agent' => $request->userAgent(),
+        ]);
 
         return response()->json(['message' => 'Status updated successfully']);
     }
@@ -81,6 +110,20 @@ class ServerController extends Controller
             DB::insert('INSERT INTO role_servers (role_id, server_id) VALUES (?, ?)', [$role->id, $server->id]);
 
         }
+
+        ActivityLog::create([
+            'user_id' => Auth::id(),
+            'activity_type' => 'New Server',
+            'action' => $request->path(),
+            'url' => url()->full(),
+            'method' => $request->method(),
+            'ip_address' => $request->ip(),
+            'input' => json_encode([
+                'server' => $server,
+                'request' => $request->except(['password']),
+            ]),
+            'user_agent' => $request->userAgent(),
+        ]);
 
         return redirect()->route('server.index')->with('success', 'Server details added successfully');
     }
@@ -151,11 +194,25 @@ class ServerController extends Controller
 
         $server->save();
 
+        ActivityLog::create([
+            'user_id' => Auth::id(),
+            'activity_type' => 'Update Server',
+            'action' => $request->path(),
+            'url' => url()->full(),
+            'method' => $request->method(),
+            'ip_address' => $request->ip(),
+            'input' => json_encode([
+                'server' => $server,
+                'request' => $request->except(['password']),
+            ]),
+            'user_agent' => $request->userAgent(),
+        ]);
+
         return redirect()->route('server.index')->with('success', 'Server details updated successfully');
 
     }
 
-    public function downloadFile($id)
+    public function downloadFile(Request $request,$id)
     {
         $server = Server::find($id);
 
@@ -165,6 +222,19 @@ class ServerController extends Controller
 
         $filePath = storage_path('/key/' . basename($server->sshkey));
 
+        ActivityLog::create([
+            'user_id' => Auth::id(),
+            'activity_type' => 'Download File',
+            'action' => $request->path(),
+            'url' => url()->full(),
+            'method' => $request->method(),
+            'ip_address' => $request->ip(),
+            'input' => json_encode([
+                'server' => $server,
+                'request' => $request->except(['password']),
+            ]),
+            'user_agent' => $request->userAgent(),
+        ]);
 
         // Check if the file exists
         if (file_exists($filePath)) {
@@ -186,6 +256,20 @@ class ServerController extends Controller
 
     public function deleteServer(Request $request,$id)
     {
+        ActivityLog::create([
+            'user_id' => Auth::id(),
+            'activity_type' => 'Delete Server',
+            'action' => $request->path(),
+            'url' => url()->full(),
+            'method' => $request->method(),
+            'ip_address' => $request->ip(),
+            'input' => json_encode([
+                'server' => Server::find($id),
+                'request' => $request->except(['password']),
+            ]),
+            'user_agent' => $request->userAgent(),
+        ]);
+
         // Retrieve the server by ID
         $server = Server::find($id);
 
