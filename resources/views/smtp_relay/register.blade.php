@@ -107,6 +107,7 @@
                         <option value="{{ $server['hostname'] }}">{{ $server['hostname'] }}</option>
                         @endforeach
                     </select>
+                    <input type="hidden" id="subhostname" name="subhostname" value="">
                 </div>
                 <div class="mb-3">
                     <table class="table table-striped" id="tableA">
@@ -115,7 +116,7 @@
                                 <th scope="col">System Name<span style="color: red"> *</span></th>
                                 <th scope="col">IP Address<span style="color: red"> *</span></th>
                                 <th scope="col">Domain System<span style="color: red"> *</span></th>
-                                <th scope="col">MailFrom<span style="color: red"> *</span></th>
+                                <th scope="col">MailFrom</th>
                                 <th scope="col">Action</th>
                             </tr>
                         </thead>
@@ -124,7 +125,7 @@
                                 <td><input type="text" name="tableSpmr[0][server_name]" id="server_name" value="" class="form-control" required disabled/></td>
                                 <td><input type="text" name="tableSpmr[0][ipaddress]" id="ipaddress" value="" class="form-control ipaddress-input" required disabled/></td>
                                 <td><input type="text" name="tableSpmr[0][domain]" id="domain" value="" class="form-control" required disabled/></td>
-                                <td><input type="text" name="tableSpmr[0][mailfrom]" id="mailfrom" value="" class="form-control" required disabled/></td>
+                                <td><input type="text" name="tableSpmr[0][mailfrom]" id="mailfrom" value="" class="form-control" disabled/></td>
                                 <td><button class="btn btn-danger remove-row"><i class="me-1" data-feather="minus"></i>Remove</button></td>
                             </tr>
                         </tbody>
@@ -135,6 +136,7 @@
                                 </th>
                             </tr>
                         </tfoot>
+                        <strong><p style="color: red;" id="resultContainerEror"></p></strong>
                         <strong><p style="color: red;" id="resultContainer"></p></strong>
                         <strong><p style="color: red;" id="resultContainer2"></p></strong>
                         <strong><p style="color: red;" id="resultContainer3"></p></strong>
@@ -205,12 +207,12 @@
                 <div class="row col-12">
                     <div class="mb-3 col-md-4">
                         <label class=" mb-1" for="applicantposition">Applicant's Position:</label>
-                        <input class="form-control" name="applicantposition" id="applicantposition" required>
+                        <input class="form-control" name="applicantposition" id="applicantposition" >
                         </input>
                     </div>
                     <div class="mb-3 col-md-4">
                         <label class=" mb-1" for="applicantdepart">Applicant's Department / Division:</label>
-                        <input class="form-control" name="applicantdepart" id="applicantdepart" required>
+                        <input class="form-control" name="applicantdepart" id="applicantdepart" >
                         </input>
                     </div>
                     <div class="mb-3 col-md-4">
@@ -227,12 +229,12 @@
                 <div class="row col-12">
                     <div class="mb-3 col-md-4">
                         <label class=" mb-1" for="verifierposition">Verifier Position:</label>
-                        <input class="form-control" name="verifierposition" id="verifierposition" value="" required>
+                        <input class="form-control" name="verifierposition" id="verifierposition" value="" >
                         </input>
                     </div>
                     <div class="mb-3 col-md-4">
                         <label class=" mb-1" for="verifierdepart">Verifier Department / Division:</label>
-                        <input class="form-control" name="verifierdepart" id="verifierdepart" value="" required>
+                        <input class="form-control" name="verifierdepart" id="verifierdepart" value="" >
                         </input>
                     </div>
                     <div class="mb-3 col-md-4">
@@ -263,12 +265,12 @@
                 <div class="row col-12">
                     <div class="mb-3 col-md-4">
                         <label class=" mb-1" for="approvalposition">Approval Position</label>
-                        <input class="form-control" name="approvalposition" id="approvalposition" value="" required>
+                        <input class="form-control" name="approvalposition" id="approvalposition" value="" >
                         </input>
                     </div>
                     <div class="mb-3 col-md-4">
                         <label class=" mb-1" for="approvaldepart">Approval Department / Division:</label>
-                        <input class="form-control" name="approvaldepart" id="approvaldepart" value="" required>
+                        <input class="form-control" name="approvaldepart" id="approvaldepart" value="" >
                         </input>
                     </div>
                     <div class="mb-3 col-md-4">
@@ -305,10 +307,10 @@
 
 @endsection
 @push('script')
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
-<link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
-<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
-<script src="https://ajax.aspnetcdn.com/ajax/jquery.validate/1.19.2/jquery.validate.min.js"></script>
+<script src="{{ asset('js/jquery-3.6.4.min.js') }}"></script>
+<link rel="stylesheet" href="{{asset('css/select2.min.css')}}">
+<script src="{{asset('js/select2.min.js')}}"></script>
+<script src="{{asset('js/jquery.validate.min.js')}}"></script>
 
 <script>
 
@@ -457,39 +459,7 @@
                 $(this).removeClass('is-invalid');
             }
         });
-        $('#approvaldepart').on('change', function() {
-            var isValid = $(this).valid();
-            if (isValid) {
-                $(this).removeClass('is-invalid');
-            }
-        });
-        $('#approvalposition').on('change', function() {
-            var isValid = $(this).valid();
-            if (isValid) {
-                $(this).removeClass('is-invalid');
-            }
-        });
-        $('#verifierdepart').on('change', function() {
-            var isValid = $(this).valid();
-            if (isValid) {
-                $(this).removeClass('is-invalid');
-            }
-        });
         $('#verifierdate').on('change', function() {
-            var isValid = $(this).valid();
-            if (isValid) {
-                $(this).removeClass('is-invalid');
-                $(this).next('.select2-container').find('.select2-selection').removeClass('is-invalid');
-            }
-        });
-        $('#authpassword').on('change', function() {
-            var isValid = $(this).valid();
-            if (isValid) {
-                $(this).removeClass('is-invalid');
-                $(this).next('.select2-container').find('.select2-selection').removeClass('is-invalid');
-            }
-        });
-        $('#authusername').on('change', function() {
             var isValid = $(this).valid();
             if (isValid) {
                 $(this).removeClass('is-invalid');
@@ -511,13 +481,6 @@
             }
         });
         $('#agency').on('change', function() {
-            var isValid = $(this).valid();
-            if (isValid) {
-                $(this).removeClass('is-invalid');
-                $(this).next('.select2-container').find('.select2-selection').removeClass('is-invalid');
-            }
-        });
-        $('#departowner').on('change', function() {
             var isValid = $(this).valid();
             if (isValid) {
                 $(this).removeClass('is-invalid');
@@ -552,28 +515,7 @@
                 $(this).next('.select2-container').find('.select2-selection').removeClass('is-invalid');
             }
         });
-        $('#applicantposition').on('change', function() {
-            var isValid = $(this).valid();
-            if (isValid) {
-                $(this).removeClass('is-invalid');
-                $(this).next('.select2-container').find('.select2-selection').removeClass('is-invalid');
-            }
-        });
-        $('#applicantdepart').on('change', function() {
-            var isValid = $(this).valid();
-            if (isValid) {
-                $(this).removeClass('is-invalid');
-                $(this).next('.select2-container').find('.select2-selection').removeClass('is-invalid');
-            }
-        });
         $('#applicantdate').on('change', function() {
-            var isValid = $(this).valid();
-            if (isValid) {
-                $(this).removeClass('is-invalid');
-                $(this).next('.select2-container').find('.select2-selection').removeClass('is-invalid');
-            }
-        });
-        $('#verifierposition').on('change', function() {
             var isValid = $(this).valid();
             if (isValid) {
                 $(this).removeClass('is-invalid');
@@ -584,6 +526,7 @@
 
     $(document).on('input', '#dynamic-inputs-container input#ipaddress', function() {
             var type_req = document.getElementById("type_req");
+            var subhostname = document.getElementById("subhostname").value;
             var selectBox = document.getElementById("mailrelay");
             var selectedValue = selectBox.value;
             var selectedValuetype_req = type_req.value;
@@ -592,26 +535,32 @@
             var submitBtn2 = document.getElementById("submit");
 
             $.ajax({
-                    url: '/mailrelay/check-ip-address',
-                    method: 'POST',
-                    contentType: 'application/json',
-                    data: JSON.stringify({ ipAddress: ipAddress, mailrelay: selectedValue,type_req: selectedValuetype_req}),
-                    success: function(response) {
-                        if (response.exists) {
-                            // console.log(response);
-                            $('#resultContainer2').html(response.message);
-                            submitBtn2.disabled = true;
-                        } else {
-                            // console.log(response);
-                            $('#resultContainer2').empty();
-                            submitBtn2.disabled = false;
-                        }
+                url: "{{ route('check.ip.address') }}",
+                method: 'POST',
+                contentType: 'application/json',
+                data: JSON.stringify({ ipAddress: ipAddress, mailrelay: selectedValue,type_req: selectedValuetype_req}),
+                success: function(response) {
+                    if (response.exists) {
+                        //console.log(response);
+                        $('#resultContainer2').html(response.message);
+                        submitBtn2.disabled = true;
+                    } else {
+                        //console.log(response);
+                        $('#resultContainer2').empty();
+                        submitBtn2.disabled = false;
                     }
+                },
+                error: function(xhr, status, error) {
+                    // console.error("Error fetching Primary server:", error);
+                    // $('#resultContainer').html("Error fetching Primary server: Contact Administrator!");
+
+                }
             });
 
 
             if (/^(?:[0-9]{1,3}\.){3}[0-9]{1,3}$/.test(ipAddress)) {
-                const serverAddress = 'wss://spmr.mygovuc.gov.my/' + selectedValue;
+                const serverAddress = 'wss://spmr.mygovuc.gov.my/'+subhostname;
+                //console.log(serverAddress);
                 const socket = new WebSocket(serverAddress);
 
                 socket.addEventListener('open', (event) => {
@@ -634,6 +583,7 @@
                     if (selectedValuetype_req == 1) {
                     if (response.includes('IP address already Registered!')) {
                             submitBtn.disabled = true;
+                            $(this).addClass('is-invalid');
                             $('#resultContainer').html(response);
                         } else {
                             submitBtn.disabled = false;
@@ -642,12 +592,14 @@
                     }
                     if (selectedValuetype_req == 2) {
                     if (response.includes('IP address already Terminated!')) {
-                        console.log(response);
+                        //console.log(response);
                         submitBtn.disabled = true;
+                        $(this).addClass('is-invalid');
                         $('#resultContainer').html(response);
                     } else if (response.includes('IP address not Registered to Terminate!')) {
-                        console.log(response);
+                        //console.log(response);
                         submitBtn.disabled = true;
+                        $(this).addClass('is-invalid');
                         $('#resultContainer').html(response);
                     } else {
                         submitBtn.disabled = false;
@@ -659,6 +611,7 @@
 
                 socket.addEventListener('error', (error) => {
                     // console.error("WebSocket error observed:", error);
+                    //$('#resultContainerEror').html("Error fetching Primary server: Contact Administrator!");
                 });
 
                 socket.addEventListener('close', (event) => {
@@ -689,10 +642,37 @@
             });
         } else {
             // Enable all input fields inside the tbody
-            var inputs = tbody.querySelectorAll("input");
-            inputs.forEach(function(input) {
-                input.disabled = false;
+            // var inputs = tbody.querySelectorAll("input");
+            // inputs.forEach(function(input) {
+            //     input.disabled = false;
+            // });
+            // Use AJAX to send selectedValue to the controller
+            $.ajax({
+                url: "{{ route('check.subhostname.unique') }}", // Update the URL with your controller route
+                type: 'POST',
+                data: { selectedValue: selectedValue },
+                success: function(response) {
+                    // Check if hostname is present in the response
+                    if (response.subhostname) {
+                        document.getElementById("subhostname").value = response.subhostname;
+                        // Enable all input fields inside the tbody
+                        var inputs = tbody.querySelectorAll("input");
+                        inputs.forEach(function(input) {
+                            input.disabled = false;
+                            // Set the input value to the fetched hostname
+                            // input.value = response.hostname;
+                        });
+                    } else {
+                        //console.error("Hostname not found");
+                    }
+                },
+                error: function(xhr, status, error) {
+                    // console.error("Error fetching Primary server:", error);
+                    // $('#resultContainer').html("Error fetching Primary server: Contact Administrator!");
+
+                }
             });
+
         }
     }
 

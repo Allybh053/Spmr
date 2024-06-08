@@ -14,13 +14,17 @@
         <link href="{{asset('assets/styles.css')}}" rel="stylesheet" />
         <link rel="icon" type="image/x-icon" href="{{asset('assets/img/favicon.png')}}" />
         <link href="{{asset('css/select2.css')}}" rel="stylesheet" />
-        <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+        {{-- <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css"> --}}
+        <link rel="stylesheet" href="{{asset('css/jquery-ui.css')}}">
         <link rel="stylesheet" href="{{asset('css/sweetalert2.min.css')}}">
-        <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.24/css/jquery.dataTables.min.css">
-        <link rel="stylesheet" href="https://cdn.datatables.net/buttons/2.2.2/css/buttons.dataTables.min.css">
+        {{-- <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.24/css/jquery.dataTables.min.css"> --}}
+        <link rel="stylesheet" href="{{asset('css/jquery.dataTables.min.css')}}">
+        {{-- <link rel="stylesheet" href="https://cdn.datatables.net/buttons/2.2.2/css/buttons.dataTables.min.css"> --}}
+        <link rel="stylesheet" href="{{asset('css/buttons.dataTables.min.css')}}">
         <link href="{{asset('css/custom.css')}}" rel="stylesheet" />
-        <script data-search-pseudo-elements defer src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/js/all.min.js" crossorigin="anonymous"></script>
-        
+        {{-- <script data-search-pseudo-elements defer src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/js/all.min.js" crossorigin="anonymous"></script> --}}
+        <script src="{{asset('js/all.min.js')}}"></script>
+
 
 
 <style>
@@ -107,12 +111,15 @@
     </div>
 
     <script src="{{ asset('js/jquery-3.6.4.min.js') }}"></script>
-    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+    <script src="{{ asset('js/jquery-ui.js') }}"></script>
+    {{-- <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script> --}}
     <script src="{{asset('js/select2.min.js')}}"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js" crossorigin="anonymous"></script>
+    <script src="{{asset('js/bootstrap.bundle.min.js')}}"></script>
+    {{-- <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js" crossorigin="anonymous"></script> --}}
     <script src="{{asset('js/scripts.js')}}" type="text/javascript"></script>
     <script src="{{asset('js/sweetalert2.min.js')}}"></script>
-    <script src="https://cdn.jsdelivr.net/npm/feather-icons@latest/dist/feather.min.js"></script>
+    <script src="{{asset('js/feather.min.js')}}"></script>
+    {{-- <script src="https://cdn.jsdelivr.net/npm/feather-icons@latest/dist/feather.min.js"></script> --}}
 
 
     <script src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.min.js"></script>
@@ -172,15 +179,15 @@ jQuery.extend(jQuery.fn.dataTableExt.oSort, {
                 }
             });
 
-            $(function() {
-                $(".datepicker").datepicker({
-                    format: "dd-mm-yyyy",
-                    todayHighlight: true,
-                    orientation: "bottom",
-                });
+            // $(function() {
+            //     $(".datepicker").datepicker({
+            //         format: "dd-mm-yyyy",
+            //         todayHighlight: true,
+            //         orientation: "bottom",
+            //     });
 
 
-            });
+            // });
 
                 // Handle change event on the dropdown
                 $('#authmethod').change(function () {

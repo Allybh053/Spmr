@@ -118,6 +118,7 @@
                         <option value="{{ $server['hostname'] }}">{{ $server['hostname'] }}</option>
                         @endforeach
                     </select>
+                    <input type="hidden" name="sub_smtp_relay_server" id="sub_smtp_relay_server" value="{{ old('sub_smtp_relay_server', $formsmtp->sub_smtp_relay_server) }}">
                 </div>
                 <div class="mb-3">
                     <table class="table table-striped" id="tableA">
@@ -443,7 +444,7 @@ $(document).on('click', '.remove-row', function() {
         $('#dynamic-inputs-container').on('input', '#ip_addr_server', function() {
             var type_req = document.getElementById("types_req");
             var selectBox = document.getElementById("smtp_relay_server");
-            var selectedValuesmtp_relay_server = selectBox.options[selectBox.selectedIndex].value;
+            var subhostname = document.getElementById("sub_smtp_relay_server").value;
             var selectedValue = selectBox.options[selectBox.selectedIndex].value;
             var selectedValuetype_req = type_req.options[type_req.selectedIndex].value;
             var ipAddress = $(this).val();
@@ -451,7 +452,7 @@ $(document).on('click', '.remove-row', function() {
 
 
             if (/^(?:[0-9]{1,3}\.){3}[0-9]{1,3}$/.test(ipAddress)) {
-                const serverAddress = 'wss://spmr.mygovuc.gov.my/' + selectedValuesmtp_relay_server;
+                const serverAddress = 'wss://spmr.mygovuc.gov.my/' + subhostname;
                 const socket = new WebSocket(serverAddress);
 
                 socket.addEventListener('open', (event) => {
@@ -600,24 +601,24 @@ $(document).on('click', '.remove-row', function() {
             $(this).removeClass('is-invalid');
         }
     });
-    $('#verifier_3_dept_div').on('change', function() {
-        var isValid = $(this).valid();
-        if (isValid) {
-            $(this).removeClass('is-invalid');
-        }
-    });
-    $('#verifier_3_position').on('change', function() {
-        var isValid = $(this).valid();
-        if (isValid) {
-            $(this).removeClass('is-invalid');
-        }
-    });
-    $('#verifier_1_dept_div').on('change', function() {
-        var isValid = $(this).valid();
-        if (isValid) {
-            $(this).removeClass('is-invalid');
-        }
-    });
+    // $('#verifier_3_dept_div').on('change', function() {
+    //     var isValid = $(this).valid();
+    //     if (isValid) {
+    //         $(this).removeClass('is-invalid');
+    //     }
+    // });
+    // $('#verifier_3_position').on('change', function() {
+    //     var isValid = $(this).valid();
+    //     if (isValid) {
+    //         $(this).removeClass('is-invalid');
+    //     }
+    // });
+    // $('#verifier_1_dept_div').on('change', function() {
+    //     var isValid = $(this).valid();
+    //     if (isValid) {
+    //         $(this).removeClass('is-invalid');
+    //     }
+    // });
     $('#date_verification_1').on('change', function() {
         var isValid = $(this).valid();
         if (isValid) {
@@ -660,13 +661,13 @@ $(document).on('click', '.remove-row', function() {
             $(this).next('.select2-container').find('.select2-selection').removeClass('is-invalid');
         }
     });
-    $('#dept_div_unit').on('change', function() {
-        var isValid = $(this).valid();
-        if (isValid) {
-            $(this).removeClass('is-invalid');
-            $(this).next('.select2-container').find('.select2-selection').removeClass('is-invalid');
-        }
-    });
+    // $('#dept_div_unit').on('change', function() {
+    //     var isValid = $(this).valid();
+    //     if (isValid) {
+    //         $(this).removeClass('is-invalid');
+    //         $(this).next('.select2-container').find('.select2-selection').removeClass('is-invalid');
+    //     }
+    // });
     $('#smtp_relay_auth_method').on('change', function() {
         var isValid = $(this).valid();
         if (isValid) {
@@ -695,20 +696,20 @@ $(document).on('click', '.remove-row', function() {
             $(this).next('.select2-container').find('.select2-selection').removeClass('is-invalid');
         }
     });
-    $('#applicant_position').on('change', function() {
-        var isValid = $(this).valid();
-        if (isValid) {
-            $(this).removeClass('is-invalid');
-            $(this).next('.select2-container').find('.select2-selection').removeClass('is-invalid');
-        }
-    });
-    $('#applicant_dept_div').on('change', function() {
-        var isValid = $(this).valid();
-        if (isValid) {
-            $(this).removeClass('is-invalid');
-            $(this).next('.select2-container').find('.select2-selection').removeClass('is-invalid');
-        }
-    });
+    // $('#applicant_position').on('change', function() {
+    //     var isValid = $(this).valid();
+    //     if (isValid) {
+    //         $(this).removeClass('is-invalid');
+    //         $(this).next('.select2-container').find('.select2-selection').removeClass('is-invalid');
+    //     }
+    // });
+    // $('#applicant_dept_div').on('change', function() {
+    //     var isValid = $(this).valid();
+    //     if (isValid) {
+    //         $(this).removeClass('is-invalid');
+    //         $(this).next('.select2-container').find('.select2-selection').removeClass('is-invalid');
+    //     }
+    // });
     $('#date_application').on('change', function() {
         var isValid = $(this).valid();
         if (isValid) {
@@ -716,13 +717,13 @@ $(document).on('click', '.remove-row', function() {
             $(this).next('.select2-container').find('.select2-selection').removeClass('is-invalid');
         }
     });
-    $('#verifier_1_position').on('change', function() {
-        var isValid = $(this).valid();
-        if (isValid) {
-            $(this).removeClass('is-invalid');
-            $(this).next('.select2-container').find('.select2-selection').removeClass('is-invalid');
-        }
-    });
+    // $('#verifier_1_position').on('change', function() {
+    //     var isValid = $(this).valid();
+    //     if (isValid) {
+    //         $(this).removeClass('is-invalid');
+    //         $(this).next('.select2-container').find('.select2-selection').removeClass('is-invalid');
+    //     }
+    // });
     });
 
     document.addEventListener('DOMContentLoaded', function() {
@@ -825,5 +826,56 @@ document.getElementById('submit').addEventListener('click', function() {
                 }
             });
         });
+
+        function toggleInputs() {
+
+        var selectBox = document.getElementById("smtp_relay_server");
+        var selectedValue = selectBox.options[selectBox.selectedIndex].value;
+
+
+        var tbody = document.getElementById("dynamic-inputs-container"); // Select the tbody by name
+
+        // Check if the selected option is the "Select Server" option
+        if (selectedValue === "") {
+            // Disable all input fields inside the tbody
+            var inputs = tbody.querySelectorAll("input");
+            inputs.forEach(function(input) {
+                input.disabled = true;
+            });
+        } else {
+            // Enable all input fields inside the tbody
+            // var inputs = tbody.querySelectorAll("input");
+            // inputs.forEach(function(input) {
+            //     input.disabled = false;
+            // });
+            // Use AJAX to send selectedValue to the controller
+            $.ajax({
+                url: "{{ route('check.subhostname.unique') }}", // Update the URL with your controller route
+                type: 'POST',
+                data: { selectedValue: selectedValue },
+                success: function(response) {
+                    // Check if hostname is present in the response
+                    if (response.subhostname) {
+                        document.getElementById("sub_smtp_relay_server").value = response.subhostname;
+                        // Enable all input fields inside the tbody
+                        var inputs = tbody.querySelectorAll("input");
+                        inputs.forEach(function(input) {
+                            input.disabled = false;
+                            // Set the input value to the fetched hostname
+                            // input.value = response.hostname;
+                        });
+                    } else {
+                        //console.error("Hostname not found");
+                    }
+                },
+                error: function(xhr, status, error) {
+                    // console.error("Error fetching Primary server:", error);
+                    // $('#resultContainer').html("Error fetching Primary server: Contact Administrator!");
+
+                }
+            });
+
+        }
+        }
 </script>
 @endpush

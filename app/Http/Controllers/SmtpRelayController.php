@@ -317,6 +317,7 @@ class SmtpRelayController extends Controller
                 'est_no_email_sent_from_system_users_per_day' => $request->input('ensystem'),
                 'upload_copy_attachment' => $fileName,
                 'smtp_relay_server'=>$request->input('mailrelay'),
+                'sub_smtp_relay_server'=>$request->input('subhostname'),
                 'smtp_username'=>$request->input('authusername'),
                 'smtp_password'=>$request->input('authpassword'),
                 'smtp_port'=>$request->input('ports'),
@@ -538,6 +539,7 @@ class SmtpRelayController extends Controller
                 'est_no_email_sent_from_system_users_per_day' => $request->input('ensystem'),
                 'upload_copy_attachment' => $fileName,
                 'smtp_relay_server'=>$request->input('mailrelay'),
+                'sub_smtp_relay_server'=>$request->input('subhostname'),
                 'smtp_username'=>$request->input('authusername'),
                 'smtp_password'=>$request->input('authpassword'),
                 'smtp_port'=>$request->input('ports'),
@@ -712,7 +714,7 @@ class SmtpRelayController extends Controller
             'est_no_email_sent_from_system_users_per_day', 'applicant_name', 'applicant_position', 'applicant_dept_div',
             'date_application', 'verifier_1_name', 'verifier_1_position', 'verifier_1_dept_div', 'date_verification_1',
             'verifier_2_name', 'date_verification_2', 'verifier_3_name', 'verifier_3_position', 'verifier_3_dept_div',
-            'date_verification_3','status'
+            'date_verification_3','status','sub_smtp_relay_server'
         ]);
 
         $formdata['form_id'] = $id;
@@ -868,6 +870,22 @@ class SmtpRelayController extends Controller
         $agency = Agency::where('ministry', $ministry)->pluck('name', 'id');
         return response()->json($agency);
 
+    }
+
+
+    public function getHostname(Request $request)
+    {
+        $selectedValue = $request->input('selectedValue');
+
+        // Query the Server table to get the hostname based on the selected value
+        $serverId  = Server::where('hostname', $selectedValue)->value('id');
+
+        // $subhostname = Server::where('master_id',$serverId)->where('status_cluster','=',1)->value('hostname');
+        $server = Server::where('master_id', $serverId)->where('status_cluster', 1)->first();
+        $subhostname = $server ? $server->subhostname : null;
+
+        // Return the hostname as JSON response
+        return response()->json(['subhostname' => $subhostname]);
     }
 
 }

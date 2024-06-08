@@ -379,7 +379,8 @@
 
 @endsection
 @push('script')
-<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.4/Chart.min.js" crossorigin="anonymous"></script>
+<script src="{{ asset('js/vendor/Chart.min.js') }}"></script>
+{{-- <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.4/Chart.min.js" crossorigin="anonymous"></script> --}}
 <script>
   document.addEventListener('DOMContentLoaded', function () {
     function getRandomColor() {

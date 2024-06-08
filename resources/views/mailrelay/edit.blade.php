@@ -38,7 +38,7 @@
                     <div class="col-md-4">
                         <label for="servermail">Server Mail Relay</label>
                         <p class="text-primary">{{ $smtpreq->smtp_relay_server }}</p>
-                        <input type="hidden" id="servermail" name="servermail" value="{{ $smtpreq->smtp_relay_server }}">
+                        <input type="hidden" id="sub_smtp_relay_server" name="sub_smtp_relay_server" value="{{ $smtpreq->sub_smtp_relay_server }}">
                     </div>
                     <div class="col-md-4" @if($smtpreq->types_req === 2) style="display: none;" @endif>
                         <label for="mailbox">Auth Method</label>
@@ -196,13 +196,14 @@
             function toggleInputs() {
 
             var selectBox = document.getElementById("servermail");
+            var sub_smtp_relay_server = document.getElementById("sub_smtp_relay_server").value;
             var smtp_username = document.getElementById("smtp_username").value;
             var smtp_password = document.getElementById("smtp_password").value;
             var selectedValue = selectBox.value;
 
             const smtpMailServers = @json($smtpMailServers);
                         //console.log(smtpMailServers);
-            const serverAddress = 'wss://spmr.mygovuc.gov.my/' + selectedValue;
+            const serverAddress = 'wss://spmr.mygovuc.gov.my/' + sub_smtp_relay_server;
 
             const socket = new WebSocket(serverAddress);
 
@@ -216,6 +217,7 @@
                         const formIds = smtpMailServer.form_id;
                         // Construct your command
                         command = `echo '${ipAddress} #${formIds}:' >> /opt/cluster/postfix/access_list`;
+                        command += ` ; /usr/sbin/postmap /opt/cluster/postfix/access_list ; /usr/bin/systemctl reload postfix`;
 
                     }
                     if (smtpMailServer.types_req == 2){
@@ -227,6 +229,7 @@
                                 grep -q '^${ipAddress}' /opt/cluster/postfix/access_list && \
                                 sed -i 's/^${ipAddress} .*/#${ipAddress} #${formIds}:/' /opt/cluster/postfix/access_list || \
                                 echo '#${ipAddress} #${formIds}:' >> /opt/cluster/postfix/access_list`;
+                        command += ` ; /usr/sbin/postmap /opt/cluster/postfix/access_list ; /usr/bin/systemctl reload postfix`;
                     }
                     // Send the command through the WebSocket if it's not empty
                     if (command) {
@@ -251,8 +254,16 @@
 
                 });
                 let command2 = '';
-                if (smtp_username != "") {
-                    const command2 = `echo '${smtp_password}: ' | /usr/sbin/saslpasswd2 -c '${smtp_username}'`;
+
+                if (smtpMailServer.types_req == 1 && smtp_username != "") {
+                    command2 = `echo '${smtp_password}:' | /usr/sbin/saslpasswd2 -c '${smtp_username}'`;
+                    // /usr/sbin/saslpasswd2 -d '${smtp_username}' ->command to delete
+                    // console.log(command2);
+                    socket.send(command2);
+                }
+
+                if (smtpMailServer.types_req == 2 && smtp_username != "") {
+                    command2 = `/usr/sbin/saslpasswd2 -d '${smtp_username}'`;
                     // console.log(command2);
                     socket.send(command2);
                 }
@@ -264,7 +275,7 @@
                 if (response.includes('Failed')) {
                     //console.log("Failed to send command");
                 } else {
-                    console.log(response);
+                    //console.log(response);
                 }
 
                 // Close the socket after processing the response

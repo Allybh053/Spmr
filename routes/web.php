@@ -112,6 +112,7 @@ Route::group(['middleware' => ['auth', 'nocache']], function () {
         Route::get('/mailupstream', [MainRelayController::class, 'mailupstream'])->name('mailrelay.mailupstream')->middleware('auth.resource:mail_upstream_routing_view');
         Route::get('/getServer', [MainRelayController::class, 'api'])->name('mailrelay.api');
         Route::get('/index/searching', [MainRelayController::class, 'search'])->name('mailrelay.index.search');
+
     });
 
     //SMTP Relay Request
@@ -136,6 +137,8 @@ Route::group(['middleware' => ['auth', 'nocache']], function () {
         Route::get('/index/searching', [SmtpRelayController::class, 'search'])->name('smtp_relay.index.search');
         Route::get('/view-pdf/{filename}',[SmtpRelayController::class, 'showPdf'])->name('smtp_relay.viewPdf');
 
+        Route::post('/getHostname', [SmtpRelayController::class, 'getHostname'])->name('check.subhostname.unique');
+
     });
 
     Route::group(['prefix' => 'server'], function () {
@@ -148,6 +151,8 @@ Route::group(['middleware' => ['auth', 'nocache']], function () {
 
         Route::get('/{id}/file/download', [ServerController::class, 'downloadFile'])->name('server.file.download');
         Route::post('/servers/{id}', [ServerController::class, 'deleteServer'])->name('server.delete');
+        Route::post('/check-hostname-unique', [ServerController::class, 'checkHostnameUnique'])->name('check.hostname.unique');
+
 
     });
 
