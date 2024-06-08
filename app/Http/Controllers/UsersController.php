@@ -12,6 +12,7 @@ use App\Models\Position;
 use Illuminate\Support\Facades\Log;
 use App\Mail\WelcomeNewUser;
 use Illuminate\Support\Facades\Mail;
+use App\Models\ActivityLog;
 
 
 class UsersController extends Controller
@@ -19,10 +20,24 @@ class UsersController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
         $users = User::with('role')->orderBy('id', 'DESC')->get();
         $user = Auth::user();
+
+        ActivityLog::create([
+            'user_id' => Auth::id(),
+            'activity_type' => 'View Users',
+            'action' => $request->path(),
+            'url' => url()->full(),
+            'method' => $request->method(),
+            'ip_address' => $request->ip(),
+            'input' => json_encode([
+                'user' => $users->take(5)->toArray(),
+                'request' => $request->except(['password']),
+            ]),
+            'user_agent' => $request->userAgent(),
+        ]);
 
         return view('users.usermanagements.index', compact('user','users'));
     }
@@ -104,6 +119,20 @@ class UsersController extends Controller
             $this->syncPermissions($request, $user);
 
             // Check if user was created successfully
+
+            ActivityLog::create([
+                'user_id' => Auth::id(),
+                'activity_type' => 'New User',
+                'action' => $request->path(),
+                'url' => url()->full(),
+                'method' => $request->method(),
+                'ip_address' => $request->ip(),
+                'input' => json_encode([
+                    'user' => $user,
+                    'request' => $request->except(['password']),
+                ]),
+                'user_agent' => $request->userAgent(),
+            ]);
 
             if ($user) {
                 //Mail::to($user->email)->send(new WelcomeNewUser($user,$plaintextPassword));
@@ -199,6 +228,20 @@ class UsersController extends Controller
 
         $this->syncPermissions($request, $user);
 
+        ActivityLog::create([
+            'user_id' => Auth::id(),
+            'activity_type' => 'Update User',
+            'action' => $request->path(),
+            'url' => url()->full(),
+            'method' => $request->method(),
+            'ip_address' => $request->ip(),
+            'input' => json_encode([
+                'user' => $user,
+                'request' => $request->except(['password']),
+            ]),
+            'user_agent' => $request->userAgent(),
+        ]);
+
         // Redirect back to the user management index page with a success message
         return redirect()->route('usermanagements.index')->with('success', 'User updated successfully');
     }
@@ -207,8 +250,22 @@ class UsersController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy($id)
+    public function destroy(Request $request,$id)
     {
+        ActivityLog::create([
+            'user_id' => Auth::id(),
+            'activity_type' => 'Delete User',
+            'action' => $request->path(),
+            'url' => url()->full(),
+            'method' => $request->method(),
+            'ip_address' => $request->ip(),
+            'input' => json_encode([
+                'user' => User::withTrashed()->find($id),
+                'request' => $request->except(['password']),
+            ]),
+            'user_agent' => $request->userAgent(),
+        ]);
+
         // Find the user by ID
         $user = User::withTrashed()->find($id);
 

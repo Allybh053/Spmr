@@ -20,6 +20,7 @@ use Mail;
 use Spatie\Permission\Models\Permission;
 use Spatie\Permission\Models\Role;
 use Validator;
+use App\Models\ActivityLog;
 
 class DashboardController extends Controller
 {
@@ -152,6 +153,20 @@ class DashboardController extends Controller
 
 
         }
+
+        ActivityLog::create([
+            'user_id' => Auth::id(),
+            'activity_type' => 'Dashboard',
+            'action' => $request->path(),
+            'url' => url()->full(),
+            'method' => $request->method(),
+            'ip_address' => $request->ip(),
+            'input' => json_encode([
+                'dashboard' => 'Retrieve Data From Server',
+                'request' => $request->except(['password']),
+            ]),
+            'user_agent' => $request->userAgent(),
+        ]);
 
             // Pass the data to the view
             return view('dashboard.index', compact(
