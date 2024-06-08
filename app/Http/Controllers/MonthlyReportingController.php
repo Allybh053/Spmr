@@ -12,10 +12,11 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Collection;
 use Carbon\Carbon;
+use App\Models\ActivityLog;
 
 class MonthlyReportingController extends Controller
 {
-    public function index() {
+    public function index(Request $request) {
         $user = Auth::user();
         $role = $user->roles->isNotEmpty() ? $user->roles->pluck('name')->first() : null;
         $serverIds = RoleServer::whereIn('role_servers.role_id', $user->roles->pluck('id')->all())
@@ -29,6 +30,20 @@ class MonthlyReportingController extends Controller
         $serverconfig = Server::whereIn('id', $serverIds)
             ->where('status', 1)->orderBy('id', 'asc')
             ->pluck('hostname', 'id');
+
+        ActivityLog::create([
+            'user_id' => Auth::id(),
+            'activity_type' => 'View Usage Reporting',
+            'action' => $request->path(),
+            'url' => url()->full(),
+            'method' => $request->method(),
+            'ip_address' => $request->ip(),
+            'input' => json_encode([
+                'usage report' => 'Retrieve data for viewing monthly reporting Page',
+                'request' => $request->except(['password']),
+            ]),
+            'user_agent' => $request->userAgent(),
+        ]);
 
         return view('monthlyReport.index',compact('defaultServerId','serverconfig'));
     }
@@ -155,6 +170,21 @@ class MonthlyReportingController extends Controller
         ->orderBy('total_email', 'desc')
         ->limit(20)
         ->get();
+
+
+        ActivityLog::create([
+            'user_id' => Auth::id(),
+            'activity_type' => 'Searching Usage Reporting',
+            'action' => $request->path(),
+            'url' => url()->full(),
+            'method' => $request->method(),
+            'ip_address' => $request->ip(),
+            'input' => json_encode([
+                'usage report' => 'Retrieve data for searching monthly reporting Page',
+                'request' => $request->except(['password']),
+            ]),
+            'user_agent' => $request->userAgent(),
+        ]);
 
         return response()->json([
             'dataTbl2' => $valDataJad2,

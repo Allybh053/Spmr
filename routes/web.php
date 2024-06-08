@@ -71,7 +71,7 @@ Route::get('/logout', [LoginController::class, 'logout'])->name('logout' );
 
 
 
-Route::group(['middleware' => ['auth', 'nocache']], function () {
+Route::group(['middleware' => ['auth', 'nocache','log.user.activity']], function () {
 
     //testing route
     Route::get('/home', [DashboardController::class, 'index'])->name('dashboard.index');

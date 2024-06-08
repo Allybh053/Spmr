@@ -5,21 +5,53 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Agency;
 use App\Models\Ministry;
+use App\Models\ActivityLog;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Auth;
+
 
 class AgencyController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
         $agencies = Agency::select('agencies.*','ministrys.name as ministry_name')
         ->leftJoin('ministrys','ministrys.id',DB::raw('CAST(agencies.ministry AS bigint)'))
         ->get();
+
+        ActivityLog::create([
+            'user_id' => Auth::id(),
+            'activity_type' => 'View Agency',
+            'action' => $request->path(),
+            'url' => url()->full(),
+            'method' => $request->method(),
+            'ip_address' => $request->ip(),
+            'input' => json_encode([
+                'agencies' => $agencies->take(5)->toArray(),
+                'request' => $request->except(['password']),
+            ]),
+            'user_agent' => $request->userAgent(),
+        ]);
+
         return view('agency.index', compact('agencies'));
     }
 
-    public function addagency()
+    public function addagency(Request $request)
     {
         $ministry = Ministry::get();
+
+        ActivityLog::create([
+            'user_id' => Auth::id(),
+            'activity_type' => 'Get Ministry Information',
+            'action' => $request->path(),
+            'url' => url()->full(),
+            'method' => $request->method(),
+            'ip_address' => $request->ip(),
+            'input' => json_encode([
+                'ministry' => $ministry->take(5)->toArray(),
+                'request' => $request->except(['password']),
+            ]),
+            'user_agent' => $request->userAgent(),
+        ]);
         return view('agency.addagency', compact('ministry'));
     }
 
@@ -33,17 +65,46 @@ class AgencyController extends Controller
             'status' => $request->input('status'),
         ]);
 
+        ActivityLog::create([
+            'user_id' => Auth::id(),
+            'activity_type' => 'Saving Agency',
+            'action' => $request->path(),
+            'url' => url()->full(),
+            'method' => $request->method(),
+            'ip_address' => $request->ip(),
+            'input' => json_encode([
+                'new agency' => $agency,
+                'request' => $request->except(['password']),
+            ]),
+            'user_agent' => $request->userAgent(),
+        ]);
+
         return redirect()->route('agency.index')->with('success', 'Agency created successfully.');
 
     }
 
-    public function updateagency($id)
+    public function updateagency(Request $request,$id)
     {
         $agency = Agency::findOrFail($id);
 
         $ministry1 = Ministry::where('id',$agency->ministry)->first();
 
         $ministry = Ministry::get();
+
+        ActivityLog::create([
+            'user_id' => Auth::id(),
+            'activity_type' => 'View Agency Info by Id',
+            'action' => $request->path(),
+            'url' => url()->full(),
+            'method' => $request->method(),
+            'ip_address' => $request->ip(),
+            'input' => json_encode([
+                'agency' => $agency->take(5)->toArray(),
+                'ministry' => $ministry->take(5)->toArray(),
+                'request' => $request->except(['password']),
+            ]),
+            'user_agent' => $request->userAgent(),
+        ]);
 
         return view('agency.updateagency', compact('agency','ministry','ministry1'));
     }
@@ -65,13 +126,45 @@ class AgencyController extends Controller
             'remark' => $request->input('remark'),
             'status' => $request->input('status'),
         ]);
+
+        ActivityLog::create([
+            'user_id' => Auth::id(),
+            'activity_type' => 'Update Agency',
+            'action' => $request->path(),
+            'url' => url()->full(),
+            'method' => $request->method(),
+            'ip_address' => $request->ip(),
+            'input' => json_encode([
+                'agency update' => $agency,
+                'request' => $request->except(['password']),
+            ]),
+            'user_agent' => $request->userAgent(),
+        ]);
+
+
         return redirect()->route('agency.index')->with('success', 'Agency Updated successfully.');
     }
 
-    public function agencydelete($id)
+    public function agencydelete(Request $request,$id)
     {
+        ActivityLog::create([
+            'user_id' => Auth::id(),
+            'activity_type' => 'Delete Agency',
+            'action' => $request->path(),
+            'url' => url()->full(),
+            'method' => $request->method(),
+            'ip_address' => $request->ip(),
+            'input' => json_encode([
+                'agency delete' => Agency::findOrFail($id),
+                'request' => $request->except(['password']),
+            ]),
+            'user_agent' => $request->userAgent(),
+        ]);
+
         $agency = Agency::findOrFail($id);
         $agency->delete();
+
+
         return redirect()->route('agency.index')->with('success', 'Agency deleted successfully.');
     }
 }

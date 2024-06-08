@@ -12,6 +12,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 use Maatwebsite\Excel\Facades\Excel;
 use App\Excel\ExportStatisticData;
+use App\Models\ActivityLog;
 
 class MailLogController extends Controller
 {
@@ -21,7 +22,7 @@ class MailLogController extends Controller
      *
      * @return \Illuminate\Contracts\Support\Renderable
      */
-    public function index()
+    public function index(Request $request)
     {
         $user = Auth::user();
         $role = $user->roles->isNotEmpty() ? $user->roles->pluck('name')->first() : null;
@@ -43,6 +44,20 @@ class MailLogController extends Controller
         $serverconfig = Server::whereIn('id', $serverIds)
             ->where('status', 1)
             ->pluck('hostname', 'id');
+
+            ActivityLog::create([
+                'user_id' => Auth::id(),
+                'activity_type' => 'View MailLog',
+                'action' => $request->path(),
+                'url' => url()->full(),
+                'method' => $request->method(),
+                'ip_address' => $request->ip(),
+                'input' => json_encode([
+                    'maillog' => 'Retrieve related data for viewing maillog page',
+                    'request' => $request->except(['password']),
+                ]),
+                'user_agent' => $request->userAgent(),
+            ]);
 
         return view('mailLog.index',compact( 'user', 'role', 'serversArray', 'serverIds', 'defaultServerId', 'serverconfig','serverIp'));
     }

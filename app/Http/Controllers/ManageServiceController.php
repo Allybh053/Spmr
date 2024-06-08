@@ -11,6 +11,7 @@ use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Storage;
 use phpseclib3\Net\SSH2;
 use OwenIt\Auditing\Models\Audit;
+use App\Models\ActivityLog;
 
 class ManageServiceController extends Controller
 {
@@ -39,6 +40,20 @@ class ManageServiceController extends Controller
                 'hostname' => $server->hostname
             ];
         }
+
+        ActivityLog::create([
+            'user_id' => Auth::id(),
+            'activity_type' => 'View Manage Service',
+            'action' => $request->path(),
+            'url' => url()->full(),
+            'method' => $request->method(),
+            'ip_address' => $request->ip(),
+            'input' => json_encode([
+                'manage service' => 'Retrieve related data for manage service page',
+                'request' => $request->except(['password']),
+            ]),
+            'user_agent' => $request->userAgent(),
+        ]);
 
         //return view('manageService.index');
         return view('manageService.index',

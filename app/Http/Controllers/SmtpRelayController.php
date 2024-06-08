@@ -26,12 +26,13 @@ use Maatwebsite\Excel\Facades\Excel;
 use App\Http\Controllers\ImportController;
 use Illuminate\Support\Facades\Log;
 use App\Models\HistoryCopyAttachment;
+use App\Models\ActivityLog;
 
 
 
 class SmtpRelayController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
         $user = Auth::user();
         $role = $user->roles->isNotEmpty() ? $user->roles->pluck('name')->first() : null;
@@ -49,6 +50,21 @@ class SmtpRelayController extends Controller
         $serverconfig = Server::whereIn('id', $serverIds)
         ->where('status', 1)
         ->pluck('hostname', 'id');
+
+        ActivityLog::create([
+            'user_id' => Auth::id(),
+            'activity_type' => 'View SMTP Relay',
+            'action' => $request->path(),
+            'url' => url()->full(),
+            'method' => $request->method(),
+            'ip_address' => $request->ip(),
+            'input' => json_encode([
+                'smtp relay' => 'Retrieve data for viewing smtp relay Page',
+                'request' => $request->except(['password']),
+            ]),
+            'user_agent' => $request->userAgent(),
+        ]);
+
 
         return view('smtp_relay.index', compact('user', 'role','agency','serverIds','defaultServerId','serverconfig','domainsArray'));
     }
@@ -187,7 +203,23 @@ class SmtpRelayController extends Controller
 
     public function delete(Request $request, $id, $ip, $idApp)
     {
+
         $application = SmtpRelayReqForm::find($id);
+
+        ActivityLog::create([
+            'user_id' => Auth::id(),
+            'activity_type' => 'Delete Application',
+            'action' => $request->path(),
+            'url' => url()->full(),
+            'method' => $request->method(),
+            'ip_address' => $request->ip(),
+            'input' => json_encode([
+                'smtp relay' => $application,
+                'request' => $request->except(['password']),
+            ]),
+            'user_agent' => $request->userAgent(),
+        ]);
+
 
         $tbldetail = smtp_relay_server::where('id', $ip)->where('types_req',$idApp)->first();
 
@@ -650,6 +682,20 @@ class SmtpRelayController extends Controller
             ->cc($request->input('emailadd'))
             ->send(new MailForm($request));
 
+            ActivityLog::create([
+                'user_id' => Auth::id(),
+                'activity_type' => 'New Smtp Relay',
+                'action' => $request->path(),
+                'url' => url()->full(),
+                'method' => $request->method(),
+                'ip_address' => $request->ip(),
+                'input' => json_encode([
+                    'smtp relay' => 'Savings data smtp relay',
+                    'request' => $request->except(['password']),
+                ]),
+                'user_agent' => $request->userAgent(),
+            ]);
+
             return redirect()->route('smtp_relay.smtp_relay_req')->with('success', 'Form added successfully');
         } else {
             return redirect()->route('smtp_relay.smtp_relay_req')->with('success', 'Form Error!');
@@ -918,6 +964,21 @@ class SmtpRelayController extends Controller
         });*/
 
         Excel::import(new ImportController(), $file);
+
+        ActivityLog::create([
+            'user_id' => Auth::id(),
+            'activity_type' => 'Update Smtp Relay',
+            'action' => $request->path(),
+            'url' => url()->full(),
+            'method' => $request->method(),
+            'ip_address' => $request->ip(),
+            'input' => json_encode([
+                'smtp relay' => 'Updating data smtp relay',
+                'request' => $request->except(['password']),
+            ]),
+            'user_agent' => $request->userAgent(),
+        ]);
+
 
         return redirect()->route('smtp_relay.smtp_relay_req')->with('success', 'Data imported successfully.');
     }

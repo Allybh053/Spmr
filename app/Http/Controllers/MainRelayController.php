@@ -20,11 +20,12 @@ use App\Models\RoleServer;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\File;
 use App\Models\HistoryCopyAttachment;
+use App\Models\ActivityLog;
 
 
 class MainRelayController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
         // Get the currently authenticated user
         $user = Auth::user();
@@ -32,6 +33,21 @@ class MainRelayController extends Controller
         $smtpMailServers = DB::table('smtp_relay_req_form')
         ->orderBy('status', 'desc')
         ->get();
+
+        ActivityLog::create([
+            'user_id' => Auth::id(),
+            'activity_type' => 'View Mail Relay',
+            'action' => $request->path(),
+            'url' => url()->full(),
+            'method' => $request->method(),
+            'ip_address' => $request->ip(),
+            'input' => json_encode([
+                'mail relay' => 'Retrieve related data for viewing mail relay page',
+                'request' => $request->except(['password']),
+            ]),
+            'user_agent' => $request->userAgent(),
+        ]);
+
 
         return view('mailrelay.index', compact('user','smtpMailServers'));
     }
@@ -52,6 +68,25 @@ class MainRelayController extends Controller
               AND srs.types_req = ?
         ", [$mailrelay, $ipAddress, $type_req]);
 
+
+        ActivityLog::create([
+            'user_id' => Auth::id(),
+            'activity_type' => 'Checking Ip Address',
+            'action' => $request->path(),
+            'url' => url()->full(),
+            'method' => $request->method(),
+            'ip_address' => $request->ip(),
+            'input' => json_encode([
+                'mail relay' => [
+                    'ip_address' => $request->input('ipAddress'),
+                    'mail_relay' => $request->input('mailrelay'),
+                    'type_req' => $request->input('type_req'),
+                    'output' => $result
+                ],
+                'request' => $request->except(['password']),
+            ]),
+            'user_agent' => $request->userAgent(),
+        ]);
 
         if (count($result) > 0) {
             $form_id = $result[0]->form_id;
@@ -86,7 +121,7 @@ class MainRelayController extends Controller
         return view('mailrelay.edit', compact('user','smtpMailServers','smtpreq'));
     }
 
-    public function papar($id, $type){
+    public function papar(Request $request,$id, $type){
 
         $datasmtp = SmtpRelayReqForm::select('smtp_relay_req_form.*','ministrys.name as ministry_name','agencies.name as agencies_name')
         ->leftJoin('ministrys','ministrys.id',DB::raw('CAST(smtp_relay_req_form.ministry AS bigint)'))
@@ -99,6 +134,22 @@ class MainRelayController extends Controller
                     ->where('types_req', $datasmtp->types_req)
                     ->get();
         $attachment = HistoryCopyAttachment::select('sm.upload_copy_attachment','history_copy_attachment.attachment_path');
+
+
+        ActivityLog::create([
+            'user_id' => Auth::id(),
+            'activity_type' => 'View Smtp Mail Relay',
+            'action' => $request->path(),
+            'url' => url()->full(),
+            'method' => $request->method(),
+            'ip_address' => $request->ip(),
+            'input' => json_encode([
+                'mail relay' => 'Retrieve related data for viewing smtp mail relay page',
+                'request' => $request->except(['password']),
+            ]),
+            'user_agent' => $request->userAgent(),
+        ]);
+
         return view('smtp_relay.view',compact('datasmtp','details','attachment'));
     }
 
@@ -117,12 +168,27 @@ class MainRelayController extends Controller
         ->cc($request->input('owner_email_addr'))
         ->send(new mailReject($request));
 
+        ActivityLog::create([
+            'user_id' => Auth::id(),
+            'activity_type' => 'Submit Reject Form',
+            'action' => $request->path(),
+            'url' => url()->full(),
+            'method' => $request->method(),
+            'ip_address' => $request->ip(),
+            'input' => json_encode([
+                'submit form' => 'Submit Reject Form',
+                'request' => $request->except(['password']),
+            ]),
+            'user_agent' => $request->userAgent(),
+        ]);
+        
         $successMessage = 'Form updated!';
         return response()->json(['message' => $successMessage]);
         }else{
         $Message = 'Error!';
         return response()->json(['message' => $Message]);
         }
+
 
     }
 
@@ -218,6 +284,20 @@ class MainRelayController extends Controller
 
         // $update = SmtpRelayReqForm::where('id', $request->input('smtpid'))->update(['comments' => $comment,'status'=>1,'implementation_name'=>$user->username]);
 
+        ActivityLog::create([
+            'user_id' => Auth::id(),
+            'activity_type' => 'Submit Application Form',
+            'action' => $request->path(),
+            'url' => url()->full(),
+            'method' => $request->method(),
+            'ip_address' => $request->ip(),
+            'input' => json_encode([
+                'mail relay' => 'Submit Application Form',
+                'request' => $request->except(['password']),
+            ]),
+            'user_agent' => $request->userAgent(),
+        ]);
+
         if ($update) {
 
             $adminEmails = User::where('role_id', 3)->pluck('email')->toArray(); //role admin will receive the email and cc to the helpdesk
@@ -257,6 +337,19 @@ class MainRelayController extends Controller
             ->pluck('hostname', 'id');
 
 
+            ActivityLog::create([
+                'user_id' => Auth::id(),
+                'activity_type' => 'View Mail Upstream',
+                'action' => $request->path(),
+                'url' => url()->full(),
+                'method' => $request->method(),
+                'ip_address' => $request->ip(),
+                'input' => json_encode([
+                    'mail upstream' => 'Retrieve data for viewing Mail Upstream Page',
+                    'request' => $request->except(['password']),
+                ]),
+                'user_agent' => $request->userAgent(),
+            ]);
 
         return view('mailrelay.mailupstream', compact('user','serverconfig', 'defaultServerId'));
     }

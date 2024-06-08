@@ -6,6 +6,8 @@ use App\Models\SmtpRelayReqForm;
 use Carbon\Carbon;
 use Illuminate\Support\Str;
 use Maatwebsite\Excel\Concerns\ToModel;
+use App\Models\ActivityLog;
+use Illuminate\Support\Facades\Auth;
 
 class ImportController implements ToModel
 {
@@ -13,7 +15,7 @@ class ImportController implements ToModel
     /**
      * @inheritDoc
      */
-    public function model(array $row)
+    public function model(Request $request,array $row)
     {
         // Convert the Excel serial number to a Unix timestamp
         $unixTimestamp = ($row[14] - 25569) * 86400;
@@ -26,6 +28,20 @@ class ImportController implements ToModel
         $date_verification_3 = Carbon::createFromTimestamp($unixTimestamp3)->format('Y-m-d H:i:s');
 
         $randomId = Str::random(9); // variable for form_id
+
+        ActivityLog::create([
+            'user_id' => Auth::id(),
+            'activity_type' => 'Import Mail Relay',
+            'action' => $request->path(),
+            'url' => url()->full(),
+            'method' => $request->method(),
+            'ip_address' => $request->ip(),
+            'input' => json_encode([
+                'import' => 'Import Data Smtp Mail Relay',
+                'request' => $request->except(['password']),
+            ]),
+            'user_agent' => $request->userAgent(),
+        ]);
 
         return new SmtpRelayReqForm([
             'form_id' => $randomId,
