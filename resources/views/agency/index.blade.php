@@ -172,7 +172,16 @@
                     }
                 }
             }
-        ]
+        ],
+        drawCallback: function(settings) {
+            // Reinitialize Feather icons
+            if (typeof feather !== 'undefined') {
+                feather.replace();
+            }
+
+            // Reinitialize any other JavaScript functionality as needed
+            // For example, tooltips, modals, etc.
+        }
     });
 
     // Append export buttons to DataTable 1's search container
