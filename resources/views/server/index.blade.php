@@ -13,6 +13,10 @@
                     </div>
                     @can('server_add')
                     <div class="col-12 col-xl-auto mb-3">
+                        <a class="btn btn-sm btn-light text-primary new" type="button" data-bs-toggle="modal" data-bs-target="#serverModal">
+                            <i class="me-1" data-feather="plus"></i>
+                            Add New Virtual Server
+                        </a>
                         <a class="btn btn-sm btn-light text-primary" href="{{ route('server.create') }}">
                             <i class="me-1" data-feather="plus"></i>
                             Add New Server Config
@@ -53,6 +57,39 @@
     @endif
 
 
+    <div class="modal fade" id="serverModal" tabindex="-1" role="dialog" aria-labelledby="serverModal" aria-hidden="true">
+        <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Virtual Server</h5>
+                    <button class="btn-close" type="button" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <form class="ajax-form" novalidate action="{{ route('server.virtualServer.add') }}" method="POST">
+                <div class="modal-body">
+                <div class="row">
+                    {!! Form::hidden('serverId', null, ['id' => 'serverId']) !!}
+                    <div class="col-md-6 @if ($errors->has('hostname')) has-error @endif">
+                    <label class="small mb-1" for="hostname">Hostname</label>
+                        {!! Form::text('hostname', null, ['id' => 'hostname', 'class' => 'form-control']) !!}
+                        @if ($errors->has('hostname')) <p class="help-block">{{ $errors->first('hostname') }}</p> @endif
+                    </div>
+                    <div class="col-md-6 @if ($errors->has('ipaddress')) has-error @endif">
+                        <label class="small mb-1" for="ipaddress">Ip Address</label>
+                            {!! Form::text('ipaddress', null, ['id' => 'ipaddress', 'class' => 'form-control','pattern'=>'((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)|([0-9a-fA-F]{1,4}:){7}([0-9a-fA-F]{1,4})']) !!}
+                            @if ($errors->has('ipaddress')) <p class="help-block">{{ $errors->first('ipaddress') }}</p> @endif
+                        </div>
+                </div>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-primary" type="button" data-bs-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-success">Save</button>
+                </div>
+                                                        </form>
+            </div>
+        </div>
+    </div>
+
+
     <div class="row">
         <div class="col-xl-12">
             <div class="card">
@@ -60,18 +97,22 @@
                 <div class="card-body">
                     <div class="row col-md-12">
                         @foreach ($dataservers as $dataserver)
+
                         <!-- Check if the server is a master server (i.e., it has sub-servers) -->
                         {{-- @if($dataserver->subServers->isNotEmpty()) --}}
                             <div class="col-lg-12 mb-4">
                                 <div class="card">
                                     <div class="card-header text-white {{ $dataserver->status == 1 ? 'bg-success' : 'bg-warning' }}">
                                         <p style="color: black;">Virtual-server: {{ $dataserver->hostname }}</p>
-                                        <div class="form-check form-switch">
-                                            <input class="form-check-input" type="checkbox"
-                                            id="flexSwitchCheck{{ $dataserver->id }}"
-                                            {{ $dataserver->status == 1 ? 'checked' : '' }}
-                                            onclick="updateStatus({{ $dataserver->id }}, this)"/>
-                                            <label class="form-check-label" for="flexSwitchCheck{{ $dataserver->id }}">{{ $dataserver->status == 1 ? 'Enable' : 'Disable' }}</label>
+                                        <div class="d-flex align-items-center justify-content-start">
+                                            <div class="form-check form-switch me-3">
+                                                <input class="form-check-input" type="checkbox"
+                                                    id="flexSwitchCheck{{ $dataserver->id }}"
+                                                    {{ $dataserver->status == 1 ? 'checked' : '' }}
+                                                    onclick="updateStatus({{ $dataserver->id }}, this)" />
+                                                <label class="form-check-label" for="flexSwitchCheck{{ $dataserver->id }}">{{ $dataserver->status == 1 ? 'Enable' : 'Disable' }}</label>
+                                            </div>
+                                            <a class="btn btn-sm btn-light text-primary rename me-3" data-bs-toggle="modal" data-bs-target="#serverModal" data-id="{{ $dataserver->id }}" data-hostname="{{ $dataserver->hostname }}" data-ipaddress="{{ $dataserver->ipaddress }}">Update Virtual Server</a>
                                         </div>
                                     </div>
 
@@ -136,6 +177,30 @@
     }
 </style>
 <script>
+       document.addEventListener("DOMContentLoaded", function() {
+            $(document).on("click", ".new", function () {
+                var serverId = '';
+                $(".modal-content #serverId").val(serverId);
+
+                var hostname = '';
+                $(".modal-content #hostname").val(hostname);
+
+                var ipaddress = '';
+                $(".modal-content #ipaddress").val(ipaddress);
+            });
+
+            $(document).on("click", ".rename", function () {
+                var serverId = $(this).data('id');
+                $(".modal-content #serverId").val(serverId);
+
+                var hostname = $(this).data('hostname');
+                $(".modal-content #hostname").val(hostname);
+
+                var ipaddress = $(this).data('ipaddress');
+                $(".modal-content #ipaddress").val(ipaddress);
+            });
+
+        });
     function updateStatus(serverId, checkbox) {
 
         // Assuming you have the server/update-status route
@@ -214,6 +279,7 @@
                 // Optionally, handle error and display message to user
             });
     }
+
 
 </script>
 

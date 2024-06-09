@@ -24,6 +24,33 @@
                 <button class="btn-close" type="button" data-bs-dismiss="alert" aria-label="Close"></button>
             </div>
         @endif
+        @if(session('success'))
+        <script>
+            document.addEventListener('DOMContentLoaded', function () {
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Success',
+                    text: '{{ session('success') }}',
+                    showConfirmButton: false,
+                    timer: 3000  // Automatically close after 3 seconds
+                });
+            });
+        </script>
+        @endif
+
+        @if(session('error'))
+            <script>
+                document.addEventListener('DOMContentLoaded', function () {
+                    Swal.fire({
+                        icon: 'error',
+                        title: '',
+                        text: '{{ session('error') }}',
+                        showConfirmButton: false,
+                        timer: 3000  // Automatically close after 3 seconds
+                    });
+                });
+            </script>
+        @endif
         <div class="card mb-4">
             <div class="card-header">Edit Server Connection Configuration</div>
             <div class="card-body">
@@ -33,24 +60,26 @@
                 @method('POST')
                 <div class="mb-3">
                     <label for="hostname">Server Hostname</label>
-                    <input class="form-control" id="hostname" name="hostname" type="text" value="{{ old('hostname', $server->hostname) }}" onblur="checkHostname()" required>
+                    <input type="hidden" value="{{ $server->id  }}" name="hostname" />
+                    {!! Form::select('hostname', $getServer, $server->id ?? null, ['id'=>'hostnamed', 'name'=>'hostnamed', 'class'=>'form-control select2', 'placeholder'=>config('params.dropdown_default'), 'disabled'=>'true']) !!}
                     <span id="hostname-error" class="text-danger"></span>
                 </div>
                 <div class="mb-3">
                     <label for="ipaddress">IP Address</label>
-                    <input class="form-control" id="ipaddress" name="ipaddress" type="text" value="{{ old('ipaddress', $server->ipaddress) }}" required>
+                    <input class="form-control" id="ipaddress" name="ipaddress" type="text" value="{{ old('ipaddress', $server->ipaddress) }}" readonly>
                 </div>
                 <hr>
                 <strong><h3 style="color:midnightblue;">Primary Server</h3></strong><hr>
                 <div  id="subservers-container">
-                    @foreach ($subserver as $sub)
+                    @foreach ($subserver as $index=>$sub)
                     <div class="mb-3">
+                        <input type="hidden" name="subServers[{{ $index }}][id]" value="{{ $sub->id }}">
                         <label for="primary{{$loop->index + 1}}">Primary Server {{$loop->index + 1}} Hostname</label>
-                        <input class="form-control" id="primary{{$loop->index + 1}}name" name="primary{{$loop->index + 1}}name" placeholder="Enter Hostname" type="text" value="{{ old('subhostname', $sub->subhostname) }}" required>
+                        <input class="form-control" id="primary{{$loop->index + 1}}name" name="subServers[{{ $index }}][name]" placeholder="Enter Hostname" type="text" value="{{ old('subhostname', $sub->subhostname) }}" required>
                     </div>
                     <div class="mb-3">
                         <label for="primary2">Primary Server {{$loop->index + 1}} Ip Address</label>
-                        <input class="form-control" id="primary{{$loop->index + 1}}ip" name="primary{{$loop->index + 1}}ip" type="text" placeholder="Enter IP Address" value="{{ old('ipaddress', $sub->ipaddress) }}" required>
+                        <input class="form-control" id="primary{{$loop->index + 1}}ip" name="subServers[{{ $index }}][ip]" type="text" placeholder="Enter IP Address" value="{{ old('ipaddress', $sub->ipaddress) }}" required>
                     </div>
                     @endforeach
                 </div>
@@ -77,6 +106,7 @@
         let subserverIndex = {{ count($subserver) }};
 
         document.getElementById('add-subserver').addEventListener('click', function () {
+              // Remove or adjust the condition to allow more than 2
             if (subserverIndex >= 2) {
                 alert('You can only add up to 2 Primary Servers.');
                 return;
@@ -94,7 +124,7 @@
             const hostnameInput = document.createElement('input');
             hostnameInput.classList.add('form-control');
             hostnameInput.setAttribute('id', `primary${subserverIndex}name`);
-            hostnameInput.setAttribute('name', `primary${subserverIndex}name`);
+            hostnameInput.setAttribute('name', `subServers[${subserverIndex}][name]`);
             hostnameInput.setAttribute('placeholder', 'Enter Hostname');
             hostnameInput.setAttribute('type', 'text');
             //hostnameInput.required = true;
@@ -109,7 +139,7 @@
             const ipInput = document.createElement('input');
             ipInput.classList.add('form-control');
             ipInput.setAttribute('id', `primary${subserverIndex}ip`);
-            ipInput.setAttribute('name', `primary${subserverIndex}ip`);
+            ipInput.setAttribute('name', `subServers[${subserverIndex}][ip]`);
             ipInput.setAttribute('placeholder', 'Enter IP Address');
             ipInput.setAttribute('type', 'text');
             //ipInput.required = true;
@@ -183,6 +213,29 @@
         }
     });
 }
+
+document.addEventListener('DOMContentLoaded', function () {
+        $('#hostname').on('change', function() {
+            var selectedHostname = $(this).val();
+            if (selectedHostname) {
+                // Make an AJAX request to fetch the IP address based on the selected hostname
+                $.ajax({
+                    url: '/server/get-ip-address', // Replace with the actual endpoint to fetch IP address
+                    method: 'GET',
+                    data: { hostname: selectedHostname },
+                    success: function(response) {
+                        console.log(response);
+                        $('#ipaddress').val(response.ip_address);
+                    },
+                    error: function(xhr, status, error) {
+                        console.error(error);
+                    }
+                });
+            } else {
+                $('#ipaddress').val('');
+            }
+        });
+    });
 
 </script>
 @endsection
