@@ -20,7 +20,7 @@
     </header>
     <!-- Main page content-->
     <div class="container-fluid px-4">
-        <div class="card mb-4">
+        <div class="card mb-4" id="registerpage">
             <div class="card-header text-center"><h3 class=" text-primary">SMTP Relay Request MyGovUC</h3></div>
             <div class="card-body">
                 <form id="formserver" name="formserver" action="{{ route('smtp_relay.saving')}}" method="post" enctype="multipart/form-data">
@@ -303,6 +303,9 @@
         th,td {
             font-size: var(--bs-body-font-size);
         }
+        #registerpage {
+            display: none;
+        }
     </style>
 </main>
 
@@ -314,6 +317,11 @@
 <script src="{{asset('js/jquery.validate.min.js')}}"></script>
 
 <script>
+
+window.addEventListener('load', function() {
+    console.log('Page is fully loaded, including all frames and resources');
+    document.getElementById('registerpage').style.display = 'block';
+});
 
     $(document).ready(function() {
 
@@ -562,7 +570,7 @@
 
             if (/^(?:[0-9]{1,3}\.){3}[0-9]{1,3}$/.test(ipAddress)) {
                 const serverAddress = 'wss://spmr.mygovuc.gov.my/' + subhostname;
-                console.log("WebSocket URL: " + serverAddress);
+                // console.log("WebSocket URL: " + serverAddress);
                 const socket = new WebSocket(serverAddress);
 
                 socket.addEventListener('open', (event) => {
@@ -583,7 +591,7 @@
 
                 socket.addEventListener('message', (event) => {
                     const response = event.data;
-                    console.log("Received response: " + response);
+                    // console.log("Received response: " + response);
 
                     if (selectedValuetype_req == 1) {
                         if (response.includes('IP address already Registered!')) {
