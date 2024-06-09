@@ -18,6 +18,34 @@
 
     <div class="container-xl px-4">
         <div class="card mb-4">
+            @if(session('success'))
+            <script>
+                document.addEventListener('DOMContentLoaded', function () {
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Success',
+                        text: '{{ session('success') }}',
+                        showConfirmButton: false,
+                        timer: 3000  // Automatically close after 3 seconds
+                    });
+                });
+            </script>
+            @endif
+
+            @if(session('error'))
+                <script>
+                    document.addEventListener('DOMContentLoaded', function () {
+                        Swal.fire({
+                            icon: 'error',
+                            title: '',
+                            text: '{{ session('error') }}',
+                            showConfirmButton: false,
+                            timer: 3000  // Automatically close after 3 seconds
+                        });
+                    });
+                </script>
+            @endif
+            
             <div class="card-header">New Server Connection Configuration</div>
             <div class="card-body">
                 <strong><h3 style="color:blue;">Virtual Server</h3></strong><hr>
@@ -25,12 +53,12 @@
                 @csrf
                 <div class="mb-3">
                     <label for="hostname">Server Hostname</label>
-                    <input class="form-control" id="hostname" name="hostname" type="text" placeholder="Enter Hostname" value="" onblur="checkHostname()" required>
+                    {!! Form::select('hostname', $getServer, $server->master_id ?? null, ['id'=>'hostname', 'name'=>'hostname', 'class'=>'form-control select2', 'placeholder'=>config('params.dropdown_default')]) !!}
                     <span id="hostname-error" class="text-danger"></span>
                 </div>
                 <div class="mb-3">
                     <label for="ipaddress">IP Address</label>
-                    <input class="form-control" id="ipaddress" name="ipaddress" type="text" placeholder="" value="" pattern="((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)|([0-9a-fA-F]{1,4}:){7}([0-9a-fA-F]{1,4})" required>
+                    <input class="form-control" id="ipaddress" name="ipaddress" type="text" placeholder="" value="" pattern="((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)|([0-9a-fA-F]{1,4}:){7}([0-9a-fA-F]{1,4})" readonly>
                     <small class="form-text text-muted">Enter a valid IPv4 or IPv6 address.</small>
                 </div>
                 <hr>
@@ -152,5 +180,27 @@ function checkHostname() {
         }
     });
 }
+document.addEventListener('DOMContentLoaded', function () {
+        $('#hostname').on('change', function() {
+            var selectedHostname = $(this).val();
+            if (selectedHostname) {
+                // Make an AJAX request to fetch the IP address based on the selected hostname
+                $.ajax({
+                    url: '/server/get-ip-address', // Replace with the actual endpoint to fetch IP address
+                    method: 'GET',
+                    data: { hostname: selectedHostname },
+                    success: function(response) {
+                        console.log(response);
+                        $('#ipaddress').val(response.ip_address);
+                    },
+                    error: function(xhr, status, error) {
+                        console.error(error);
+                    }
+                });
+            } else {
+                $('#ipaddress').val('');
+            }
+        });
+    });
 </script>
 @endsection

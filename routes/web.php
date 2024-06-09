@@ -153,6 +153,9 @@ Route::group(['middleware' => ['auth', 'nocache','log.user.activity']], function
         Route::post('/servers/{id}', [ServerController::class, 'deleteServer'])->name('server.delete');
         Route::post('/check-hostname-unique', [ServerController::class, 'checkHostnameUnique'])->name('check.hostname.unique');
 
+        Route::post('/add/virtual-server', [ServerController::class, 'virtualServer'])->name('server.virtualServer.add');
+        Route::get('/get-ip-address', [ServerController::class, 'getIp'])->name('server.virtualServer.getIp');
+
 
     });
 

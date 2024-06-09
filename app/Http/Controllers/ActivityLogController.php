@@ -15,53 +15,58 @@ class ActivityLogController extends Controller
 {
     public function showActivityLogs()
     {
+        ini_set('memory_limit', '512M'); // Increase memory limit if necessary
 
+        // Initialize an empty collection for logs
+        $allLogs = collect();
         // Fetch audit logs
         //$auditLogs = AuditLog::orderBy('created_at', 'desc')->get();
 
-        // Fetch audit logs, limit to 50
-        $auditLogs = AuditLog::whereNotNull('old_values')
-        ->whereNotNull('new_values')->orderBy('created_at', 'desc')->get();
-
-        // Fetch activity logs
-        //$activityLogs = ActivityLog::orderBy('created_at', 'desc')->get();
-
-        // Fetch activity logs, limit to 50
-        $activityLogs = ActivityLog::whereNotNull('input')
-        ->where('input', '!=', '')
-        ->where('input', '!=', '[]')
-        ->orderBy('created_at', 'desc')
-        ->get();
-
-        function limitWords($string, $wordLimit) {
-            $words = explode(' ', $string);
-            if (count($words) > $wordLimit) {
-                return implode(' ', array_slice($words, 0, $wordLimit)) . '...';
+       // Process audit logs with cursor
+            foreach (AuditLog::whereNotNull('old_values')
+            ->whereNotNull('new_values')
+            ->orderBy('created_at', 'desc')
+            ->cursor() as $auditLog) {
+            $allLogs->push($auditLog);
             }
-            return $string;
-        }
 
-        // Applying the word limit to each log's input
-        foreach ($activityLogs as $log) {
-            $log->input = limitWords($log->input, 50); // Adjust the number 10 to your desired word limit
-        }
-
+            // Process activity logs with cursor
+            foreach (ActivityLog::whereNotNull('input')
+            ->where('input', '!=', '')
+            ->where('input', '!=', '[]')
+            ->orderBy('created_at', 'desc')
+            ->cursor() as $activityLog) {
+                if ($activityLog) { // Ensure $activityLog is valid
+                    $activityLog->input = $this->limitWords($activityLog->input, 50); // Apply word limit
+                    $allLogs->push($activityLog);
+                }
+            }
         // Merge audit logs and activity logs into a single collection
-        $logs = $auditLogs->merge($activityLogs);
+        // $logs = $auditLogs->merge($activityLogs);
 
         // Sort the merged logs by created_at timestamp
         // $logsPaginated = $logs->sortByDesc('created_at')->values();
 
          // Sort the merged logs by created_at timestamp
-        $logsPaginated = $logs->sortByDesc('created_at');
+       // Sort the merged logs by created_at timestamp
+            $logsPaginated = $allLogs->sortByDesc('created_at');
 
-    // Transform the collection to add display date
-         $logsPaginated->transform(function ($log) {
-            $log->created_at_display = Carbon::parse($log->created_at)->setTimezone('Asia/Kuala_Lumpur')->format('d/m/Y h:i:s A');
-            return $log;
-         });
+            // Transform the collection to add display date
+            $logsPaginated->transform(function ($log) {
+                $log->created_at_display = Carbon::parse($log->created_at)->setTimezone('Asia/Kuala_Lumpur')->format('d/m/Y h:i:s A');
+                return $log;
+            });
         // Assuming you want to pass the logs to a view named 'activityLog.index'
         return view('activityLog.index', compact('logsPaginated'));
+    }
+
+    private function limitWords($string, $wordLimit)
+    {
+        $words = explode(' ', $string);
+        if (count($words) > $wordLimit) {
+            return implode(' ', array_slice($words, 0, $wordLimit)) . '...';
+        }
+        return $string;
     }
 
 
