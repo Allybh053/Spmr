@@ -53,10 +53,10 @@
                                 </tr>
                                 </thead>
                                 <tbody>
-                                    @foreach ($logsPaginated as $log)
+                                    @foreach ($logsPaginated->items() as $log)
                                     <tr>
                                         <td>{{ $log->user ? $log->user->username : 'Guest' }}</td>
-                                        <td>{{ $log->activity_type ?? $log->event}}</td>
+                                        <td>{{ $log->activity_type ?? $log->event }}</td>
                                         <td>{{ $log->action }}</td>
                                         <td>{{ $log->ip_address }}</td>
                                         <td style="white-space: pre-line;">{{ $log->user_agent }}</td>
@@ -71,12 +71,12 @@
                                             <div style="height: 165px; overflow:auto;">
                                                 {{ $log->input }}
                                             </div>
-
                                         </td>
-                                        <td><pre>{{ $log->created_at->format('d/m/Y h:i:s A')  }}</pre></td>
+                                        <td><pre>{{ $log->created_at_display }}</pre></td>
                                     </tr>
                                     @endforeach
                                 </tbody>
+
                             </table>
                             {{-- {{ $logsPaginated->links() }} --}}
                             </div>
@@ -89,71 +89,71 @@
 @endsection
 @push('script')
 <script>
- jQuery.extend(jQuery.fn.dataTable.ext.type.order, {
-            "date-uk-pre": function(a) {
-                if (!a) {
-                    return 0;
-                }
-                var ukDateTime = a.split(' ');
-                var ukDate = ukDateTime[0].split('/');
-                var ukTime = ukDateTime[1] + ' ' + ukDateTime[2];
-                return new Date(ukDate[2], ukDate[1] - 1, ukDate[0], new Date('1970-01-01T' + ukTime).getHours(), new Date('1970-01-01T' + ukTime).getMinutes(), new Date('1970-01-01T' + ukTime).getSeconds());
-            },
-            "date-uk-asc": function(a, b) {
-                return a - b;
-            },
-            "date-uk-desc": function(a, b) {
-                return b - a;
+    jQuery.extend(jQuery.fn.dataTable.ext.type.order, {
+        "date-uk-pre": function(a) {
+            if (!a) {
+                return 0;
             }
-        });
+            var ukDateTime = a.split(' ');
+            var ukDate = ukDateTime[0].split('/');
+            var ukTime = ukDateTime[1] + ' ' + ukDateTime[2];
+            return new Date(ukDate[2], ukDate[1] - 1, ukDate[0], new Date('1970-01-01T' + ukTime).getHours(), new Date('1970-01-01T' + ukTime).getMinutes(), new Date('1970-01-01T' + ukTime).getSeconds());
+        },
+        "date-uk-asc": function(a, b) {
+            return a - b;
+        },
+        "date-uk-desc": function(a, b) {
+            return b - a;
+        }
+    });
 
-// Initialize DataTable with custom sorting for date column
-var table = $('#spmrDatatable').DataTable({
-    processing: true,
-    serverSide: false,
-    ordering: true,
-    lengthMenu: [[10, 25, 50, -1], [10, 25, 50, "All"]],
-    dom: '<"top"fBl>rt<"bottom"ip>',
-    buttons: [
-        { extend: 'copy', text: 'Copy', exportOptions: { columns: ':visible' } },
-        { extend: 'csv', text: 'CSV', exportOptions: { columns: ':visible' } },
-        { extend: 'excel', text: 'Excel', exportOptions: { columns: ':visible' } },
-        { extend: 'pdf', text: 'PDF', exportOptions: { columns: ':visible' } },
-        { extend: 'print', text: 'Print', exportOptions: { columns: ':visible' } }
-    ],
-    columnDefs: [
-        { type: 'date-uk', targets: [9] },
-        {
-            targets: [6, 7], // Assuming columns containing JSON data are the 6th and 7th columns
-            render: function(data, type, row, meta) {
-                if (!data) {
-                    return ''; // Return empty string if data is null
-                }
-
-                try {
-                    var json;
-                    if (data.startsWith('"') && data.endsWith('"')) {
-                        // Unescape the string if wrapped in double quotes
-                        var unescapedData = data.slice(1, -1).replace(/\\"/g, '"');
-                        json = JSON.parse(unescapedData);
-                    } else {
-                        // Parse the JSON string directly
-                        json = JSON.parse(data);
+    // Initialize DataTable with custom sorting for date column
+    var table = $('#spmrDatatable').DataTable({
+        processing: true,
+        serverSide: false, // Change this to true for server-side processing
+        ordering: true,
+        lengthMenu: [[10, 25, 50, -1], [10, 25, 50, "All"]],
+        dom: '<"top"fBl>rt<"bottom"ip>',
+        buttons: [
+            { extend: 'copy', text: 'Copy', exportOptions: { columns: ':visible' } },
+            { extend: 'csv', text: 'CSV', exportOptions: { columns: ':visible' } },
+            { extend: 'excel', text: 'Excel', exportOptions: { columns: ':visible' } },
+            { extend: 'pdf', text: 'PDF', exportOptions: { columns: ':visible' } },
+            { extend: 'print', text: 'Print', exportOptions: { columns: ':visible' } }
+        ],
+        columnDefs: [
+            { type: 'date-uk', targets: [9] },
+            {
+                targets: [6, 7], // Assuming columns containing JSON data are the 6th and 7th columns
+                render: function(data, type, row, meta) {
+                    if (!data) {
+                        return ''; // Return empty string if data is null
                     }
 
-                    // Format JSON object with line breaks
-                    var formattedJson = JSON.stringify(json, null, 2);
-                    // Replace newlines with <br> tags for HTML rendering
-                    return '<pre>' + formattedJson + '</pre>';
-                } catch (error) {
-                    console.error("Error parsing JSON:", error);
-                    return "Invalid JSON";
+                    try {
+                        var json;
+                        if (data.startsWith('"') && data.endsWith('"')) {
+                            // Unescape the string if wrapped in double quotes
+                            var unescapedData = data.slice(1, -1).replace(/\\"/g, '"');
+                            json = JSON.parse(unescapedData);
+                        } else {
+                            // Parse the JSON string directly
+                            json = JSON.parse(data);
+                        }
+
+                        // Format JSON object with line breaks
+                        var formattedJson = JSON.stringify(json, null, 2);
+                        // Replace newlines with <br> tags for HTML rendering
+                        return '<pre>' + formattedJson + '</pre>';
+                    } catch (error) {
+                        console.error("Error parsing JSON:", error);
+                        return "Invalid JSON";
+                    }
                 }
             }
-        }
-    ],
-    order: [[9, 'asc']],
-    drawCallback: function(settings) {
+        ],
+        order: [[9, 'asc']],
+        drawCallback: function(settings) {
             // Reinitialize Feather icons
             if (typeof feather !== 'undefined') {
                 feather.replace();
@@ -162,11 +162,12 @@ var table = $('#spmrDatatable').DataTable({
             // Reinitialize any other JavaScript functionality as needed
             // For example, tooltips, modals, etc.
         }
-});
+    });
 
-// Adjust positioning of search input and export buttons
-$('.dataTables_filter').addClass('d-inline-block mr-2'); // Make search input inline
-$('.dt-buttons').appendTo('.dataTables_filter'); // Append export buttons to search container
-</script>
+    // Adjust positioning of search input and export buttons
+    $('.dataTables_filter').addClass('d-inline-block mr-2'); // Make search input inline
+    $('.dt-buttons').appendTo('.dataTables_filter'); // Append export buttons to search container
+    </script>
+
 @endpush
 

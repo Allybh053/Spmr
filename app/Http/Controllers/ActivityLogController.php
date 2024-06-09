@@ -13,61 +13,50 @@ use Carbon\Carbon;
 
 class ActivityLogController extends Controller
 {
-    public function showActivityLogs()
-    {
-        ini_set('memory_limit', '512M'); // Increase memory limit if necessary
 
-        // Initialize an empty collection for logs
-        $allLogs = collect();
-        // Fetch audit logs
-        //$auditLogs = AuditLog::orderBy('created_at', 'desc')->get();
+public function showActivityLogs()
+{
+    // Fetch audit logs with old and new values
+    $auditLogs = AuditLog::whereNotNull('old_values')
+        ->whereNotNull('new_values')
+        ->orderBy('created_at', 'desc')
+        ->get();
 
-       // Process audit logs with cursor
-            foreach (AuditLog::whereNotNull('old_values')
-            ->whereNotNull('new_values')
-            ->orderBy('created_at', 'desc')
-            ->cursor() as $auditLog) {
-            $allLogs->push($auditLog);
-            }
+    // Fetch activity logs with input
+    $activityLogs = ActivityLog::whereNotNull('input')
+        ->where('input', '!=', '')
+        ->where('input', '!=', '[]')
+        ->orderBy('created_at', 'desc')
+        ->get();
 
-            // Process activity logs with cursor
-            foreach (ActivityLog::whereNotNull('input')
-            ->where('input', '!=', '')
-            ->where('input', '!=', '[]')
-            ->orderBy('created_at', 'desc')
-            ->cursor() as $activityLog) {
-                if ($activityLog) { // Ensure $activityLog is valid
-                    $activityLog->input = $this->limitWords($activityLog->input, 50); // Apply word limit
-                    $allLogs->push($activityLog);
-                }
-            }
-        // Merge audit logs and activity logs into a single collection
-        // $logs = $auditLogs->merge($activityLogs);
+    // Merge logs
+    $logs = $auditLogs->merge($activityLogs);
 
-        // Sort the merged logs by created_at timestamp
-        // $logsPaginated = $logs->sortByDesc('created_at')->values();
+    // Sort the merged logs by created_at timestamp
+    $logs = $logs->sortByDesc('created_at');
 
-         // Sort the merged logs by created_at timestamp
-       // Sort the merged logs by created_at timestamp
-            $logsPaginated = $allLogs->sortByDesc('created_at');
+    $totalLogs = $logs->count();
+    $perPage = 100000; // Adjust per your desired pagination limit
+    $currentPage = LengthAwarePaginator::resolveCurrentPage();
+    $currentPageItems = $logs->slice(($currentPage - 1) * $perPage, $perPage)->all();
 
-            // Transform the collection to add display date
-            $logsPaginated->transform(function ($log) {
-                $log->created_at_display = Carbon::parse($log->created_at)->setTimezone('Asia/Kuala_Lumpur')->format('d/m/Y h:i:s A');
-                return $log;
-            });
-        // Assuming you want to pass the logs to a view named 'activityLog.index'
-        return view('activityLog.index', compact('logsPaginated'));
-    }
+    // Debug output
+    // dd($totalLogs, $perPage, $currentPage, count($currentPageItems));
+    $logsPaginated = new LengthAwarePaginator($currentPageItems, $logs->count(), $perPage, $currentPage, [
+        'path' => LengthAwarePaginator::resolveCurrentPath(),
+    ]);
 
-    private function limitWords($string, $wordLimit)
-    {
-        $words = explode(' ', $string);
-        if (count($words) > $wordLimit) {
-            return implode(' ', array_slice($words, 0, $wordLimit)) . '...';
-        }
-        return $string;
-    }
+    // Transform logs to add display date
+    $logsPaginated->getCollection()->transform(function ($log) {
+        $log->created_at_display = Carbon::parse($log->created_at)->setTimezone('Asia/Kuala_Lumpur')->format('d/m/Y h:i:s A');
+        return $log;
+    });
+
+    // Assuming you want to pass the logs to a view named 'activityLog.index'
+    return view('activityLog.index', compact('logsPaginated'));
+}
+
+
 
 
 
