@@ -44,8 +44,8 @@ class DashboardController extends Controller
         $serverList = [];
         $listServer = Server::whereIn('id', $serverIds)->where('status', 1)->orderBy('id', 'asc')->get();
         foreach ($listServer as $server) {
-            $subServer = Server::where('master_id',$server->id)->where('status_cluster',1)->get();
-            $subServer2 = Server::where('master_id',$server->id)->where('status_cluster',1)->get();
+            $subServer = Server::where('master_id',$server->id)->where('status_cluster',1)->orderBy('id', 'asc')->get();
+            $subServer2 = Server::where('master_id',$server->id)->where('status_cluster',1)->orderBy('id', 'asc')->get();
 
             $subs2=[];
             foreach($subServer2 as $subServers2){
@@ -64,7 +64,7 @@ class DashboardController extends Controller
                     ->leftJoin('smtp_relay_server', 'smtp_relay_req_form.form_id', '=', 'smtp_relay_server.form_id')
                     ->where('smtp_relay_req_form.status', 1)
                     ->where('smtp_relay_req_form.sub_smtp_relay_server', $subServers->subhostname)
-                    ->count();
+                    ->count(); 
 
                 $subDataDomain = DB::table('mailrouting')
                     ->where('mailrouting.server', $subServers->subhostname)
