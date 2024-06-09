@@ -70,12 +70,12 @@
                     {!! Form::hidden('serverId', null, ['id' => 'serverId']) !!}
                     <div class="col-md-6 @if ($errors->has('hostname')) has-error @endif">
                     <label class="small mb-1" for="hostname">Hostname</label>
-                        {!! Form::text('hostname', null, ['id' => 'hostname', 'class' => 'form-control']) !!}
+                        {!! Form::text('hostname', null, ['id' => 'hostname', 'class' => 'form-control', 'required']) !!}
                         @if ($errors->has('hostname')) <p class="help-block">{{ $errors->first('hostname') }}</p> @endif
                     </div>
                     <div class="col-md-6 @if ($errors->has('ipaddress')) has-error @endif">
                         <label class="small mb-1" for="ipaddress">Ip Address</label>
-                            {!! Form::text('ipaddress', null, ['id' => 'ipaddress', 'class' => 'form-control','pattern'=>'((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)|([0-9a-fA-F]{1,4}:){7}([0-9a-fA-F]{1,4})']) !!}
+                            {!! Form::text('ipaddress', null, ['id' => 'ipaddress', 'class' => 'form-control','pattern'=>'((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)|([0-9a-fA-F]{1,4}:){7}([0-9a-fA-F]{1,4})', 'required']) !!}
                             @if ($errors->has('ipaddress')) <p class="help-block">{{ $errors->first('ipaddress') }}</p> @endif
                         </div>
                 </div>
@@ -84,7 +84,7 @@
                     <button class="btn btn-primary" type="button" data-bs-dismiss="modal">Close</button>
                     <button type="submit" class="btn btn-success">Save</button>
                 </div>
-                                                        </form>
+                </form>
             </div>
         </div>
     </div>
@@ -255,15 +255,10 @@
 
     // Function to handle deletion with Ajax
     function deleteServer(serverId) {
-        var deleteUrl = '/server/servers/' + serverId;
+    // Check if the serverId exists in the master_id column and deleted_at column is null
+    var checkUrl = '/server/check-server/' + serverId;
 
-        fetch(deleteUrl, {
-            method: 'POST',
-            headers: {
-                'X-CSRF-TOKEN': '{{ csrf_token() }}',
-                'Content-Type': 'application/json'
-            }
-        })
+        fetch(checkUrl)
             .then(response => {
                 if (!response.ok) {
                     throw new Error('Network response was not ok');
@@ -271,14 +266,48 @@
                 return response.json();
             })
             .then(data => {
-                //console.log('Server deleted successfully');
-                location.reload();
+                if (data.exists) {
+                    // ServerId does not exist in the master_id column or deleted_at column is not null, show warning
+                    Swal.fire({
+                        title: 'Cannot delete!',
+                        text: 'This server is linked to existing Primary servers.',
+                        icon: 'warning',
+                        confirmButtonColor: '#3085d6',
+                        confirmButtonText: 'OK'
+                    });
+                } else {
+                    // ServerId exists in the master_id column and deleted_at column is null, proceed with deletion
+                    var deleteUrl = '/server/servers/' + serverId;
+
+                    fetch(deleteUrl, {
+                        method: 'POST',
+                        headers: {
+                            'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                            'Content-Type': 'application/json'
+                        }
+                    })
+                        .then(response => {
+                            if (!response.ok) {
+                                throw new Error('Network response was not ok');
+                            }
+                            return response.json();
+                        })
+                        .then(data => {
+                            //console.log('Server deleted successfully');
+                            location.reload();
+                        })
+                        .catch(error => {
+                            //console.error('There was a problem with the deletion:', error);
+                            // Optionally, handle error and display message to user
+                        });
+                }
             })
             .catch(error => {
-                //console.error('There was a problem with the deletion:', error);
+                //console.error('There was a problem checking serverId:', error);
                 // Optionally, handle error and display message to user
             });
     }
+
 
 
 </script>

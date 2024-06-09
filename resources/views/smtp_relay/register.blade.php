@@ -140,6 +140,7 @@
                         <strong><p style="color: red;" id="resultContainer"></p></strong>
                         <strong><p style="color: red;" id="resultContainer2"></p></strong>
                         <strong><p style="color: red;" id="resultContainer3"></p></strong>
+                        <strong><p style="color: red;" id="resultContainer4"></p></strong>
                     </table>
                 </div>
 
@@ -366,7 +367,7 @@
                         });
                     },
                     error: function(xhr, status, error) {
-                        console.error(error);
+                        //console.error(error);
                     }
                 });
             } else {
@@ -542,6 +543,7 @@
                 success: function(response) {
                     if (response.exists) {
                         //console.log(response);
+                        // message="Ip Address already keyin in the previous row!";
                         $('#resultContainer2').html(response.message);
                         submitBtn2.disabled = true;
                     } else {
@@ -559,31 +561,30 @@
 
 
             if (/^(?:[0-9]{1,3}\.){3}[0-9]{1,3}$/.test(ipAddress)) {
-                const serverAddress = 'wss://spmr.mygovuc.gov.my/'+subhostname;
-                //console.log(serverAddress);
+                const serverAddress = 'wss://spmr.mygovuc.gov.my/' + subhostname;
+                //console.log("WebSocket URL: " + serverAddress);
                 const socket = new WebSocket(serverAddress);
-                //console.log(selectedValuetype_req);
+
                 socket.addEventListener('open', (event) => {
                     let command = '';
 
                     if (selectedValuetype_req == 1) {
-                        command = `grep -q '^${ipAddress}' /opt/cluster/postfix/access_list && echo "IP address already Registered!"`;
+                        command = `grep -q '^${ipAddress}' /opt/cluster/postfix/access_list && echo "IP address already Registered!" || echo "IP address not Registered!"`;
                     }
                     if (selectedValuetype_req == 2) {
-
-                        command = `grep -q '^#${ipAddress}' /opt/cluster/postfix/access_list && echo "IP address already Terminated!" || (grep -q '^${ipAddress}' /opt/cluster/postfix/access_list || echo "IP address not Registered to Terminate!")`;
-                        //console.log("command"+ command);
+                        command = `grep -q '^#${ipAddress}' /opt/cluster/postfix/access_list && echo "IP address already Terminated!" || (grep -q '^${ipAddress}' /opt/cluster/postfix/access_list && echo "IP address Registered to Terminate!" || echo "IP address not Registered to Terminate!")`;
                     }
 
                     if (command) {
-                        //console.log(command);
+                        //console.log("Sending command: " + command);
                         socket.send(command);
                     }
                 });
 
                 socket.addEventListener('message', (event) => {
                     const response = event.data;
-                    //console.log("masuk"+response);
+                    //console.log("Received response: " + response);
+
                     if (selectedValuetype_req == 1) {
                         if (response.includes('IP address already Registered!')) {
                             submitBtn.disabled = true;
@@ -595,16 +596,17 @@
                         }
                     } else if (selectedValuetype_req == 2) {
                         if (response.includes('IP address already Terminated!')) {
-                            console.log("IP address already Terminated!"+response);
+                            //console.log("IP address already Terminated: " + response);
                             submitBtn.disabled = true;
                             $(this).addClass('is-invalid');
                             $('#resultContainer').html(response);
                         } else if (response.includes('IP address not Registered to Terminate!')) {
-                            console.log("IP address not Registered to Terminate!"+response);
+                            //console.log("IP address not Registered to Terminate: " + response);
                             submitBtn.disabled = true;
                             $(this).addClass('is-invalid');
                             $('#resultContainer').html(response);
-                        } else {
+                        } else if (response.includes('IP address Registered to Terminate!')) {
+                            //console.log("IP address Registered to Terminate: " + response);
                             submitBtn.disabled = false;
                             $('#resultContainer').empty();
                         }
@@ -613,18 +615,19 @@
                 });
 
                 socket.addEventListener('error', (error) => {
-                    // console.error("WebSocket error observed:", error);
-                    //$('#resultContainerEror').html("Error fetching Primary server: Contact Administrator!");
+                    //console.error("WebSocket error observed:", error);
+                    $('#resultContainerError').html("Error fetching server: Contact Administrator!");
                 });
 
                 socket.addEventListener('close', (event) => {
-                    // console.log("WebSocket connection closed");
+                    //console.log("WebSocket connection closed");
                 });
             } else {
                 // Clear result container if input is invalid
                 submitBtn.disabled = false;
                 $('#resultContainer').empty();
             }
+
         });
 
 
@@ -662,11 +665,13 @@
                         var inputs = tbody.querySelectorAll("input");
                         inputs.forEach(function(input) {
                             input.disabled = false;
+                            $('#resultContainer4').empty();
                             // Set the input value to the fetched hostname
                             // input.value = response.hostname;
                         });
                     } else {
-                        //console.error("Hostname not found");
+                        message="Primary Server is not exist!";
+                        $('#resultContainer4').html(message);
                     }
                 },
                 error: function(xhr, status, error) {

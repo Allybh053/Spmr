@@ -865,7 +865,8 @@ document.getElementById('submit').addEventListener('click', function() {
                             // input.value = response.hostname;
                         });
                     } else {
-                        //console.error("Hostname not found");
+                        message="Primary Server is not exist!"
+                        $('#resultContainer').html(message);
                     }
                 },
                 error: function(xhr, status, error) {
