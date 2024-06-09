@@ -82,23 +82,11 @@
                         <label for="agencies">Agency</label>
                         <select class="form-control select2" name="agencies" id="agencies" aria-label="Default select">
                             <option value="{{ old('agencies', $formsmtp->agencies) }}">{{ old('agencies', $formsmtp->agencies_name) }}</option>
-                            {{-- @foreach ($agenciesArray as $agency)
-                            <option value="{{ $agency['name'] }}">{{ $agency['name'] }}</option>
-                            @endforeach --}}
                         </select>
                     </div>
                     <div class="col-md-6">
                         <label for="dept_div_unit">Department/Division/Unit</label>
-                        {{-- @if ($formsmtp->types_req == 1) --}}
                         <input class="form-control" id="dept_div_unit" name="dept_div_unit" value="{{ old('dept_div_unit', $formsmtp->dept_div_unit) }}"/>
-                        {{-- @else
-                        <select class="form-control select2" name="dept_div_unit" id="dept_div_unit" aria-label="Default select">
-                            <option value="{{ old('dept_div_unit', $formsmtp->dept_div_unit) }}">{{ old('dept_div_unit', $formsmtp->dept_div_unit) }}</option>
-                            @foreach ($departmentsArray as $department)
-                            <option value="{{ $department['name'] }}">{{ $department['name'] }}</option>
-                            @endforeach
-                        </select>
-                        @endif --}}
                     </div>
                 </div>
                 <div class="mb-3">
@@ -130,6 +118,7 @@
                         <option value="{{ $server['hostname'] }}">{{ $server['hostname'] }}</option>
                         @endforeach
                     </select>
+                    <input type="hidden" name="sub_smtp_relay_server" id="sub_smtp_relay_server" value="{{ old('sub_smtp_relay_server', $formsmtp->sub_smtp_relay_server) }}">
                 </div>
                 <div class="mb-3">
                     <table class="table table-striped" id="tableA">
@@ -151,7 +140,7 @@
                                     <td>
                                         <input type="text" name="tableSpmr[{{ $loop->index }}][server_name]" id="server_name" value="{{ old('tableSpmr.' . $loop->index . '.server_name', $detail->server_name) }}" class="form-control" required />
                                     </td>
-                                    <td><input type="text" name="tableSpmr[{{ $loop->index }}][ip_addr_server]" id="ip_addr_server" value="{{ old('tableSpmr.' . $loop->index . '.ip_addr_server', $detail->ip_addr_server) }}" class="form-control" required /></td>
+                                    <td><input type="text" name="tableSpmr[{{ $loop->index }}][ip_addr_server]" id="ip_addr_server" value="{{ old('tableSpmr.' . $loop->index . '.ip_addr_server', $detail->ip_addr_server) }}" class="form-control ipaddress-input" required /></td>
                                     <td><input type="text" name="tableSpmr[{{ $loop->index }}][fqdn_server]" id="fqdn_server" value="{{ old('tableSpmr.' . $loop->index . '.fqdn_server', $detail->fqdn_server) }}" class="form-control" required /></td>
                                     <td><input type="text" name="tableSpmr[{{ $loop->index }}][mailfrom]" id="mailfrom" value="{{ old('tableSpmr.' . $loop->index . '.mailfrom', $detail->mailfrom) }}" class="form-control" required /></td>
                                     <td hidden><input type="text" name="tableSpmr[{{ $loop->index }}][deactivated]" id="deactivated" value="{{ old('tableSpmr.' . $loop->index . '.deactivated', $detail->deactivated) }}" class="form-control" /></td>
@@ -167,6 +156,7 @@
                             </tr>
                         </tfoot>
                         <strong><p style="color: red;" id="resultContainer"></p></strong>
+                        <strong><p style="color: red;" id="resultContainer3"></p></strong>
                     </table>
                 </div>
 
@@ -269,7 +259,7 @@
                     <div class="mb-3 col-md-4">
                         <label class=" mb-1" for="verifier_1_position">Verifier Position:</label>
                         {{-- @if ($formsmtp->types_req == 1) --}}
-                        <input class="form-control" id="dept_div_unit" name="dept_div_unit" value="{{ old('dept_div_unit', $formsmtp->dept_div_unit) }}"/>
+                        <input class="form-control" id="verifier_1_dept_div" name="verifier_1_dept_div" value="{{ old('verifier_1_dept_div', $formsmtp->verifier_1_dept_div) }}"/>
                         {{-- @else
                         <select class="form-control select2" name="verifier_1_position" id="verifier_1_position" aria-label="Default select">
                             <option value="{{ old('verifier_1_position', $formsmtp->verifier_1_position) }}">{{ old('verifier_1_position', $formsmtp->verifier_1_position) }}</option>
@@ -393,6 +383,40 @@
 
 <script>
     $(document).ready(function() {
+
+    // Function to check for duplicate IP addresses
+    function checkDuplicateIP() {
+        var ipAddresses = [];
+        var isDuplicate = false;
+
+        $('.ipaddress-input').each(function() {
+            var ip = $(this).val();
+            if (ip && ipAddresses.includes(ip)) {
+                isDuplicate = true;
+                var response = "IP address already Keyin in previous row!";
+                $(this).addClass('is-invalid');
+                $('#resultContainer3').html(response);
+            } else {
+                $(this).removeClass('is-invalid');
+                $('#resultContainer3').empty(response);
+                ipAddresses.push(ip);
+            }
+        });
+
+        return isDuplicate;
+    }
+
+// Event listener for changes to the IP address input fields
+$(document).on('input', '.ipaddress-input', function() {
+    checkDuplicateIP();
+});
+
+// Add event listener for removing rows
+$(document).on('click', '.remove-row', function() {
+    $(this).closest('tr').remove();
+    checkDuplicateIP(); // Recheck IP addresses after a row is removed
+});
+
         $('#ministry').change(function() {
             var ministry = $(this).val();
             var ministryCode = $(this).find(':selected').data('code');
@@ -420,7 +444,7 @@
         $('#dynamic-inputs-container').on('input', '#ip_addr_server', function() {
             var type_req = document.getElementById("types_req");
             var selectBox = document.getElementById("smtp_relay_server");
-            var selectedValuesmtp_relay_server = selectBox.options[selectBox.selectedIndex].value;
+            var subhostname = document.getElementById("sub_smtp_relay_server").value;
             var selectedValue = selectBox.options[selectBox.selectedIndex].value;
             var selectedValuetype_req = type_req.options[type_req.selectedIndex].value;
             var ipAddress = $(this).val();
@@ -428,7 +452,7 @@
 
 
             if (/^(?:[0-9]{1,3}\.){3}[0-9]{1,3}$/.test(ipAddress)) {
-                const serverAddress = 'wss://spmr.mygovuc.gov.my/' + selectedValuesmtp_relay_server;
+                const serverAddress = 'wss://spmr.mygovuc.gov.my/' + subhostname;
                 const socket = new WebSocket(serverAddress);
 
                 socket.addEventListener('open', (event) => {
@@ -577,24 +601,24 @@
             $(this).removeClass('is-invalid');
         }
     });
-    $('#verifier_3_dept_div').on('change', function() {
-        var isValid = $(this).valid();
-        if (isValid) {
-            $(this).removeClass('is-invalid');
-        }
-    });
-    $('#verifier_3_position').on('change', function() {
-        var isValid = $(this).valid();
-        if (isValid) {
-            $(this).removeClass('is-invalid');
-        }
-    });
-    $('#verifier_1_dept_div').on('change', function() {
-        var isValid = $(this).valid();
-        if (isValid) {
-            $(this).removeClass('is-invalid');
-        }
-    });
+    // $('#verifier_3_dept_div').on('change', function() {
+    //     var isValid = $(this).valid();
+    //     if (isValid) {
+    //         $(this).removeClass('is-invalid');
+    //     }
+    // });
+    // $('#verifier_3_position').on('change', function() {
+    //     var isValid = $(this).valid();
+    //     if (isValid) {
+    //         $(this).removeClass('is-invalid');
+    //     }
+    // });
+    // $('#verifier_1_dept_div').on('change', function() {
+    //     var isValid = $(this).valid();
+    //     if (isValid) {
+    //         $(this).removeClass('is-invalid');
+    //     }
+    // });
     $('#date_verification_1').on('change', function() {
         var isValid = $(this).valid();
         if (isValid) {
@@ -637,13 +661,13 @@
             $(this).next('.select2-container').find('.select2-selection').removeClass('is-invalid');
         }
     });
-    $('#dept_div_unit').on('change', function() {
-        var isValid = $(this).valid();
-        if (isValid) {
-            $(this).removeClass('is-invalid');
-            $(this).next('.select2-container').find('.select2-selection').removeClass('is-invalid');
-        }
-    });
+    // $('#dept_div_unit').on('change', function() {
+    //     var isValid = $(this).valid();
+    //     if (isValid) {
+    //         $(this).removeClass('is-invalid');
+    //         $(this).next('.select2-container').find('.select2-selection').removeClass('is-invalid');
+    //     }
+    // });
     $('#smtp_relay_auth_method').on('change', function() {
         var isValid = $(this).valid();
         if (isValid) {
@@ -672,20 +696,20 @@
             $(this).next('.select2-container').find('.select2-selection').removeClass('is-invalid');
         }
     });
-    $('#applicant_position').on('change', function() {
-        var isValid = $(this).valid();
-        if (isValid) {
-            $(this).removeClass('is-invalid');
-            $(this).next('.select2-container').find('.select2-selection').removeClass('is-invalid');
-        }
-    });
-    $('#applicant_dept_div').on('change', function() {
-        var isValid = $(this).valid();
-        if (isValid) {
-            $(this).removeClass('is-invalid');
-            $(this).next('.select2-container').find('.select2-selection').removeClass('is-invalid');
-        }
-    });
+    // $('#applicant_position').on('change', function() {
+    //     var isValid = $(this).valid();
+    //     if (isValid) {
+    //         $(this).removeClass('is-invalid');
+    //         $(this).next('.select2-container').find('.select2-selection').removeClass('is-invalid');
+    //     }
+    // });
+    // $('#applicant_dept_div').on('change', function() {
+    //     var isValid = $(this).valid();
+    //     if (isValid) {
+    //         $(this).removeClass('is-invalid');
+    //         $(this).next('.select2-container').find('.select2-selection').removeClass('is-invalid');
+    //     }
+    // });
     $('#date_application').on('change', function() {
         var isValid = $(this).valid();
         if (isValid) {
@@ -693,13 +717,13 @@
             $(this).next('.select2-container').find('.select2-selection').removeClass('is-invalid');
         }
     });
-    $('#verifier_1_position').on('change', function() {
-        var isValid = $(this).valid();
-        if (isValid) {
-            $(this).removeClass('is-invalid');
-            $(this).next('.select2-container').find('.select2-selection').removeClass('is-invalid');
-        }
-    });
+    // $('#verifier_1_position').on('change', function() {
+    //     var isValid = $(this).valid();
+    //     if (isValid) {
+    //         $(this).removeClass('is-invalid');
+    //         $(this).next('.select2-container').find('.select2-selection').removeClass('is-invalid');
+    //     }
+    // });
     });
 
     document.addEventListener('DOMContentLoaded', function() {
@@ -802,5 +826,56 @@ document.getElementById('submit').addEventListener('click', function() {
                 }
             });
         });
+
+        function toggleInputs() {
+
+        var selectBox = document.getElementById("smtp_relay_server");
+        var selectedValue = selectBox.options[selectBox.selectedIndex].value;
+
+
+        var tbody = document.getElementById("dynamic-inputs-container"); // Select the tbody by name
+
+        // Check if the selected option is the "Select Server" option
+        if (selectedValue === "") {
+            // Disable all input fields inside the tbody
+            var inputs = tbody.querySelectorAll("input");
+            inputs.forEach(function(input) {
+                input.disabled = true;
+            });
+        } else {
+            // Enable all input fields inside the tbody
+            // var inputs = tbody.querySelectorAll("input");
+            // inputs.forEach(function(input) {
+            //     input.disabled = false;
+            // });
+            // Use AJAX to send selectedValue to the controller
+            $.ajax({
+                url: "{{ route('check.subhostname.unique') }}", // Update the URL with your controller route
+                type: 'POST',
+                data: { selectedValue: selectedValue },
+                success: function(response) {
+                    // Check if hostname is present in the response
+                    if (response.subhostname) {
+                        document.getElementById("sub_smtp_relay_server").value = response.subhostname;
+                        // Enable all input fields inside the tbody
+                        var inputs = tbody.querySelectorAll("input");
+                        inputs.forEach(function(input) {
+                            input.disabled = false;
+                            // Set the input value to the fetched hostname
+                            // input.value = response.hostname;
+                        });
+                    } else {
+                        //console.error("Hostname not found");
+                    }
+                },
+                error: function(xhr, status, error) {
+                    // console.error("Error fetching Primary server:", error);
+                    // $('#resultContainer').html("Error fetching Primary server: Contact Administrator!");
+
+                }
+            });
+
+        }
+        }
 </script>
 @endpush

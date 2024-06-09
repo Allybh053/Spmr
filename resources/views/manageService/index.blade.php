@@ -18,269 +18,135 @@
   </header>
   <!-- Main page content-->
   <div class="container-fluid px-4">
-      {{-- @foreach ($serverconfig as $server) --}}
           <div class="card">
-              {{-- <div class="card-header text-center p-3">
-                  <h5 style="text-align:left;">
-                      {{ $server->hostname }}
-                      <p>{{ $server->ipaddress }}</p>
-                      <input type="hidden" id="hostname" value="{{ $server->hostname }}" />
-                  </h5>
-              </div> --}}
               <div class="card-body">
                 <div class="table-responsive">
                     <div style="width: 100%; overflow-x: auto;">
                     <table id="spmrDatatable" class="display table table-striped table-bordered" cellspacing="0" width="60%">
-                        @foreach ($serverconfig as $server)
-                        @php
-                            $col = (auth()->user()->can('manage_service_update')) ? 3 : 2;
-                        @endphp
-                        <thead>
-                            @if($loop->index != 0)
-                            <tr><th colspan="2">&nbsp;</th></tr>@endif
-                            <tr  style="background-color: rgb(197, 204, 210);">
-                                <th colspan="{{ $col }}">
-                                    <h5 style="text-align:left;">
-                                        {{ $server['hostname']}}
-                                        <p>{{ $server['ipaddress'] }}</p>
-                                    </h5>
-                                </th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                                <tr class="postfix {{$server->id}}">
-                                    <th width="25%">
-                                        {{--<a class="mService" href="{{ route('manageService.index', ['server_id' => $server->id, 'server_type' => 'postfix']) }}">
-                                            <h6><b>Postfix</b></h6>
-                                        </a>--}}
-                                        <p class="mService" href="{{ route('manageService.index', ['server_id' => $server->id, 'server_type' => 'postfix']) }}">
-                                        <h6>
-                                            <b>Postfix</b>
-                                        </h6>
-                                        </p>
+                        @foreach ($serverList as $server)
+                            @php
+                                $col = (auth()->user()->can('manage_service_update')) ? 3 : 2;
+                                $serverConfigCount = count($serverconfig);
+                            @endphp
+                            <thead >
+                                @if($loop->index != 0)
+                                <tr><th colspan="2">&nbsp;</th></tr>@endif
+                                <tr  style="background-color: rgb(80, 160, 230);">
+                                    <th colspan="{{ $col }}">
+                                        <h5 style="text-align:left;">
+                                            {{ $server['hostname']}}
+                                            <p>{{ $server['ipaddress'] }}</p>
+                                        </h5>
                                     </th>
-                                    <td width="35%">
-                                        <h6 id="statusPostfix{{ $loop->index }}">--</h6>
-                                        <img id="statusPostfixImage{{ $loop->index }}" src="{{ asset('assets/img/demo/offline.png') }}" alt="Postfix is down" style="width: 3rem">
-                                    </td>
-                                    @can('manage_service_update')
-                                    <td>
-
-                                        <div class="btn-group" role="group" aria-label="Button group with nested dropdown">
-                                           {{-- <button type="button" id="postfixStart" class="btn btn-primary" value="{{ $server->hostname }}" onclick="startPostfixServices.call(this)">
-                                                <i class="fas fa-play"></i>
-                                            </button>--}}
-                                            <button type="button" id="postfixStart" class="btn btn-primary" value="{{ $server->hostname }}">
-                                                <i class="fas fa-play"></i>
-                                            </button>
-                                            {{--<button type="button" id="postfixStop" class="btn btn-danger" value="{{ $server->hostname }}" onclick="stopPostfixServices.call(this)">
-                                                <i class="fas fa-stop"></i>
-                                            </button>--}}
-                                            <button type="button" id="postfixStop" class="btn btn-danger" value="{{ $server->hostname }}">
-                                                <i class="fas fa-stop"></i>
-                                            </button>
-                                            {{--<button type="button" id="postfixRestart" class="btn btn-warning" value="{{ $server->hostname }}" onclick="restartPostfixServices.call(this)">
-                                                <i class="fas fa-redo"></i>
-                                            </button>--}}
-                                            <button type="button" id="postfixRestart" class="btn btn-warning" value="{{ $server->hostname }}">
-                                                <i class="fas fa-redo"></i>
-                                            </button>
-                                        </div>
-                                    </td>
-
-                                    @endcan
                                 </tr>
-                                <tr class="apache {{$server->id}}">
-                                    <th width="25%">
-                                        {{--<a class="mService" href="{{ route('manageService.index', ['server_id' => $server->id , 'server_type' => 'apache']) }}">
-                                            <h6><b>Apache</b></h6>
-                                        </a>--}}
-                                        <p class="mService" href="{{ route('manageService.index', ['server_id' => $server->id , 'server_type' => 'apache']) }}">
-                                        <h6>
-                                            <b>Apache</b>
-                                        </h6>
-                                        </p>
-                                    </th>
-                                    <td width="35%">
-                                        <h6 id="statusApache2{{ $loop->index }}">--</h6>
-                                        <img id="statusApache2Image{{ $loop->index }}" src="{{ asset('assets/img/demo/offline.png') }}" alt="Apache2 is down" style="width: 3rem">
-                                    </td>
-                                    @can('manage_service_update')
-                                    <td>
+                            </thead>
+                            <tbody>
 
-                                        <div class="btn-group" role="group" aria-label="Button group with nested dropdown">
-                                            {{--<button type="button" id="apacheStart" class="btn btn-primary" value="{{ $server->hostname }}" onclick="startApacheServices.call(this)">
-                                                <i class="fas fa-play"></i>
-                                            </button>--}}
-                                            <button type="button" id="apacheStart" class="btn btn-primary" value="{{ $server->hostname }}">
-                                                <i class="fas fa-play"></i>
-                                            </button>
-                                            {{--<button type="button" id="apacheStop" class="btn btn-danger" value="{{ $server->hostname }}" onclick="stopApacheServices.call(this)">
-                                                <i class="fas fa-stop"></i>
-                                            </button>--}}
-                                            <button type="button" id="apacheStop" class="btn btn-danger" value="{{ $server->hostname }}">
-                                                <i class="fas fa-stop"></i>
-                                            </button>
-                                            {{--<button type="button" id="apacheRestart" class="btn btn-warning" value="{{ $server->hostname }}" onclick="restartApacheServices.call(this)">
-                                                <i class="fas fa-redo"></i>
-                                            </button>--}}
-                                            <button type="button" id="apacheRestart" class="btn btn-warning" value="{{ $server->hostname }}">
-                                                <i class="fas fa-redo"></i>
-                                            </button>
-                                        </div>
-
-                                    </td>
-                                    @endcan
+                                @foreach ($server['subsDataHostname'] as $serverSubs)
+                                @php
+                                    $cleanSubhostname = preg_replace('/[^a-zA-Z0-9]/', '', $serverSubs['subhostname']);
+                                @endphp
+                                <tr>
+                                        <thead>
+                                            @if($loop->index != 0)
+                                            <tr><th colspan="2">&nbsp;</th></tr>@endif
+                                            <tr  style="background-color: rgb(197, 204, 210);">
+                                                <th colspan="{{ $col }}">
+                                                    <h5 style="text-align:left;">
+                                                        {{ $serverSubs['subhostname']}}
+                                                        <p>{{ $serverSubs['subIpaddress'] }}</p>
+                                                    </h5>
+                                                </th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr class="postfix {{ $serverSubs['subsid'] }}">
+                                                <th width="25%">
+                                                    <p class="mService" href="{{ route('manageService.index', ['server_id' => $serverSubs['subsid'], 'server_type' => 'postfix']) }}">
+                                                        <h6><b>Postfix</b></h6>
+                                                    </p>
+                                                </th>
+                                                <td width="35%">
+                                                    <h6 id="statusPostfix{{ $cleanSubhostname }}">--</h6>
+                                                    <img id="statusPostfixImage{{ $cleanSubhostname }}" src="{{ asset('assets/img/demo/offline.png') }}" alt="Postfix is down" style="width: 3rem">
+                                                </td>
+                                                @can('manage_service_update')
+                                                <td>
+                                                    <div class="btn-group" role="group" aria-label="Button group with nested dropdown">
+                                                        <button type="button" id="postfixStart{{ $cleanSubhostname }}" class="btn btn-primary" data-value="{{ $serverSubs['subhostname'] }}"  onclick="startPostfixServices('{{ $cleanSubhostname }}')">
+                                                            <i class="fas fa-play"></i>
+                                                        </button>
+                                                        <button type="button" id="postfixStop{{ $cleanSubhostname }}" class="btn btn-danger" data-value="{{ $serverSubs['subhostname'] }}"  onclick="stopPostfixServices('{{ $cleanSubhostname }}')">
+                                                            <i class="fas fa-stop"></i>
+                                                        </button>
+                                                        <button type="button" id="postfixRestart{{ $cleanSubhostname }}" class="btn btn-warning" data-value="{{ $serverSubs['subhostname'] }}"  onclick="restartPostfixServices('{{ $cleanSubhostname }}')">
+                                                            <i class="fas fa-redo"></i>
+                                                        </button>
+                                                    </div>
+                                                </td>
+                                                @endcan
+                                            </tr>
+                                            <tr class="apache {{ $serverSubs['subsid'] }}">
+                                                <th width="25%">
+                                                    <p class="mService" href="{{ route('manageService.index', ['server_id' => $serverSubs['subsid'], 'server_type' => 'apache']) }}">
+                                                        <h6><b>Apache</b></h6>
+                                                    </p>
+                                                </th>
+                                                <td width="35%">
+                                                    <h6 id="statusApache2{{ $cleanSubhostname }}">--</h6>
+                                                    <img id="statusApache2Image{{ $cleanSubhostname }}" src="{{ asset('assets/img/demo/offline.png') }}" alt="Apache2 is down" style="width: 3rem">
+                                                </td>
+                                                @can('manage_service_update')
+                                                <td>
+                                                    <div class="btn-group" role="group" aria-label="Button group with nested dropdown">
+                                                        <button type="button" id="apacheStart{{ $cleanSubhostname }}" class="btn btn-primary" value="{{ $serverSubs['subhostname'] }}"  onclick="startApacheServices('{{ $cleanSubhostname }}')">
+                                                            <i class="fas fa-play"></i>
+                                                        </button>
+                                                        <button type="button" id="apacheStop{{ $cleanSubhostname }}" class="btn btn-danger" value="{{ $serverSubs['subhostname'] }}"  onclick="stopApacheServices('{{ $cleanSubhostname }}')">
+                                                            <i class="fas fa-stop"></i>
+                                                        </button>
+                                                        <button type="button" id="apacheRestart{{ $cleanSubhostname }}" class="btn btn-warning" value="{{ $serverSubs['subhostname'] }}"  onclick="restartApacheServices('{{ $cleanSubhostname }}')">
+                                                            <i class="fas fa-redo"></i>
+                                                        </button>
+                                                    </div>
+                                                </td>
+                                                @endcan
+                                            </tr>
+                                            <tr class="webmin {{ $serverSubs['subsid'] }}">
+                                                <th width="25%">
+                                                    <p class="mService" href="{{ route('manageService.index', ['server_id' => $serverSubs['subsid'], 'server_type' => 'webmin']) }}">
+                                                        <h6><b>Webmin</b></h6>
+                                                    </p>
+                                                </th>
+                                                <td width="35%">
+                                                    <h6 id="statusWebmin{{ $cleanSubhostname }}">--</h6>
+                                                    <img id="statusWebminImage{{ $cleanSubhostname }}" src="{{ asset('assets/img/demo/offline.png') }}" alt="Webmin is down" style="width: 3rem">
+                                                </td>
+                                                @can('manage_service_update')
+                                                <td>
+                                                    <div class="btn-group" role="group" aria-label="Button group with nested dropdown">
+                                                        <button type="button" id="webminStart{{ $cleanSubhostname }}" class="btn btn-primary" value="{{ $serverSubs['subhostname'] }}"  onclick="startWebminServices('{{ $cleanSubhostname }}')">
+                                                            <i class="fas fa-play"></i>
+                                                        </button>
+                                                        <button type="button" id="webminStop{{ $cleanSubhostname }}" class="btn btn-danger" value="{{ $serverSubs['subhostname'] }}"  onclick="stopWebminServices('{{ $cleanSubhostname }}')">
+                                                            <i class="fas fa-stop"></i>
+                                                        </button>
+                                                        <button type="button" id="webminRestart{{ $cleanSubhostname }}" class="btn btn-warning" value="{{ $serverSubs['subhostname'] }}"  onclick="restartWebminServices('{{ $cleanSubhostname }}')">
+                                                            <i class="fas fa-redo"></i>
+                                                        </button>
+                                                    </div>
+                                                </td>
+                                                @endcan
+                                            </tr>
+                                        </tbody>
                                 </tr>
-                                <tr class="webmin {{$server->id}}">
-                                    <th width="25%">
-                                        {{--<a class="mService" href="{{ route('manageService.index', ['server_id' => $server->id, 'server_type' => 'webmin']) }}">
-                                            <h6><b>Webmin</b></h6>
-                                        </a>--}}
-                                        <p class="mService" href="{{ route('manageService.index', ['server_id' => $server->id, 'server_type' => 'webmin']) }}">
-                                        <h6>
-                                            <b>Webmin</b>
-                                        </h6>
-                                        </p>
-                                    </th>
-                                    <td width="35%">
-                                        <h6 id="statusWebmin{{ $loop->index }}">--</h6>
-                                        <img id="statusWebminImage{{ $loop->index }}" src="{{ asset('assets/img/demo/offline.png') }}" alt="Webmin is down" style="width: 3rem">
-                                    </td>
-                                    @can('manage_service_update')
-                                    <td>
+                                @endforeach
+                            </tbody>
 
-                                        <div class="btn-group" role="group" aria-label="Button group with nested dropdown">
-                                            {{--<button type="button" id="webminStart" class="btn btn-primary" value="{{ $server->hostname }}" onclick="startWebminServices.call(this)">
-                                                <i class="fas fa-play"></i>
-                                            </button>--}}
-                                            <button type="button" id="webminStart" class="btn btn-primary" value="{{ $server->hostname }}">
-                                                <i class="fas fa-play"></i>
-                                            </button>
-                                            {{--<button type="button" id="webminStop" class="btn btn-danger" value="{{ $server->hostname }}" onclick="stopWebminServices.call(this)">
-                                                <i class="fas fa-stop"></i>
-                                            </button>--}}
-                                            <button type="button" id="webminStop" class="btn btn-danger" value="{{ $server->hostname }}">
-                                                <i class="fas fa-stop"></i>
-                                            </button>
-                                            {{--<button type="button" id="webminRestart" class="btn btn-warning" value="{{ $server->hostname }}" onclick="restartWebminServices.call(this)">
-                                                <i class="fas fa-redo"></i>
-                                            </button>--}}
-                                            <button type="button" id="webminRestart" class="btn btn-warning" value="{{ $server->hostname }}">
-                                                <i class="fas fa-redo"></i>
-                                            </button>
-                                        </div>
-
-                                    </td>
-                                    @endcan
-                                </tr>
-                        </tbody>
                         @endforeach
                     </table>
                     </div>
                 </div>
-
-
-
-
-
-
-                  {{-- <div class="row  mt-1">
-                      {{-- Start Loop Server Here --}}
-                      {{-- <div class="col-xxl-12 ">
-                          @php $status = 'Online'; @endphp
-                          <div class="card-body mainRealtime" style="min-height: auto; max-height: 800px;overflow-y: auto;">
-                              <div class="row">
-                                  <div class="col-xl-4 mb-4 selected-item postfix {{$server->id}}">
-                                      <div class="card h-100" style="height: 79% !important;">
-                                          <div class="card-body cardService d-flex justify-content-center flex-column">
-                                              <div class="d-flex align-items-center justify-content-between">
-                                                  <div class="me-3">
-                                                      <h5>Postfix</h5>
-                                                  </div>
-                                                  <img id="statusPostfixImage{{ $loop->index }}" src="{{ asset('assets/img/demo/offline.png') }}" alt="Postfix is down" style="width: 3rem">
-                                              </div>
-                                              <p id="statusPostfix{{ $loop->index }}" style="display: inline-block; margin-left: 5px;">--</p>
-                                          </div>
-                                          @can('manage_service_update')
-                                              <div class="col-md-6 d-flex justify-content-center" style="padding-left: 280px;padding-bottom: 15px;margin-top: -54px;">
-                                                  <div class="btn-group" role="group" aria-label="Button group with nested dropdown">
-                                                      <button type="button" id="postfixStart" class="btn btn-primary" value="{{ $server->hostname }}" onclick="startPostfixServices.call(this)">
-                                                          <i class="fas fa-play"></i>
-                                                      </button>
-                                                      <button type="button" id="postfixStop" class="btn btn-danger" value="{{ $server->hostname }}" onclick="stopPostfixServices.call(this)">
-                                                          <i class="fas fa-stop"></i>
-                                                      </button>
-                                                      <button type="button" id="postfixRestart" class="btn btn-warning" value="{{ $server->hostname }}" onclick="restartPostfixServices.call(this)">
-                                                          <i class="fas fa-redo"></i>
-                                                      </button>
-                                                  </div>
-                                              </div>
-                                          @endcan
-                                            </div>
-                                  </div>
-                                  <div class="col-xl-4 mb-4 selected-item apache {{$server->id}}">
-                                      <div class="card h-100" style="height: 79% !important;">
-                                          <div class="card-body cardService d-flex justify-content-center flex-column">
-                                              <div class="d-flex align-items-center justify-content-between">
-                                                  <div class="me-3">
-                                                      <h5>Apache</h5>
-                                                  </div>
-                                                  <img id="statusApache2Image{{ $loop->index }}" src="{{ asset('assets/img/demo/offline.png') }}" alt="Apache2 is down" style="width: 3rem">
-                                              </div>
-                                              <p id="statusApache2{{ $loop->index }}" style="display: inline-block; margin-left: 5px;">--</p>
-                                          </div>
-                                          @can('manage_service_update')
-                                              <div class="col-md-6 d-flex justify-content-center" style="padding-left: 280px;padding-bottom: 15px;margin-top: -54px;">
-                                                  <div class="btn-group" role="group" aria-label="Button group with nested dropdown">
-                                                      <button type="button" id="apacheStart" class="btn btn-primary" value="{{ $server->hostname }}" onclick="startApacheServices.call(this)">
-                                                          <i class="fas fa-play"></i>
-                                                      </button>
-                                                      <button type="button" id="apacheStop" class="btn btn-danger" value="{{ $server->hostname }}" onclick="stopApacheServices.call(this)">
-                                                          <i class="fas fa-stop"></i>
-                                                      </button>
-                                                      <button type="button" id="apacheRestart" class="btn btn-warning" value="{{ $server->hostname }}" onclick="restartApacheServices.call(this)">
-                                                          <i class="fas fa-redo"></i>
-                                                      </button>
-                                                  </div>
-                                              </div>
-                                          @endcan
-                                            </div>
-                                  </div>
-                                  <div class="col-xl-4 mb-4 selected-item webmin {{$server->id}}">
-                                      <div class="card h-100" style="height: 79% !important;">
-                                          <div class="card-body cardService d-flex justify-content-center flex-column">
-                                              <div class="d-flex align-items-center justify-content-between">
-                                                  <div class="me-3">
-                                                      <h5>Webmin</h5>
-                                                  </div>
-                                                  <img id="statusWebminImage{{ $loop->index }}" src="{{ asset('assets/img/demo/offline.png') }}" alt="Webmin is down" style="width: 3rem">
-                                              </div>
-                                              <p id="statusWebmin{{ $loop->index }}" style="display: inline-block; margin-left: 5px;">--</p>
-                                          </div>
-                                          @can('manage_service_update')
-                                              <div class="col-md-6 d-flex justify-content-center" style="padding-left: 280px;padding-bottom: 15px;margin-top: -54px;">
-                                                  <div class="btn-group" role="group" aria-label="Button group with nested dropdown">
-                                                      <button type="button" id="webminStart" class="btn btn-primary" value="{{ $server->hostname }}" onclick="startWebminServices.call(this)">
-                                                          <i class="fas fa-play"></i>
-                                                      </button>
-                                                      <button type="button" id="webminStop" class="btn btn-danger" value="{{ $server->hostname }}" onclick="stopWebminServices.call(this)">
-                                                          <i class="fas fa-stop"></i>
-                                                      </button>
-                                                      <button type="button" id="webminRestart" class="btn btn-warning" value="{{ $server->hostname }}" onclick="restartWebminServices.call(this)">
-                                                          <i class="fas fa-redo"></i>
-                                                      </button>
-                                                  </div>
-                                              </div>
-                                          @endcan
-                                            </div>
-                                  </div>
-                              </div>
-                          </div>
-                      </div> --}}
-
-                      {{-- End Loop Server Here --}}
-                  {{-- </div>  --}}
               </div>
           </div>
           <br>
@@ -323,787 +189,94 @@
 
 
     });
+let sockets = [];
+let serverIpaddresses = [];
+let cleanlSubhostnames = [];
 
-    let sockets = [];
-    let serverIpaddresses = [];
+@foreach ($serverconfig as $server)
+@php
+    // Remove special characters from subhostname
+    $cleanSubhostnamex = preg_replace('/[^a-zA-Z0-9]/', '', $server->subhostname);
+@endphp
 
-    @foreach ($serverconfig as $server)
-    //let serverMailRelay{{$loop->iteration}} = "{{ $server->ipaddress }}";
-    let serverMailRelay{{$loop->iteration}} = "{{ $server->hostname }}";
-    serverIpaddresses.push(serverMailRelay{{$loop->iteration}});
-    @endforeach
+let serverMailRelay{{ $loop->index }} = "{{ $server->subhostname }}";
+let cleanSubhostname{{ $loop->index }} = "{{ $cleanSubhostnamex }}";
 
-    serverIpaddresses.forEach(hostname => {
-        //const serverAddress = 'ws://' + ip + ':8000/';
-        // const serverAddress = 'wss://' + hostname + '/wss/';
-        const serverAddress = 'wss://spmr.mygovuc.gov.my/' + hostname;
+serverIpaddresses.push(serverMailRelay{{ $loop->index }});
+cleanlSubhostnames.push(cleanSubhostname{{ $loop->index }});
+@endforeach
 
-        const socket = new WebSocket(serverAddress);
-        sockets.push(socket);
+var commands = [
+{
+    command: 'status=$(systemctl --no-pager status postfix | grep Active:); if echo "$status" | grep -q "active (exited) since"; then echo "Postfix is running"; elif echo "$status" | grep -q "inactive (dead) since"; then echo "Postfix is down"; else echo "Something is wrong"; fi',
+    id: 'statusPostfix'
+},
+{
+    command: 'status=$(systemctl --no-pager status webmin | grep Active:); if echo "$status" | grep -q "active (running) since"; then echo "Webmin is running"; elif echo "$status" | grep -q "inactive (dead) since"; then echo "Webmin is down"; else echo "Something is wrong"; fi',
+    id: 'statusWebmin'
+},
+{
+    command: 'status=$(systemctl --no-pager status apache2 | grep Active:); if echo "$status" | grep -q "active (running) since"; then echo "Apache2 is running"; elif echo "$status" | grep -q "inactive (dead)"; then echo "Apache2 is down"; else echo "Something is wrong"; fi',
+    id: 'statusApache2'
+}
+];
+
+serverIpaddresses.forEach((subhostname, index) => {
+const serverAddress = 'wss://spmr.mygovuc.gov.my/' + subhostname;
+console.log(serverAddress);
+
+const socket = new WebSocket(serverAddress);
+sockets.push(socket);
+
+socket.addEventListener('open', () => {
+    console.log('WebSocket connection established with ' + subhostname);
+    commands.forEach((commandObj, commandIndex) => {
+        setTimeout(() => {
+            socket.send(commandObj.command);
+        }, commandIndex * 1000); // Delay each command by 1 second
     });
-
-    var commands = [
-                        {
-                            command: 'status=$(systemctl --no-pager status postfix | grep Active:); if echo "$status" | grep -q "active (exited) since"; then echo "Postfix is running"; elif echo "$status" | grep -q "inactive (dead) since"; then echo "Postfix is down"; else echo "Something is wrong"; fi',
-                            id: 'statusPostfix'
-                        },
-                        {
-                            command: 'status=$(systemctl --no-pager status webmin | grep Active:); if echo "$status" | grep -q "active (running) since"; then echo "Webmin is running"; elif echo "$status" | grep -q "inactive (dead) since"; then echo "Webmin is down"; else echo "Something is wrong"; fi',
-                            id: 'statusWebmin'
-                        },
-                        {
-                            command: 'status=$(systemctl --no-pager status apache2 | grep Active:); if echo "$status" | grep -q "active (running) since"; then echo "Apache2 is running"; elif echo "$status" | grep -q "inactive (dead)"; then echo "Apache2 is down"; else echo "Something is wrong"; fi',
-                            id: 'statusApache2'
-                        }
-                    ];
-
-    sockets.forEach((socket, index) => {
-        // getStatusServicesMailServer(socket);
-        socket.addEventListener('open', (event) => {
-        commands.forEach((commandObj, commandIndex) => {
-            setTimeout(() => {
-                //console.log("Sending command to : " + commandObj.command);
-                socket.send(commandObj.command);
-            }, commandIndex * 1000); // Delay each command by 1 second
-        });
-
-        });
-
-        socket.addEventListener('close', (event) => {
-
-        });
-
-        socket.addEventListener('error', (event) => {
-
-        });
-        var outputs = [];
-        socket.addEventListener('message', (event) => {
-        const response = event.data;
-        outputs.push(response);
-        $('#statusPostfix'+ index).text(outputs[0]);
-        var postfixStatus = outputs[0];
-            var postfixAlt;
-            if(postfixStatus == "Postfix is running"){
-            postfixStatus = "Online";
-            postfixAlt = "Postfix is running";
-            }else{
-            postfixStatus = "Offline";
-            postfixAlt = "Postfix is down";
-            }
-            var postfixImageSrc = postfixStatus === 'Online' ? '/assets/img/demo/online.png' : '/assets/img/demo/offline.png';
-            $('#statusPostfixImage'+ index).attr('src', postfixImageSrc).attr('alt', postfixAlt);
-
-
-        $('#statusWebmin'+ index).text(outputs[1]);
-            var WebminStatus = outputs[1];
-            var WebminAlt;
-            if(WebminStatus == "Webmin is running"){
-            WebminStatus = "Online";
-            WebminAlt = "Webmin is running";
-            }else{
-            WebminStatus = "Offline";
-            WebminAlt = "Webmin is down";
-            }
-            var WebminImageSrc = WebminStatus === 'Online' ? '/assets/img/demo/online.png' : '/assets/img/demo/offline.png';
-            $('#statusWebminImage'+ index).attr('src', WebminImageSrc).attr('alt', WebminAlt);
-
-        $('#statusApache2'+ index).text(outputs[2]);
-            var Apache2Status = outputs[2];
-            var Apache2Alt;
-            if(Apache2Status == "Apache2 is running"){
-            Apache2Status = "Online";
-            Apache2Alt = "Apache2 is running";
-            }else{
-            Apache2Status = "Offline";
-            Apache2Alt = "Apache2 is down";
-            }
-            var Apache2ImageSrc = Apache2Status === 'Online' ? '/assets/img/demo/online.png' : '/assets/img/demo/offline.png';
-            $('#statusApache2Image'+ index).attr('src', Apache2ImageSrc).attr('alt', Apache2Alt);
-
-        });
-        // socket.close();
-    });
-
-    // function getStatusServicesMailServer(socket) {
-
-    //     const commands = [
-    //         'status=$(systemctl --no-pager status postfix | grep Active:); if echo "$status" | grep -q "active (exited) since"; then echo "Postfix is running"; elif echo "$status" | grep -q "inactive (dead) since"; then echo "Postfix is down"; else echo "Something is wrong"; fi',
-    //         'status=$(systemctl --no-pager status webmin | grep Active:); if echo "$status" | grep -q "active (running) since"; then echo "Webmin is running"; elif echo "$status" | grep -q "inactive (dead) since"; then echo "Webmin is down"; else echo "Something is wrong"; fi',
-    //         'status=$(systemctl --no-pager status apache2 | grep Active:); if echo "$status" | grep -q "active (running) since"; then echo "Apache2 is running"; elif echo "$status" | grep -q "inactive (dead) since"; then echo "Apache2 is down"; else echo "Something is wrong"; fi',
-
-    //     ];
-
-    //     const outputs = [];
-
-    //     socket.addEventListener('open', (event) => {
-
-    //         commands.forEach(command => {
-    //             socket.send(command);
-    //         });
-    //     });
-
-    //     socket.addEventListener('message', (event) => {
-
-    //         const response = event.data;
-
-    //         const output = extractOutput(response);
-    //         if (output !== null) {
-
-    //             outputs.push(output);
-
-    //             if (outputs.length > commands.length) {
-
-    //                 $('#statusPostfix').text(outputs[1]);
-    //                 $('#statusWebmin').text(outputs[3]);
-    //                 $('#statusApache2').text(outputs[5]);
-
-    //                 var postfixStatus = outputs[1];
-    //                   var postfixAlt;
-    //                   if(postfixStatus == "Postfix is running"){
-    //                     postfixStatus = "Online";
-    //                     postfixAlt = "Postfix is running";
-    //                   }else{
-    //                     postfixStatus = "Offline";
-    //                     postfixAlt = "Postfix is down";
-    //                   }
-    //                   var postfixImageSrc = postfixStatus === 'Online' ? '/assets/img/demo/online.png' : '/assets/img/demo/offline.png';
-    //                   $('#statusPostfixImage').attr('src', postfixImageSrc).attr('alt', postfixAlt);
-
-    //                   var Apache2Status = outputs[5];
-    //                   var Apache2Alt;
-    //                   if(Apache2Status == "Apache2 is running"){
-    //                     Apache2Status = "Online";
-    //                     Apache2Alt = "Apache2 is running";
-    //                   }else{
-    //                     Apache2Status = "Offline";
-    //                     Apache2Alt = "Apache2 is down";
-    //                   }
-    //                   var Apache2ImageSrc = Apache2Status === 'Online' ? '/assets/img/demo/online.png' : '/assets/img/demo/offline.png';
-    //                   $('#statusApache2Image').attr('src', Apache2ImageSrc).attr('alt', Apache2Alt);
-
-    //                   var WebminStatus = outputs[3];
-    //                   var WebminAlt;
-    //                   if(WebminStatus == "Webmin is running"){
-    //                     WebminStatus = "Online";
-    //                     WebminAlt = "Webmin is running";
-    //                   }else{
-    //                     WebminStatus = "Offline";
-    //                     WebminAlt = "Webmin is down";
-    //                   }
-    //                   var WebminImageSrc = WebminStatus === 'Online' ? '/assets/img/demo/online.png' : '/assets/img/demo/offline.png';
-    //                   $('#statusWebminImage').attr('src', WebminImageSrc).attr('alt', WebminAlt);
-
-
-    //             }
-    //         }
-    //         socket.close();
-    //     });
-
-        // function extractOutput(response) {
-
-        //     const cleanResponse = response.replace(/\[\d;?\d*m/g, '').trim();
-
-        //     //const outputMatch = cleanResponse.match(/command: (.*)/);
-        //     const outputMatch = cleanResponse.match(/\[.*?\]#\S (.*)/);
-
-        //     const outputs = [];
-
-        //     if (outputMatch && outputMatch.length > 1) {
-
-        //         outputs.push(outputMatch[1]);
-
-        //         return outputs;
-        //     } else {
-        //         return null;
-        //     }
-        // }
-    // }
-
-    // Postfix Controller //
-    // Start //
-    /*$('#postfixStart').click(function(e) {
-        let text = "Are you sure you want to START Postfix services?";
-        if (confirm(text)) {
-            startPostfixServices();
-
-            $.ajax({
-            url: '/start-services',
-            type: 'POST',
-            data: {
-                _token: '{{ csrf_token() }}',// Include CSRF token if required
-                server:  $('#hostname').val(),
-                status: 'start',
-                type:'postfix'
-            },
-            success: function(response) {
-                // Handle success response if needed
-                console.log(response);
-            },
-            error: function(xhr, status, error) {
-                // Handle error response if needed
-                console.error(error);
-            }
-        });
-        }
-    });*/
-    /*function startPostfixServices() {
-        const selectedServer = $(this).val();
-        const serverAddress = 'wss://spmr.mygovuc.gov.my/'+ selectedServer;
-        //console.log(serverAddress);
-        const socket = new WebSocket(serverAddress);
-
-        socket.addEventListener('open', (event) => {
-            const command = 'sudo systemctl --no-pager start postfix';
-            socket.send(command);
-        });
-
-        socket.addEventListener('message', (event) => {
-            //alert("Postfix services successfully started on " + selectedServer);
-            const response = event.data;
-            //console.log(response);
-            if (response.includes('Failed')) {
-                alert("Failed to start Postfix services on " + selectedServer);
-            } else {
-
-                Swal.fire({
-                    title: 'Succesfully starting Postfix..'+ selectedServer,
-                    allowOutsideClick: false, // Prevent outside clicks
-                    showConfirmButton: false, // Disable the "OK" button
-                    onBeforeOpen: () => {
-                        Swal.showLoading();
-                    },
-                    timer: 100000, // 6 seconds
-                    willClose: () => {
-                        // You can add any action you want to perform when the alert is about to close
-                        // console.log('The alert is closing');
-                    }
-                });
-                // alert("Postfix services successfully started on " + selectedServer);
-            }
-            socket.close();
-            location.reload();
-        });
-    }*/
-    // Stop //
-    /*$('#postfixStop').click(function(e) {
-        let text = "Are you sure you want to STOP Postfix services?";
-        if (confirm(text)) {
-            stopPostfixServices();
-
-            $.ajax({
-            url: '/stop-services',
-            type: 'POST',
-            data: {
-                _token: '{{ csrf_token() }}',// Include CSRF token if required
-                server:  $('#hostname').val(),
-                status: 'stop',
-                type: 'postfix'
-            },
-            success: function(response) {
-                // Handle success response if needed
-                console.log(response);
-            },
-            error: function(xhr, status, error) {
-                // Handle error response if needed
-                console.error(error);
-            }
-        });
-        }
-    });*/
-    /*function stopPostfixServices() {
-        const selectedServer = $(this).val();
-        // const serverAddress = 'wss://' + selectedServer + '/wss/';
-        const serverAddress = 'wss://spmr.mygovuc.gov.my/'+ selectedServer;
-        //console.log(serverAddress);
-        const socket = new WebSocket(serverAddress);
-
-        socket.addEventListener('open', (event) => {
-            const command = 'sudo systemctl --no-pager stop postfix';
-            socket.send(command);
-        });
-
-        socket.addEventListener('message', (event) => {
-            //alert("Postfix services successfully stopped on " + selectedServer);
-            const response = event.data;
-            console.log(response);
-            if (response.includes('Failed')) {
-                alert("Failed to stop Postfix services on " + selectedServer);
-            } else {
-
-                Swal.fire({
-                    title: 'Postfix services successfully stopped on'+ selectedServer,
-                    allowOutsideClick: false, // Prevent outside clicks
-                    showConfirmButton: false, // Disable the "OK" button
-                    onBeforeOpen: () => {
-                        Swal.showLoading();
-                    },
-                    timer: 100000, // 6 seconds
-                    willClose: () => {
-                        // You can add any action you want to perform when the alert is about to close
-                        // console.log('The alert is closing');
-                    }
-                });
-                // alert("Postfix services successfully stopped on " + selectedServer);
-            }
-            socket.close();
-            location.reload();
-        });
-    }*/
-    // Restart //
-    /*$('#postfixRestart').click(function(e) {
-        let text = "Are you sure you want to RESTART Postfix services?";
-        if (confirm(text)) {
-            restartPostfixServices();
-
-            $.ajax({
-            url: '/restart-services',
-            type: 'POST',
-            data: {
-                _token: '{{ csrf_token() }}',// Include CSRF token if required
-                server:  $('#hostname').val(),
-                status: 'restart',
-                type: 'postfix'
-            },
-            success: function(response) {
-                // Handle success response if needed
-                console.log(response);
-            },
-            error: function(xhr, status, error) {
-                // Handle error response if needed
-                console.error(error);
-            }
-        });
-        }
-    });*/
-    /*function restartPostfixServices() {
-        const selectedServer = $(this).val();
-        // const serverAddress = 'wss://' + selectedServer + '/wss/';
-        const serverAddress = 'wss://spmr.mygovuc.gov.my/'+ selectedServer;
-        //console.log(serverAddress);
-        const socket = new WebSocket(serverAddress);
-
-        socket.addEventListener('open', (event) => {
-            const command = 'sudo systemctl --no-pager restart postfix';
-            socket.send(command);
-        });
-
-        socket.addEventListener('message', (event) => {
-            //alert("Postfix services successfully restarting on " + selectedServer);
-            const response = event.data;
-            //console.log(response);
-            if (response.includes('Failed')) {
-                alert("Failed to restart Postfix services on " + selectedServer);
-            } else {
-
-                Swal.fire({
-                    title: 'Postfix services successfully restarting on'+ selectedServer,
-                    allowOutsideClick: false, // Prevent outside clicks
-                    showConfirmButton: false, // Disable the "OK" button
-                    onBeforeOpen: () => {
-                        Swal.showLoading();
-                    },
-                    timer: 100000, // 6 seconds
-                    willClose: () => {
-                        // You can add any action you want to perform when the alert is about to close
-                        // console.log('The alert is closing');
-                    }
-                });
-                // alert("Postfix services successfully restarting on " + selectedServer);
-            }
-            socket.close();
-            location.reload();
-        });
-    }*/
-
-
-    // Apache2 Controller //
-    // Start //
-  /*$('#apacheStart').click(function(e) {
-        let text = "Are you sure you want to START Apache2 services?";
-        if (confirm(text)) {
-            startApacheServices();
-
-            $.ajax({
-            url: '/start-services',
-            type: 'POST',
-            data: {
-                _token: '{{ csrf_token() }}',// Include CSRF token if required
-                server:  $('#hostname').val(),
-                status: 'start',
-                type: 'apache'
-            },
-            success: function(response) {
-                // Handle success response if needed
-                console.log(response);
-            },
-            error: function(xhr, status, error) {
-                // Handle error response if needed
-                console.error(error);
-            }
-        });
-        }
-    });*/
-    /*function startApacheServices() {
-        const selectedServer = $(this).val();
-        // const serverAddress = 'wss://' + selectedServer + '/wss/';
-        const serverAddress = 'wss://spmr.mygovuc.gov.my/'+ selectedServer;
-        //console.log(serverAddress);
-        const socket = new WebSocket(serverAddress);
-
-        socket.addEventListener('open', (event) => {
-            const command = 'sudo systemctl --no-pager start apache2';
-            socket.send(command);
-        });
-
-        socket.addEventListener('message', (event) => {
-            //alert("Apache2 services successfully started on " + selectedServer);
-            const response = event.data;
-            //console.log(response);
-            if (response.includes('Failed')) {
-                alert("Failed to start Apache2 services on " + selectedServer);
-            } else {
-                Swal.fire({
-                    title: 'Apache2 services successfully started on'+ selectedServer,
-                    allowOutsideClick: false, // Prevent outside clicks
-                    showConfirmButton: false, // Disable the "OK" button
-                    onBeforeOpen: () => {
-                        Swal.showLoading();
-                    },
-                    timer: 100000, // 6 seconds
-                    willClose: () => {
-                        // You can add any action you want to perform when the alert is about to close
-                        // console.log('The alert is closing');
-                    }
-                });
-                // alert("Apache2 services successfully started on " + selectedServer);
-            }
-            socket.close();
-            location.reload();
-        });
-    }*/
-    // Stop //
-/*    $('#apacheStop').click(function(e) {
-        let text = "Are you sure you want to STOP Apache2 services?";
-        if (confirm(text)) {
-            stopApacheServices();
-            $.ajax({
-            url: '/stop-services',
-            type: 'POST',
-            data: {
-                _token: '{{ csrf_token() }}',// Include CSRF token if required
-                server:  $('#hostname').val(),
-                status: 'stop',
-                type: 'apache'
-            },
-            success: function(response) {
-                // Handle success response if needed
-                console.log(response);
-            },
-            error: function(xhr, status, error) {
-                // Handle error response if needed
-                console.error(error);
-            }
-        });
-        }
-    });*/
-    /*function stopApacheServices() {
-        const selectedServer = $(this).val();
-        // const serverAddress = 'wss://' + selectedServer + '/wss/';
-        const serverAddress = 'wss://spmr.mygovuc.gov.my/'+ selectedServer;
-        //console.log(serverAddress);
-        const socket = new WebSocket(serverAddress);
-
-        socket.addEventListener('open', (event) => {
-            const command = 'sudo systemctl --no-pager stop apache2';
-            socket.send(command);
-        });
-
-        socket.addEventListener('message', (event) => {
-            //alert("Apache2 services successfully stopped on " + selectedServer);
-            const response = event.data;
-            //console.log(response);
-            if (response.includes('Failed')) {
-                alert("Failed to stop Apache2 services on " + selectedServer);
-            } else {
-                Swal.fire({
-                    title: 'Apache2 services successfully stopped on '+ selectedServer,
-                    allowOutsideClick: false, // Prevent outside clicks
-                    showConfirmButton: false, // Disable the "OK" button
-                    onBeforeOpen: () => {
-                        Swal.showLoading();
-                    },
-                    timer: 100000, // 6 seconds
-                    willClose: () => {
-                        // You can add any action you want to perform when the alert is about to close
-                        // console.log('The alert is closing');
-                    }
-                });
-                // alert("Apache2 services successfully stopped on " + selectedServer);
-            }
-            socket.close();
-            location.reload();
-        });
-    }*/
-    // Restart //
-    /*$('#apacheRestart').click(function(e) {
-        let text = "Are you sure you want to RESTART Apache2 services?";
-        if (confirm(text)) {
-            restartApacheServices();
-
-            $.ajax({
-            url: '/restart-services',
-            type: 'POST',
-            data: {
-                _token: '{{ csrf_token() }}',// Include CSRF token if required
-                server:  $('#hostname').val(),
-                status: 'restart',
-                type: 'apache'
-            },
-            success: function(response) {
-                // Handle success response if needed
-                console.log(response);
-            },
-            error: function(xhr, status, error) {
-                // Handle error response if needed
-                console.error(error);
-            }
-        });
-
-        }
-    });*/
-    /*function restartApacheServices() {
-        const selectedServer = $(this).val();
-        // const serverAddress = 'wss://' + selectedServer + '/wss/';
-        const serverAddress = 'wss://spmr.mygovuc.gov.my/'+ selectedServer;
-        //console.log(serverAddress);
-        const socket = new WebSocket(serverAddress);
-
-        socket.addEventListener('open', (event) => {
-            const command = 'sudo systemctl --no-pager restart apache2';
-            socket.send(command);
-        });
-
-        socket.addEventListener('message', (event) => {
-            //alert("Apache2 services successfully restarting on " + selectedServer);
-            const response = event.data;
-            //console.log(response);
-            if (response.includes('Failed')) {
-                alert("Failed to restart Apache2 services on " + selectedServer);
-            } else {
-                Swal.fire({
-                    title: 'Apache2 services successfully restarting on '+ selectedServer,
-                    allowOutsideClick: false, // Prevent outside clicks
-                    showConfirmButton: false, // Disable the "OK" button
-                    onBeforeOpen: () => {
-                        Swal.showLoading();
-                    },
-                    timer: 100000, // 6 seconds
-                    willClose: () => {
-                        // You can add any action you want to perform when the alert is about to close
-                        // console.log('The alert is closing');
-                    }
-                });
-                // alert("Apache2 services successfully restarting on " + selectedServer);
-            }
-            socket.close();
-            location.reload();
-        });
-    }*/
-
-
-    // Webmin Controller //
-    // Start //
-    /*$('#webminStart').click(function(e) {
-        let text = "Are you sure you want to START Webmin services?";
-        if (confirm(text)) {
-            startWebminServices();
-
-            $.ajax({
-            url: '/start-services',
-            type: 'POST',
-            data: {
-                _token: '{{ csrf_token() }}',// Include CSRF token if required
-                server:  $('#hostname').val(),
-                status: 'start',
-                type: 'webmin'
-            },
-            success: function(response) {
-                // Handle success response if needed
-                console.log(response);
-            },
-            error: function(xhr, status, error) {
-                // Handle error response if needed
-                console.error(error);
-            }
-        });
-        }
-    });*/
-    /*function startWebminServices() {
-        const selectedServer = $(this).val();
-        // const serverAddress = 'wss://' + selectedServer + '/wss/';
-        const serverAddress = 'wss://spmr.mygovuc.gov.my/'+ selectedServer;
-        //console.log(serverAddress);
-        const socket = new WebSocket(serverAddress);
-
-        socket.addEventListener('open', (event) => {
-            const command = 'sudo systemctl --no-pager start webmin';
-            socket.send(command);
-        });
-
-        socket.addEventListener('message', (event) => {
-            //alert("Webmin services successfully started on " + selectedServer);
-            const response = event.data;
-            //console.log(response);
-            if (response.includes('Failed')) {
-                alert("Failed to start Webmin services on " + selectedServer);
-            } else {
-                Swal.fire({
-                    title: 'Webmin services successfully started on '+ selectedServer,
-                    allowOutsideClick: false, // Prevent outside clicks
-                    showConfirmButton: false, // Disable the "OK" button
-                    onBeforeOpen: () => {
-                        Swal.showLoading();
-                    },
-                    timer: 100000, // 6 seconds
-                    willClose: () => {
-                        // You can add any action you want to perform when the alert is about to close
-                        // console.log('The alert is closing');
-                    }
-                });
-
-                // alert("Webmin services successfully started on " + selectedServer);
-            }
-            socket.close();
-            location.reload();
-        });
-    }*/
-    // Stop //
-    /*$('#webminStop').click(function(e) {
-        let text = "Are you sure you want to STOP Webmin services?";
-        if (confirm(text)) {
-            stopWebminServices();
-            $.ajax({
-            url: '/stop-services',
-            type: 'POST',
-            data: {
-                _token: '{{ csrf_token() }}',// Include CSRF token if required
-                server:  $('#hostname').val(),
-                status: 'stop',
-                type:'webmin'
-            },
-            success: function(response) {
-                // Handle success response if needed
-                console.log(response);
-            },
-            error: function(xhr, status, error) {
-                // Handle error response if needed
-                console.error(error);
-            }
-        });
-        }
-    });*/
-    /*function stopWebminServices() {
-        const selectedServer = $(this).val();
-        // const serverAddress = 'wss://' + selectedServer + '/wss/';
-        const serverAddress = 'wss://spmr.mygovuc.gov.my/'+ selectedServer;
-        //console.log(serverAddress);
-        const socket = new WebSocket(serverAddress);
-
-        socket.addEventListener('open', (event) => {
-            const command = 'sudo systemctl --no-pager stop webmin';
-            socket.send(command);
-        });
-
-        socket.addEventListener('message', (event) => {
-            //alert("Webmin services successfully stopped on " + selectedServer);
-            const response = event.data;
-            //console.log(response);
-            if (response.includes('Failed')) {
-                alert("Failed to stop Webmin services on " + selectedServer);
-            } else {
-                Swal.fire({
-                    title: 'Webmin services successfully stopped on '+ selectedServer,
-                    allowOutsideClick: false, // Prevent outside clicks
-                    showConfirmButton: false, // Disable the "OK" button
-                    onBeforeOpen: () => {
-                        Swal.showLoading();
-                    },
-                    timer: 100000, // 6 seconds
-                    willClose: () => {
-                        // You can add any action you want to perform when the alert is about to close
-                        // console.log('The alert is closing');
-                    }
-                });
-                // alert("Webmin services successfully stopped on " + selectedServer);
-            }
-            socket.close();
-            location.reload();
-        });
-    }*/
-    // Restart //
-    /*$('#webminRestart').click(function(e) {
-        let text = "Are you sure you want to RESTART Webmin services?";
-        if (confirm(text)) {
-            restartWebminServices();
-
-            $.ajax({
-            url: '/restart-services',
-            type: 'POST',
-            data: {
-                _token: '{{ csrf_token() }}',// Include CSRF token if required
-                server:  $('#hostname').val(),
-                status: 'restart',
-                type: 'webmin'
-            },
-            success: function(response) {
-                // Handle success response if needed
-                console.log(response);
-            },
-            error: function(xhr, status, error) {
-                // Handle error response if needed
-                console.error(error);
-            }
-        });
-        }
-    });*/
-    /*function restartWebminServices() {
-        const selectedServer = $(this).val();
-        // const serverAddress = 'wss://' + selectedServer + '/wss/';
-        const serverAddress = 'wss://spmr.mygovuc.gov.my/'+ selectedServer;
-        //console.log(serverAddress);
-        const socket = new WebSocket(serverAddress);
-
-        socket.addEventListener('open', (event) => {
-            const command = 'sudo systemctl --no-pager restart webmin';
-            socket.send(command);
-        });
-
-        socket.addEventListener('message', (event) => {
-            //alert("Webmin services successfully restarting on " + selectedServer);
-            const response = event.data;
-            //console.log(response);
-            if (response.includes('Failed')) {
-                alert("Failed to restart Webmin services on " + selectedServer);
-            } else {
-                Swal.fire({
-                    title: 'Webmin services successfully restarting on '+ selectedServer,
-                    allowOutsideClick: false, // Prevent outside clicks
-                    showConfirmButton: false, // Disable the "OK" button
-                    onBeforeOpen: () => {
-                        Swal.showLoading();
-                    },
-                    timer: 100000, // 6 seconds
-                    willClose: () => {
-                        // You can add any action you want to perform when the alert is about to close
-                        // console.log('The alert is closing');
-                    }
-                });
-                // alert("Webmin services successfully restarting on " + selectedServer);
-            }
-            socket.close();
-            location.reload();
-        });
-    }*/
+});
+
+var outputs = [];
+socket.addEventListener('message', (event) => {
+    const response = event.data;
+    console.log(response);
+    console.log(cleanlSubhostnames[index]);
+    if (response.includes('Postfix')) {
+        updateStatus(response, 'statusPostfixImage'+cleanlSubhostnames[index],'statusPostfix'+cleanlSubhostnames[index]);
+    } else if (response.includes('Webmin')) {
+        updateStatus(response, 'statusWebminImage'+cleanlSubhostnames[index], 'statusWebmin'+cleanlSubhostnames[index]);
+    } else if (response.includes('Apache2')) {
+        updateStatus(response, 'statusApache2Image'+cleanlSubhostnames[index], 'statusApache2'+cleanlSubhostnames[index]);
+    }
+});
+
+socket.addEventListener('close', () => {
+    console.log('WebSocket connection closed with ' + subhostname);
+});
+
+socket.addEventListener('error', (error) => {
+    console.error('WebSocket error with ' + subhostname, error);
+});
+});
+
+function updateStatus(response, imageId,cleanlSubhostnames) {
+console.log('#' + cleanlSubhostnames);
+$('#' +cleanlSubhostnames).text(response);
+let statusText;
+let altText;
+
+if (response.includes('is running')) {
+    statusText = 'Online';
+    altText = response;
+} else {
+    statusText = 'Offline';
+    altText = response;
+}
+
+let imageSrc = statusText === 'Online' ? '/assets/img/demo/online.png' : '/assets/img/demo/offline.png';
+$('#' + imageId).attr('src', imageSrc).attr('alt', altText);
+}
 
 
 
@@ -1111,10 +284,11 @@
 
     // Postfix Controller //
     // Start //
-    function startPostfixServices() {
-        const selectedServer = $('#postfixStart').val();
+    function startPostfixServices(subhostname) {
+        const selectedServer = $('#postfixStart'+subhostname).data('value');
+        console.log(selectedServer);
         const serverAddress = 'wss://spmr.mygovuc.gov.my/'+ selectedServer;
-        //console.log(serverAddress);
+        console.log(selectedServer);
         const socket = new WebSocket(serverAddress);
 
         socket.addEventListener('open', (event) => {
@@ -1166,7 +340,7 @@
                 },
                 success: function(response) {
                     // Handle success response if needed
-                    console.log(response);
+                    alert(response);
                 },
                 error: function(xhr, status, error) {
                     // Handle error response if needed
@@ -1178,8 +352,8 @@
         }
     });
     // Stop //
-    function stopPostfixServices() {
-        const selectedServer = $('#postfixStop').val();
+    function stopPostfixServices(subhostname) {
+        const selectedServer = $('#postfixStop'+subhostname).data('value');
         // const serverAddress = 'wss://' + selectedServer + '/wss/';
         const serverAddress = 'wss://spmr.mygovuc.gov.my/'+ selectedServer;
         //console.log(serverAddress);
@@ -1246,8 +420,8 @@
         }
     });
     // Restart //
-    function restartPostfixServices() {
-        const selectedServer = $('#postfixRestart').val();
+    function restartPostfixServices(subhostname) {
+        const selectedServer = $('#postfixRestart'+subhostname).data('value');
         // const serverAddress = 'wss://' + selectedServer + '/wss/';
         const serverAddress = 'wss://spmr.mygovuc.gov.my/'+ selectedServer;
         //console.log(serverAddress);
@@ -1319,8 +493,8 @@
 
     // Apache2 Controller //
     // Start //
-    function startApacheServices() {
-        const selectedServer = $('#apacheStart').val();
+    function startApacheServices(subhostname) {
+        const selectedServer = $('#apacheStart'+subhostname).val();
         // const serverAddress = 'wss://' + selectedServer + '/wss/';
         const serverAddress = 'wss://spmr.mygovuc.gov.my/'+ selectedServer;
         //console.log(serverAddress);
@@ -1386,8 +560,8 @@
         }
     });
     // Stop //
-    function stopApacheServices() {
-        const selectedServer = $('#apacheStop').val();
+    function stopApacheServices(subhostname) {
+        const selectedServer = $('#apacheStop'+subhostname).val();
         // const serverAddress = 'wss://' + selectedServer + '/wss/';
         const serverAddress = 'wss://spmr.mygovuc.gov.my/'+ selectedServer;
         //console.log(serverAddress);
@@ -1452,8 +626,8 @@
         }
     });
     // Restart //
-    function restartApacheServices() {
-        const selectedServer = $('#apacheRestart').val();
+    function restartApacheServices(subhostname) {
+        const selectedServer = $('#apacheRestart'+subhostname).val();
         // const serverAddress = 'wss://' + selectedServer + '/wss/';
         const serverAddress = 'wss://spmr.mygovuc.gov.my/'+ selectedServer;
         //console.log(serverAddress);
@@ -1524,8 +698,8 @@
 
     // Webmin Controller //
     // Start //
-    function startWebminServices() {
-        const selectedServer = $('#webminStart').val();
+    function startWebminServices(subhostname) {
+        const selectedServer = $('#webminStart'+subhostname).val();
         // const serverAddress = 'wss://' + selectedServer + '/wss/';
         const serverAddress = 'wss://spmr.mygovuc.gov.my/'+ selectedServer;
         //console.log(serverAddress);
@@ -1592,8 +766,8 @@
         }
     });
     // Stop //
-    function stopWebminServices() {
-        const selectedServer = $('#webminStop').val();
+    function stopWebminServices(subhostname) {
+        const selectedServer = $('#webminStop'+subhostname).val();
         // const serverAddress = 'wss://' + selectedServer + '/wss/';
         const serverAddress = 'wss://spmr.mygovuc.gov.my/'+ selectedServer;
         //console.log(serverAddress);
@@ -1658,8 +832,8 @@
         }
     });
     // Restart //
-    function restartWebminServices() {
-        const selectedServer = $('#webminRestart').val();
+    function restartWebminServices(subhostname) {
+        const selectedServer = $('#webminRestart'+subhostname).val();
         // const serverAddress = 'wss://' + selectedServer + '/wss/';
         const serverAddress = 'wss://spmr.mygovuc.gov.my/'+ selectedServer;
         //console.log(serverAddress);

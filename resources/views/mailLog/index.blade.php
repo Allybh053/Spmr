@@ -70,7 +70,7 @@
                                         <select class="form-control select2" name="mailrelay" id="mailrelay" aria-label="Default select" required>
                                             <option selected disabled>Select Server</option>
                                             @foreach ($serversArray as $server)
-                                            <option value="{{ $server['ipaddress'] }}" @if($server['ipaddress'] == $serverIp->ipaddress) selected @endif>{{ $server['hostname'] }}</option>
+                                            <option value="{{ $server['ipaddress'] }}" @if($server['ipaddress'] == $serverIp->ipaddress) selected @endif>{{ $server['subhostname'] }}</option>
                                             @endforeach
                                         </select>
                                     </div>

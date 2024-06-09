@@ -36,19 +36,72 @@ class DashboardController extends Controller
 
         $defaultServerId = $serverIds->min();
 
-        $serverconfig =  Server::whereIn('id', $serverIds)
-            ->where('status', 1)->orderBy('id', 'asc')
-            ->select('id', 'hostname', 'ipaddress')
+        $serverconfig =  Server::whereIn('master_id', $serverIds)
+            ->where('status_cluster', 1)->orderBy('id', 'asc')
+            ->select('id', 'hostname', 'ipaddress','subhostname')
             ->get();
-
+         
         $serverList = [];
         $listServer = Server::whereIn('id', $serverIds)->where('status', 1)->orderBy('id', 'asc')->get();
         foreach ($listServer as $server) {
+            $subServer = Server::where('master_id',$server->id)->orderBy('status_cluster','desc')->get();
+            $subServer2 = Server::where('master_id',$server->id)->where('status_cluster',1)->get();
+
+            $subs2=[];
+            foreach($subServer2 as $subServers2){
+
+                $subs2[] = [
+                    'subsid2' => $subServers2->id,
+                    'subhostname2' => $subServers2->subhostname,
+                    'subIpaddress2' => $subServers2 -> ipaddress
+                ];
+            }
+            $subs=[];
+            foreach($subServer as $subServers){
+
+                // Calculate statistics for each subserver
+                $subDataSmtpForm = DB::table('smtp_relay_req_form')
+                    ->leftJoin('smtp_relay_server', 'smtp_relay_req_form.form_id', '=', 'smtp_relay_server.form_id')
+                    ->where('smtp_relay_req_form.status', 1)
+                    ->where('smtp_relay_req_form.sub_smtp_relay_server', $subServers->subhostname)
+                    ->count();
+
+                $subDataDomain = DB::table('mailrouting')
+                    ->where('mailrouting.server', $subServers->subhostname)
+                    ->count();
+
+                $subDataSasl = DB::table('smtp_relay_req_form')
+                    ->where('smtp_relay_req_form.sub_smtp_relay_server', $subServers->subhostname)
+                    ->where('smtp_relay_req_form.smtp_relay_auth_method', 2)
+                    ->where('smtp_relay_req_form.status', 1)
+                    ->count();
+
+                $subDataIpBased = DB::table('smtp_relay_req_form')
+                    ->where('smtp_relay_req_form.sub_smtp_relay_server', $subServers->subhostname)
+                    ->where('smtp_relay_req_form.smtp_relay_auth_method', 1)
+                    ->where('smtp_relay_req_form.status', 1)
+                    ->count();
+
+                $subs[] = [
+                    'subsid' => $subServers->id,
+                    'subhostname' => $subServers->subhostname,
+                    'subIpaddress' => $subServers -> ipaddress,
+                    'subTotalApplicationRegistered' => $subDataSmtpForm,
+                    'subTotalDomain' => $subDataDomain,
+                    'subTotalSasl' => $subDataSasl,
+                    'subTotalIpBased' => $subDataIpBased
+                ];
+            }
+
             $serverList[] = [
-                'hostname' => $server->hostname
+                'id' => $server->id,
+                'hostname' => $server->hostname,
+                'ipaddress' => $server ->ipaddress,
+                'subsDataHostname' => $subs,
+                'subsDataHostname2' =>$subs2
             ];
         }
-
+        // dd($serverList);
         $limit = $request->input('limit', $limit);
 
         $collectedDataMinistry = $this->generateDataMinistry();
@@ -80,7 +133,7 @@ class DashboardController extends Controller
             $days = range(1, 10);
 
             $totalCountDashboard = $this->countTotalDashboard();
-            //dd($totalCountDashboard);
+            // dd($totalCountDashboard);
 
         if ($request->expectsJson()) {
             $responseData = [
@@ -370,6 +423,7 @@ class DashboardController extends Controller
 
         $serverSum=[];
         foreach ($listServer as $server) {
+
             $dataSmtpForm = DB::table('smtp_relay_req_form')
                 ->leftJoin('smtp_relay_server', 'smtp_relay_req_form.form_id', 'smtp_relay_server.form_id')
                 ->where('smtp_relay_req_form.status', 1)
@@ -380,20 +434,27 @@ class DashboardController extends Controller
                 ->where('mailrouting.server', $server->hostname)->get()->count();
 
             $dataSasl = DB::table('smtp_relay_req_form')
-                // ->leftJoin('smtp_relay_server as smr','smr.form_id','smtp_relay_req_form.form_id')
                 ->where('smtp_relay_req_form.smtp_relay_server', $server->hostname)
                 ->where('smtp_relay_req_form.smtp_relay_auth_method', 2)
                 ->where('smtp_relay_req_form.status', 1)
                 ->count();
 
             $dataIpBased = DB::table('smtp_relay_req_form')
-                // ->leftJoin('smtp_relay_server as smr','smr.form_id','smtp_relay_req_form.form_id')
                 ->where('smtp_relay_req_form.smtp_relay_server', $server->hostname)
                 ->where('smtp_relay_req_form.smtp_relay_auth_method', 1)
                 ->where('smtp_relay_req_form.status', 1)
                 ->count();
 
+
+            // Retrieve subservers
+            $subServer = Server::where('master_id', $server->id)
+            ->orderBy('status_cluster', 'desc')
+            ->get();
+
+
+
             $serverSum=[
+                'id' => $server->id,
                 'hostname'=>  $server->hostname,
                 'ipAddress' => $server->ipaddress,
                 'totalApplicationRegistered' => $dataSmtpForm,
@@ -403,8 +464,9 @@ class DashboardController extends Controller
             ];
 
             $dataSmtpFormReq[] = $serverSum;
-        }
 
+        }
+        // dd($dataSmtpFormReq);
         return $dataSmtpFormReq;
     }
 }

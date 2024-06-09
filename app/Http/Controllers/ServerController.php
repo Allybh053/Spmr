@@ -17,8 +17,29 @@ class ServerController extends Controller
      */
     public function index(Request $request)
     {
-        $user = Auth::user();
-        $dataservers = Server::whereNotNull('status')->orderBy('id', 'asc')->get();
+        // $user = Auth::user();
+        // $dataservers = Server::whereNotNull('status')->orderBy('id', 'asc')->get();
+        $dataservers  = Server::whereIn('status', [1, 0])
+            ->with(['subServers' => function($query) {
+                $query->select('id', 'hostname', 'ipaddress', 'status_cluster', 'master_id','server_type','subhostname');
+            }])
+            ->orderBy('id')
+            ->get();
+
+        // Transform the data as needed
+        // $result = [];
+        // foreach ($servers as $master) {
+        //     foreach ($master->subServers as $sub) {
+        //         $result[] = [
+        //             'master' => $master->hostname,
+        //             'sub' => $sub->hostname,
+        //             'subip' => $sub->ipaddress,
+        //             'subcluster' => $sub->status_cluster
+        //         ];
+        //     }
+        // }
+
+        // return response()->json($result);
 
         ActivityLog::create([
             'user_id' => Auth::id(),
@@ -72,45 +93,86 @@ class ServerController extends Controller
 
     public function uploadServer(Request $request)
     {
-        $data = $request->all();
-        // Save server details and file path in the database
-        $server = Server::create([
-            'hostname' => $request->input('hostname'),
-            'ipaddress' => $request->input('ipaddress'),
-            'sshusername' => "null",
-            'status' => 0,
-            'sshkey' => "null",
-            'server_type' => 0,
-            'updated_at' => null,
+        $validatedData = $request->validate([
+            'hostname' => 'required|string',
+            'ipaddress' => 'nullable|ip',
+            'primary1name' => 'nullable|string',
+            'primary1ip' => 'nullable|ip',
+            'primary2name' => 'nullable|string',
+            'primary2ip' => 'nullable|ip',
         ]);
 
-        // // Insert primary1name
-        // Server::create([
-        //     'hostname' => $data['primary1name'],
-        //     'ipaddress' => $data['primary1ip'],
-        //     'sshusername' => "null",
-        //     'sshkey' => "null",
-        //     'server_type' => 1,
-        //     'master_id'=>$request->input('hostname'),
-        // ]);
+        DB::beginTransaction();
 
-        // // Insert primary2name
-        // Server::create([
-        //     'hostname' => $data['primary2name'],
-        //     'ipaddress' => $data['primary2ip'],
-        //     'sshusername' => "null",
-        //     'sshkey' => "null",
-        //     'server_type' => 1,
-        //     'master_id'=>$request->input('hostname'),
-        // ]);
+        try {
+            // Insert the master server
+            $master = new Server();
+            $master->hostname = $validatedData['hostname'];
+            $master->ipaddress = $validatedData['ipaddress'];
+            $master->status = 1;  // Assuming status = 1 indicates a master server
+            $master->server_type = 0; // Assuming server_type = 0 indicates a master server
+            $master->save();
 
-        $roles = Role::get();
+            // Check and insert primary1 (sub-server 1)
+            if (!empty($validatedData['primary1name']) && !empty($validatedData['primary1ip'])) {
+                $primary1 = new Server();
+                $primary1->hostname = $validatedData['hostname'];
+                $primary1->subhostname = $validatedData['primary1name'];
+                $primary1->ipaddress = $validatedData['primary1ip'];
+                $primary1->status = null;  // Assuming null status indicates a sub-server
+                $primary1->server_type = 1; // Assuming server_type = 1 indicates a sub-server
+                $primary1->status_cluster = 0; // Assuming status_cluster = 1 indicates active cluster
+                $primary1->master_id = $master->id;
+                $primary1->save();
 
-        foreach ($roles as $role) {
-            DB::insert('INSERT INTO role_servers (role_id, server_id) VALUES (?, ?)', [$role->id, $server->id]);
+                $roles = Role::get();
 
+                foreach ($roles as $role) {
+                    DB::insert('INSERT INTO role_servers (role_id, server_id) VALUES (?, ?)', [$role->id,$primary1->id]);
+
+                }
+            }
+
+            // Check and insert primary2 (sub-server 2)
+            if (!empty($validatedData['primary2name']) && !empty($validatedData['primary2ip'])) {
+                $primary2 = new Server();
+                $primary2->hostname = $validatedData['hostname'];
+                $primary2->subhostname = $validatedData['primary2name'];
+                $primary2->ipaddress = $validatedData['primary2ip'];
+                $primary2->status = null;  // Assuming null status indicates a sub-server
+                $primary2->server_type = 1; // Assuming server_type = 1 indicates a sub-server
+                $primary2->status_cluster = 0; // Assuming status_cluster = 1 indicates active cluster
+                $primary2->master_id = $master->id;
+                $primary2->save();
+
+                $roles2 = Role::get();
+
+                foreach ($roles2 as $role) {
+                    DB::insert('INSERT INTO role_servers (role_id, server_id) VALUES (?, ?)', [$role->id,$primary2->id]);
+
+                }
+            }
+
+            // Commit the transaction
+            DB::commit();
+
+
+
+
+        } catch (\Exception $e) {
+            // Rollback the transaction in case of error
+            DB::rollBack();
+            return redirect()->route('server.index')->with('error', 'Failed to save server data. Please try again.');
         }
 
+        // $roles = Role::get();
+
+        // foreach ($roles as $role) {
+        //     DB::insert('INSERT INTO role_servers (role_id, server_id) VALUES (?, ?)', [$role->id, $server->id]);
+
+        // }
+
+        // return redirect()->route('server.index')->with('success', 'Server details added successfully');
         ActivityLog::create([
             'user_id' => Auth::id(),
             'activity_type' => 'New Server',
@@ -119,7 +181,7 @@ class ServerController extends Controller
             'method' => $request->method(),
             'ip_address' => $request->ip(),
             'input' => json_encode([
-                'server' => $server,
+                'server' => $validatedData,
                 'request' => $request->except(['password']),
             ]),
             'user_agent' => $request->userAgent(),
@@ -144,7 +206,7 @@ class ServerController extends Controller
 
         $server = Server::findOrFail($id);
 
-        $subserver = Server::where('master_id',$server->hostname)->get();
+        $subserver = Server::where('master_id',$server->id)->get();
 
         return view('server.edit',compact('server','subserver'));
     }
@@ -162,38 +224,41 @@ class ServerController extends Controller
      */
     public function update(Request $request, $id)
     {
-        $request->validate([
-            'hostname' => 'required|string|max:255',
-            'ipaddress' => 'required|string',
-            // 'sshusername' => 'required|string|max:255',
-            // 'sshkey' => 'sometimes|mimes:pem|max:1024', // Allow file replacement
+        // Validate the incoming request data
+        $validatedData = $request->validate([
+            'hostname' => 'required|string',
+            'ipaddress' => 'nullable|ip',
+            'primary1name' => 'nullable|string',
+            'primary1ip' => 'nullable|ip',
+            'primary2name' => 'nullable|string',
+            'primary2ip' => 'nullable|ip',
         ]);
 
+        // Find the master server by ID
         $server = Server::find($id);
 
         if (!$server) {
-            return redirect()->route('server.index')->with('message', 'Server not found');
+            return redirect()->route('server.index')->with('error', 'Server not found');
         }
 
-        // Handle other server details update here
-        $server->hostname = $request->input('hostname');
-        $server->ipaddress = $request->input('ipaddress');
-        // $server->sshusername = $request->input('sshusername');
-
-        // // Check if a new file is provided for replacement
-        // if ($request->hasFile('sshkey')) {
-        //     $newFile = $request->file('sshkey');
-        //     $newFileName = $newFile->getClientOriginalName();
-
-        //     // Move the new file to the 'key' directory
-        //     $newFile->move(storage_path('../key'), $newFileName);
-
-        //     // Update the database with the new file path
-        //     $server->sshkey = $newFileName;
-        // }
-
+        // Update the master server details
+        $server->hostname = $validatedData['hostname'];
+        $server->ipaddress = $validatedData['ipaddress'];
         $server->save();
 
+        // Handle the sub-servers update
+        $subServersData = [
+            [
+                'hostname' => $validatedData['hostname'],
+                'subhostname' => $validatedData['primary1name'],
+                'ipaddress' => $validatedData['primary1ip'],
+            ],
+            [
+                'hostname' => $validatedData['hostname'],
+                'subhostname' => $validatedData['primary2name'],
+                'ipaddress' => $validatedData['primary2ip'],
+            ]
+        ];
         ActivityLog::create([
             'user_id' => Auth::id(),
             'activity_type' => 'Update Server',
@@ -202,14 +267,42 @@ class ServerController extends Controller
             'method' => $request->method(),
             'ip_address' => $request->ip(),
             'input' => json_encode([
-                'server' => $server,
+                'server' => $validatedData,
                 'request' => $request->except(['password']),
             ]),
             'user_agent' => $request->userAgent(),
         ]);
 
-        return redirect()->route('server.index')->with('success', 'Server details updated successfully');
+        // return redirect()->route('server.index')->with('success', 'Server details updated successfully');
 
+        foreach ($subServersData as $subData) {
+            if (!empty($subData['subhostname']) && !empty($subData['ipaddress'])) {
+                // Find the sub-server by master ID and subhostname
+                $subServer = Server::where('master_id', $server->id)
+                                   ->where('subhostname', $subData['subhostname'])
+                                   ->first();
+
+                if ($subServer) {
+                    // Update the existing sub-server
+                    $subServer->hostname = $subData['hostname'];
+                    $subServer->subhostname = $subData['subhostname'];
+                    $subServer->ipaddress = $subData['ipaddress'];
+                    $subServer->save();
+                } else {
+                    // Create a new sub-server if it doesn't exist
+                    Server::create([
+                        'hostname' => $subData['hostname'],
+                        'subhostname' => $subData['subhostname'],
+                        'ipaddress' => $subData['ipaddress'],
+                        'server_type' => 1,  // Assuming server_type = 1 indicates a sub-server
+                        //'status_cluster' => 1, // Assuming status_cluster = 1 indicates active cluster
+                        'master_id' => $server->id,
+                    ]);
+                }
+            }
+        }
+
+        return redirect()->route('server.index')->with('success', 'Server details updated successfully');
     }
 
     public function downloadFile(Request $request,$id)
@@ -283,6 +376,17 @@ class ServerController extends Controller
 
         // Redirect with success message
         return response()->json(['message' => 'Server deleted successfully.']);
+    }
+
+    public function checkHostnameUnique(Request $request)
+    {
+        $hostname = $request->input('hostname');
+
+        $exists = Server::where('hostname', $hostname)
+                    ->whereIn('status', [0, 1])
+                    ->exists();
+
+        return response()->json(['exists' => $exists]);
     }
 
 
