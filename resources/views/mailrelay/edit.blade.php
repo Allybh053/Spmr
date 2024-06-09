@@ -19,6 +19,7 @@
         </div>
     </header>
     <!-- Main page content-->
+    <div id="registerpage">
     <div class="container-fluid px-4">
         <div class="card mb-4">
             <div class="card-header">Type of Request :
@@ -191,138 +192,307 @@
             </div>
         </div>
     </form>
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    </div>
+    <style>
+        #registerpage {
+            display: none;
+        }
+    </style>
+    <script src="{{asset('js/vendor/jquery.min.js')}}"></script>
     <script>
+        window.addEventListener('load', function() {
+            console.log('Page is fully loaded, including all frames and resources');
+            document.getElementById('registerpage').style.display = 'block';
+        });
+
         $(document).ready(function() {
 
             function toggleInputs() {
-
-            // var selectBox = document.getElementById("servermail");
+        return new Promise((resolve, reject) => {
             var sub_smtp_relay_server = document.getElementById("sub_smtp_relay_server").value;
             var smtp_username = document.getElementById("smtp_username").value;
             var smtp_password = document.getElementById("smtp_password").value;
-            // var selectedValue = selectBox.value;
 
             const smtpMailServers = @json($smtpMailServers);
-                        //console.log(smtpMailServers);
             const serverAddress = 'wss://spmr.mygovuc.gov.my/' + sub_smtp_relay_server;
-            //console.log("WebSocket URL: " + serverAddress);
             const socket = new WebSocket(serverAddress);
 
             socket.addEventListener('open', (event) => {
-                // Flag to check if any commands were sent
                 let commandSent = false;
                 let finalCommandSent = false;
+                let commandsProcessed = 0;
 
                 smtpMailServers.forEach((smtpMailServer, index) => {
                     let command = '';
+                    let command2 = '';
 
                     if (smtpMailServer.types_req == 1) {
                         const ipAddress = smtpMailServer.ip_addr_server;
                         const formIds = smtpMailServer.form_id;
-                        command = `echo '${ipAddress} #${formIds}:' >> /opt/cluster/postfix/access_list && /usr/sbin/postmap /opt/cluster/postfix/access_list && /usr/bin/systemctl reload postfix && echo 'Command succeeded' || echo 'Command failed'`;
-                        commandSent = true;
+                        command = `echo '${ipAddress} #${formIds}:' >> /opt/cluster/postfix/access_list`;
                     }
 
                     if (smtpMailServer.types_req == 2) {
                         const ipAddress = smtpMailServer.ip_addr_server;
                         const formIds = smtpMailServer.form_id;
                         command = `grep -q '^${ipAddress}' /opt/cluster/postfix/access_list && sed -i 's/^${ipAddress} .*/#${ipAddress} #${formIds}:/' /opt/cluster/postfix/access_list || echo '#${ipAddress} #${formIds}:' >> /opt/cluster/postfix/access_list`;
-                        commandSent = true;
                     }
 
                     if (command) {
-                        //console.log("Sending command: " + command);
-                        socket.send(command);
+                        sendCommand(socket, command, () => {
+                            if (smtpMailServer.types_req == 1 && smtp_username != "") {
+                                command2 = `echo '${smtp_password}:' | /usr/sbin/saslpasswd2 -c '${smtp_username}'`;
+                                sendCommand(socket, command2, () => checkCompletion());
+                            } else if (smtpMailServer.types_req == 2 && smtp_username != "") {
+                                command2 = `/usr/sbin/saslpasswd2 -d '${smtp_username}'`;
+                                sendCommand(socket, command2, () => checkCompletion());
+                            } else {
+                                checkCompletion();
+                            }
 
-                        // Show loading only if a command was sent
-                        if (!commandSent) return;
+                            // Check if it's the last iteration of the loop and send final command
+                            if (index === smtpMailServers.length - 1 && !finalCommandSent) {
+                                const finalCommand = `/usr/sbin/postmap /opt/cluster/postfix/access_list && /usr/bin/systemctl reload postfix`;
+                                sendCommand(socket, finalCommand, () => {
+                                    finalCommandSent = true;
+                                    checkCompletion();
+                                });
+                            }
+                        });
 
                         Swal.fire({
-                            title: 'Succesfully register mail relay..',
-                            allowOutsideClick: false, // Prevent outside clicks
-                            showConfirmButton: false, // Disable the "OK" button
+                            title: 'Successfully Submit Mail Relay..',
+                            allowOutsideClick: false,
+                            showConfirmButton: false,
                             onBeforeOpen: () => {
                                 Swal.showLoading();
                             },
-                            timer: 500, // 6 seconds
+                            timer: 2000,
                             willClose: () => {
-                                // You can add any action you want to perform when the alert is about to close
                                 //console.log('The alert is closing');
                             }
                         });
                     }
-
-                    let command2 = '';
-
-                    if (smtpMailServer.types_req == 1 && smtp_username != "") {
-                        command2 = `echo '${smtp_password}:' | /usr/sbin/saslpasswd2 -c '${smtp_username}'`;
-                        //console.log("Sending command user and password: " + command2);
-                        socket.send(command2);
-                    }
-
-                    if (smtpMailServer.types_req == 2 && smtp_username != "") {
-                        command2 = `/usr/sbin/saslpasswd2 -d '${smtp_username}'`;
-                        //console.log("Sending command user and password for terminated: " + command2);
-                        socket.send(command2);
-                    }
-
-                    // Check if it's the last iteration of the loop
-                    if (index === smtpMailServers.length - 1 && commandSent && !finalCommandSent) {
-                        const finalCommand = `/usr/sbin/postmap /opt/cluster/postfix/access_list && /usr/bin/systemctl reload postfix`;
-                        //console.log("Sending final command: " + finalCommand);
-                        socket.send(finalCommand);
-                        finalCommandSent = true;
-                    }
                 });
+
+                function sendCommand(socket, command, callback) {
+                    const retries = 3;
+                    const delay = 1000; // 1 second
+
+                    function trySend(attempt) {
+                        if (attempt > retries) {
+                            console.error(`Failed to send command after ${retries} attempts`);
+                            checkCompletion();
+                            return;
+                        }
+
+                        try {
+                            socket.send(command);
+                            console.log(`Command sent: ${command}`);
+                            if (callback) callback();
+                        } catch (error) {
+                            console.error(`Error sending command: ${error.message}`);
+                            setTimeout(() => trySend(attempt + 1), delay);
+                        }
+                    }
+
+                    trySend(1);
+                }
+
+                function checkCompletion() {
+                    commandsProcessed++;
+                    if (commandsProcessed === smtpMailServers.length) {
+                        resolve();
+                    }
+                }
+
+            });
+        });
+    }
+
+    $('#submitBtn').click(function(event) {
+        // Prevent the default form submission
+        event.preventDefault();
+        if (confirm('Are you sure you want to submit this form?')) {
+            // Serialize form data
+            var formData = $('#myForm').serialize();
+            // Show loading animation
+            Swal.fire({
+                title: 'Processing...',
+                allowOutsideClick: false, // Prevent outside clicks
+                showConfirmButton: false, // Disable the "OK" button
+                onBeforeOpen: () => {
+                    Swal.showLoading();
+                },
+                timer: 10000, // 6 seconds
+                willClose: () => {
+                    // You can add any action you want to perform when the alert is about to close
+                    //console.log('The alert is closing');
+                }
+            });
+            // Send AJAX request
+            $.ajax({
+                url: "{{ route('mailrelay.form') }}", // Replace with your reject route
+                method: 'POST',
+                data: formData,
+                headers: {
+                    'X-CSRF-TOKEN': '{{ csrf_token() }}' // Add CSRF token header
+                },
+                success: function(response) {
+                    toggleInputs().then(() => {
+                        window.location.href = "{{ route('smtp_relay.smtp_relay_req') }}?message=" + response.message;
+                    });
+                },
+                error: function(xhr, status, error) {
+                    // Handle error response
+                    //console.error(xhr.responseText);
+                }
             });
 
+        } else {
+            // If the user clicks "Cancel" in the confirmation dialog, do nothing
+            return false;
         }
+    });
 
-        $('#submitBtn').click(function(event) {
-            // Prevent the default form submission
-            event.preventDefault();
-            if (confirm('Are you sure you want to submit this form?')) {
-                // Serialize form data
-                var formData = $('#myForm').serialize();
-                // Show loading animation
-                Swal.fire({
-                    title: 'Processing...',
-                    allowOutsideClick: false, // Prevent outside clicks
-                    showConfirmButton: false, // Disable the "OK" button
-                    onBeforeOpen: () => {
-                        Swal.showLoading();
-                    },
-                    timer: 10000, // 6 seconds
-                    willClose: () => {
-                        // You can add any action you want to perform when the alert is about to close
-                        //console.log('The alert is closing');
-                    }
-                });
-                // Send AJAX request
-                $.ajax({
-                    url: "{{ route('mailrelay.form') }}", // Replace with your reject route
-                    method: 'POST',
-                    data: formData,
-                    headers: {
-                        'X-CSRF-TOKEN': '{{ csrf_token() }}' // Add CSRF token header
-                    },
-                    success: function(response) {
-                        //console.log(response);
-                        toggleInputs();
-                        window.location.href = "{{ route('smtp_relay.smtp_relay_req') }}?message=" + response.message;
-                    },
-                    error: function(xhr, status, error) {
-                        // Handle error response
-                        //console.error(xhr.responseText);
-                    }
-                });
+        //     function toggleInputs() {
 
-            } else {
-                // If the user clicks "Cancel" in the confirmation dialog, do nothing
-                return false;
-            }
-        });
+        //     // var selectBox = document.getElementById("servermail");
+        //     var sub_smtp_relay_server = document.getElementById("sub_smtp_relay_server").value;
+        //     var smtp_username = document.getElementById("smtp_username").value;
+        //     var smtp_password = document.getElementById("smtp_password").value;
+        //     // var selectedValue = selectBox.value;
+
+        //     const smtpMailServers = @json($smtpMailServers);
+        //                 //console.log(smtpMailServers);
+        //     const serverAddress = 'wss://spmr.mygovuc.gov.my/' + sub_smtp_relay_server;
+        //     //console.log("WebSocket URL: " + serverAddress);
+        //     const socket = new WebSocket(serverAddress);
+
+        //     socket.addEventListener('open', (event) => {
+        //         // Flag to check if any commands were sent
+        //         let commandSent = false;
+        //         let finalCommandSent = false;
+
+        //         smtpMailServers.forEach((smtpMailServer, index) => {
+        //             let command = '';
+        //             let command2 = '';
+
+        //             if (smtpMailServer.types_req == 1) {
+        //                 const ipAddress = smtpMailServer.ip_addr_server;
+        //                 const formIds = smtpMailServer.form_id;
+        //                 command = `echo '${ipAddress} #${formIds}:' >> /opt/cluster/postfix/access_list && /usr/sbin/postmap /opt/cluster/postfix/access_list`;
+        //             }
+
+        //             if (smtpMailServer.types_req == 2) {
+        //                 const ipAddress = smtpMailServer.ip_addr_server;
+        //                 const formIds = smtpMailServer.form_id;
+        //                 command = `grep -q '^${ipAddress}' /opt/cluster/postfix/access_list && sed -i 's/^${ipAddress} .*/#${ipAddress} #${formIds}:/' /opt/cluster/postfix/access_list || echo '#${ipAddress} #${formIds}:' >> /opt/cluster/postfix/access_list`;
+        //             }
+
+        //             if (command) {
+        //                 sendCommand(socket, command, () => {
+        //                     if (smtpMailServer.types_req == 1 && smtp_username != "") {
+        //                         command2 = `echo '${smtp_password}:' | /usr/sbin/saslpasswd2 -c '${smtp_username}'`;
+        //                         sendCommand(socket, command2);
+        //                     } else if (smtpMailServer.types_req == 2 && smtp_username != "") {
+        //                         command2 = `/usr/sbin/saslpasswd2 -d '${smtp_username}'`;
+        //                         sendCommand(socket, command2);
+        //                     }
+
+        //                     // Check if it's the last iteration of the loop and send final command
+        //                     if (index === smtpMailServers.length - 1) {
+        //                         const finalCommand = `/usr/sbin/postmap /opt/cluster/postfix/access_list && /usr/bin/systemctl reload postfix`;
+        //                         sendCommand(socket, finalCommand);
+        //                     }
+        //                 });
+
+        //                 Swal.fire({
+        //                     title: 'Successfully registered mail relay..',
+        //                     allowOutsideClick: false,
+        //                     showConfirmButton: false,
+        //                     onBeforeOpen: () => {
+        //                         Swal.showLoading();
+        //                     },
+        //                     timer: 2000,
+        //                     willClose: () => {
+        //                         //console.log('The alert is closing');
+        //                     }
+        //                 });
+        //             }
+        //         });
+
+        //         function sendCommand(socket, command, callback) {
+        //             const retries = 3;
+        //             const delay = 1000; // 1 seconds
+
+        //             function trySend(attempt) {
+        //                 if (attempt > retries) {
+        //                     console.error(`Failed to send command after ${retries} attempts`);
+        //                     return;
+        //                 }
+
+        //                 try {
+        //                     socket.send(command);
+        //                     console.log(`Command sent: ${command}`);
+        //                     if (callback) callback();
+        //                 } catch (error) {
+        //                     console.error(`Error sending command: ${error.message}`);
+        //                     setTimeout(() => trySend(attempt + 1), delay);
+        //                 }
+        //             }
+
+        //             trySend(1);
+        //         }
+
+        //     });
+
+        // }
+
+        // $('#submitBtn').click(function(event) {
+        //     // Prevent the default form submission
+        //     event.preventDefault();
+        //     if (confirm('Are you sure you want to submit this form?')) {
+        //         // Serialize form data
+        //         var formData = $('#myForm').serialize();
+        //         // Show loading animation
+        //         Swal.fire({
+        //             title: 'Processing...',
+        //             allowOutsideClick: false, // Prevent outside clicks
+        //             showConfirmButton: false, // Disable the "OK" button
+        //             onBeforeOpen: () => {
+        //                 Swal.showLoading();
+        //             },
+        //             timer: 10000, // 6 seconds
+        //             willClose: () => {
+        //                 // You can add any action you want to perform when the alert is about to close
+        //                 //console.log('The alert is closing');
+        //             }
+        //         });
+        //         // Send AJAX request
+        //         $.ajax({
+        //             url: "{{ route('mailrelay.form') }}", // Replace with your reject route
+        //             method: 'POST',
+        //             data: formData,
+        //             headers: {
+        //                 'X-CSRF-TOKEN': '{{ csrf_token() }}' // Add CSRF token header
+        //             },
+        //             success: function(response) {
+        //                 //console.log(response);
+        //                 toggleInputs();
+        //                 window.location.href = "{{ route('smtp_relay.smtp_relay_req') }}?message=" + response.message;
+        //             },
+        //             error: function(xhr, status, error) {
+        //                 // Handle error response
+        //                 //console.error(xhr.responseText);
+        //             }
+        //         });
+
+        //     } else {
+        //         // If the user clicks "Cancel" in the confirmation dialog, do nothing
+        //         return false;
+        //     }
+        // });
 
 
         $('#rejectBtn').click(function() {
