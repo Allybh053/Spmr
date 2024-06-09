@@ -40,11 +40,11 @@ class DashboardController extends Controller
             ->where('status_cluster', 1)->orderBy('id', 'asc')
             ->select('id', 'hostname', 'ipaddress','subhostname')
             ->get();
-         
+
         $serverList = [];
         $listServer = Server::whereIn('id', $serverIds)->where('status', 1)->orderBy('id', 'asc')->get();
         foreach ($listServer as $server) {
-            $subServer = Server::where('master_id',$server->id)->orderBy('status_cluster','desc')->get();
+            $subServer = Server::where('master_id',$server->id)->where('status_cluster',1)->get();
             $subServer2 = Server::where('master_id',$server->id)->where('status_cluster',1)->get();
 
             $subs2=[];

@@ -249,9 +249,10 @@ class MainRelayController extends Controller
 
         $user = Auth::user();
         $role = $user->roles->isNotEmpty() ? $user->roles->pluck('name')->first() : null;
+
         $serverIds = RoleServer::whereIn('role_servers.role_id', $user->roles->pluck('id')->all())
         ->leftJoin('servers','servers.id','role_servers.server_id')
-        ->where('servers.status_cluster',1)
+        ->whereNull('servers.subhostname')
         ->pluck('server_id');
 
         //$serverconfig = Server::where('status', 1)->get();
@@ -261,8 +262,8 @@ class MainRelayController extends Controller
         $defaultServerId = $serverIds->min();
 
         // Filter servers based on the fetched IDs
-        $serverconfig = Server::where('status_cluster', 1)->orderBy('id', 'asc')
-            ->pluck('subhostname', 'id');
+        $serverconfig = Server::whereNull('subhostname')->orderBy('id', 'asc')
+            ->pluck('hostname', 'id');
 
 
             ActivityLog::create([
@@ -292,11 +293,13 @@ class MainRelayController extends Controller
 
     public function search(Request $request)
     {
+
         // Retrieve other inputs from the request
         $serverIds = $request->input('server');
 
         // You can adjust the search logic based on the selected calendar type and agency here
-        $serverMailRelay = Server::find($serverIds);
+        $serverMailRelay = Server::where('id',$serverIds)->first();
+
         $serverName = $serverMailRelay->hostname;
 
         $queryMailRoute = Mailrouting::where('server', $serverName);

@@ -20,9 +20,9 @@ class ServerController extends Controller
         // $user = Auth::user();
         // $dataservers = Server::whereNotNull('status')->orderBy('id', 'asc')->get();
         $dataservers  = Server::whereIn('status', [1, 0])
-        ->whereHas('subServers', function ($query) {
-            $query->whereNotNull('master_id');
-        })
+        // ->whereHas('subServers', function ($query) {
+        //     $query->whereNotNull('master_id');
+        // })
         ->with(['subServers' => function ($query) {
             $query->select('id', 'hostname', 'ipaddress', 'status_cluster', 'master_id', 'server_type', 'subhostname');
         }])
@@ -445,6 +445,7 @@ class ServerController extends Controller
 
     public function deleteServer(Request $request,$id)
     {
+
         ActivityLog::create([
             'user_id' => Auth::id(),
             'activity_type' => 'Delete Server',
@@ -579,6 +580,12 @@ class ServerController extends Controller
                 $server->ipaddress = $ipaddress;
                 $server->save();
 
+                $roles2 = Role::get();
+
+                foreach ($roles2 as $role) {
+                    DB::insert('INSERT INTO role_servers (role_id, server_id) VALUES (?, ?)', [$role->id,$server->id]);
+
+                }
                 ActivityLog::create([
                     'user_id' => Auth::id(),
                     'activity_type' => 'Create Virtual Server',
@@ -610,6 +617,12 @@ class ServerController extends Controller
         return response()->json(['ip_address' => $server->ipaddress]);
     }
 
+    public function checkServer($serverId)
+    {
+        // Check if the serverId exists in the master_id column and deleted_at column is null
+        $serverExists = Server::where('master_id', $serverId)->whereNull('deleted_at')->exists();
 
+        return response()->json(['exists' => $serverExists]);
+    }
 
 }

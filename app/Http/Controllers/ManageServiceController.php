@@ -29,7 +29,7 @@ class ManageServiceController extends Controller
 
         // Filter servers based on the fetched IDs
         $serverconfig =  Server::whereIn('master_id', $serverIds)
-            ->whereIn('status_cluster', [1,0])->orderBy('id', 'asc')
+            ->whereIn('status_cluster', [1,0])->orderBy('status_cluster', 'asc')
             ->select('id', 'subhostname', 'ipaddress')
             ->get();
 

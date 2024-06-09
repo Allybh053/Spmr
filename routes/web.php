@@ -155,7 +155,7 @@ Route::group(['middleware' => ['auth', 'nocache','log.user.activity']], function
 
         Route::post('/add/virtual-server', [ServerController::class, 'virtualServer'])->name('server.virtualServer.add');
         Route::get('/get-ip-address', [ServerController::class, 'getIp'])->name('server.virtualServer.getIp');
-
+        Route::get('/check-server/{serverId}', [ServerController::class, 'checkServer'])->name('server.check-server');
 
     });
 

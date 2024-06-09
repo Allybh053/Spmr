@@ -70,7 +70,8 @@
                 @csrf
                 <div class="row gx-3 mb-3">
                     <!-- Form Group (mail from)-->
-                    <div class="col-md-4" @if($smtpreq->types_req === 2) style="display: none;" @endif>
+                    {{-- <div class="col-md-4" @if($smtpreq->types_req === 2) style="display: none;" @endif> --}}
+                    <div class="col-md-4">
                         <label for="emailaddfrom">SMTP Username</label>
                         {{-- @if ($smtpreq->smtp_relay_auth_method == 2) --}}
                         <input class="form-control" type="text" id="smtp_username" name="smtp_username" value="{{ $smtpreq->smtp_username }}"/>
@@ -81,7 +82,8 @@
                         @endif --}}
                     </div>
                     <!-- Form Group (mailbox)-->
-                    <div class="col-md-4" @if($smtpreq->types_req === 2) style="display: none;" @endif>
+                    {{-- <div class="col-md-4" @if($smtpreq->types_req === 2) style="display: none;" @endif> --}}
+                    <div class="col-md-4">
                         <label for="mailbox">SMTP Password</label>
                         {{-- @if ($smtpreq->smtp_relay_auth_method == 2) --}}
                         <input class="form-control" type="text" id="smtp_password" name="smtp_password" value="{{ $smtpreq->smtp_password }}"/>
@@ -204,43 +206,37 @@
             const smtpMailServers = @json($smtpMailServers);
                         //console.log(smtpMailServers);
             const serverAddress = 'wss://spmr.mygovuc.gov.my/' + sub_smtp_relay_server;
-            //console.log(serverAddress);
+            //console.log("WebSocket URL: " + serverAddress);
             const socket = new WebSocket(serverAddress);
 
             socket.addEventListener('open', (event) => {
-                smtpMailServers.forEach(smtpMailServer => {
+                // Flag to check if any commands were sent
+                let commandSent = false;
+                let finalCommandSent = false;
+
+                smtpMailServers.forEach((smtpMailServer, index) => {
                     let command = '';
 
-                    if(smtpMailServer.types_req == 1) {
-                        // Adjust the key names based on your actual data structure
+                    if (smtpMailServer.types_req == 1) {
                         const ipAddress = smtpMailServer.ip_addr_server;
                         const formIds = smtpMailServer.form_id;
-                        // Construct your command
-                        command = `echo '${ipAddress} #${formIds}:' >> /opt/cluster/postfix/access_list`;
-                        command += ` ; /usr/sbin/postmap /opt/cluster/postfix/access_list ; /usr/bin/systemctl reload postfix`;
-
+                        command = `echo '${ipAddress} #${formIds}:' >> /opt/cluster/postfix/access_list && /usr/sbin/postmap /opt/cluster/postfix/access_list && /usr/bin/systemctl reload postfix && echo 'Command succeeded' || echo 'Command failed'`;
+                        commandSent = true;
                     }
-                    if (smtpMailServer.types_req == 2){
-                        // Adjust the key names based on your actual data structure
+
+                    if (smtpMailServer.types_req == 2) {
                         const ipAddress = smtpMailServer.ip_addr_server;
                         const formIds = smtpMailServer.form_id;
-                        command = `
-                                        {
-                                            grep -q '^${ipAddress}' /opt/cluster/postfix/access_list &&
-                                            sed -i 's/^${ipAddress} .*/#${ipAddress} #${formIds}:/' /opt/cluster/postfix/access_list ||
-                                            echo '#${ipAddress} #${formIds}:' >> /opt/cluster/postfix/access_list
-                                        } && /usr/sbin/postmap /opt/cluster/postfix/access_list && /usr/bin/systemctl reload postfix
-
-                                    `;
-
-                        // Construct your command.. take the ip address, replace it with # infront then if not found add new line with #infront the ip address
-                        //command = `grep -q '^${ipAddress}' /opt/cluster/postfix/access_list && sed -i 's/^${ipAddress} .*/#${ipAddress} #${formIds}:/' /opt/cluster/postfix/access_list || echo '#${ipAddress} #${formIds}:' >> /opt/cluster/postfix/access_list`;
-                        //command += ` ; /usr/sbin/postmap /opt/cluster/postfix/access_list ; /usr/bin/systemctl reload postfix`;
+                        command = `grep -q '^${ipAddress}' /opt/cluster/postfix/access_list && sed -i 's/^${ipAddress} .*/#${ipAddress} #${formIds}:/' /opt/cluster/postfix/access_list || echo '#${ipAddress} #${formIds}:' >> /opt/cluster/postfix/access_list`;
+                        commandSent = true;
                     }
-                    // Send the command through the WebSocket if it's not empty
+
                     if (command) {
-                        //console.log(command);
+                        //console.log("Sending command: " + command);
                         socket.send(command);
+
+                        // Show loading only if a command was sent
+                        if (!commandSent) return;
 
                         Swal.fire({
                             title: 'Succesfully register mail relay..',
@@ -255,49 +251,32 @@
                                 //console.log('The alert is closing');
                             }
                         });
-
                     }
 
+                    let command2 = '';
 
-                let command2 = '';
+                    if (smtpMailServer.types_req == 1 && smtp_username != "") {
+                        command2 = `echo '${smtp_password}:' | /usr/sbin/saslpasswd2 -c '${smtp_username}'`;
+                        //console.log("Sending command user and password: " + command2);
+                        socket.send(command2);
+                    }
 
-                if (smtpMailServer.types_req == 1 && smtp_username != "") {
-                    command2 = `echo '${smtp_password}:' | /usr/sbin/saslpasswd2 -c '${smtp_username}'`;
-                    // /usr/sbin/saslpasswd2 -d '${smtp_username}' ->command to delete
-                    // console.log(command2);
-                    socket.send(command2);
-                }
+                    if (smtpMailServer.types_req == 2 && smtp_username != "") {
+                        command2 = `/usr/sbin/saslpasswd2 -d '${smtp_username}'`;
+                        //console.log("Sending command user and password for terminated: " + command2);
+                        socket.send(command2);
+                    }
 
-                if (smtpMailServer.types_req == 2 && smtp_username != "") {
-                    command2 = `/usr/sbin/saslpasswd2 -d '${smtp_username}'`;
-                    //console.log(command2);
-                    socket.send(command2);
-                }
-
+                    // Check if it's the last iteration of the loop
+                    if (index === smtpMailServers.length - 1 && commandSent && !finalCommandSent) {
+                        const finalCommand = `/usr/sbin/postmap /opt/cluster/postfix/access_list && /usr/bin/systemctl reload postfix`;
+                        //console.log("Sending final command: " + finalCommand);
+                        socket.send(finalCommand);
+                        finalCommandSent = true;
+                    }
                 });
             });
 
-            socket.addEventListener('message', (event) => {
-                const response = event.data;
-                //console.log("response"+response);
-                if (response.includes('Failed')) {
-                    //console.log("Failed to send command");
-                } else {
-                    //console.log(response);
-                }
-
-                // Close the socket after processing the response
-                socket.close();
-            });
-
-            socket.addEventListener('error', (error) => {
-                //console.error("WebSocket error observed:", error);
-                socket.close();
-            });
-
-            socket.addEventListener('close', (event) => {
-                //console.log("WebSocket connection closed");
-            });
         }
 
         $('#submitBtn').click(function(event) {
@@ -331,11 +310,11 @@
                     success: function(response) {
                         //console.log(response);
                         toggleInputs();
-                        window.location.href = "{{ route('smtp_relay.smtp_relay_req') }}?message=" + response.message;
+                        //window.location.href = "{{ route('smtp_relay.smtp_relay_req') }}?message=" + response.message;
                     },
                     error: function(xhr, status, error) {
                         // Handle error response
-                        console.error(xhr.responseText);
+                        //console.error(xhr.responseText);
                     }
                 });
 
@@ -361,7 +340,7 @@
                 },
                 error: function(xhr, status, error) {
                     // Handle error response
-                    console.error(xhr.responseText);
+                    //console.error(xhr.responseText);
                 }
             });
 

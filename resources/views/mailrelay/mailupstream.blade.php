@@ -46,7 +46,6 @@
                     <div class="row gx-3 mb-3">
                         <div class="col-md-6">
                             <label class="small mb-1" for="serverconfig">Server Name:</label>
-
                             {!! Form::select('server', $serverconfig,  $defaultServerId ?? 1,  ['id'=>'server', 'name'=>'server', 'class'=>'form-control select2', 'placeholder'=>config('params.dropdown_default')]) !!}
                             <p class="card-text mt-1 mb-1" id="ipAddress"></p>
                             <div class="small text-muted"></div>
@@ -158,7 +157,7 @@
 
 @endsection
 @push('script')
-<script> 
+<script>
 
 $(document).ready(function () {
     // Event listener for select change
@@ -275,6 +274,7 @@ $(document).ready(function () {
 
     function submitSearchForm() {
         var formData = $('#searchForm').serialize();
+        console.log(formData);
         if (formData === 'server=') {
             alert("Please Choose Server in options field.");
         } else {
