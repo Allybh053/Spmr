@@ -288,11 +288,11 @@
                                         <th>Ticket No.</th>
                                         <th>Types Request</th>
                                         <th>Agency Name</th>
-                                        <th>Mailfrom</th>
                                         <th>System Name</th>
-                                        <th>SMTP Port</th>
-                                        <th>SMTP Username</th>
                                         <th>Ip Address</th>
+                                        <th>Mail From</th>
+                                        <th>SMTP Username</th>
+                                        <th>SMTP Port</th>
                                         <th>Date Approval</th>
                                     </tr>
                                     </thead>
@@ -311,11 +311,11 @@
                                         <th>No.</th>
                                         <th>Ticket No.</th>
                                         <th>Types Request</th>
-                                        <th>Mailfrom</th>
+                                        <th>Agency Name</th>
                                         <th>System Name</th>
-                                        <th>SMTP Relay Authentication Method</th>
-                                        <th>SMTP Port</th>
                                         <th>Ip Address</th>
+                                        <th>Mail From</th>
+                                        <th>SMTP Port</th>
                                         <th>Date Approval</th>
                                     </tr>
                                     </thead>
@@ -609,11 +609,11 @@
                     class: 'text-center'
                 },
                 { data: 'agenciesName', name: 'agenciesName', class: 'text-center' },
-                { data: 'system_owner_name', name: 'system_owner_name', class: 'text-center' },
-                { data: 'mailfrom', name: 'mailfrom', class: 'text-center' },
-                { data: 'smtp_port', name: 'smtp_port', class: 'text-center' },
-                { data: 'smtp_username', name: 'smtp_username', class: 'text-center' },
+                { data: 'server_name', name: 'server_name', class: 'text-center' },
                 { data: 'ip_addr_server', name: 'ip_addr_server', class: 'text-center' },
+                { data: 'mailfrom', name: 'mailfrom', class: 'text-center' },
+                { data: 'smtp_username', name: 'smtp_username', class: 'text-center' },
+                { data: 'smtp_port', name: 'smtp_port', class: 'text-center' },
                 {
                     data: 'date_verification_3',
                     name: 'date_verification_3',
@@ -701,10 +701,10 @@
                     class: 'text-center'
                 },
                 { data: 'agenciesName', name: 'agenciesName', class: 'text-center' },
-                { data: 'system_owner_name', name: 'system_owner_name', class: 'text-center' },
+                { data: 'server_name', name: 'server_name', class: 'text-center' },
+                { data: 'ip_addr_server', name: 'ip_addr_server', class: 'text-center' },
                 { data: 'mailfrom', name: 'mailfrom', class: 'text-center' },
                 { data: 'smtp_port', name: 'smtp_port', class: 'text-center' },
-                { data: 'ip_addr_server', name: 'ip_addr_server', class: 'text-center' },
                 {
                     data: 'date_verification_3',
                     name: 'date_verification_3',
