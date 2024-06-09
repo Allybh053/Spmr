@@ -64,19 +64,19 @@
                     data: {serverName: $('#serverName').val()},
                     success: function(response) {
                         // Handle the response from the controller
-                        //console.log(response);
+                        console.log(response);
 
-                        $('#card-title-header').text(response.hostname);
+                        $('#card-title-header').text(response.subhostname);
                         $('#ip-address').text(response.ipaddress);
 
                         //Websocket connections
 
-                        let hostname = response.hostname;
+                        let hostname = response.subhostname;
                         // const serverAddress = 'wss://' + hostname + '/wss/';
                         websocket(hostname);
                   },
                   error: function(xhr, status, error) {
-                    console.error(xhr.responseText);
+                    //console.error(xhr.responseText);
                     }
                 });
 
@@ -93,12 +93,12 @@
                         // Handle the response from the controller
                         //console.log(response);
 
-                        $('#card-title-header').text(response.hostname);
+                        $('#card-title-header').text(response.subhostname);
                         $('#ip-address').text(response.ipaddress);
 
                         //Websocket connections
 
-                        let hostname = response.hostname;
+                        let hostname = response.subhostname;
                         // const serverAddress = 'wss://' + hostname + '/wss/';
                         websocket(hostname);
 

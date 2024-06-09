@@ -26,24 +26,26 @@ class MailLogController extends Controller
     {
         $user = Auth::user();
         $role = $user->roles->isNotEmpty() ? $user->roles->pluck('name')->first() : null;
-        $serversArray = Server::leftJoin('role_servers as rs','servers.id','rs.server_id')
+        $serversArray = Server::leftJoin('role_servers as rs','servers.master_id','rs.server_id')
         ->where('rs.role_id',$user->roles->pluck('id')->first())
-        ->where('servers.status',1)
-        ->orderBy('servers.id', 'asc')
+        ->whereIn('servers.status_cluster',[1,0])
+        ->orderBy('servers.master_id', 'asc')
         ->get();
+
         $serverIds = RoleServer::whereIn('role_servers.role_id', $user->roles->pluck('id')->all())
-        ->leftJoin('servers','servers.id','role_servers.server_id')
-        ->where('servers.status',1)
+        ->leftJoin('servers','servers.master_id','role_servers.server_id')
+        ->whereIn('servers.status_cluster',[1,0])
         ->pluck('server_id');
 
         $defaultServerId = $serverIds->min();
 
+
         $serverIp = Server::find($defaultServerId);
 
         // Filter servers based on the fetched IDs
-        $serverconfig = Server::whereIn('id', $serverIds)
-            ->where('status', 1)
-            ->pluck('hostname', 'id');
+        $serverconfig = Server::whereIn('master_id', $serverIds)
+            ->orderBy('status_cluster', 'desc')
+            ->pluck('subhostname', 'id');
 
             ActivityLog::create([
                 'user_id' => Auth::id(),

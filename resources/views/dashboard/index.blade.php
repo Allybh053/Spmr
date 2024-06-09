@@ -9,167 +9,87 @@
   </div>
 </header>
 <!-- Main page content-->
-<div class="container-xl px-4 mt-n10">
-  <!-- <a class="card card-icon lift lift-sm mb-4" href="#"><div class="row"><div class="col-auto card-icon-aside bg-primary"><i class="text-white-50" data-feather="server"></i></div><div class="col"><div class="card-body py-4">
-                                        {{-- {!! Form::select('server', $serverconfig,  $defaultServerId,  ['id'=>'server', 'name'=>'server', 'class'=>'form-control select2', 'placeholder'=>config('params.dropdown_default')]) !!} --}}
-                                        <p class="card-text mt-1 mb-1" id="ipAddress"></p><div class="small text-muted"></div></div></div></div></a> -->
-
-
-
-
-<!-- Start Loop By Server Here -->
-    {{-- @foreach ($totalCountDashboard as $server) --}}
+<div class="container-fluid px-4 mt-n10">
   <div class="row mb-4">
     <div class="col-xxl-12">
       <div class="card">
-        {{-- <div class="card-header text-center p-3">
-          <h5 style="text-align:left;">
-              {{ $server['hostname']}}
-              <p>{{ $server['ipAddress'] }}</p>
-          </h5> --}}
-        {{-- </div> --}}
         <div class="card-body">
 
             <div class="table-responsive">
                 <div style="width: 100%; overflow-x: auto; height: 355px;">
                 <table id="spmrDatatable" class="display table table-striped table-bordered" cellspacing="0" width="60%">
-                    @foreach ($totalCountDashboard as $server)
+                    @foreach ($serverList as $server)
+                    @php
+                        $col = (auth()->user()->can('manage_service_update')) ? 3 : 2;
+                    @endphp
                     <thead>
                         @if($loop->index != 0)
                         <tr><th colspan="2">&nbsp;</th></tr>@endif
-                        <tr  style="background-color: rgb(197, 204, 210);">
+                        <tr  style="background-color: rgb(11, 135, 244);">
                             <th colspan="2">
-                                <h5 style="text-align:left;">
-                                    {{ $server['hostname']}}
-                                    <p>{{ $server['ipAddress'] }}</p>
+                                <h5 style="text-align:left; color:white; font-weight: bold;">
+                                   Virtual Server: {{ $server['hostname']}}
+                                    <p>{{ $server['ipaddress'] }}</p>
                                 </h5>
                             </th>
                         </tr>
                     </thead>
-                    <tbody>
-                        @can('total_application_registered')
-                            <tr>
-                                <th width="45%"><h6><b>Total Application Registered</b></h6></th>
-                                <td width="15%"><h6>{{$server['totalApplicationRegistered'] ?? '0'}}</h6></td>
-                            </tr>
-                        @endcan
-                        @can('total_domain_registered')
-                            <tr>
-                                <th width="45%"><h6><b>Total Domain Registered</b></h6>
-                                    <div  class="small text-muted">Updated every 30 minutes</div>
+                    @foreach ($server['subsDataHostname'] as $serverSubs)
+                    <tr>
+                        <thead>
+                            @if($loop->index != 0)
+                            <tr><th colspan="2">&nbsp;</th></tr>@endif
+                            <tr  style="background-color: rgb(179, 189, 183);">
+                                <th colspan="{{ $col }}">
+                                    <h5 style="text-align:left; font-weight: bold;">
+                                        Primary Server: {{ $serverSubs['subhostname']}}
+                                        <p>{{ $serverSubs['subIpaddress'] }}</p>
+                                    </h5>
                                 </th>
-                                <td width="15%"><h6>{{$server['totalDomain'] ?? '0'}}</h6></td>
                             </tr>
-                        @endcan
-                        @can('number_of_registered_sasl')
-                            <tr>
-                                <th width="45%"><h6><b>Total SASL based (SMTP relay request form registered)</b></h6></th>
-                                <td width="15%"><h6>{{$server['totalSasl'] ?? '0'}}</h6></td>
-                            </tr>
-                        @endcan
-                        @can('total_ip_based_registered')
-                            <tr>
-                                <th width="45%"><h6><b>Total IP based (SMTP relay request form registered)</b></h6></th>
-                                <td width="15%"><h6>{{$server['totalIpBased'] ?? '0'}}</h6></td>
-                            </tr>
-                        @endcan
-                    </tbody>
+                        </thead>
+                        <tbody>
+                            @can('total_application_registered')
+                                <tr>
+                                    <th width="45%"><h6><b>Total Application Registered</b></h6></th>
+                                    <td width="15%"><h6>{{ $serverSubs['subTotalApplicationRegistered'] ?? '0' }}</h6></td>
+                                </tr>
+                            @endcan
+                            @can('total_domain_registered')
+                                <tr>
+                                    <th width="45%"><h6><b>Total Domain Registered</b></h6>
+                                        <div class="small text-muted">Updated every 30 minutes</div>
+                                    </th>
+                                    <td width="15%"><h6>{{ $serverSubsub['subTotalDomain'] ?? '0' }}</h6></td>
+                                </tr>
+                            @endcan
+                            @can('number_of_registered_sasl')
+                                <tr>
+                                    <th width="45%"><h6><b>Total SASL based (SMTP relay request form registered)</b></h6></th>
+                                    {{-- <td width="15%"><h6>{{$server['totalSasl'] ?? '0'}}</h6></td> --}}
+                                    <td width="15%"><h6>{{ $serverSubsub['subTotalSasl'] ?? '0' }}</h6></td>
+                                </tr>
+                            @endcan
+                            @can('total_ip_based_registered')
+                                <tr>
+                                    <th width="45%"><h6><b>Total IP based (SMTP relay request form registered)</b></h6></th>
+                                    {{-- <td width="15%"><h6>{{$server['totalIpBased'] ?? '0'}}</h6></td> --}}
+                                    <td width="15%"><h6>{{ $serverSubsub['subTotalIpBased'] ?? '0' }}</h6></td>
+                                </tr>
+                            @endcan
+                        </tbody>
+                    </tr>
+                    @endforeach
+
+
                     @endforeach
                 </table>
                 </div>
             </div>
-
-
-          {{-- <div class="row">
-            @can('total_application_registered')
-            <div class="col-xl-4 mb-6" style="margin-right: -11%;">
-                <div class="card h-100" style="width: 64%;">
-                  <div class="card-body d-flex justify-content-center flex-column">
-                    <div class="d-flex align-items-center justify-content-between">
-                      <div class="me-3">
-                        <i class="feather-xl text-primary mb-3" data-feather="activity"></i>
-                        <h5>Total Application Registered</h5>
-                        <div class="inline">
-                          <i class="feather-l text-primary" data-feather="corner-down-right"></i>
-                          <h2 id="totalApplications" style="display: inline-block; margin-left: 5px;">{{$server['totalApplicationRegistered'] ?? '-'}}</h2>
-                        </div>
-                      </div>
-                      <img src="{{asset ('assets/img/illustrations/dash_app.svg')}}" alt="..." style="width: 4rem" />
-                    </div>
-                  </div>
-              </div>
-            </div>
-            @endcan
-            @can('total_domain_registered')
-            <div class="col-xl-4 mb-6" style="margin-right: -11%;">
-                <div class="card h-100" style="width: 64%;">
-                  <div class="card-body d-flex justify-content-center flex-column">
-                    <div class="d-flex align-items-center justify-content-between">
-                      <div class="me-3">
-                        <i class="feather-xl text-secondary mb-3" data-feather="zap"></i>
-                        <h5>Total Domain Registered</h5>
-                        <div  class="small text-muted">Updated every 30 minutes</div>
-                        <div class="inline">
-                          <i class="feather-l text-primary" data-feather="corner-down-right"></i>
-                          <h2 id="totalDomains" style="display: inline-block; margin-left: 5px;">{{$server['totalDomain'] ?? '-'}}</h2>
-                        </div>
-                      </div>
-                      <img src="{{asset ('assets/img/illustrations/dash_domain.svg')}}" alt="..." style="width: 4rem" />
-                    </div>
-                  </div>
-              </div>
-              </div>
-            @endcan
-
-
-            @can('number_of_registered_sasl')
-            <div class="col-xl-4 mb-6" style="margin-right: -11%;">
-                <div class="card h-100" style="width: 64%;">
-                    <div class="card-body d-flex justify-content-center flex-column">
-                        <div class="d-flex align-items-center justify-content-between">
-                            <div class="me-3">
-                                <i class="feather-xl text-green mb-3" data-feather="shield"></i>
-                                <h5>Total SASL based (SMTP relay request form registered)</h5>
-                                <div class="inline">
-                                    <i class="feather-l text-primary" data-feather="corner-down-right"></i>
-                                    <h2 id="totalSASL" style="display: inline-block; margin-left: 5px;">{{$server['totalSasl'] ?? '-'}}</h2>
-                                </div>
-                            </div>
-                            <img src="{{asset ('assets/img/illustrations/dash_sasl.svg')}}" alt="..." style="width: 4rem" />
-                        </div>
-                    </div>
-                </div>
-            </div>
-            @endcan
-
-            @can('total_ip_based_registered')
-            <div class="col-xl-4 mb-6" style="margin-right: -11%;">
-                <div class="card h-100" style="width: 64%;">
-                    <div class="card-body d-flex justify-content-center flex-column">
-                        <div class="d-flex align-items-center justify-content-between">
-                            <div class="me-3">
-                                <i class="feather-xl text-green mb-3" data-feather=""></i>
-                                <h5>Total IP based (SMTP relay request form registered)</h5>
-                                <div class="inline">
-                                    <i class="feather-l text-primary" data-feather="corner-down-right"></i>
-                                    <h2 id="totalIPBased" style="display: inline-block; margin-left: 5px;">{{$server['totalIpBased'] ?? '-'}}</h2>
-                                </div>
-                            </div>
-                            <img src="{{asset ('assets/img/illustrations/browser-stats.svg')}}" alt="..." style="width: 4rem" />
-                        </div>
-                    </div>
-                </div>
-            </div>
-            @endcan --}}
-
-
-          {{-- </div> --}}
         </div>
       </div>
     </div>
   </div>
-    {{-- @endforeach --}}
-<!-- End Loop By Server Here -->
 
   <div class="row mb-4">
     @can('top_5_list_ministry')
@@ -216,45 +136,8 @@
         </div>
     </div>
     @endcan
-    {{--@can('top_5_list_ministry')
-    <div class="col-xxl-12 mb-4">
-        <div class="card" style="height: 500px; overflow-y: auto;">
-            <div class="card-header text-center p-5">
-                <h5>TOP 5 LIST OF MINISTRY/AGENCY/SUK</h5>
-                <h5>{{ $serverListMinistry[0]['hostname'] }}</h5>
-                <p>{{ $serverListMinistry[0]['ipAddress'] }}</p>
-            </div>
-            <div class="card-body">
-                @foreach($serverListMinistry as $server)
-                    <div class="mb-4">
-                        <h6>{{ $server['hostname'] }}</h6>
-                        <p>{{ $server['ipAddress'] }}</p>
-                        <canvas id="chartMinistry-{{ $loop->index }}"></canvas>
-                    </div>
-                @endforeach
-            </div>
-        </div>
-    </div>
-    @endcan --}}
-
-
-
-    {{-- @can('top_5_list_department')
-    <div class="col-xxl-6">
-        <div class="card">
-          <div class="card-header text-center p-5">
-            <h5>Top 5 List Department/Division/Unit</h5>
-          </div>
-          <div class="card-body">
-            <!-- <label for="limitSelect">Select Limit:</label><select name="limit" id="limitSelect"><option value="all" {{ $limit === 'all' ? 'selected' : '' }}>All</option><option value="10" {{ $limit == 10 ? 'selected' : '' }}>Top 10</option><option value="20" {{ $limit == 20 ? 'selected' : '' }}>Top 20</option><option value="50" {{ $limit == 50 ? 'selected' : '' }}>Top 50</option></select> -->
-            <canvas id="departmentChart"></canvas>
-          </div>
-        </div>
-      </div>
-    @endcan --}}
 
   </div>
-  <!-- <div class="row mb-4"><div class="col-xxl-4"><div class="card"><div class="card-header text-center p-5"><h5>Graf serial apps vs day</h5></div><div class="card-body"><canvas id="appsChart"></canvas></div></div></div><div class="col-xxl-4"><div class="card"><div class="card-header text-center p-5"><h5>Graf serial domain vs day</h5></div><div class="card-body"><canvas id="domainChart"></canvas></div></div></div><div class="col-xxl-4"><div class="card"><div class="card-header text-center p-5"><h5>Graf serial sasl vs day</h5></div><div class="card-body"><canvas id="saslChart"></canvas></div></div></div></div> -->
   <div class="row">
     @can('serial_mail_queue_chart')
     <div class="col-xxl-12">
@@ -278,7 +161,6 @@
         <div class="card-header text-center p-3">
           <h5>RealTime Service Status</h5> @php $status = 'Online'; @endphp
         </div>
-        {{--<div class="card-body mainRealtime" style="min-height: auto; max-height: 800px;overflow-y: auto;">--}}
         <div class="card-body mainRealtime"  style="overflow-y: auto;">
 
             <div class="table-responsive">
@@ -322,54 +204,6 @@
                 </table>
                 </div>
             </div>
-
-            {{-- @foreach ($serverconfig as $server)
-                    <h5>{{ $server->hostname }}</h5>
-                    <div class="card-body">
-                        <div class="row">
-                            <div class="col-xl-4 mb-4">
-                                <a class="card h-100 mService" href="{{ route('manageService.index', ['server_id' => $server->id, 'server_type' => 'postfix']) }}">
-                                    <div class="card-body cardService d-flex justify-content-center flex-column">
-                                        <div class="d-flex align-items-center justify-content-between">
-                                            <div class="me-3">
-                                                <h5>Postfix</h5>
-                                            </div>
-                                            <img id="statusPostfixImage{{ $loop->index }}" src="{{ asset('assets/img/demo/offline.png') }}" alt="Postfix is down" style="width: 5rem">
-                                        </div>
-                                        <p id="statusPostfix{{ $loop->index }}" style="display: inline-block; margin-left: 5px;">--</p>
-                                    </div>
-                                </a>
-                            </div>
-                            <div class="col-xl-4 mb-4">
-                                <a class="card h-100 mService" href="{{ route('manageService.index', ['server_id' => $server->id , 'server_type' => 'apache']) }}">
-                                    <div class="card-body cardService d-flex justify-content-center flex-column">
-                                        <div class="d-flex align-items-center justify-content-between">
-                                            <div class="me-3">
-                                                <h5>Apache</h5>
-                                            </div>
-                                            <img id="statusApache2Image{{ $loop->index }}" src="{{ asset('assets/img/demo/offline.png') }}" alt="Apache2 is down" style="width: 5rem">
-                                        </div>
-                                        <p id="statusApache2{{ $loop->index }}" style="display: inline-block; margin-left: 5px;">--</p>
-                                    </div>
-                                </a>
-                            </div>
-                            <div class="col-xl-4 mb-4">
-                                <a class="card h-100 mService" href="{{ route('manageService.index', ['server_id' => $server->id, 'server_type' => 'webmin']) }}">
-                                    <div class="card-body cardService d-flex justify-content-center flex-column">
-                                        <div class="d-flex align-items-center justify-content-between">
-                                            <div class="me-3">
-                                                <h5>Webmin</h5>
-                                            </div>
-                                            <img id="statusWebminImage{{ $loop->index }}" src="{{ asset('assets/img/demo/offline.png') }}" alt="Webmin is down" style="width: 5rem">
-                                        </div>
-                                        <p id="statusWebmin{{ $loop->index }}" style="display: inline-block; margin-left: 5px;">--</p>
-                                    </div>
-                                </a>
-                            </div>
-                        </div>
-                    </div>
-
-            @endforeach --}}
         </div>
       </div>
     </div>
@@ -380,7 +214,6 @@
 @endsection
 @push('script')
 <script src="{{ asset('js/vendor/Chart.min.js') }}"></script>
-{{-- <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.4/Chart.min.js" crossorigin="anonymous"></script> --}}
 <script>
   document.addEventListener('DOMContentLoaded', function () {
     function getRandomColor() {
@@ -454,43 +287,6 @@
     });
 
 
-
-
-
-
-
-
-
-        // const serverListMinistry = @json($serverListMinistry);
-
-        // serverListMinistry.forEach((server, index) => {
-        //     const ctx = document.getElementById(`chartMinistry-${index}`).getContext('2d');
-        //     const labels = server.ministry.map(item => item.ministry);
-        //     const data = server.ministry.map(item => item.totalMinistry);
-
-        //     const datasets = labels.map((label, i) => ({
-        //         label: label,
-        //         data: [data[i]],
-        //         backgroundColor: getRandomColor(),
-        //         borderColor: getRandomColor(),
-        //         borderWidth: 1
-        //     }));
-
-        //     new Chart(ctx, {
-        //         type: 'bar',
-        //         data: {
-        //             labels: labels,
-        //             datasets: datasets
-        //         },
-        //         options: {
-        //             scales: {
-        //                 y: {
-        //                     beginAtZero: true
-        //                 }
-        //             }
-        //         }
-        //     });
-        // })
     });
 </script>
 
@@ -522,95 +318,10 @@ function getRandomColor() {
     return color;
 }
 
-// renderChartKementerian();
-// function renderChartKementerian() {
-//     var ctx = document.getElementById('kementerianChart').getContext('2d');
-//     window.kementerianChart = new Chart(ctx, {
-//         type: 'bar',
-//         data: {
-//             labels: <?php echo json_encode($filteredMinistries); ?>,
-//             datasets: <?php
-//                       $datasets = [];
-//                       foreach ($serverList as $server) {
-//                           $serverHostname = $server['hostname'];
-//                           $color = sprintf('#%06X', mt_rand(0, 0xFFFFFF));
-//                           $data = collect($departmentCounts)->map(function ($data) use ($serverHostname) {
-//                               return $data['postmasters'] === $serverHostname ? $data['count'] : 0;
-//                           })->values()->toArray(); // Convert to array
-//                           $datasets[] = [
-//                               'label' => $serverHostname,
-//                               'data' => $data,
-//                               'backgroundColor' => $color, // Corrected syntax
-//                               'borderColor' => '#4e73df',
-//                               'borderWidth' => 1
-//                           ];
-//                   }
-//                       echo json_encode($datasets);
-//                       ?>
-//         },
-//         options: {
-//             scales: {
-//                 y: {
-//                     beginAtZero: true
-//                 }
-//             },
-//             plugins: {
-//                 legend: {
-//                     display: true,
-//                     position: 'bottom',
-//                 }
-//             }
-//         }
-//     });
-// }
-
-// renderChart();
-// function renderChart() {
-//     var departmentChart = document.getElementById('departmentChart').getContext('2d');
-//     window.chart = new Chart(departmentChart, {
-//         type: 'bar',
-//         data: {
-//             labels: <?php echo json_encode($filteredDept); ?>,
-//             datasets: <?php
-//                       $datasets = [];
-//                       foreach ($serverList as $server) {
-//                           $serverHostname = $server['hostname'];
-//                           $color = sprintf('#%06X', mt_rand(0, 0xFFFFFF));
-//                           $data = collect($departmentCounts2)->map(function ($data) use ($serverHostname) {
-//                               return $data['postmasters'] === $serverHostname ? $data['count'] : 0;
-//                           })->values()->toArray(); // Convert to array
-//                           $datasets[] = [
-//                               'label' => $serverHostname,
-//                               'data' => $data,
-//                               'backgroundColor' => $color, // Corrected syntax
-//                               'borderColor' => '#4e73df',
-//                               'borderWidth' => 1
-//                           ];
-//                       }
-//                       echo json_encode($datasets);
-//                       ?>
-//         },
-//         options: {
-//             scales: {
-//                 y: {
-//                     beginAtZero: true
-//                 }
-//             },
-//             plugins: {
-//                 legend: {
-//                     display: true,
-//                     position: 'bottom',
-//                 }
-//             }
-//         }
-//     });
-// }
 
 function randomColor() {
     return '#' + Math.floor(Math.random() * 16777215).toString(16);
 }
-
-// var data = [];
 
 function generateServerData(serverName, cleanResponse) {
 
@@ -661,7 +372,7 @@ function formatDate(date) {
 
 
 @foreach ($serverconfig as $server)
-var serverMailRelay1{{$loop->iteration}} = "{{ $server->hostname }}";
+var serverMailRelay1{{$loop->iteration}} = "{{ $server->subhostname }}";
 serverIpaddresses1.push(serverMailRelay1{{$loop->iteration}});
 @endforeach
 
@@ -673,7 +384,7 @@ function connectAndProcess(hostname1, index) {
     const socket1 = new WebSocket(serverAddress1);
 
     socket1.onopen = function() {
-        console.log("Connected to " + serverAddress1);
+        //console.log("Connected to " + serverAddress1);
 
         // Send any initial message if needed
         // socket.send("Initial message or request data");
@@ -717,11 +428,11 @@ function connectAndProcess(hostname1, index) {
     };
 
     socket1.onerror = function(error) {
-        console.error("WebSocket Error for " + serverAddress1 + ": ", error);
+        //console.error("WebSocket Error for " + serverAddress1 + ": ", error);
     };
 
     socket1.onclose = function() {
-        console.log("WebSocket connection closed for " + serverAddress1);
+        //console.log("WebSocket connection closed for " + serverAddress1);
     };
 
     sockets.push(socket1);
@@ -731,17 +442,6 @@ function connectAndProcess(hostname1, index) {
 serverIpaddresses1.forEach(function(hostname, index) {
     connectAndProcess(hostname, index);
 });
-
-// // start reopen connection
-// function reopenConnections() {
-//     serverIpaddresses1.forEach(function(hostname, index) {
-//         connectAndProcess(hostname, index);
-//     });
-// }
-
-// // Call the reopenConnections function after 3 minutes
-// setTimeout(reopenConnections, 3 * 60 * 1000);
-// // end reopen connection
 
 var ctx = document.getElementById('mailQueueChart').getContext('2d');
 var mailQueueChart = new Chart(ctx, {
@@ -787,7 +487,7 @@ var mailQueueChart = new Chart(ctx, {
 });
 
 @foreach ($serverconfig as $server)
-let serverMailRelay{{$loop->iteration}} = "{{ $server->hostname }}";
+let serverMailRelay{{$loop->iteration}} = "{{ $server->subhostname }}";
 serverIpaddresses.push(serverMailRelay{{$loop->iteration}});
 @endforeach
 

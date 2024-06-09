@@ -185,7 +185,7 @@ class MainRelayController extends Controller
             ]),
             'user_agent' => $request->userAgent(),
         ]);
-        
+
         $successMessage = 'Form updated!';
         return response()->json(['message' => $successMessage]);
         }else{
@@ -251,7 +251,7 @@ class MainRelayController extends Controller
         $role = $user->roles->isNotEmpty() ? $user->roles->pluck('name')->first() : null;
         $serverIds = RoleServer::whereIn('role_servers.role_id', $user->roles->pluck('id')->all())
         ->leftJoin('servers','servers.id','role_servers.server_id')
-        ->where('servers.status',1)
+        ->where('servers.status_cluster',1)
         ->pluck('server_id');
 
         //$serverconfig = Server::where('status', 1)->get();
@@ -261,9 +261,8 @@ class MainRelayController extends Controller
         $defaultServerId = $serverIds->min();
 
         // Filter servers based on the fetched IDs
-        $serverconfig = Server::whereIn('id', $serverIds)
-            ->where('status', 1)->orderBy('id', 'asc')
-            ->pluck('hostname', 'id');
+        $serverconfig = Server::where('status_cluster', 1)->orderBy('id', 'asc')
+            ->pluck('subhostname', 'id');
 
 
             ActivityLog::create([

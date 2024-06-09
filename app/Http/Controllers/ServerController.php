@@ -116,6 +116,7 @@ class ServerController extends Controller
             // Check and insert primary1 (sub-server 1)
             if (!empty($validatedData['primary1name']) && !empty($validatedData['primary1ip'])) {
                 $primary1 = new Server();
+                $primary1->hostname = $validatedData['hostname'];
                 $primary1->subhostname = $validatedData['primary1name'];
                 $primary1->ipaddress = $validatedData['primary1ip'];
                 $primary1->status = null;  // Assuming null status indicates a sub-server
@@ -123,11 +124,19 @@ class ServerController extends Controller
                 $primary1->status_cluster = 0; // Assuming status_cluster = 1 indicates active cluster
                 $primary1->master_id = $master->id;
                 $primary1->save();
+
+                $roles = Role::get();
+
+                foreach ($roles as $role) {
+                    DB::insert('INSERT INTO role_servers (role_id, server_id) VALUES (?, ?)', [$role->id,$primary1->id]);
+
+                }
             }
 
             // Check and insert primary2 (sub-server 2)
             if (!empty($validatedData['primary2name']) && !empty($validatedData['primary2ip'])) {
                 $primary2 = new Server();
+                $primary2->hostname = $validatedData['hostname'];
                 $primary2->subhostname = $validatedData['primary2name'];
                 $primary2->ipaddress = $validatedData['primary2ip'];
                 $primary2->status = null;  // Assuming null status indicates a sub-server
@@ -135,19 +144,21 @@ class ServerController extends Controller
                 $primary2->status_cluster = 0; // Assuming status_cluster = 1 indicates active cluster
                 $primary2->master_id = $master->id;
                 $primary2->save();
+
+                $roles2 = Role::get();
+
+                foreach ($roles2 as $role) {
+                    DB::insert('INSERT INTO role_servers (role_id, server_id) VALUES (?, ?)', [$role->id,$primary2->id]);
+
+                }
             }
 
             // Commit the transaction
             DB::commit();
 
-        $roles = Role::get();
 
-        foreach ($roles as $role) {
-            DB::insert('INSERT INTO role_servers (role_id, server_id) VALUES (?, ?)', [$role->id, $master->id]);
 
-        }
 
-             
         } catch (\Exception $e) {
             // Rollback the transaction in case of error
             DB::rollBack();
@@ -170,7 +181,7 @@ class ServerController extends Controller
             'method' => $request->method(),
             'ip_address' => $request->ip(),
             'input' => json_encode([
-                'server' => $server,
+                'server' => $validatedData,
                 'request' => $request->except(['password']),
             ]),
             'user_agent' => $request->userAgent(),
@@ -238,10 +249,12 @@ class ServerController extends Controller
         // Handle the sub-servers update
         $subServersData = [
             [
+                'hostname' => $validatedData['hostname'],
                 'subhostname' => $validatedData['primary1name'],
                 'ipaddress' => $validatedData['primary1ip'],
             ],
             [
+                'hostname' => $validatedData['hostname'],
                 'subhostname' => $validatedData['primary2name'],
                 'ipaddress' => $validatedData['primary2ip'],
             ]
@@ -254,13 +267,13 @@ class ServerController extends Controller
             'method' => $request->method(),
             'ip_address' => $request->ip(),
             'input' => json_encode([
-                'server' => $server,
+                'server' => $validatedData,
                 'request' => $request->except(['password']),
             ]),
             'user_agent' => $request->userAgent(),
         ]);
 
-        return redirect()->route('server.index')->with('success', 'Server details updated successfully');
+        // return redirect()->route('server.index')->with('success', 'Server details updated successfully');
 
         foreach ($subServersData as $subData) {
             if (!empty($subData['subhostname']) && !empty($subData['ipaddress'])) {
@@ -271,16 +284,18 @@ class ServerController extends Controller
 
                 if ($subServer) {
                     // Update the existing sub-server
+                    $subServer->hostname = $subData['hostname'];
+                    $subServer->subhostname = $subData['subhostname'];
                     $subServer->ipaddress = $subData['ipaddress'];
                     $subServer->save();
                 } else {
                     // Create a new sub-server if it doesn't exist
                     Server::create([
-                        'hostname' => $subData['subhostname'], // Assuming 'hostname' field
+                        'hostname' => $subData['hostname'],
                         'subhostname' => $subData['subhostname'],
                         'ipaddress' => $subData['ipaddress'],
                         'server_type' => 1,  // Assuming server_type = 1 indicates a sub-server
-                        'status_cluster' => 1, // Assuming status_cluster = 1 indicates active cluster
+                        //'status_cluster' => 1, // Assuming status_cluster = 1 indicates active cluster
                         'master_id' => $server->id,
                     ]);
                 }

@@ -28,16 +28,30 @@ class ManageServiceController extends Controller
         $defaultServerId = $serverIds->min();
 
         // Filter servers based on the fetched IDs
-        $serverconfig =  Server::whereIn('id', $serverIds)
-            ->where('status', 1)->orderBy('id', 'asc')
-            ->select('id', 'hostname', 'ipaddress')
+        $serverconfig =  Server::whereIn('master_id', $serverIds)
+            ->whereIn('status_cluster', [1,0])->orderBy('id', 'asc')
+            ->select('id', 'subhostname', 'ipaddress')
             ->get();
 
         $serverList = [];
         $listServer = Server::whereIn('id', $serverIds)->where('status', 1)->orderBy('id', 'asc')->get();
         foreach ($listServer as $server) {
+            $subServer = Server::where('master_id',$server->id)->orderBy('status_cluster','desc')->get();
+
+            $subs=[];
+            foreach($subServer as $subServers){
+                $subs[] = [
+                    'subsid' => $subServers->id,
+                    'subhostname' => $subServers->subhostname,
+                    'subIpaddress' => $subServers -> ipaddress
+                ];
+            }
+
             $serverList[] = [
-                'hostname' => $server->hostname
+                'id' => $server->id,
+                'hostname' => $server->hostname,
+                'ipaddress' => $server ->ipaddress,
+                'subsDataHostname' => $subs
             ];
         }
 
@@ -56,14 +70,13 @@ class ManageServiceController extends Controller
         ]);
 
         //return view('manageService.index');
-        return view('manageService.index',
-            compact('user', 'role', 'serverconfig', 'serverList','defaultServerId'));
+        return view('manageService.index',compact('user', 'role', 'serverconfig', 'serverList','defaultServerId','serverList'));
     }
 
 
 
     public function start(Request $request){
-        $serverId = Server::where('hostname', $request->input('server'))->first();
+        $serverId = Server::where('subhostname', $request->input('server'))->first();
         $oldValues = [];
         $oldValuesJson = json_encode($oldValues);
         $newValues=[
@@ -89,7 +102,7 @@ class ManageServiceController extends Controller
     }
 
     public function stop(Request $request){
-        $serverId = Server::where('hostname', $request->input('server'))->first();
+        $serverId = Server::where('subhostname', $request->input('server'))->first();
         $oldValues = [];
         $oldValuesJson = json_encode($oldValues);
         $newValues=[
@@ -114,7 +127,7 @@ class ManageServiceController extends Controller
     }
 
     public function restart(Request $request){
-        $serverId = Server::where('hostname', $request->input('server'))->first();
+        $serverId = Server::where('subhostname', $request->input('server'))->first();
         $oldValues = [];
         $oldValuesJson = json_encode($oldValues);
         $newValues=[

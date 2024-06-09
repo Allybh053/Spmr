@@ -562,7 +562,7 @@
                 const serverAddress = 'wss://spmr.mygovuc.gov.my/'+subhostname;
                 //console.log(serverAddress);
                 const socket = new WebSocket(serverAddress);
-
+                //console.log(selectedValuetype_req);
                 socket.addEventListener('open', (event) => {
                     let command = '';
 
@@ -570,18 +570,22 @@
                         command = `grep -q '^${ipAddress}' /opt/cluster/postfix/access_list && echo "IP address already Registered!"`;
                     }
                     if (selectedValuetype_req == 2) {
+
                         command = `grep -q '^#${ipAddress}' /opt/cluster/postfix/access_list && echo "IP address already Terminated!" || (grep -q '^${ipAddress}' /opt/cluster/postfix/access_list || echo "IP address not Registered to Terminate!")`;
+                        //console.log("command"+ command);
                     }
 
                     if (command) {
+                        //console.log(command);
                         socket.send(command);
                     }
                 });
 
                 socket.addEventListener('message', (event) => {
                     const response = event.data;
+                    //console.log("masuk"+response);
                     if (selectedValuetype_req == 1) {
-                    if (response.includes('IP address already Registered!')) {
+                        if (response.includes('IP address already Registered!')) {
                             submitBtn.disabled = true;
                             $(this).addClass('is-invalid');
                             $('#resultContainer').html(response);
@@ -589,22 +593,21 @@
                             submitBtn.disabled = false;
                             $('#resultContainer').empty();
                         }
-                    }
-                    if (selectedValuetype_req == 2) {
-                    if (response.includes('IP address already Terminated!')) {
-                        //console.log(response);
-                        submitBtn.disabled = true;
-                        $(this).addClass('is-invalid');
-                        $('#resultContainer').html(response);
-                    } else if (response.includes('IP address not Registered to Terminate!')) {
-                        //console.log(response);
-                        submitBtn.disabled = true;
-                        $(this).addClass('is-invalid');
-                        $('#resultContainer').html(response);
-                    } else {
-                        submitBtn.disabled = false;
-                        $('#resultContainer').empty();
-                    }
+                    } else if (selectedValuetype_req == 2) {
+                        if (response.includes('IP address already Terminated!')) {
+                            console.log("IP address already Terminated!"+response);
+                            submitBtn.disabled = true;
+                            $(this).addClass('is-invalid');
+                            $('#resultContainer').html(response);
+                        } else if (response.includes('IP address not Registered to Terminate!')) {
+                            console.log("IP address not Registered to Terminate!"+response);
+                            submitBtn.disabled = true;
+                            $(this).addClass('is-invalid');
+                            $('#resultContainer').html(response);
+                        } else {
+                            submitBtn.disabled = false;
+                            $('#resultContainer').empty();
+                        }
                     }
                     socket.close();
                 });
