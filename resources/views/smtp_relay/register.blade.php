@@ -562,7 +562,7 @@
 
             if (/^(?:[0-9]{1,3}\.){3}[0-9]{1,3}$/.test(ipAddress)) {
                 const serverAddress = 'wss://spmr.mygovuc.gov.my/' + subhostname;
-                //console.log("WebSocket URL: " + serverAddress);
+                console.log("WebSocket URL: " + serverAddress);
                 const socket = new WebSocket(serverAddress);
 
                 socket.addEventListener('open', (event) => {
@@ -583,7 +583,7 @@
 
                 socket.addEventListener('message', (event) => {
                     const response = event.data;
-                    //console.log("Received response: " + response);
+                    console.log("Received response: " + response);
 
                     if (selectedValuetype_req == 1) {
                         if (response.includes('IP address already Registered!')) {
