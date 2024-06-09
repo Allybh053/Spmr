@@ -64,10 +64,10 @@ class DashboardController extends Controller
                     ->leftJoin('smtp_relay_server', 'smtp_relay_req_form.form_id', '=', 'smtp_relay_server.form_id')
                     ->where('smtp_relay_req_form.status', 1)
                     ->where('smtp_relay_req_form.sub_smtp_relay_server', $subServers->subhostname)
-                    ->count(); 
+                    ->count();
 
                 $subDataDomain = DB::table('mailrouting')
-                    ->where('mailrouting.server', $subServers->subhostname)
+                    ->where('mailrouting.server', $subServers->hostname)
                     ->count();
 
                 $subDataSasl = DB::table('smtp_relay_req_form')
