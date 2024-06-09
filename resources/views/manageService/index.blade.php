@@ -223,13 +223,13 @@ var commands = [
 
 serverIpaddresses.forEach((subhostname, index) => {
 const serverAddress = 'wss://spmr.mygovuc.gov.my/' + subhostname;
-console.log(serverAddress);
+// console.log(serverAddress);
 
 const socket = new WebSocket(serverAddress);
 sockets.push(socket);
 
 socket.addEventListener('open', () => {
-    console.log('WebSocket connection established with ' + subhostname);
+    // console.log('WebSocket connection established with ' + subhostname);
     commands.forEach((commandObj, commandIndex) => {
         setTimeout(() => {
             socket.send(commandObj.command);
@@ -240,8 +240,8 @@ socket.addEventListener('open', () => {
 var outputs = [];
 socket.addEventListener('message', (event) => {
     const response = event.data;
-    console.log(response);
-    console.log(cleanlSubhostnames[index]);
+    // console.log(response);
+    // console.log(cleanlSubhostnames[index]);
     if (response.includes('Postfix')) {
         updateStatus(response, 'statusPostfixImage'+cleanlSubhostnames[index],'statusPostfix'+cleanlSubhostnames[index]);
     } else if (response.includes('Webmin')) {
@@ -252,7 +252,7 @@ socket.addEventListener('message', (event) => {
 });
 
 socket.addEventListener('close', () => {
-    console.log('WebSocket connection closed with ' + subhostname);
+    // console.log('WebSocket connection closed with ' + subhostname);
 });
 
 socket.addEventListener('error', (error) => {
@@ -261,7 +261,7 @@ socket.addEventListener('error', (error) => {
 });
 
 function updateStatus(response, imageId,cleanlSubhostnames) {
-console.log('#' + cleanlSubhostnames);
+// console.log('#' + cleanlSubhostnames);
 $('#' +cleanlSubhostnames).text(response);
 let statusText;
 let altText;
@@ -286,9 +286,9 @@ $('#' + imageId).attr('src', imageSrc).attr('alt', altText);
     // Start //
     function startPostfixServices(subhostname) {
         const selectedServer = $('#postfixStart'+subhostname).data('value');
-        console.log(selectedServer);
+        // console.log(selectedServer);
         const serverAddress = 'wss://spmr.mygovuc.gov.my/'+ selectedServer;
-        console.log(selectedServer);
+        // console.log(selectedServer);
         const socket = new WebSocket(serverAddress);
 
         socket.addEventListener('open', (event) => {
@@ -367,7 +367,7 @@ $('#' + imageId).attr('src', imageSrc).attr('alt', altText);
         socket.addEventListener('message', (event) => {
             //alert("Postfix services successfully stopped on " + selectedServer);
             const response = event.data;
-            console.log(response);
+            // console.log(response);
             if (response.includes('Failed')) {
                 alert("Failed to stop Postfix services on " + selectedServer);
             } else {
@@ -408,11 +408,11 @@ $('#' + imageId).attr('src', imageSrc).attr('alt', altText);
                 },
                 success: function(response) {
                     // Handle success response if needed
-                    console.log(response);
+                    // console.log(response);
                 },
                 error: function(xhr, status, error) {
                     // Handle error response if needed
-                    console.error(error);
+                    // console.error(error);
                 }
             });
         } else {
@@ -476,7 +476,7 @@ $('#' + imageId).attr('src', imageSrc).attr('alt', altText);
                 },
                 success: function(response) {
                     // Handle success response if needed
-                    console.log(response);
+                    // console.log(response);
                 },
                 error: function(xhr, status, error) {
                     // Handle error response if needed
@@ -548,7 +548,7 @@ $('#' + imageId).attr('src', imageSrc).attr('alt', altText);
             },
             success: function(response) {
                 // Handle success response if needed
-                console.log(response);
+                // console.log(response);
             },
             error: function(xhr, status, error) {
                 // Handle error response if needed
@@ -614,7 +614,7 @@ $('#' + imageId).attr('src', imageSrc).attr('alt', altText);
                 },
                 success: function(response) {
                     // Handle success response if needed
-                    console.log(response);
+                    // console.log(response);
                 },
                 error: function(xhr, status, error) {
                     // Handle error response if needed
@@ -681,7 +681,7 @@ $('#' + imageId).attr('src', imageSrc).attr('alt', altText);
                 },
                 success: function(response) {
                     // Handle success response if needed
-                    console.log(response);
+                    // console.log(response);
                 },
                 error: function(xhr, status, error) {
                     // Handle error response if needed
@@ -754,7 +754,7 @@ $('#' + imageId).attr('src', imageSrc).attr('alt', altText);
                 },
                 success: function(response) {
                     // Handle success response if needed
-                    console.log(response);
+                    // console.log(response);
                 },
                 error: function(xhr, status, error) {
                     // Handle error response if needed
@@ -820,7 +820,7 @@ $('#' + imageId).attr('src', imageSrc).attr('alt', altText);
                 },
                 success: function(response) {
                     // Handle success response if needed
-                    console.log(response);
+                    // console.log(response);
                 },
                 error: function(xhr, status, error) {
                     // Handle error response if needed
@@ -887,7 +887,7 @@ $('#' + imageId).attr('src', imageSrc).attr('alt', altText);
                 },
                 success: function(response) {
                     // Handle success response if needed
-                    console.log(response);
+                    // console.log(response);
                 },
                 error: function(xhr, status, error) {
                     // Handle error response if needed
