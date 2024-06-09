@@ -59,8 +59,7 @@ class MainRelayController extends Controller
         $type_req = $request->input('type_req');
 
         $result = DB::select("
-            SELECT srs.*
-            FROM smtp_relay_req_form srrf
+            SELECT srs.* FROM smtp_relay_req_form srrf
             JOIN smtp_relay_server srs ON srrf.id = srs.smtpid
             WHERE srrf.smtp_relay_server = ?
               AND srrf.status = 0
@@ -92,7 +91,7 @@ class MainRelayController extends Controller
             $form_id = $result[0]->form_id;
             return response()->json(['exists' => true, 'message' => 'IP address found in Pending Listing Request Form, Serial Number '.$form_id]);
         } else {
-            //return response()->json(['exists' => false, 'message' => 'IP address not found in the database']);
+            return response()->json(['exists' => false, 'message' => 'IP address not found in the database']);
         }
     }
 
@@ -113,12 +112,17 @@ class MainRelayController extends Controller
         $user = Auth::user();
 
         $smtpreq = SmtpRelayReqForm::find($id);
+        $mailhostname = Server::where('hostname',$smtpreq->smtp_relay_server)->first();
+        $subhostname = Server::where('master_id',$mailhostname->id)
+                    ->where('status_cluster',1)
+                    ->first();
 
         $smtpMailServers = smtp_relay_server::where('form_id',$smtpreq->form_id)
                 ->where('types_req',$smtpreq->types_req)
                 ->get();
 
-        return view('mailrelay.edit', compact('user','smtpMailServers','smtpreq'));
+
+        return view('mailrelay.edit', compact('user','smtpMailServers','smtpreq','subhostname'));
     }
 
     public function papar(Request $request,$id, $type){
@@ -181,7 +185,7 @@ class MainRelayController extends Controller
             ]),
             'user_agent' => $request->userAgent(),
         ]);
-        
+
         $successMessage = 'Form updated!';
         return response()->json(['message' => $successMessage]);
         }else{
@@ -200,81 +204,6 @@ class MainRelayController extends Controller
         $types_req = $request->input("types_req");
         $form_id = $request->input("form_id");
 
-        if ($types_req == 1 ){
-            // $access_list = preg_replace('/^.*$/m', '$0;', $access_list);
-            // $lines = explode("\n", $access_list);
-
-            // foreach ($lines as &$line) {
-            //     $line = trim($line) . $request->get('formId');
-            // }
-            // $access_list = implode("\n", $lines);
-
-            // $filePath = storage_path($smtp_relay_server.'/postfix/access_list');
-
-            // $file = fopen($filePath, 'a');
-
-            // fwrite($file, $access_list . PHP_EOL);
-
-            // fclose($file);
-        } else if ($types_req == 2){
-            // $filePath = storage_path($smtp_relay_server.'/postfix/access_list');
-
-            // $fileContent = file_get_contents($filePath);
-            // $lines = explode("\n", $fileContent);
-            // $ipFound = false;
-
-            // foreach (explode("\n", $access_list) as $access_line) {
-
-            //     $access_ip = explode('#', $access_line)[0];
-            //     $access_ip = trim($access_ip);
-
-            //     if (!empty($access_ip)) {
-            //         foreach ($lines as &$line) {
-            //             // Trim leading and trailing whitespace from the file content line
-            //             $trimmed_line = trim($line);
-
-            //             // Split the file content line by '#' and take the first part
-            //             $file_ip = explode('#', $trimmed_line)[0];
-
-            //             // Trim leading and trailing whitespace from the file IP
-            //             $file_ip = trim($file_ip);
-
-            //             // Check if the access IP matches the file IP
-            //             if ($file_ip === $access_ip) {
-            //                 // If the access IP is found, prepend '#' to the line
-            //                 $line = '#' . $line;
-            //                 $ipFound = true;
-            //                 break;
-            //             }
-
-            //         }
-            //         // If the IP was not found in the existing lines, add it as a new line
-            //         if (!$ipFound) {
-            //             $lines[] = "#$access_ip #";
-            //         }
-
-            //         $record = smtp_relay_server::where('ip_addr_server', $access_ip)
-            //         ->where('form_id', $form_id)
-            //         ->first();
-            //         if ($record) {
-            //             // If the record exists, update the deactivated field
-            //             $record->update(['deactivated' => 1]);
-            //         }
-            //     }
-
-            // }
-
-            // // Join the lines back together
-            // $newContent = implode("\n", $lines);
-
-            // // Write the modified content back to the file
-            // file_put_contents($filePath, $newContent);
-
-        }else{
-            //set outbound type of request here
-            $Message = 'Contact Administrator';
-            return response()->json(['message' => $Message]);
-        }
 
         $smtp_username = $request->input("smtp_username");
         $smtp_password = $request->input("smtp_password");
@@ -322,7 +251,7 @@ class MainRelayController extends Controller
         $role = $user->roles->isNotEmpty() ? $user->roles->pluck('name')->first() : null;
         $serverIds = RoleServer::whereIn('role_servers.role_id', $user->roles->pluck('id')->all())
         ->leftJoin('servers','servers.id','role_servers.server_id')
-        ->where('servers.status',1)
+        ->where('servers.status_cluster',1)
         ->pluck('server_id');
 
         //$serverconfig = Server::where('status', 1)->get();
@@ -332,9 +261,8 @@ class MainRelayController extends Controller
         $defaultServerId = $serverIds->min();
 
         // Filter servers based on the fetched IDs
-        $serverconfig = Server::whereIn('id', $serverIds)
-            ->where('status', 1)->orderBy('id', 'asc')
-            ->pluck('hostname', 'id');
+        $serverconfig = Server::where('status_cluster', 1)->orderBy('id', 'asc')
+            ->pluck('subhostname', 'id');
 
 
             ActivityLog::create([
@@ -387,5 +315,7 @@ class MainRelayController extends Controller
             'dataMailRoute' => $valDataMailRoute,
         ]);
     }
+
+
 
 }

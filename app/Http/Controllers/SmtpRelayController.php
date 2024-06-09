@@ -75,44 +75,11 @@ class SmtpRelayController extends Controller
         $agency = $request->input('agency');
         $calendarType = $request->input('calendarType');
 
-        // Start building the query, xnk guna yg ni
-        // $query =  SmtpRelayReqForm::select('smtp_relay_req_form.*', 'smtp_relay_server.ip_addr_server')
-        //     ->leftJoin('smtp_relay_server', 'smtp_relay_req_form.form_id', '=', 'smtp_relay_server.form_id');
-
-        // $query = smtp_relay_server::select(
-        //     DB::raw('DISTINCT smtp_relay_req_form.updated_at as updated_at'),
-        //     'smtp_relay_req_form.form_id as formA',
-        //     'smtp_relay_req_form.ticket_id',
-        //     'agencies.name as agencies',
-        //     'smtp_relay_req_form.project_name',
-        //     'smtp_relay_req_form.smtp_relay_server',
-        //     'smtp_relay_req_form.date_verification_3',
-        //     'smtp_relay_server.types_req as typeB',
-        //     'smtp_relay_server.ip_addr_server',
-        //     'smtp_relay_server.id as detailID',
-        //     'smtp_relay_server.smtpid',
-        //     'smtp_relay_server.created_at as created_at',
-        //     'smtp_relay_server.server_name',
-        //     'smtp_relay_req_form.status as status'
-        // )
-        // ->leftJoin('smtp_relay_req_form', 'smtp_relay_req_form.id', '=', 'smtp_relay_server.smtpid')
-        // ->leftJoin('agencies', 'agencies.id', DB::raw('CAST(agencies.id AS bigint)'))
-        // ->orderby('smtp_relay_req_form.status', 'asc')
-        // ->orderBy('smtp_relay_server.created_at', 'desc');
-
         $query = smtp_relay_server::select('smtp_relay_req_form.updated_at as updated_at','smtp_relay_req_form.form_id as formA', 'smtp_relay_req_form.ticket_id', 'agencies.name as agencies', 'smtp_relay_req_form.project_name', 'smtp_relay_req_form.smtp_relay_server', 'smtp_relay_req_form.date_verification_3', 'smtp_relay_server.types_req as typeB', 'smtp_relay_server.ip_addr_server','smtp_relay_server.id as detailID', 'smtp_relay_server.smtpid','smtp_relay_server.created_at as created_at', 'smtp_relay_server.server_name', 'smtp_relay_req_form.status as status')
                 ->leftJoin('smtp_relay_req_form', 'smtp_relay_req_form.id', '=', 'smtp_relay_server.smtpid')
-                // ->leftJoin('agencies','agencies.id','=','smtp_relay_req_form.agencies')
                 ->leftJoin('agencies','agencies.id','=',DB::raw('CAST(smtp_relay_req_form.agencies AS bigint)'))
                 ->orderby('smtp_relay_req_form.status','asc')
                 ->orderBy('created_at', 'desc');
-                //->leftJoin('ministrys','ministrys.id',DB::raw('CAST(agencies.ministry AS bigint)'))
-        // Apply filters based on search parameters
-        // if (!empty($agency)) {
-        //   $query->where('agency_column', $agency); // Replace 'agency_column' with the actual column name for agency in your database table
-        // }
-
-
 
       // Execute the query
       $application = $query->get();
@@ -183,7 +150,7 @@ class SmtpRelayController extends Controller
                 if (auth()->user()->can('smtp_mail_relay_view')) {
                     $data .= '<a class="btn btn-datatable btn-icon btn-transparent-dark me-2" href="'.route('smtp_relay.view',[$row['formA'],$row['typeB']]).'"><i class="fas fa-eye text-primary"></i></a>';
                 }
-                if ($row['status'] == 0) {
+                if ($row['status'] == 0 || $row['status'] == 2) {
                     if (auth()->user()->can('smtp_mail_relay_update')) {
                         $data .= '<a class="btn btn-datatable btn-icon btn-transparent-dark me-2" href="'.route('smtp_relay.kemaskini',[$row['smtpid'],$row['typeB']]).'"><i class="fas fa-edit text-primary"></i></a>';
                     }
@@ -382,6 +349,7 @@ class SmtpRelayController extends Controller
                 'est_no_email_sent_from_system_users_per_day' => $request->input('ensystem'),
                 'upload_copy_attachment' => $fileName,
                 'smtp_relay_server'=>$request->input('mailrelay'),
+                'sub_smtp_relay_server'=>$request->input('subhostname'),
                 'smtp_username'=>$request->input('authusername'),
                 'smtp_password'=>$request->input('authpassword'),
                 'smtp_port'=>$request->input('ports'),
@@ -603,6 +571,7 @@ class SmtpRelayController extends Controller
                 'est_no_email_sent_from_system_users_per_day' => $request->input('ensystem'),
                 'upload_copy_attachment' => $fileName,
                 'smtp_relay_server'=>$request->input('mailrelay'),
+                'sub_smtp_relay_server'=>$request->input('subhostname'),
                 'smtp_username'=>$request->input('authusername'),
                 'smtp_password'=>$request->input('authpassword'),
                 'smtp_port'=>$request->input('ports'),
@@ -756,7 +725,6 @@ class SmtpRelayController extends Controller
 
     public function kemaskinidata(Request $request,$id){
 
-
             // Check if a file was uploaded
         if ($request->hasFile('upload_copy_attachment')) {
             $relayDetails = SmtpRelayReqForm::where('form_id',$id)->first();
@@ -784,45 +752,6 @@ class SmtpRelayController extends Controller
             // No file was uploaded, set fileName to null
             $fileName = null;
         }
-
-        // $departowner = $request->input('dept_div_unit');
-        // $existingdepartonwer = Department::where('name', $departowner)->first();
-        // if(!$existingdepartonwer){
-        //     Department::create(['name'=>$departowner, 'status'=>1]);
-        // }
-        // $applicantdepart = $request->input('applicant_dept_div');
-        // $existingapplicantdepart = Department::where('name', $applicantdepart)->first();
-        // if(!$existingapplicantdepart){
-        //     Department::create(['name'=>$applicantdepart, 'status'=>1]);
-        // }
-        // $verifierdepart = $request->input('verifier_1_dept_div');
-        // $existingverifierdepart = Department::where('name', $verifierdepart)->first();
-        // if(!$existingverifierdepart){
-        //     Department::create(['name'=>$verifierdepart, 'status'=>1]);
-        // }
-        // $approvaldepart = $request->input('verifier_3_dept_div');
-        // $existingapprovaldepart = Department::where('name', $approvaldepart)->first();
-        // if(!$existingapprovaldepart){
-        //     Department::create(['name'=>$approvaldepart, 'status'=>1]);
-        // }
-
-        // $applicantposition = $request->input('applicant_position');
-        // $existingapplicantposition = Position::where('name', $applicantposition)->first();
-        // if(!$existingapplicantposition){
-        //     Position::create(['name'=>$applicantposition, 'status'=>1]);
-        // }
-        // $verifierposition = $request->input('verifier_1_position');
-        // $existingverifierposition = Position::where('name', $verifierposition)->first();
-        // if(!$existingverifierposition){
-        //     Position::create(['name'=>$verifierposition, 'status'=>1]);
-        // }
-
-        // $approvalposition =$request->input('verifier_3_position');
-        // $existingapprovalposition = Position::where('name', $approvalposition)->first();
-        // if(!$existingapprovalposition){
-        //     Position::create(['name'=>$approvalposition, 'status'=>1]);
-        // }
-
         // Update the main form data
         $formdata = $request->only([
             'ticket_id', 'types_req', 'project_name', 'system_owner_name', 'owner_email_addr', 'owner_phone_number',
@@ -831,7 +760,7 @@ class SmtpRelayController extends Controller
             'est_no_email_sent_from_system_users_per_day', 'applicant_name', 'applicant_position', 'applicant_dept_div',
             'date_application', 'verifier_1_name', 'verifier_1_position', 'verifier_1_dept_div', 'date_verification_1',
             'verifier_2_name', 'date_verification_2', 'verifier_3_name', 'verifier_3_position', 'verifier_3_dept_div',
-            'date_verification_3',
+            'date_verification_3','status','sub_smtp_relay_server'
         ]);
 
         $formdata['form_id'] = $id;
@@ -1002,6 +931,22 @@ class SmtpRelayController extends Controller
         $agency = Agency::where('ministry', $ministry)->pluck('name', 'id');
         return response()->json($agency);
 
+    }
+
+
+    public function getHostname(Request $request)
+    {
+        $selectedValue = $request->input('selectedValue');
+
+        // Query the Server table to get the hostname based on the selected value
+        $serverId  = Server::where('hostname', $selectedValue)->value('id');
+
+        // $subhostname = Server::where('master_id',$serverId)->where('status_cluster','=',1)->value('hostname');
+        $server = Server::where('master_id', $serverId)->where('status_cluster', 1)->first();
+        $subhostname = $server ? $server->subhostname : null;
+
+        // Return the hostname as JSON response
+        return response()->json(['subhostname' => $subhostname]);
     }
 
 }

@@ -74,26 +74,14 @@
                 <div class="row gx-3 mb-3">
                     <div class="col-md-6">
                         <label for="agency">Agency<span style="color: red"> *</span></label>
-                        <select class="form-control select2" name="agency" id="agency" disabled>
+                        <select class="form-control select2" name="agency" id="agency" disabled required>
                             <option disabled selected>Select Agency</option>
-                            {{-- @foreach ($agenciesArray as $agency)
-                            <option value="{{ $agency['name'] }}">{{ $agency['name'] }}</option>
-                            @endforeach --}}
                         </select>
                     </div>
                     <div class="col-md-6">
                         <label for="departowner">Department/Division/Unit</label>
-                        <input class="form-control" name="departowner" id="departowner" value="" required> </input>
+                        <input class="form-control" name="departowner" id="departowner" value=""> </input>
                     </div>
-                    {{-- <div class="col-md-6" id="departowner2" style="display:none;">
-                        <label for="departowner">Department/Division/Unit</label>
-                        <select class="form-control select2" name="departowner" id="departowner" required>
-                            <option disabled selected>Select Department/Division/Unit</option>
-                            @foreach ($departmentsArray as $department)
-                            <option value="{{ $department['name'] }}">{{ $department['name'] }}</option>
-                            @endforeach
-                        </select>
-                    </div> --}}
                 </div>
                 <div class="mb-3">
                     <label for="agencyadd">Agency Address</label>
@@ -119,6 +107,7 @@
                         <option value="{{ $server['hostname'] }}">{{ $server['hostname'] }}</option>
                         @endforeach
                     </select>
+                    <input type="hidden" id="subhostname" name="subhostname" value="">
                 </div>
                 <div class="mb-3">
                     <table class="table table-striped" id="tableA">
@@ -127,16 +116,16 @@
                                 <th scope="col">System Name<span style="color: red"> *</span></th>
                                 <th scope="col">IP Address<span style="color: red"> *</span></th>
                                 <th scope="col">Domain System<span style="color: red"> *</span></th>
-                                <th scope="col">MailFrom<span style="color: red"> *</span></th>
+                                <th scope="col">MailFrom</th>
                                 <th scope="col">Action</th>
                             </tr>
                         </thead>
                         <tbody id="dynamic-inputs-container" name="dynamic-inputs-container">
                             <tr class="dynamic-input-row">
                                 <td><input type="text" name="tableSpmr[0][server_name]" id="server_name" value="" class="form-control" required disabled/></td>
-                                <td><input type="text" name="tableSpmr[0][ipaddress]" id="ipaddress" value="" class="form-control" required disabled/></td>
+                                <td><input type="text" name="tableSpmr[0][ipaddress]" id="ipaddress" value="" class="form-control ipaddress-input" required disabled/></td>
                                 <td><input type="text" name="tableSpmr[0][domain]" id="domain" value="" class="form-control" required disabled/></td>
-                                <td><input type="text" name="tableSpmr[0][mailfrom]" id="mailfrom" value="" class="form-control" required disabled/></td>
+                                <td><input type="text" name="tableSpmr[0][mailfrom]" id="mailfrom" value="" class="form-control" disabled/></td>
                                 <td><button class="btn btn-danger remove-row"><i class="me-1" data-feather="minus"></i>Remove</button></td>
                             </tr>
                         </tbody>
@@ -147,8 +136,10 @@
                                 </th>
                             </tr>
                         </tfoot>
+                        <strong><p style="color: red;" id="resultContainerEror"></p></strong>
                         <strong><p style="color: red;" id="resultContainer"></p></strong>
                         <strong><p style="color: red;" id="resultContainer2"></p></strong>
+                        <strong><p style="color: red;" id="resultContainer3"></p></strong>
                     </table>
                 </div>
 
@@ -216,12 +207,12 @@
                 <div class="row col-12">
                     <div class="mb-3 col-md-4">
                         <label class=" mb-1" for="applicantposition">Applicant's Position:</label>
-                        <input class="form-control" name="applicantposition" id="applicantposition" required>
+                        <input class="form-control" name="applicantposition" id="applicantposition" >
                         </input>
                     </div>
                     <div class="mb-3 col-md-4">
                         <label class=" mb-1" for="applicantdepart">Applicant's Department / Division:</label>
-                        <input class="form-control" name="applicantdepart" id="applicantdepart" required>
+                        <input class="form-control" name="applicantdepart" id="applicantdepart" >
                         </input>
                     </div>
                     <div class="mb-3 col-md-4">
@@ -238,12 +229,12 @@
                 <div class="row col-12">
                     <div class="mb-3 col-md-4">
                         <label class=" mb-1" for="verifierposition">Verifier Position:</label>
-                        <input class="form-control" name="verifierposition" id="verifierposition" value="" required>
+                        <input class="form-control" name="verifierposition" id="verifierposition" value="" >
                         </input>
                     </div>
                     <div class="mb-3 col-md-4">
                         <label class=" mb-1" for="verifierdepart">Verifier Department / Division:</label>
-                        <input class="form-control" name="verifierdepart" id="verifierdepart" value="" required>
+                        <input class="form-control" name="verifierdepart" id="verifierdepart" value="" >
                         </input>
                     </div>
                     <div class="mb-3 col-md-4">
@@ -274,12 +265,12 @@
                 <div class="row col-12">
                     <div class="mb-3 col-md-4">
                         <label class=" mb-1" for="approvalposition">Approval Position</label>
-                        <input class="form-control" name="approvalposition" id="approvalposition" value="" required>
+                        <input class="form-control" name="approvalposition" id="approvalposition" value="" >
                         </input>
                     </div>
                     <div class="mb-3 col-md-4">
                         <label class=" mb-1" for="approvaldepart">Approval Department / Division:</label>
-                        <input class="form-control" name="approvaldepart" id="approvaldepart" value="" required>
+                        <input class="form-control" name="approvaldepart" id="approvaldepart" value="" >
                         </input>
                     </div>
                     <div class="mb-3 col-md-4">
@@ -316,73 +307,48 @@
 
 @endsection
 @push('script')
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
-<link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
-<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
-<script src="https://ajax.aspnetcdn.com/ajax/jquery.validate/1.19.2/jquery.validate.min.js"></script>
+<script src="{{ asset('js/jquery-3.6.4.min.js') }}"></script>
+<link rel="stylesheet" href="{{asset('css/select2.min.css')}}">
+<script src="{{asset('js/select2.min.js')}}"></script>
+<script src="{{asset('js/jquery.validate.min.js')}}"></script>
 
 <script>
 
-    // function typeChange() {
-
-    // var selectType = document.getElementById("type_req");
-    // var selectedValueType = selectType.options[selectType.selectedIndex].value;
-    // var departowner1 = document.getElementById("departowner1");
-    // var departowner2 = document.getElementById("departowner2");
-    // var applicant1 = document.getElementById("applicant1");
-    // var applicant2 = document.getElementById("applicant2");
-    // var verifier1 = document.getElementById("verifier1");
-    // var verifier2 = document.getElementById("verifier2");
-    // var approval1 = document.getElementById("approval1");
-    // var approval2 = document.getElementById("approval2");
-
-
-    // Check if the selected option is the "Select Server" option
-    // if (selectedValueType === "1") {
-    //         departowner1.style.display = "block";
-    //         departowner1.style.display = "inline-block";
-    //         departowner2.style.display = "none";
-    //         departowner2.disabled = true;
-
-    //         applicant1.style.display = "block";
-    //         applicant1.style.display = "inline-block";
-    //         applicant2.style.display = "none";
-    //         applicant2.disabled = true;
-
-    //         verifier1.style.display = "block";
-    //         verifier1.style.display = "inline-block";
-    //         verifier2.style.display = "none";
-    //         verifier2.disabled = true;
-
-    //         approval1.style.display = "block";
-    //         approval1.style.display = "inline-block";
-    //         approval2.style.display = "none";
-    //         approval2.disabled = true;
-
-    //     }else{
-    //         departowner1.style.display = "none";
-    //         departowner1.disabled = true;
-    //         departowner2.style.display = "block";
-    //         departowner2.style.display = "inline-block";
-
-    //         applicant1.style.display = "none";
-    //         applicant1.disabled = true;
-    //         applicant2.style.display = "block";
-    //         applicant2.style.display = "inline-block";
-
-    //         verifier1.style.display = "none";
-    //         verifier1.disabled = true;
-    //         verifier2.style.display = "block";
-    //         verifier2.style.display = "inline-block";
-
-    //         approval1.style.display = "none";
-    //         approval1.disabled = true;
-    //         approval2.style.display = "block";
-    //         approval2.style.display = "inline-block";
-    //     }
-    // }
-
     $(document).ready(function() {
+
+    // Function to check for duplicate IP addresses
+    function checkDuplicateIP() {
+        var ipAddresses = [];
+        var isDuplicate = false;
+
+        $('.ipaddress-input').each(function() {
+            var ip = $(this).val();
+            if (ip && ipAddresses.includes(ip)) {
+                isDuplicate = true;
+                var response = "IP address already Keyin in previous row!";
+                $(this).addClass('is-invalid');
+                $('#resultContainer3').html(response);
+            } else {
+                $(this).removeClass('is-invalid');
+                $('#resultContainer3').empty(response);
+                ipAddresses.push(ip);
+            }
+        });
+
+        return isDuplicate;
+    }
+
+    // Event listener for changes to the IP address input fields
+    $(document).on('input', '.ipaddress-input', function() {
+        checkDuplicateIP();
+    });
+
+    // Add event listener for removing rows
+    $(document).on('click', '.remove-row', function() {
+        $(this).closest('tr').remove();
+        checkDuplicateIP(); // Recheck IP addresses after a row is removed
+    });
+
 
         $('#ministry').change(function() {
             var ministry = $(this).val();
@@ -493,39 +459,7 @@
                 $(this).removeClass('is-invalid');
             }
         });
-        $('#approvaldepart').on('change', function() {
-            var isValid = $(this).valid();
-            if (isValid) {
-                $(this).removeClass('is-invalid');
-            }
-        });
-        $('#approvalposition').on('change', function() {
-            var isValid = $(this).valid();
-            if (isValid) {
-                $(this).removeClass('is-invalid');
-            }
-        });
-        $('#verifierdepart').on('change', function() {
-            var isValid = $(this).valid();
-            if (isValid) {
-                $(this).removeClass('is-invalid');
-            }
-        });
         $('#verifierdate').on('change', function() {
-            var isValid = $(this).valid();
-            if (isValid) {
-                $(this).removeClass('is-invalid');
-                $(this).next('.select2-container').find('.select2-selection').removeClass('is-invalid');
-            }
-        });
-        $('#authpassword').on('change', function() {
-            var isValid = $(this).valid();
-            if (isValid) {
-                $(this).removeClass('is-invalid');
-                $(this).next('.select2-container').find('.select2-selection').removeClass('is-invalid');
-            }
-        });
-        $('#authusername').on('change', function() {
             var isValid = $(this).valid();
             if (isValid) {
                 $(this).removeClass('is-invalid');
@@ -547,13 +481,6 @@
             }
         });
         $('#agency').on('change', function() {
-            var isValid = $(this).valid();
-            if (isValid) {
-                $(this).removeClass('is-invalid');
-                $(this).next('.select2-container').find('.select2-selection').removeClass('is-invalid');
-            }
-        });
-        $('#departowner').on('change', function() {
             var isValid = $(this).valid();
             if (isValid) {
                 $(this).removeClass('is-invalid');
@@ -588,28 +515,7 @@
                 $(this).next('.select2-container').find('.select2-selection').removeClass('is-invalid');
             }
         });
-        $('#applicantposition').on('change', function() {
-            var isValid = $(this).valid();
-            if (isValid) {
-                $(this).removeClass('is-invalid');
-                $(this).next('.select2-container').find('.select2-selection').removeClass('is-invalid');
-            }
-        });
-        $('#applicantdepart').on('change', function() {
-            var isValid = $(this).valid();
-            if (isValid) {
-                $(this).removeClass('is-invalid');
-                $(this).next('.select2-container').find('.select2-selection').removeClass('is-invalid');
-            }
-        });
         $('#applicantdate').on('change', function() {
-            var isValid = $(this).valid();
-            if (isValid) {
-                $(this).removeClass('is-invalid');
-                $(this).next('.select2-container').find('.select2-selection').removeClass('is-invalid');
-            }
-        });
-        $('#verifierposition').on('change', function() {
             var isValid = $(this).valid();
             if (isValid) {
                 $(this).removeClass('is-invalid');
@@ -620,6 +526,7 @@
 
     $(document).on('input', '#dynamic-inputs-container input#ipaddress', function() {
             var type_req = document.getElementById("type_req");
+            var subhostname = document.getElementById("subhostname").value;
             var selectBox = document.getElementById("mailrelay");
             var selectedValue = selectBox.value;
             var selectedValuetype_req = type_req.value;
@@ -628,28 +535,34 @@
             var submitBtn2 = document.getElementById("submit");
 
             $.ajax({
-                    url: '/mailrelay/check-ip-address',
-                    method: 'POST',
-                    contentType: 'application/json',
-                    data: JSON.stringify({ ipAddress: ipAddress, mailrelay: selectedValue,type_req: selectedValuetype_req}),
-                    success: function(response) {
-                        if (response.exists) {
-                            // console.log(response);
-                            $('#resultContainer2').html(response.message);
-                            submitBtn2.disabled = true;
-                        } else {
-                            // console.log(response);
-                            $('#resultContainer2').empty();
-                            submitBtn2.disabled = false;
-                        }
+                url: "{{ route('check.ip.address') }}",
+                method: 'POST',
+                contentType: 'application/json',
+                data: JSON.stringify({ ipAddress: ipAddress, mailrelay: selectedValue,type_req: selectedValuetype_req}),
+                success: function(response) {
+                    if (response.exists) {
+                        //console.log(response);
+                        $('#resultContainer2').html(response.message);
+                        submitBtn2.disabled = true;
+                    } else {
+                        //console.log(response);
+                        $('#resultContainer2').empty();
+                        submitBtn2.disabled = false;
                     }
+                },
+                error: function(xhr, status, error) {
+                    // console.error("Error fetching Primary server:", error);
+                    // $('#resultContainer').html("Error fetching Primary server: Contact Administrator!");
+
+                }
             });
 
 
             if (/^(?:[0-9]{1,3}\.){3}[0-9]{1,3}$/.test(ipAddress)) {
-                const serverAddress = 'wss://spmr.mygovuc.gov.my/' + selectedValue;
+                const serverAddress = 'wss://spmr.mygovuc.gov.my/'+subhostname;
+                //console.log(serverAddress);
                 const socket = new WebSocket(serverAddress);
-
+                //console.log(selectedValuetype_req);
                 socket.addEventListener('open', (event) => {
                     let command = '';
 
@@ -657,44 +570,51 @@
                         command = `grep -q '^${ipAddress}' /opt/cluster/postfix/access_list && echo "IP address already Registered!"`;
                     }
                     if (selectedValuetype_req == 2) {
+
                         command = `grep -q '^#${ipAddress}' /opt/cluster/postfix/access_list && echo "IP address already Terminated!" || (grep -q '^${ipAddress}' /opt/cluster/postfix/access_list || echo "IP address not Registered to Terminate!")`;
+                        //console.log("command"+ command);
                     }
 
                     if (command) {
+                        //console.log(command);
                         socket.send(command);
                     }
                 });
 
                 socket.addEventListener('message', (event) => {
                     const response = event.data;
+                    //console.log("masuk"+response);
                     if (selectedValuetype_req == 1) {
-                    if (response.includes('IP address already Registered!')) {
+                        if (response.includes('IP address already Registered!')) {
                             submitBtn.disabled = true;
+                            $(this).addClass('is-invalid');
+                            $('#resultContainer').html(response);
+                        } else {
+                            submitBtn.disabled = false;
+                            $('#resultContainer').empty();
+                        }
+                    } else if (selectedValuetype_req == 2) {
+                        if (response.includes('IP address already Terminated!')) {
+                            console.log("IP address already Terminated!"+response);
+                            submitBtn.disabled = true;
+                            $(this).addClass('is-invalid');
+                            $('#resultContainer').html(response);
+                        } else if (response.includes('IP address not Registered to Terminate!')) {
+                            console.log("IP address not Registered to Terminate!"+response);
+                            submitBtn.disabled = true;
+                            $(this).addClass('is-invalid');
                             $('#resultContainer').html(response);
                         } else {
                             submitBtn.disabled = false;
                             $('#resultContainer').empty();
                         }
                     }
-                    if (selectedValuetype_req == 2) {
-                    if (response.includes('IP address already Terminated!')) {
-                        console.log(response);
-                        submitBtn.disabled = true;
-                        $('#resultContainer').html(response);
-                    } else if (response.includes('IP address not Registered to Terminate!')) {
-                        console.log(response);
-                        submitBtn.disabled = true;
-                        $('#resultContainer').html(response);
-                    } else {
-                        submitBtn.disabled = false;
-                        $('#resultContainer').empty();
-                    }
-                    }
                     socket.close();
                 });
 
                 socket.addEventListener('error', (error) => {
                     // console.error("WebSocket error observed:", error);
+                    //$('#resultContainerEror').html("Error fetching Primary server: Contact Administrator!");
                 });
 
                 socket.addEventListener('close', (event) => {
@@ -725,10 +645,37 @@
             });
         } else {
             // Enable all input fields inside the tbody
-            var inputs = tbody.querySelectorAll("input");
-            inputs.forEach(function(input) {
-                input.disabled = false;
+            // var inputs = tbody.querySelectorAll("input");
+            // inputs.forEach(function(input) {
+            //     input.disabled = false;
+            // });
+            // Use AJAX to send selectedValue to the controller
+            $.ajax({
+                url: "{{ route('check.subhostname.unique') }}", // Update the URL with your controller route
+                type: 'POST',
+                data: { selectedValue: selectedValue },
+                success: function(response) {
+                    // Check if hostname is present in the response
+                    if (response.subhostname) {
+                        document.getElementById("subhostname").value = response.subhostname;
+                        // Enable all input fields inside the tbody
+                        var inputs = tbody.querySelectorAll("input");
+                        inputs.forEach(function(input) {
+                            input.disabled = false;
+                            // Set the input value to the fetched hostname
+                            // input.value = response.hostname;
+                        });
+                    } else {
+                        //console.error("Hostname not found");
+                    }
+                },
+                error: function(xhr, status, error) {
+                    // console.error("Error fetching Primary server:", error);
+                    // $('#resultContainer').html("Error fetching Primary server: Contact Administrator!");
+
+                }
             });
+
         }
     }
 
@@ -753,6 +700,7 @@ function addRow(containerId) {
     container.append(newRow);
 
 }
+
 
 // Function to update the name attribute of inputs
 function updateNameAttribute(nameAttr, newIndex) {

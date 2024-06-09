@@ -59,52 +59,62 @@
                 <div class="card-header">PDSA Putrajaya</div>
                 <div class="card-body">
                     <div class="row col-md-12">
-                    @foreach ($dataservers as $dataserver)
-                        <div class="col-lg-6">
-                            <div class="card card-header-actions mb-4">
-                                <div class="card-header text-white {{ $dataserver->status == 1 ? 'bg-success' : 'bg-warning' }}">
-                                    {{ $dataserver -> hostname}}
-                                    <div class="form-check form-switch">
-                                        <input class="form-check-input" type="checkbox"
-                                        id="flexSwitchCheck{{ $dataserver->id }}"
-                                        {{ $dataserver->status == 1 ? 'checked' : '' }}
-                                        onclick="updateStatus({{ $dataserver->id }}, this)"/>
-                                        <label class="form-check-label" for="flexSwitchCheck{{ $dataserver->id }}">{{ $dataserver->status == 1 ? 'Enable' : 'Disable' }}</label>
+                        @foreach ($dataservers as $dataserver)
+                        <!-- Check if the server is a master server (i.e., it has sub-servers) -->
+                        {{-- @if($dataserver->subServers->isNotEmpty()) --}}
+                            <div class="col-lg-12 mb-4">
+                                <div class="card">
+                                    <div class="card-header text-white {{ $dataserver->status == 1 ? 'bg-success' : 'bg-warning' }}">
+                                        <p style="color: black;">Virtual-server: {{ $dataserver->hostname }}</p>
+                                        <div class="form-check form-switch">
+                                            <input class="form-check-input" type="checkbox"
+                                            id="flexSwitchCheck{{ $dataserver->id }}"
+                                            {{ $dataserver->status == 1 ? 'checked' : '' }}
+                                            onclick="updateStatus({{ $dataserver->id }}, this)"/>
+                                            <label class="form-check-label" for="flexSwitchCheck{{ $dataserver->id }}">{{ $dataserver->status == 1 ? 'Enable' : 'Disable' }}</label>
+                                        </div>
                                     </div>
-                                </div>
-                                <div class="card-body">
-                                    <div class="mb-3">
-                                        <label class="small mb-1" for="inputNotificationEmail">Server Name : {{ $dataserver->hostname}}</label>
-                                    </div>
-                                    <div class="mb-3">
-                                        <label class="small mb-1" for="inputNotificationEmail">IP Address : {{ $dataserver->ipaddress}}</label>
-                                    </div>
-                                    <div class="mb-3" hidden>
-                                        <label class="small mb-1" for="inputNotificationEmail">SSH Username : {{ $dataserver->sshusername}}</label>
-                                    </div>
-                                    <div class="mb-3" hidden>
-                                        <label class="small mb-1" for="inputNotificationEmail">SSH key Path : {{ $dataserver->sshkey}}</label>
-                                    </div>
-                                    {{-- <div class="mb-3">
-                                        <label class="small mb-1" for="inputNotificationEmail">Updated At : {{ $dataserver->updated_at->format('d/m/Y h:i:s')}}</label>
-                                    </div> --}}
-                                </div>
-                                <div class="card-footer d-flex align-items-center justify-content-between small">
+
                                     @can('server_update')
-                                    <a class="text-primary" href="{{ route('server.edit', ['id' => $dataserver->id]) }}">Edit Configuration</a>
+                                    <a class="text-primary" style="margin-left: 30px;margin-top:10px; margin-bottom:5px;" href="{{ route('server.edit', ['id' => $dataserver->id]) }}">Edit Configuration</a>
                                     @endcan
-                                    @can('server_delete')
-                                            <button class="btn btn-danger delete-btn" data-id="{{ $dataserver->id }}">Delete</button>
+
+                                    <div class="card-footer d-flex align-items-center justify-content-between small">
+                                        @can('server_delete')
+                                            <button class="btn btn-danger delete-btn" data-id="{{ $dataserver->id }}" >Delete</button>
                                         @endcan
+                                    </div>
                                 </div>
                             </div>
-                        </div>
+                            @if($dataserver->subServers->isNotEmpty())
+                            @foreach ($dataserver->subServers as $subServer)
+                                <div class="col-lg-6">
+                                    <div class="card card-header-actions mb-4">
+                                        <div class="card-header text-white bg-primary {{ $dataserver->status == 1 ? 'bg-success' : 'bg-warning' }}"">
+                                            <p style="color: black;">Primary-server: {{ $subServer->subhostname }}</p>
+                                        </div>
+                                        <div class="card-body">
+                                            <div class="mb-3">
+                                                <label class="small mb-1">IP Address: {{ $subServer->ipaddress }}</label>
+                                            </div>
+                                            <div class="mb-3">
+                                                <label class="small mb-1">Status: {{ $subServer->status_cluster == 1 ? 'Active' : 'Passive' }}</label>
+                                            </div>
+                                        </div>
+                                        <div class="card-footer d-flex align-items-center justify-content-between small">
+                                            @can('server_delete')
+                                                <button class="btn btn-danger delete-btn" data-id="{{ $subServer->id }}">Delete</button>
+                                            @endcan
+                                        </div>
+                                    </div>
+                                </div>
+                            @endforeach
+                            <hr class="bold-hr">
+                            @endif
                     @endforeach
-
+                    </div>
                 </div>
 
-
-            </div>
                 </div>
             </div>
         </div>
@@ -112,17 +122,21 @@
 
 
 </div>
+
+<style>
+    label {
+        font-weight: bold;
+    }
+    .bold-hr {
+        border: 0;
+        border-top: 10px solid black;
+        margin: 20px 0;
+        /* height: 100px; Adjust the height to make it bolder */
+        background-color: black; /* You can change the color as needed */
+    }
+</style>
 <script>
     function updateStatus(serverId, checkbox) {
-        // Check if the server is already active
-        // if (checkbox.checked) {
-        //     const activeServer = document.querySelector('.form-check-input:checked');
-        //     if (activeServer && activeServer !== checkbox) {
-        //         alert("One server at a time can be active. Deactivate the current active server before activating another one.");
-        //         checkbox.checked = false;
-        //         return;
-        //     }
-        // }
 
         // Assuming you have the server/update-status route
         fetch('/server/update-status', {
@@ -138,11 +152,11 @@
         })
         .then(response => response.json())
         .then(data => {
-            console.log(data);
+            //console.log(data);
             location.reload();
         })
         .catch(error => {
-            console.error(error);
+            //console.error(error);
             // Rollback checkbox state on error
             checkbox.checked = !checkbox.checked;
         });
@@ -192,11 +206,11 @@
                 return response.json();
             })
             .then(data => {
-                console.log('Server deleted successfully');
+                //console.log('Server deleted successfully');
                 location.reload();
             })
             .catch(error => {
-                console.error('There was a problem with the deletion:', error);
+                //console.error('There was a problem with the deletion:', error);
                 // Optionally, handle error and display message to user
             });
     }

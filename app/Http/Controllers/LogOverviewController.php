@@ -22,15 +22,16 @@ class LogOverviewController extends Controller
         $role = $user->roles->isNotEmpty() ? $user->roles->pluck('name')->first() : null;
         $serverIds = RoleServer::whereIn('role_servers.role_id', $user->roles->pluck('id')->all())
         ->leftJoin('servers','servers.id','role_servers.server_id')
-        ->where('servers.status',1)
+        ->whereNotNull('servers.status_cluster')
+        ->whereIn('servers.status_cluster',[1,0])
         ->pluck('server_id');
 
         $defaultServerId = $serverIds->min();
 
         // Filter servers based on the fetched IDs
-        $serverName = Server::whereIn('id', $serverIds)
-            ->where('status', 1)->orderBy('id', 'asc')
-            ->pluck('hostname', 'id');
+        $serverName = Server::whereIn('status_cluster', [1,0])
+            ->orderBy('id', 'asc')
+            ->pluck('subhostname', 'id');
 
         $serverData = [
             "serverName" => "--",
@@ -57,8 +58,7 @@ class LogOverviewController extends Controller
             'user_agent' => $request->userAgent(),
         ]);
 
-        return view('log.index',
-            compact( 'user', 'role', 'serverName', 'defaultServerId', 'serverData'));
+        return view('log.index', compact( 'user', 'role', 'serverName', 'defaultServerId', 'serverData'));
     }
 
 
@@ -73,10 +73,10 @@ class LogOverviewController extends Controller
 
     private function dummyData($serverName)
     {
-        $nameServer = Server::where('id', $serverName)->pluck('hostname');
-        $ipAddrServer = Server::where('id', $serverName)->pluck('ipaddress');
+        $nameServer = Server::where('id', $serverName)->pluck('subhostname');
+        $ipAddrServer = Server::where('master_id', $serverName)->pluck('ipaddress');
 
-        //dd($nameServer);
+        dd($nameServer);
 
         if ($serverName != null) {
             return [

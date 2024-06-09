@@ -38,7 +38,7 @@
                     <div class="col-md-4">
                         <label for="servermail">Server Mail Relay</label>
                         <p class="text-primary">{{ $smtpreq->smtp_relay_server }}</p>
-                        <input type="hidden" id="servermail" name="servermail" value="{{ $smtpreq->smtp_relay_server }}">
+                        <input type="hidden" id="sub_smtp_relay_server" name="sub_smtp_relay_server" value="{{ $smtpreq->sub_smtp_relay_server }}">
                     </div>
                     <div class="col-md-4" @if($smtpreq->types_req === 2) style="display: none;" @endif>
                         <label for="mailbox">Auth Method</label>
@@ -195,15 +195,16 @@
 
             function toggleInputs() {
 
-            var selectBox = document.getElementById("servermail");
+            // var selectBox = document.getElementById("servermail");
+            var sub_smtp_relay_server = document.getElementById("sub_smtp_relay_server").value;
             var smtp_username = document.getElementById("smtp_username").value;
             var smtp_password = document.getElementById("smtp_password").value;
-            var selectedValue = selectBox.value;
+            // var selectedValue = selectBox.value;
 
             const smtpMailServers = @json($smtpMailServers);
                         //console.log(smtpMailServers);
-            const serverAddress = 'wss://spmr.mygovuc.gov.my/' + selectedValue;
-
+            const serverAddress = 'wss://spmr.mygovuc.gov.my/' + sub_smtp_relay_server;
+            //console.log(serverAddress);
             const socket = new WebSocket(serverAddress);
 
             socket.addEventListener('open', (event) => {
@@ -216,21 +217,29 @@
                         const formIds = smtpMailServer.form_id;
                         // Construct your command
                         command = `echo '${ipAddress} #${formIds}:' >> /opt/cluster/postfix/access_list`;
+                        command += ` ; /usr/sbin/postmap /opt/cluster/postfix/access_list ; /usr/bin/systemctl reload postfix`;
 
                     }
                     if (smtpMailServer.types_req == 2){
                         // Adjust the key names based on your actual data structure
                         const ipAddress = smtpMailServer.ip_addr_server;
                         const formIds = smtpMailServer.form_id;
-                        // Construct your command.. take the ip address, replace it with # infront then if not found add new line with #infront the ip address
                         command = `
-                                grep -q '^${ipAddress}' /opt/cluster/postfix/access_list && \
-                                sed -i 's/^${ipAddress} .*/#${ipAddress} #${formIds}:/' /opt/cluster/postfix/access_list || \
-                                echo '#${ipAddress} #${formIds}:' >> /opt/cluster/postfix/access_list`;
+                                        {
+                                            grep -q '^${ipAddress}' /opt/cluster/postfix/access_list &&
+                                            sed -i 's/^${ipAddress} .*/#${ipAddress} #${formIds}:/' /opt/cluster/postfix/access_list ||
+                                            echo '#${ipAddress} #${formIds}:' >> /opt/cluster/postfix/access_list
+                                        } && /usr/sbin/postmap /opt/cluster/postfix/access_list && /usr/bin/systemctl reload postfix
+
+                                    `;
+
+                        // Construct your command.. take the ip address, replace it with # infront then if not found add new line with #infront the ip address
+                        //command = `grep -q '^${ipAddress}' /opt/cluster/postfix/access_list && sed -i 's/^${ipAddress} .*/#${ipAddress} #${formIds}:/' /opt/cluster/postfix/access_list || echo '#${ipAddress} #${formIds}:' >> /opt/cluster/postfix/access_list`;
+                        //command += ` ; /usr/sbin/postmap /opt/cluster/postfix/access_list ; /usr/bin/systemctl reload postfix`;
                     }
                     // Send the command through the WebSocket if it's not empty
                     if (command) {
-                        // console.log(command);
+                        //console.log(command);
                         socket.send(command);
 
                         Swal.fire({
@@ -240,7 +249,7 @@
                             onBeforeOpen: () => {
                                 Swal.showLoading();
                             },
-                            timer: 10000, // 6 seconds
+                            timer: 500, // 6 seconds
                             willClose: () => {
                                 // You can add any action you want to perform when the alert is about to close
                                 //console.log('The alert is closing');
@@ -249,22 +258,32 @@
 
                     }
 
-                });
+
                 let command2 = '';
-                if (smtp_username != "") {
-                    const command2 = `echo '${smtp_password}: ' | /usr/sbin/saslpasswd2 -c '${smtp_username}'`;
+
+                if (smtpMailServer.types_req == 1 && smtp_username != "") {
+                    command2 = `echo '${smtp_password}:' | /usr/sbin/saslpasswd2 -c '${smtp_username}'`;
+                    // /usr/sbin/saslpasswd2 -d '${smtp_username}' ->command to delete
                     // console.log(command2);
                     socket.send(command2);
                 }
+
+                if (smtpMailServer.types_req == 2 && smtp_username != "") {
+                    command2 = `/usr/sbin/saslpasswd2 -d '${smtp_username}'`;
+                    //console.log(command2);
+                    socket.send(command2);
+                }
+
+                });
             });
 
             socket.addEventListener('message', (event) => {
                 const response = event.data;
-
+                //console.log("response"+response);
                 if (response.includes('Failed')) {
                     //console.log("Failed to send command");
                 } else {
-                    console.log(response);
+                    //console.log(response);
                 }
 
                 // Close the socket after processing the response
@@ -281,63 +300,37 @@
             });
         }
 
-$('#submitBtn').click(function(event) {
-    // Prevent the default form submission
-    event.preventDefault();
-    if (confirm('Are you sure you want to submit this form?')) {
-        // Serialize form data
-        var formData = $('#myForm').serialize();
-        // Show loading animation
-        Swal.fire({
-            title: 'Processing...',
-            allowOutsideClick: false, // Prevent outside clicks
-            showConfirmButton: false, // Disable the "OK" button
-            onBeforeOpen: () => {
-                Swal.showLoading();
-            },
-            timer: 10000, // 6 seconds
-            willClose: () => {
-                // You can add any action you want to perform when the alert is about to close
-                //console.log('The alert is closing');
-            }
-        });
-        // Send AJAX request
-        $.ajax({
-            url: "{{ route('mailrelay.form') }}", // Replace with your reject route
-            method: 'POST',
-            data: formData,
-            headers: {
-                'X-CSRF-TOKEN': '{{ csrf_token() }}' // Add CSRF token header
-            },
-            success: function(response) {
-                //console.log(response);
-                toggleInputs();
-                window.location.href = "{{ route('smtp_relay.smtp_relay_req') }}?message=" + response.message;
-            },
-            error: function(xhr, status, error) {
-                // Handle error response
-                console.error(xhr.responseText);
-            }
-        });
-
-    } else {
-        // If the user clicks "Cancel" in the confirmation dialog, do nothing
-        return false;
-    }
-});
-
-
-            $('#rejectBtn').click(function() {
-
-                if (confirm('Are you sure you want to Reject this form?')) {
+        $('#submitBtn').click(function(event) {
+            // Prevent the default form submission
+            event.preventDefault();
+            if (confirm('Are you sure you want to submit this form?')) {
+                // Serialize form data
                 var formData = $('#myForm').serialize();
-                // Send reject AJAX request
+                // Show loading animation
+                Swal.fire({
+                    title: 'Processing...',
+                    allowOutsideClick: false, // Prevent outside clicks
+                    showConfirmButton: false, // Disable the "OK" button
+                    onBeforeOpen: () => {
+                        Swal.showLoading();
+                    },
+                    timer: 10000, // 6 seconds
+                    willClose: () => {
+                        // You can add any action you want to perform when the alert is about to close
+                        //console.log('The alert is closing');
+                    }
+                });
+                // Send AJAX request
                 $.ajax({
-                    url: "{{ route('mailrelay.reject') }}", // Replace with your reject route
+                    url: "{{ route('mailrelay.form') }}", // Replace with your reject route
                     method: 'POST',
                     data: formData,
+                    headers: {
+                        'X-CSRF-TOKEN': '{{ csrf_token() }}' // Add CSRF token header
+                    },
                     success: function(response) {
-                        // Handle success response
+                        //console.log(response);
+                        toggleInputs();
                         window.location.href = "{{ route('smtp_relay.smtp_relay_req') }}?message=" + response.message;
                     },
                     error: function(xhr, status, error) {
@@ -346,11 +339,37 @@ $('#submitBtn').click(function(event) {
                     }
                 });
 
-                } else {
-                    // If the user clicks "Cancel" in the confirmation dialog, do nothing
-                    return false;
+            } else {
+                // If the user clicks "Cancel" in the confirmation dialog, do nothing
+                return false;
+            }
+        });
+
+
+        $('#rejectBtn').click(function() {
+
+            if (confirm('Are you sure you want to Reject this form?')) {
+            var formData = $('#myForm').serialize();
+            // Send reject AJAX request
+            $.ajax({
+                url: "{{ route('mailrelay.reject') }}", // Replace with your reject route
+                method: 'POST',
+                data: formData,
+                success: function(response) {
+                    // Handle success response
+                    window.location.href = "{{ route('smtp_relay.smtp_relay_req') }}?message=" + encodeURIComponent(response.message);
+                },
+                error: function(xhr, status, error) {
+                    // Handle error response
+                    console.error(xhr.responseText);
                 }
             });
+
+            } else {
+                // If the user clicks "Cancel" in the confirmation dialog, do nothing
+                return false;
+            }
+        });
 
         });
     </script>
