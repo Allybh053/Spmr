@@ -530,6 +530,21 @@ class ServerController extends Controller
                 $existingServer->ipaddress = $ipaddress;
                 $existingServer->save();
 
+
+                ActivityLog::create([
+                    'user_id' => Auth::id(),
+                    'activity_type' => 'Update Virtual Server',
+                    'action' => $request->path(),
+                    'url' => url()->full(),
+                    'method' => $request->method(),
+                    'ip_address' => $request->ip(),
+                    'input' => json_encode([
+                        'server' => 'Updating New Virtual Server',
+                        'request' => $request->except(['password']),
+                    ]),
+                    'user_agent' => $request->userAgent(),
+                ]);
+
                 return response()->json(['success' => '1', 'redirect' => route('server.index'), 'message' => 'Virtual Host updated successfully.']);
             }
         } else {
@@ -571,10 +586,25 @@ class ServerController extends Controller
                     DB::insert('INSERT INTO role_servers (role_id, server_id) VALUES (?, ?)', [$role->id,$server->id]);
 
                 }
+                ActivityLog::create([
+                    'user_id' => Auth::id(),
+                    'activity_type' => 'Create Virtual Server',
+                    'action' => $request->path(),
+                    'url' => url()->full(),
+                    'method' => $request->method(),
+                    'ip_address' => $request->ip(),
+                    'input' => json_encode([
+                        'server' => 'Creating New Virtual Server',
+                        'request' => $request->except(['password']),
+                    ]),
+                    'user_agent' => $request->userAgent(),
+                ]);
 
                 return response()->json(['success' => '1', 'redirect' => route('server.index'), 'message' => 'Virtual Host saved successfully.']);
             }
         }
+
+
  }
 
     public function getIp(Request $request)
