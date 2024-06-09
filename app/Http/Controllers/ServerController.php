@@ -205,7 +205,7 @@ class ServerController extends Controller
                 'method' => $request->method(),
                 'ip_address' => $request->ip(),
                 'input' => json_encode([
-                    'server' => $$e,
+                    'server' => $e,
                     'request' => $request->except(['password']),
                 ]),
                 'user_agent' => $request->userAgent(),
