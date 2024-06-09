@@ -310,7 +310,7 @@
                     success: function(response) {
                         //console.log(response);
                         toggleInputs();
-                        //window.location.href = "{{ route('smtp_relay.smtp_relay_req') }}?message=" + response.message;
+                        window.location.href = "{{ route('smtp_relay.smtp_relay_req') }}?message=" + response.message;
                     },
                     error: function(xhr, status, error) {
                         // Handle error response
@@ -334,6 +334,9 @@
                 url: "{{ route('mailrelay.reject') }}", // Replace with your reject route
                 method: 'POST',
                 data: formData,
+                headers: {
+                    'X-CSRF-TOKEN': '{{ csrf_token() }}' // Add CSRF token header
+                },
                 success: function(response) {
                     // Handle success response
                     window.location.href = "{{ route('smtp_relay.smtp_relay_req') }}?message=" + encodeURIComponent(response.message);
