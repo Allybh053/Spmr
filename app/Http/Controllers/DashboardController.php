@@ -53,7 +53,7 @@ class DashboardController extends Controller
                 $subs2[] = [
                     'subsid2' => $subServers2->id,
                     'subhostname2' => $subServers2->subhostname,
-                    'subIpaddress2' => $subServers2 -> ipaddress
+                    'subIpaddress2' => $subServers2 ->ipaddress
                 ];
             }
             $subs=[];
@@ -69,7 +69,7 @@ class DashboardController extends Controller
                 $subDataDomain = DB::table('mailrouting')
                     ->where('mailrouting.server', $subServers->hostname)
                     ->count();
-
+                 
                 $subDataSasl = DB::table('smtp_relay_req_form')
                     ->where('smtp_relay_req_form.sub_smtp_relay_server', $subServers->subhostname)
                     ->where('smtp_relay_req_form.smtp_relay_auth_method', 2)
