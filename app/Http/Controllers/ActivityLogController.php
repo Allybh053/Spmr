@@ -36,7 +36,7 @@ public function showActivityLogs()
     $logs = $logs->sortByDesc('created_at');
 
     $totalLogs = $logs->count();
-    $perPage = 100000; // Adjust per your desired pagination limit
+    $perPage = 500; // Adjust per your desired pagination limit
     $currentPage = LengthAwarePaginator::resolveCurrentPage();
     $currentPageItems = $logs->slice(($currentPage - 1) * $perPage, $perPage)->all();
 
