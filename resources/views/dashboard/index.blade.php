@@ -60,21 +60,21 @@
                                     <th width="45%"><h6><b>Total Domain Registered</b></h6>
                                         <div class="small text-muted">Updated every 30 minutes</div>
                                     </th>
-                                    <td width="15%"><h6>{{ $serverSubsub['subTotalDomain'] ?? '0' }}</h6></td>
+                                    <td width="15%"><h6>{{ $serverSubs['subTotalDomain'] ?? '0' }}</h6></td>
                                 </tr>
                             @endcan
                             @can('number_of_registered_sasl')
                                 <tr>
                                     <th width="45%"><h6><b>Total SASL based (SMTP relay request form registered)</b></h6></th>
                                     {{-- <td width="15%"><h6>{{$server['totalSasl'] ?? '0'}}</h6></td> --}}
-                                    <td width="15%"><h6>{{ $serverSubsub['subTotalSasl'] ?? '0' }}</h6></td>
+                                    <td width="15%"><h6>{{ $serverSubs['subTotalSasl'] ?? '0' }}</h6></td>
                                 </tr>
                             @endcan
                             @can('total_ip_based_registered')
                                 <tr>
                                     <th width="45%"><h6><b>Total IP based (SMTP relay request form registered)</b></h6></th>
                                     {{-- <td width="15%"><h6>{{$server['totalIpBased'] ?? '0'}}</h6></td> --}}
-                                    <td width="15%"><h6>{{ $serverSubsub['subTotalIpBased'] ?? '0' }}</h6></td>
+                                    <td width="15%"><h6>{{ $serverSubs['subTotalIpBased'] ?? '0' }}</h6></td>
                                 </tr>
                             @endcan
                         </tbody>
