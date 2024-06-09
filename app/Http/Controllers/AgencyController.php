@@ -99,7 +99,7 @@ class AgencyController extends Controller
             'method' => $request->method(),
             'ip_address' => $request->ip(),
             'input' => json_encode([
-                'agency' => $agency->take(5)->toArray(),
+                'agency' => $agency,
                 'ministry' => $ministry->take(5)->toArray(),
                 'request' => $request->except(['password']),
             ]),
