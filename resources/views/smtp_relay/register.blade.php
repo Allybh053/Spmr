@@ -182,7 +182,7 @@
                         <label for="mailbox">MailBox<span style="color: red"> *</span></label>
                         <select class="form-control select2" name="mailbox" id="mailbox" required>
                             <option disabled selected>Select Mailbox</option>
-                            <option value="0">Not Answered</option>
+                            {{-- <option value="0">Not Answered</option> --}}
                             <option value="1">No</option>
                             <option value="2">Yes</option>
                         </select>

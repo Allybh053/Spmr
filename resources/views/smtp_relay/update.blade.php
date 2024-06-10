@@ -171,7 +171,7 @@
                         <label for=""></label>
                     </div>
                 </div>
-                <div class="row gx-3 mb-3" id="authusername" @if ($formsmtp->smtp_relay_auth_method == 1) style="display: none;" @endif>
+                <div class="row gx-3 mb-3" id="smtp_username" style="display: none;">
                     <div class="col-md-6">
                         <label for="smtp_username">SMTP Username</label>
                         <input type="text" name="smtp_username" id="smtp_username" value="{{ old('smtp_username', $formsmtp->smtp_username) }}" class="form-control" required>
@@ -194,7 +194,7 @@
                             @else
                                 Yes
                             @endif</option>
-                            <option value="0">Not Answered</option>
+                            {{-- <option value="0">Not Answered</option> --}}
                             <option value="1">No</option>
                             <option value="2">Yes</option>
                         </select>
@@ -813,7 +813,22 @@ function updateNameAttribute(containerId, nameAttr) {
     // Replace the index in the name attribute
     return nameAttr.replace('[' + currentIndex + ']', '[' + newIndex + ']');
 }
-document.getElementById('submit').addEventListener('click', function() {
+// document.getElementById('submit').addEventListener('click', function() {
+//             // Show the SweetAlert "Loading..." message
+//             Swal.fire({
+//                 title: 'Loading...',
+//                 text: 'Please wait while we process your request.',
+//                 allowOutsideClick: false,
+//                 didOpen: () => {
+//                     Swal.showLoading();
+//                     // Submit the form after the SweetAlert is shown
+//                     document.getElementById('formserver').submit();
+//                 }
+//             });
+//         });
+
+        document.getElementById('submit').addEventListener('click', function() {
+    if ($("#formserver").valid()) {
             // Show the SweetAlert "Loading..." message
             Swal.fire({
                 title: 'Loading...',
@@ -825,6 +840,8 @@ document.getElementById('submit').addEventListener('click', function() {
                     document.getElementById('formserver').submit();
                 }
             });
+        }
+
         });
 
         function toggleInputs() {
