@@ -167,10 +167,10 @@ class MainRelayController extends Controller
         $update = SmtpRelayReqForm::where('id', $request->input('smtpid'))->update(['comments' => $comment,'status'=>2,'implementation_name'=>$user->username,'smtp_password'=>$smtp_password,'smtp_username'=>$smtp_username]);
         return response()->json(['message' => $update]);
         if ($update) {
-        $adminEmails = User::where('role_id', 11)->pluck('email')->toArray(); //role admin will receive the email and cc to the helpdesk
-        Mail::to($adminEmails)
-        ->cc($request->input('owner_email_addr'))
-        ->send(new mailReject($request));
+        // $adminEmails = User::where('role_id', 11)->pluck('email')->toArray(); //role admin will receive the email and cc to the helpdesk
+        // Mail::to($adminEmails)
+        // ->cc($request->input('owner_email_addr'))
+        // ->send(new mailReject($request));
 
         ActivityLog::create([
             'user_id' => Auth::id(),
@@ -229,10 +229,10 @@ class MainRelayController extends Controller
 
         if ($update) {
 
-            $adminEmails = User::where('role_id', 3)->pluck('email')->toArray(); //role admin will receive the email and cc to the helpdesk
-            Mail::to($adminEmails)
-            ->cc($request->input('owner_email_addr'))
-            ->send(new mailApproved($request));
+            // $adminEmails = User::where('role_id', 3)->pluck('email')->toArray(); //role admin will receive the email and cc to the helpdesk
+            // Mail::to($adminEmails)
+            // ->cc($request->input('owner_email_addr'))
+            // ->send(new mailApproved($request));
 
         $successMessage = 'Form updated';
 
