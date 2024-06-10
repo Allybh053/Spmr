@@ -422,10 +422,10 @@ class SmtpRelayController extends Controller
                 smtp_relay_server::create($data);
             }
 
-            $adminEmails = User::where('role_id', 3)->pluck('email')->toArray(); //role admin will receive the email and cc to the helpdesk
-            Mail::to($adminEmails)
-            ->cc($request->input('emailadd'))
-            ->send(new MailForm($request));
+            // $adminEmails = User::where('role_id', 3)->pluck('email')->toArray(); //role admin will receive the email and cc to the helpdesk
+            // Mail::to($adminEmails)
+            // ->cc($request->input('emailadd'))
+            // ->send(new MailForm($request));
 
             return redirect()->route('smtp_relay.smtp_relay_req')->with('success', 'Form added successfully');
             // return redirect()->route('smtp_relay.smtp_relay_req')->with('message', 'Form added successfully');
@@ -646,10 +646,10 @@ class SmtpRelayController extends Controller
                 smtp_relay_server::create($data);
             }
 
-            $adminEmails = User::where('role_id', 3)->pluck('email')->toArray(); //role admin will receive the email and cc to the helpdesk
-            Mail::to($adminEmails)
-            ->cc($request->input('emailadd'))
-            ->send(new MailForm($request));
+            // $adminEmails = User::where('role_id', 3)->pluck('email')->toArray(); //role admin will receive the email and cc to the helpdesk
+            // Mail::to($adminEmails)
+            // ->cc($request->input('emailadd'))
+            // ->send(new MailForm($request));
 
             ActivityLog::create([
                 'user_id' => Auth::id(),
