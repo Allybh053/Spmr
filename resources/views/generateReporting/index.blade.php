@@ -245,7 +245,7 @@
                                         <th>Project Name</th>
                                         <th>System Name</th>
                                         <th>IP Address</th>
-                                        <th>FQDN Name</th>
+                                        <th>Domain Name</th>
                                         <th>Status Activated</th>
 
                                     </tr>
@@ -267,7 +267,7 @@
                                         <th>Project Name</th>
                                         <th>System Name</th>
                                         <th>IP Address</th>
-                                        <th>FQDN Name</th>
+                                        <th>Domain Name</th>
                                         <th>Status Activated</th>
 
                                     </tr>

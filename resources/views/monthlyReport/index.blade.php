@@ -255,34 +255,25 @@
         $('#downloadButtonJadual14').fadeOut();
 
         $('#calendarType').change(function () {
-            var selectedType = $(this).val();
-            $('#calendarInputs').empty(); // Clear previous inputs
+        var selectedType = $(this).val();
+        $('#calendarInputs').empty(); // Clear previous inputs
 
-            if (selectedType === 'month') {
-                var currentYear = new Date().getFullYear();
-                var selectMonthHtml = '<div class="col-md-6"><label for="input2_month">Month:</label><select class="form-control" name="input2_month" id="month">';
-                var monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
-                for (var month = 0; month < 12; month++) {
-                    selectMonthHtml += '<option value="' + (month + 1) + '">' + monthNames[month] + ' ' + currentYear + '</option>';
-                }
-                selectMonthHtml += '</select></div>';
-                $('#calendarInputs').append(selectMonthHtml);
-            } else if (selectedType === 'year') {
-                var currentYear = new Date().getFullYear();
-                var selectYearHtml = '<div class="col-md-6"><label for="input2_year">Year:</label><select class="form-control" name="input2_year" id="year">';
-                for (var year = currentYear; year >= currentYear - 10; year--) {
-                    selectYearHtml += '<option value="' + year + '">' + year + '</option>';
-                }
-                selectYearHtml += '</select></div>';
-                $('#calendarInputs').append(selectYearHtml);
-            }   else if (selectedType === 'range') {
-                var selectRangeHtml = '<div class="row"><div class="col-md-6"><label for="start_date">Start Date:</label><input type="date" class="form-control" name="start_date" id="start_date"></div>';
-                selectRangeHtml += '<div class="col-md-6"><label for="end_date">End Date:</label><input type="date" class="form-control" name="end_date" id="end_date"></div></div>';
-                $('#calendarInputs').append(selectRangeHtml);
-            } else {
-                // to do
+        if (selectedType === 'month') {
+            $('#calendarInputs').append('<div class="col-md-6"><label for="input2_month">Month:</label><input type="month" class="form-control" name="input2_month" id="month"></div>');
+        } else if (selectedType === 'year') {
+            var currentYear = new Date().getFullYear();
+            var selectYearHtml = '<div class="col-md-6"><label for="input2_year">Year:</label><select class="form-control" name="input2_year" id="year">';
+            for (var year = currentYear; year >= currentYear - 10; year--) {
+                selectYearHtml += '<option value="' + year + '">' + year + '</option>';
             }
-        });
+            selectYearHtml += '</select></div>';
+            $('#calendarInputs').append(selectYearHtml);
+        }  else if (selectedType === 'dateRange') {
+            $('#calendarInputs').append('<div class="row"><div class="col-md-6"><label for="input2_from">Date From:</label><input type="date" class="form-control" name="input2_from" id="input2_from" placeholder="From"></div><div class="col-md-6"><label for="input2_to">Date To:</label><input type="date" class="form-control" name="input2_to" id="input2_to" placeholder="To"></div></div>');
+        } else {
+            $('#calendarInputs').append('<div class="col-md-6"><label for="input2">Calendar:</label><input type="date" class="form-control" name="input2" placeholder="Calendar"></div>');
+        }
+    });;
 
         var tableJad2 = $('#listJad2').DataTable({
             ordering: true,

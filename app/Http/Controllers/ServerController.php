@@ -167,7 +167,7 @@ class ServerController extends Controller
                    return redirect()->route('server.create',['id'=>$getServer->id])->with('error', 'IP address already exists for another server. Please select another IP address.');
                 }
 
-                $primary2 = Server::create([
+                DB::table('servers')->insert([
                     'hostname' => $getServer->hostname,
                     'subhostname' => $validatedData['primary2name'],
                     'ipaddress' => $validatedData['primary2ip'],
@@ -306,7 +306,7 @@ class ServerController extends Controller
         $subServersData=[];
         foreach($subServers as $subs){
             $serverSub = [
-                'id'=>$subs['id'],
+                'id'=>$subs['id'] ?? null,
             'hostname' => $getServer->hostname,
             'master_id' => $getServer->id,
             'subhostname' =>$subs['name'],
@@ -337,8 +337,10 @@ class ServerController extends Controller
 
         foreach ($subServersData as $subData) {
 
-            if (!empty($subData['subhostname']) && !empty($subData['ipaddress'])) {
+
+            if ($subData['id'] != null && (!empty($subData['subhostname']) && !empty($subData['ipaddress']))) {
                 // Find the sub-server by master ID and subhostname
+
 
                 $existingHostname = Server::where('subhostname', $subData['subhostname'])
                 ->where('id', '!=', $subData['id'])
@@ -369,16 +371,30 @@ class ServerController extends Controller
 
 
                 } else {
-                    // Create a new sub-server if it doesn't exist
-                    Server::create([
-                        'hostname' => $subData['hostname'],
-                        'subhostname' => $subData['subhostname'],
-                        'ipaddress' => $subData['ipaddress'],
-                        'status'=>1,
-                        'server_type' => 1,  // Assuming server_type = 1 indicates a sub-server
-                        //'status_cluster' => 1, // Assuming status_cluster = 1 indicates active cluster
-                        'master_id' => $server->id,
-                    ]);
+
+                    if (!Server::where('subhostname', $subData['subhostname'])->exists() && !Server::where('ipaddress',$subData['ipaddress'])->exists()) {
+                        // Create a new sub-server if it doesn't exist
+                        DB::table('servers')->insert([
+                            'hostname' => $subData['hostname'],
+                            'subhostname' => $subData['subhostname'],
+                            'ipaddress' => $subData['ipaddress'],
+                            'status'=>1,
+                            'server_type' => 1,  // Assuming server_type = 1 indicates a sub-server
+                            //'status_cluster' => 1, // Assuming status_cluster = 1 indicates active cluster
+                            'master_id' => $server->id,
+                        ]);
+
+                        $insertedId = DB::getPdo()->lastInsertId();
+
+                        $roles2 = Role::get();
+
+                        foreach ($roles2 as $role) {
+                            DB::insert('INSERT INTO role_servers (role_id, server_id) VALUES (?, ?)', [$role->id,$insertedId]);
+
+                        }
+                }
+
+
                 }
             }
 

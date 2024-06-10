@@ -208,6 +208,11 @@
 
                     grandTotalTableBody.appendChild(grandTotalRow);
                 }
+                if (!$.fn.DataTable.isDataTable('#grandTotalsDatatable')) {
+                    $('#grandTotalsDatatable').DataTable({
+                        "order": [[1, "desc"]] // Initial sorting on the second column (Counts) in descending order
+                    });
+}
             }
 
             function getDomain(outputs) {
@@ -217,7 +222,9 @@
                     var filteredOutputs = outputs.filter(function(output) {
                         return regexFormat.test(output);
                     });
-
+                    if ($.fn.DataTable.isDataTable('#spmrDatatable')) {
+                        $('#spmrDatatable').DataTable().destroy();
+                    }
                     // Get the tbody element by its ID
                     var tableBody = document.getElementById('tableHostDomSum');
 
@@ -231,20 +238,32 @@
 
                         for (var j = 0; j < columns.length; j++) {
                             var cell = document.createElement('td');
-                            if (j != 0) { // Format the first column (assumed to be a number)
+                            // if (j != 0) { // Format the first column (assumed to be a number)
+                                // cell.textContent = numberWithCommas(columns[j]);
+                            // } else {
                                 cell.textContent = numberWithCommas(columns[j]);
-                            } else {
-                                cell.textContent = columns[j];
-                            }
+                            // }
                             row.appendChild(cell);
                         }
 
                         tableBody.appendChild(row);
                     }
 
+                    // Re-initialize DataTables
+                    $('#spmrDatatable').DataTable({
+                        "order": [], // Initial sorting on the first column (Message Count) in descending order
+                        "language": {
+                            "emptyTable": "No data available in table" // Custom message when table is empty
+                        }
+                    });
+
+
             }
 
             function trafficSumTableData(outputs) {
+                if ($.fn.DataTable.isDataTable('#spmrTrafficDatatable')) {
+                        $('#spmrTrafficDatatable').DataTable().destroy();
+                    }
                 // Get the tbody element by its ID
                 var tableBody = document.getElementById('tableTrafficSum');
 
@@ -274,6 +293,14 @@
                     // Append the row to the table body
                     tableBody.appendChild(row);
                 }
+
+                // Re-initialize DataTables
+                $('#spmrTrafficDatatable').DataTable({
+                        "order": [], // Initial sorting on the first column (Message Count) in descending order
+                        "language": {
+                            "emptyTable": "No data available in table" // Custom message when table is empty
+                        }
+                    });
             }
 
             function numberWithCommas(x) {
