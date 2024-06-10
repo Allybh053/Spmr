@@ -34,20 +34,20 @@
                         <div class="card-body mt-1 mb-4">
                         <form id="report-form">
                         <div class="row col-12 mb-1">
-                                    <div class="col-md-4">
-                                        <label class="small mb-1" for="serverName">Server Name:</label>
-                                        {!! Form::select('serverName', $serverName, $defaultServerId ?? 1, ['id'=>'serverName', 'name'=>'serverName', 'class'=>'form-control select2', 'placeholder'=>config('params.dropdown_default')]) !!}
-                                    </div>
+                            <div class="col-md-4">
+                                <label class="small mb-1" for="serverName">Server Name:</label>
+                                {!! Form::select('serverName', $serverName, $defaultServerId ?? 1, ['id'=>'serverName', 'name'=>'serverName', 'class'=>'form-control select2', 'placeholder'=>config('params.dropdown_default')]) !!}
+                            </div>
                         </div>
                         <div class="row col-12 mb-1">
-                                    <div class="col-md-6">
-                                        <label class="small mb-1" for="mailFrom">Mail From:</label>
-                                        {!! Form::text('mailFrom',  null, ['id'=>'mail_from', 'name'=>'mail_from', 'class'=>'form-control']) !!}
-                                    </div>
-                                    <div class="col-md-6">
-                                        <label class="small mb-1" for="recepientTo">Recepient To:</label>
-                                        {!! Form::text('recepientTo', null, ['id'=>'rec_to', 'name'=>'rec_to', 'class'=>'form-control']) !!}
-                                    </div>
+                            <div class="col-md-6">
+                                <label class="small mb-1" for="mailFrom">Mail From:</label>
+                                {!! Form::text('mailFrom',  null, ['id'=>'mail_from', 'name'=>'mail_from', 'class'=>'form-control','required']) !!}
+                            </div>
+                            <div class="col-md-6">
+                                <label class="small mb-1" for="recepientTo">Recepient To:</label>
+                                {!! Form::text('recepientTo', null, ['id'=>'rec_to', 'name'=>'rec_to', 'class'=>'form-control','required']) !!}
+                            </div>
                         </div>
                         <div class="col-md-12">
                             <!-- Save and Back button-->
@@ -105,8 +105,21 @@
                      url: "{{ route('loopback.smtpTest') }}",
                      data: formData,
                      success: function (response) {
-                         //console.log(response);
-                         sendTestCmd(response);
+                        // Display SweetAlert prompt message
+                        Swal.fire({
+                            title: 'Are you sure?',
+                            text: 'Proceed with the action?',
+                            icon: 'warning',
+                            showCancelButton: true,
+                            confirmButtonColor: '#3085d6',
+                            cancelButtonColor: '#d33',
+                            confirmButtonText: 'Yes'
+                        }).then((result) => {
+                            if (result.isConfirmed) {
+                                // User confirmed, execute the sendTestCmd(response) function
+                                sendTestCmd(response);
+                            }
+                        });
                      },
                      error: function (error) {
                          //console.log(error);
@@ -130,14 +143,46 @@
                  });
 
                  socket.addEventListener('message', (event) => {
-                     const response = event.data;
-                     if (response.includes('Failed')) {
-                         alert("Failed to send SMTP Test on " + selectedServer + ".");
-                     } else {
-                         alert("Successfully to send SMTP Test on " + selectedServer + ".");
-                     }
-                     socket.close();
-                     location.reload();
+                    const response = event.data;
+                    let alertConfig = {
+                        icon: response.includes('Failed') ? 'error' : 'success',
+                        title: response.includes('Failed') ? 'Failed' : 'Success',
+                        text: response.includes('Failed') ? "Failed to send SMTP Test on " + selectedServer + "." : "Successfully sent SMTP Test on " + selectedServer + ".",
+                        showConfirmButton: true // Don't show the confirm button initially
+                    };
+
+                    // Display SweetAlert
+                    Swal.fire(alertConfig).then((result) => {
+                        // Handle OK button click if needed
+                    });
+
+                    // Add click event listener to the OK button to close the alert
+                    document.querySelector('.swal2-confirm').addEventListener('click', () => {
+                        Swal.close(); // Close the SweetAlert
+                        socket.close();
+                        location.reload();
+                    });
+                    //  const response = event.data;
+                    //  if (response.includes('Failed')) {
+                    //     //  alert("Failed to send SMTP Test on " + selectedServer + ".");
+                    //         Swal.fire({
+                    //             icon: 'error',
+                    //             title: 'Failed',
+                    //             text: "Failed to send SMTP Test on " + selectedServer + ".",
+                    //             confirmButtonText: 'OK'
+                    //         });
+                    //  } else {
+                    //     //  alert("Successfully to send SMTP Test on " + selectedServer + ".");
+                    //     // Display SweetAlert success notification
+                    //     Swal.fire({
+                    //         icon: 'success',
+                    //         title: 'Success',
+                    //         text: "Successfully sent SMTP Test on " + selectedServer + ".",
+                    //         confirmButtonText: 'OK'
+                    //     });
+                    //  }
+                    //  socket.close();
+                    //  location.reload();
                  });
              }
 

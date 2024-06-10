@@ -66,7 +66,7 @@
                                 <span class="badge bg-red text-white rounded-pill">Inactive</span>
                             @endif
                             </td>
-                            <td> {{ \Carbon\Carbon::parse($smtpMailServer->created_at)->format('d/m/Y h:i:s') }}</td>
+                            <td> {{ \Carbon\Carbon::parse($smtpMailServer->created_at)->format('d/m/Y H:i:s') }}</td>
                             <td style="text-align: center;">
                                 <a class="btn btn-datatable btn-icon me-2 text-blue" title="View Detail" href="{{ route('mailrelay.edit',['id' => $smtpMailServer->id,'type' => $smtpMailServer->types_req])}}"><i data-feather="eye"></i></a>
                                 <form class="btn btn-datatable btn-icon me-2 text-blue" action="" method="POST" onsubmit="return confirm('Are you sure you want to delete this user?')">
@@ -105,11 +105,15 @@
                 extend: 'copy',
                 text: 'Copy',
                 exportOptions: {
-                    columns: ':visible',
+                    columns: ':not(:last-child)', // Exclude the last column
                     format: {
                         body: function (data, row, column, node) {
                             // Add row number for the first column
-                            return column === 0 ? row + 1 : data;
+                            if (column === 0) {
+                            return row + 1;
+                            } else {
+                                return data.replace(/<\/?[^>]+(>|$)/g, "");
+                            }
                         }
                     }
                 }
@@ -118,11 +122,15 @@
                 extend: 'csv',
                 text: 'CSV',
                 exportOptions: {
-                    columns: ':visible',
+                    columns: ':not(:last-child)', // Exclude the last column
                     format: {
                         body: function (data, row, column, node) {
                             // Add row number for the first column
-                            return column === 0 ? row + 1 : data;
+                            if (column === 0) {
+                            return row + 1;
+                            } else {
+                                return data.replace(/<\/?[^>]+(>|$)/g, "");
+                            }
                         }
                     }
                 }
@@ -131,7 +139,7 @@
                 extend: 'excel',
                 text: 'Excel',
                 exportOptions: {
-                    columns: ':visible',
+                    columns: ':not(:last-child)', // Exclude the last column
                     format: {
                         body: function (data, row, column, node) {
                             // Add row number for the first column
@@ -144,7 +152,7 @@
                 extend: 'pdf',
                 text: 'PDF',
                 exportOptions: {
-                    columns: ':visible',
+                    columns: ':not(:last-child)', // Exclude the last column
                     format: {
                         body: function (data, row, column, node) {
                             // Add row number for the first column
@@ -157,7 +165,7 @@
                 extend: 'print',
                 text: 'Print',
                 exportOptions: {
-                    columns: ':visible',
+                    columns: ':not(:last-child)', // Exclude the last column
                     format: {
                         body: function (data, row, column, node) {
                             // Add row number for the first column

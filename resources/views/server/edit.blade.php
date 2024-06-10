@@ -85,7 +85,9 @@
                 </div>
                 <button type="button" class="btn btn-secondary" id="add-subserver">Add Primary Server</button><hr>
                 <div class="mb-3">
-                    <label class="small mb-1" for="inputNotificationEmail">Updated At : {{ \Carbon\Carbon::now('Asia/Kuala_Lumpur')->format('d/m/Y h:i:s') }}</label>
+                    @if ($subserver->isNotEmpty())
+                    <label class="small mb-1" for="inputNotificationEmail">Last Updated At: {{ $subserver->last()->updated_at->format('d/m/Y H:i:s') }}</label> 
+                @endif
                 </div>
                 <button class="btn btn-primary me-2 my-1" type="submit">Submit</button>
                 <a class="btn btn-danger me-2 my-1" type="button" href="{{ route('server.index')}}">Cancel</a>

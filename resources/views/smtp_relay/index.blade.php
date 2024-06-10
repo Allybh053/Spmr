@@ -114,7 +114,9 @@
  @endsection
 
 @push('script')
-    <script>
+
+<script src="{{ asset('js/vendor/moment.min.js') }}"></script>
+<script>
   $(document).ready(function() {
         var table = $('#spmrDatatable').DataTable({
             processing: true,
@@ -150,7 +152,7 @@
                 { data: 'project_name', name: 'project_name', class: 'text-center' },
                 { data: 'smtp_relay_server', name: 'smtp_relay_server', class: 'text-center' },
                 { data: 'ip_addr_server', name: 'ip_addr_server', class: 'text-center' },
-                { data: 'date_verification_3', name: 'date_verification_3', class: 'text-center' },
+                { data: 'updated_at', name: 'updated_at', class: 'text-center' },
                 { data: 'status', name: 'status', class: 'text-center' },
                 { data: 'action', name: 'type', class: 'text-center', orderable: false, searchable: false },
             ],
@@ -161,7 +163,7 @@
                 text: 'Copy',
                 title: 'List SMTP Relay Request MyGovUC',
                 exportOptions: {
-                    columns: ':visible',
+                    columns: ':not(:last-child)', // Exclude the last column
                     format: {
                         body: function (data, row, column, node) {
                             // Add row number for the first column
@@ -175,7 +177,7 @@
                 text: 'CSV',
                 title: 'List SMTP Relay Request MyGovUC',
                 exportOptions: {
-                    columns: ':visible',
+                    columns: ':not(:last-child)', // Exclude the last column
                     format: {
                         body: function (data, row, column, node) {
                             // Add row number for the first column
@@ -189,7 +191,7 @@
                 text: 'Excel',
                 title: 'List SMTP Relay Request MyGovUC',
                 exportOptions: {
-                    columns: ':visible',
+                    columns: ':not(:last-child)', // Exclude the last column
                     format: {
                         body: function (data, row, column, node) {
                             // Add row number for the first column
@@ -203,7 +205,7 @@
                 text: 'PDF',
                 title: 'List SMTP Relay Request MyGovUC',
                 exportOptions: {
-                    columns: ':visible',
+                    columns: ':not(:last-child)', // Exclude the last column
                     format: {
                         body: function (data, row, column, node) {
                             // Add row number for the first column
@@ -217,7 +219,7 @@
                 text: 'Print',
                 title: 'List SMTP Relay Request MyGovUC',
                 exportOptions: {
-                    columns: ':visible',
+                    columns: ':not(:last-child)', // Exclude the last column
                     format: {
                         body: function (data, row, column, node) {
                             // Add row number for the first column
