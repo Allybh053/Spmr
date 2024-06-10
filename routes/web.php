@@ -314,6 +314,7 @@ Route::group(['middleware' => ['auth', 'nocache','log.user.activity']], function
 
     Route::get('/activity-logs', [ActivityLogController::class,'showActivityLogs'])->name('activityLog.index')
       ->middleware('auth.resource:spmr_activity_log_view');
+      Route::post('/activity-logs/filter', [ActivityLogController::class,'filter'])->name('activityLog.filter');
 
 
     Route::group(['prefix' => 'monthly-report'], function () {
