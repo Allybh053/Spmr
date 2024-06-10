@@ -216,6 +216,13 @@
 <script src="{{ asset('js/vendor/Chart.min.js') }}"></script>
 <script>
   document.addEventListener('DOMContentLoaded', function () {
+    $('#spmrDatatable').DataTable({
+        "order": [[1, 'desc']], // Initial sorting on the second column (Mail Queue Count) in descending order
+        "language": {
+            "emptyTable": "No data available in table" // Custom message when table is empty
+        }
+    });
+
     function getRandomColor() {
         var letters = '0123456789ABCDEF';
         var color = '#';

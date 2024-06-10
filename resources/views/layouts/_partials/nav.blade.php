@@ -237,7 +237,7 @@
                     <nav class="sidenav-menu-nested nav accordion" id="accordionSidenavAppsMenu">
                            <!-- Nested Sidenav Accordion (Apps -> User Management)-->
                            <!-- <a class="nav-link collapsed" href="javascript:void(0);" data-bs-toggle="collapse" data-bs-target="#appsCollapseUserManagement" aria-expanded="false" aria-controls="appsCollapseUserManagement">
-                            Appplication Users
+                            Application Users
                             <div class="sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
                         </a>
                         <div class="collapse" id="appsCollapseUserManagement" data-bs-parent="#accordionSidenavAppsMenu">
@@ -248,7 +248,7 @@
                         </div> -->
                         @can('user_view')
                         <a class="nav-link" href="{{ route('usermanagements.index') }}">
-                            Appplication Users
+                            Application Users
                             <div class="sidenav-collapse-arrow"></div>
                         </a>
                         @endcan

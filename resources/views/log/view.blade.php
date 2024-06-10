@@ -146,7 +146,7 @@
                                         </table>
                                     </div>
                                 </div>
-                                <div class="card-footer small text-muted">Updated Yesterday {{ $currentDate }}</div>
+                                <div class="card-footer small text-muted">Latest Updated {{ $currentDate }}</div>
                             </div>
                         </div>
 
@@ -169,7 +169,7 @@
                                         </table>
                                     </div>
                                 </div>
-                                <div class="card-footer small text-muted">Updated Yesterday {{ $currentDate }}</div>
+                                <div class="card-footer small text-muted">Latest Updated {{ $currentDate }}</div>
                             </div>
                         </div>
                     </div>
@@ -196,7 +196,7 @@
                                         </table>
                                     </div>
                                 </div>
-                                <div class="card-footer small text-muted">Updated Yesterday {{ $currentDate }}</div>
+                                <div class="card-footer small text-muted">Latest Updated {{ $currentDate }}</div>
                             </div>
                         </div>
                     </div>

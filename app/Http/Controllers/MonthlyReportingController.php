@@ -58,6 +58,7 @@ class MonthlyReportingController extends Controller
 
     public function search(Request $request)
     {
+
         // Retrieve other inputs from the request
         $serverIds = $request->input('server');
         $input2Type = $request->input('calendarType');
@@ -76,10 +77,15 @@ class MonthlyReportingController extends Controller
         // Apply filter based on $input2Type
         if ($input2Type !== null) {
             if ($input2Type === "month") {
-                $queryJad2->where('month', $monthType);
-                $queryJad6->where('month', $monthType);
-                $queryJad10->where('month', $monthType);
-                $queryJad14->where('month', $monthType);
+                $date = $request->input('input2_month');
+                $year = intval(substr($date, 0, 4));
+                $month = intval(substr($date, 5, 2));
+
+                // Apply the year and month filters to multiple queries
+                $queryJad2->where('year', $year)->where('month', $month);
+                $queryJad6->where('year', $year)->where('month', $month);
+                $queryJad10->where('year', $year)->where('month', $month);
+                $queryJad14->where('year', $year)->where('month', $month);
             } elseif ($input2Type === "year") {
                 $queryJad2->where('year', $yearType);
                 $queryJad6->where('year', $yearType);
@@ -104,6 +110,9 @@ class MonthlyReportingController extends Controller
         $valDataJad10 = $this->formatDataEmail($valDataJad10);
         $valDataJad14 =  $this->formatDataEmail($valDataJad14);
 
+
+
+
         // this will use for date range
 
         // ->when($request->date_from != null && $request->date_to != null, function ($query) use ($request) {
@@ -122,7 +131,10 @@ class MonthlyReportingController extends Controller
             $query->where('server', $serverName);
         })
         ->when(isset($request->input2_month) && $request->input('input2_month') != null, function ($query) use ($request) {
-            $query->where('month', $request->input('input2_month'));
+            $date = $request->input('input2_month');
+            $year = intval(substr($date, 0, 4));
+            $month = intval(substr($date, 5, 2));
+            $query->where('year', $year)->where('month', $month);
         })
         ->when(isset($request->input2_year) && $request->input('input2_year') != null, function ($query) use ($request) {
             $query->where('year', $request->input('input2_year'));
@@ -138,7 +150,10 @@ class MonthlyReportingController extends Controller
             $query->where('server', $serverName);
         })
         ->when(isset($request->input2_month) && $request->input('input2_month') != null, function ($query) use ($request) {
-            $query->where('month', $request->input('input2_month'));
+            $date = $request->input('input2_month');
+            $year = intval(substr($date, 0, 4));
+            $month = intval(substr($date, 5, 2));
+            $query->where('year', $year)->where('month', $month);
         })
         ->when(isset($request->input2_year) && $request->input('input2_year') != null, function ($query) use ($request) {
             $query->where('year', $request->input('input2_year'));
@@ -149,7 +164,10 @@ class MonthlyReportingController extends Controller
             $query->where('server', $serverName);
         })
         ->when(isset($request->input2_month) && $request->input('input2_month') != null, function ($query) use ($request) {
-            $query->where('month', $request->input('input2_month'));
+            $date = $request->input('input2_month');
+            $year = intval(substr($date, 0, 4));
+            $month = intval(substr($date, 5, 2));
+            $query->where('year', $year)->where('month', $month);
         })
         ->when(isset($request->input2_year) && $request->input('input2_year') != null, function ($query) use ($request) {
             $query->where('year', $request->input('input2_year'));
@@ -162,7 +180,10 @@ class MonthlyReportingController extends Controller
             $query->where('server', $serverName);
         })
         ->when(isset($request->input2_month) && $request->input('input2_month') != null, function ($query) use ($request) {
-            $query->where('month', $request->input('input2_month'));
+            $date = $request->input('input2_month');
+            $year = intval(substr($date, 0, 4));
+            $month = intval(substr($date, 5, 2));
+            $query->where('year', $year)->where('month', $month);
         })
         ->when(isset($request->input2_year) && $request->input('input2_year') != null, function ($query) use ($request) {
             $query->where('year', $request->input('input2_year'));

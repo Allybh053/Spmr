@@ -29,6 +29,51 @@
         </header>
         <div class="container-fluid px-4 mt-4">
             <div class="row">
+                 {{-- <div class="col-xl-12">
+                    <div class="card">
+                        <div class="card-header">Filter</div>
+                        <div class="card-body">
+                            <form id="searchForm">
+
+                                <div  id="searchBox">--}}
+
+                                    {{-- not in use for choose type --}}
+                                    {{-- <div class="row gx-3 mb-3">
+                                        <div class="col-md-6">
+                                            <div class="mb-3" id="calendarSelect">
+                                                <label class="small mb-1" for="calendarType">Filter Type:</label>
+                                                <select class="form-control select2" id="calendarType" name="calendarType">
+                                                    <option selected disabled></option>
+                                                    <option value="range">Date Range</option>
+                                                    <option value="month">Month</option>
+                                                    <option value="year">Year</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                    </div> --}}
+                                     {{-- <div class="mb-3" id="calendarInputs">
+                                        <div class="row">
+                                            <div class="col-md-6">
+                                                <label for="start_date">Start Date:</label>
+                                                <input type="date" class="form-control" name="start_date" id="start_date">
+                                            </div>
+                                            <div class="col-md-6">
+                                                <label for="end_date">End Date:</label>
+                                                <input type="date" class="form-control" name="end_date" id="end_date">
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="text-end"> <!-- Align the button to the right -->
+                                        <button type="button" class="btn btn-secondary" id="reset">Reset</button>
+                                        <button type="submit" class="btn btn-primary">Search</button>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>--}}
+                <br>
+
                 <div class="col-xl-12">
                     <!-- Account details card-->
                     <div class="card mb-4">
@@ -89,6 +134,36 @@
 @endsection
 @push('script')
 <script>
+    $('#calendarType').change(function () {
+            var selectedType = $(this).val();
+            $('#calendarInputs').empty(); // Clear previous inputs
+
+            if (selectedType === 'month') {
+                var currentYear = new Date().getFullYear();
+                var selectMonthHtml = '<div class="col-md-6"><label for="input2_month">Month:</label><select class="form-control" name="input2_month" id="month">';
+                var monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+                for (var month = 0; month < 12; month++) {
+                    selectMonthHtml += '<option value="' + (month + 1) + '">' + monthNames[month] + ' ' + currentYear + '</option>';
+                }
+                selectMonthHtml += '</select></div>';
+                $('#calendarInputs').append(selectMonthHtml);
+            } else if (selectedType === 'year') {
+                var currentYear = new Date().getFullYear();
+                var selectYearHtml = '<div class="col-md-6"><label for="input2_year">Year:</label><select class="form-control" name="input2_year" id="year">';
+                for (var year = currentYear; year >= currentYear - 10; year--) {
+                    selectYearHtml += '<option value="' + year + '">' + year + '</option>';
+                }
+                selectYearHtml += '</select></div>';
+                $('#calendarInputs').append(selectYearHtml);
+            }   else if (selectedType === 'range') {
+                var selectRangeHtml = '<div class="row"><div class="col-md-6"><label for="start_date">Start Date:</label><input type="date" class="form-control" name="start_date" id="start_date"></div>';
+                selectRangeHtml += '<div class="col-md-6"><label for="end_date">End Date:</label><input type="date" class="form-control" name="end_date" id="end_date"></div></div>';
+                $('#calendarInputs').append(selectRangeHtml);
+            } else {
+                // to do
+            }
+        });
+
     jQuery.extend(jQuery.fn.dataTable.ext.type.order, {
         "date-uk-pre": function(a) {
             if (!a) {
@@ -167,6 +242,51 @@
     // Adjust positioning of search input and export buttons
     $('.dataTables_filter').addClass('d-inline-block mr-2'); // Make search input inline
     $('.dt-buttons').appendTo('.dataTables_filter'); // Append export buttons to search container
+
+    // Handle form submission
+    $('#searchForm').submit(function(event) {
+    event.preventDefault();
+    var formData = $(this).serialize();
+
+    $.ajax({
+        type: 'POST',
+        url: '{{ route("activityLog.filter") }}',
+        data: formData,
+        success: function(response) {
+            console.log(response);
+             // Clear existing data from the DataTable
+             if (typeof response.data === 'object' && response.data !== null) {
+        // Convert response.data object into an array
+        var dataArray = Object.values(response.data);
+
+        // Clear existing data from the DataTable
+        table.clear().draw();
+
+        // Populate DataTable with new data
+        dataArray.forEach(function(item) {
+            table.row.add([
+                item.user_id, // Assuming these are the respective fields, adjust as needed
+                item.activity_type,
+                item.action,
+                item.ip_address,
+                item.user_agent,
+                item.url,
+                item.old_values,
+                item.new_values,
+                item.event,
+                item.created_at // Assuming this is the timestamp field
+            ]).draw(false);
+        });
+    } else {
+        console.error('Response data is not in expected format:', response.data);
+    }
+        },
+        error: function(xhr, status, error) {
+            console.error('Error:', error);
+        }
+    });
+});
+
     </script>
 
 @endpush

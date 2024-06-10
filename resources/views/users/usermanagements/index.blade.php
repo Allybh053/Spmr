@@ -125,12 +125,17 @@
                 extend: 'copy',
                 text: 'Copy',
                 exportOptions: {
-                    columns: ':visible',
+                    columns: ':not(:last-child)',
                     format: {
                         body: function (data, row, column, node) {
-                            // Add row number for the first column
-                            return column === 0 ? row + 1 : data;
+                        var textContent = $('<div>').html(data).text(); // Use jQuery to strip HTML tags
+                        // Handle date formatting if necessary
+                        if (/\d{2}\/\d{2}\/\d{4}/.test(textContent)) {
+                            var dateParts = textContent.split('/');
+                            textContent = new Date(dateParts[2], dateParts[1] - 1, dateParts[0]).toLocaleDateString();
                         }
+                        return column === 0 ? row + 1 : textContent;
+                    }
                     }
                 }
             },
@@ -138,12 +143,17 @@
                 extend: 'csv',
                 text: 'CSV',
                 exportOptions: {
-                    columns: ':visible',
+                    columns: ':not(:last-child)',
                     format: {
                         body: function (data, row, column, node) {
-                            // Add row number for the first column
-                            return column === 0 ? row + 1 : data;
+                        var textContent = $('<div>').html(data).text(); // Use jQuery to strip HTML tags
+                        // Handle date formatting if necessary
+                        if (/\d{2}\/\d{2}\/\d{4}/.test(textContent)) {
+                            var dateParts = textContent.split('/');
+                            textContent = new Date(dateParts[2], dateParts[1] - 1, dateParts[0]).toLocaleDateString();
                         }
+                        return column === 0 ? row + 1 : textContent;
+                    }
                     }
                 }
             },
@@ -151,12 +161,17 @@
                 extend: 'excel',
                 text: 'Excel',
                 exportOptions: {
-                    columns: ':visible',
+                    columns:  ':not(:last-child)',
                     format: {
                         body: function (data, row, column, node) {
-                            // Add row number for the first column
-                            return column === 0 ? row + 1 : data;
+                        var textContent = $('<div>').html(data).text(); // Use jQuery to strip HTML tags
+                        // Handle date formatting if necessary
+                        if (/\d{2}\/\d{2}\/\d{4}/.test(textContent)) {
+                            var dateParts = textContent.split('/');
+                            textContent = new Date(dateParts[2], dateParts[1] - 1, dateParts[0]).toLocaleDateString();
                         }
+                        return column === 0 ? row + 1 : textContent;
+                    }
                     }
                 }
             },
@@ -164,12 +179,17 @@
                 extend: 'pdf',
                 text: 'PDF',
                 exportOptions: {
-                    columns: ':visible',
+                    columns:  ':not(:last-child)',
                     format: {
                         body: function (data, row, column, node) {
-                            // Add row number for the first column
-                            return column === 0 ? row + 1 : data;
+                        var textContent = $('<div>').html(data).text(); // Use jQuery to strip HTML tags
+                        // Handle date formatting if necessary
+                        if (/\d{2}\/\d{2}\/\d{4}/.test(textContent)) {
+                            var dateParts = textContent.split('/');
+                            textContent = new Date(dateParts[2], dateParts[1] - 1, dateParts[0]).toLocaleDateString();
                         }
+                        return column === 0 ? row + 1 : textContent;
+                    }
                     }
                 }
             },
@@ -177,12 +197,17 @@
                 extend: 'print',
                 text: 'Print',
                 exportOptions: {
-                    columns: ':visible',
+                    columns: ':not(:last-child)',
                     format: {
                         body: function (data, row, column, node) {
-                            // Add row number for the first column
-                            return column === 0 ? row + 1 : data;
+                        var textContent = $('<div>').html(data).text(); // Use jQuery to strip HTML tags
+                        // Handle date formatting if necessary
+                        if (/\d{2}\/\d{2}\/\d{4}/.test(textContent)) {
+                            var dateParts = textContent.split('/');
+                            textContent = new Date(dateParts[2], dateParts[1] - 1, dateParts[0]).toLocaleDateString();
                         }
+                        return column === 0 ? row + 1 : textContent;
+                    }
                     }
                 }
             }
