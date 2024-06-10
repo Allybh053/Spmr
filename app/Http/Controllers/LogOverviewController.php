@@ -76,7 +76,7 @@ class LogOverviewController extends Controller
         $nameServer = Server::where('id', $serverName)->pluck('subhostname');
         $ipAddrServer = Server::where('master_id', $serverName)->pluck('ipaddress');
 
-        dd($nameServer);
+        //dd($nameServer);
 
         if ($serverName != null) {
             return [

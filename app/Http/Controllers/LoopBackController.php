@@ -33,9 +33,13 @@ class LoopBackController extends Controller
         $defaultServerId = $serverIds->min();
 
         // Filter servers based on the fetched IDs
-        $serverName = Server::whereIn('id', $serverIds)
-        ->where('status', 1)
-        ->pluck('hostname', 'id');
+        // $serverName = Server::whereIn('id', $serverIds)
+        // ->where('status', 1)
+        // ->pluck('hostname', 'id');
+
+        $serverName = Server::whereIn('status_cluster', [1,0])
+            ->orderBy('id', 'asc')
+            ->pluck('subhostname', 'id');
 
         ActivityLog::create([
             'user_id' => Auth::id(),

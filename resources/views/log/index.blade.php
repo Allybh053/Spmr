@@ -64,7 +64,7 @@
                     data: {serverName: $('#serverName').val()},
                     success: function(response) {
                         // Handle the response from the controller
-                        console.log(response);
+                        // console.log(response);
 
                         $('#card-title-header').text(response.subhostname);
                         $('#ip-address').text(response.ipaddress);

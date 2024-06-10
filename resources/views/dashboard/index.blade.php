@@ -60,21 +60,21 @@
                                     <th width="45%"><h6><b>Total Domain Registered</b></h6>
                                         <div class="small text-muted">Updated every 30 minutes</div>
                                     </th>
-                                    <td width="15%"><h6>{{ $serverSubsub['subTotalDomain'] ?? '0' }}</h6></td>
+                                    <td width="15%"><h6>{{ $serverSubs['subTotalDomain'] ?? '0' }}</h6></td>
                                 </tr>
                             @endcan
                             @can('number_of_registered_sasl')
                                 <tr>
                                     <th width="45%"><h6><b>Total SASL based (SMTP relay request form registered)</b></h6></th>
                                     {{-- <td width="15%"><h6>{{$server['totalSasl'] ?? '0'}}</h6></td> --}}
-                                    <td width="15%"><h6>{{ $serverSubsub['subTotalSasl'] ?? '0' }}</h6></td>
+                                    <td width="15%"><h6>{{ $serverSubs['subTotalSasl'] ?? '0' }}</h6></td>
                                 </tr>
                             @endcan
                             @can('total_ip_based_registered')
                                 <tr>
                                     <th width="45%"><h6><b>Total IP based (SMTP relay request form registered)</b></h6></th>
                                     {{-- <td width="15%"><h6>{{$server['totalIpBased'] ?? '0'}}</h6></td> --}}
-                                    <td width="15%"><h6>{{ $serverSubsub['subTotalIpBased'] ?? '0' }}</h6></td>
+                                    <td width="15%"><h6>{{ $serverSubs['subTotalIpBased'] ?? '0' }}</h6></td>
                                 </tr>
                             @endcan
                         </tbody>
@@ -372,7 +372,9 @@ function formatDate(date) {
 
 
 @foreach ($serverconfig as $server)
-var serverMailRelay1{{$loop->iteration}} = "{{ $server->subhostname }}";
+var serverMailRelay1{{$loop->iteration}} = {
+    subhostname: "{{ $server->subhostname }}",
+    hostname: "{{ $server->hostname }}"};
 serverIpaddresses1.push(serverMailRelay1{{$loop->iteration}});
 @endforeach
 
@@ -380,7 +382,9 @@ var servers = {};
 
 // Function to handle WebSocket connection and data processing
 function connectAndProcess(hostname1, index) {
-    const serverAddress1 = 'wss://spmr.mygovuc.gov.my/' + hostname1;
+    //console.log('Connecting to:', hostname1.subhostname, 'with hostname:', hostname1.hostname);
+
+    const serverAddress1 = 'wss://spmr.mygovuc.gov.my/' + hostname1.subhostname;
     const socket1 = new WebSocket(serverAddress1);
 
     socket1.onopen = function() {
@@ -406,16 +410,17 @@ function connectAndProcess(hostname1, index) {
         }
 
         // Add value to the dataset corresponding to the hostname
-        if (!datasets[hostname1]) {
-            datasets[hostname1] = {
-                label: hostname1,
+        if (!datasets[hostname1.hostname]) {
+            datasets[hostname1.hostname] = {
+                label: hostname1.hostname,
                 data: [],
                 borderColor: getRandomColor(), // Random color for the line
                 borderWidth: 2, // Bold line
                 fill: false
             };
         }
-        datasets[hostname1].data.push({
+
+        datasets[hostname1.hostname].data.push({
             x: timestamp,
             y: parseInt(value)
         });

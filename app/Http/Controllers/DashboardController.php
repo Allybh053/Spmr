@@ -40,12 +40,12 @@ class DashboardController extends Controller
             ->where('status_cluster', 1)->orderBy('id', 'asc')
             ->select('id', 'hostname', 'ipaddress','subhostname')
             ->get();
-         
+
         $serverList = [];
         $listServer = Server::whereIn('id', $serverIds)->where('status', 1)->orderBy('id', 'asc')->get();
         foreach ($listServer as $server) {
-            $subServer = Server::where('master_id',$server->id)->orderBy('status_cluster','desc')->get();
-            $subServer2 = Server::where('master_id',$server->id)->where('status_cluster',1)->get();
+            $subServer = Server::where('master_id',$server->id)->where('status_cluster',1)->orderBy('id', 'asc')->get();
+            $subServer2 = Server::where('master_id',$server->id)->where('status_cluster',1)->orderBy('id', 'asc')->get();
 
             $subs2=[];
             foreach($subServer2 as $subServers2){
@@ -53,7 +53,7 @@ class DashboardController extends Controller
                 $subs2[] = [
                     'subsid2' => $subServers2->id,
                     'subhostname2' => $subServers2->subhostname,
-                    'subIpaddress2' => $subServers2 -> ipaddress
+                    'subIpaddress2' => $subServers2 ->ipaddress
                 ];
             }
             $subs=[];
@@ -67,9 +67,9 @@ class DashboardController extends Controller
                     ->count();
 
                 $subDataDomain = DB::table('mailrouting')
-                    ->where('mailrouting.server', $subServers->subhostname)
+                    ->where('mailrouting.server', $subServers->hostname)
                     ->count();
-
+                 
                 $subDataSasl = DB::table('smtp_relay_req_form')
                     ->where('smtp_relay_req_form.sub_smtp_relay_server', $subServers->subhostname)
                     ->where('smtp_relay_req_form.smtp_relay_auth_method', 2)
