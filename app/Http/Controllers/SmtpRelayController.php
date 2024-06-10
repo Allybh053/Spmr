@@ -75,10 +75,15 @@ class SmtpRelayController extends Controller
         $agency = $request->input('agency');
         $calendarType = $request->input('calendarType');
 
-        $query = smtp_relay_server::select('smtp_relay_req_form.updated_at as updated_at','smtp_relay_req_form.form_id as formA', 'smtp_relay_req_form.ticket_id', 'agencies.name as agencies', 'smtp_relay_req_form.project_name', 'smtp_relay_req_form.smtp_relay_server', 'smtp_relay_req_form.date_verification_3', 'smtp_relay_server.types_req as typeB', 'smtp_relay_server.ip_addr_server','smtp_relay_server.id as detailID', 'smtp_relay_server.smtpid','smtp_relay_server.created_at as created_at', 'smtp_relay_server.server_name', 'smtp_relay_req_form.status as status')
+        $query = smtp_relay_server::select('smtp_relay_req_form.updated_at as updated_at','smtp_relay_req_form.form_id as formA', 'smtp_relay_req_form.ticket_id', 'agencies.name as agencies', 'smtp_relay_req_form.project_name', 'smtp_relay_req_form.smtp_relay_server', 'smtp_relay_req_form.date_verification_3', 'smtp_relay_server.types_req as typeB', 'smtp_relay_server.ip_addr_server','smtp_relay_server.id as detailID', 'smtp_relay_server.smtpid','smtp_relay_server.created_at as created_at', 'smtp_relay_server.server_name', 'smtp_relay_req_form.status as status','smtp_relay_req_form.implementation_name as implementation_name')
                 ->leftJoin('smtp_relay_req_form', 'smtp_relay_req_form.id', '=', 'smtp_relay_server.smtpid')
                 ->leftJoin('agencies','agencies.id','=',DB::raw('CAST(smtp_relay_req_form.agencies AS bigint)'))
-                ->orderby('smtp_relay_req_form.status','asc')
+                // ->orderby('smtp_relay_req_form.status','asc')
+                ->orderByRaw("CASE smtp_relay_req_form.status
+                                WHEN 0 THEN 1
+                                WHEN 2 THEN 2
+                                WHEN 1 THEN 3
+                                ELSE 4 END")
                 ->orderBy('created_at', 'desc');
 
       // Execute the query
@@ -126,19 +131,33 @@ class SmtpRelayController extends Controller
             })
             ->addColumn('date_verification_3', function ($row) {
                 $date = Carbon::parse($row['date_verification_3']);
-                return $date->format('d/m/Y h:m:s');
+                return $date->format('d/m/Y');
             })
             ->addColumn('created_at', function ($row) {
                 $date = $row['created_at'];
-                return $date->format('d/m/Y h:m:s');
+                return $date->format('d/m/Y H:i:s');
             })
-            ->addColumn('updated_at', function ($row) {
-                // Parse the date string using DateTime class
-                $date = $row['updated_at'];
+            // ->addColumn('updated_at', function ($row) {
+            //     // Parse the date string using DateTime class
+            //     $date = $row['updated_at'];
 
-                // Format the date in the desired format
-                return $date->format('d/m/Y h:m:s');
+            //     // Format the date in the desired format
+            //     return $date->format('d/m/Y H.i.s');
+            // })
+            ->addColumn('updated_at', function ($row) {
+                // Check if implementation_name is not null
+                if ($row['implementation_name'] !== null) {
+                    // Parse the date string using DateTime class
+                    $date = $row['updated_at'];
+
+                    // Format the date in the desired format
+                    return $date->format('d/m/Y H.i.s');
+                } else {
+                    // If implementation_name is null, return null
+                    return null;
+                }
             })
+
             ->addColumn('status', function ($row) {
                 //return $row['status']; value 0 is pending, 1 done created and 2 rejected
                 return $row['status'] == 0 ? 'Pending Created' : ($row['status'] == 1 ? 'Done Created' : 'Rejected');

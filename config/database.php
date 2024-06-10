@@ -76,6 +76,8 @@ return [
             'prefix_indexes' => true,
             'search_path' => 'public',
             'sslmode' => 'prefer',
+            'timezone'  => 'Asia/Kuala_Lumpur', // PostgreSQL uses named timezones
+
         ],
 
         'sqlsrv' => [

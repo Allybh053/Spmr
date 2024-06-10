@@ -72,7 +72,7 @@ class LoopBackController extends Controller
         $recTo = $request->input('rec_to');
 
         $serverMailRelay = Server::find($serverIds);
-        $serverName = $serverMailRelay->hostname;
+        $serverName = $serverMailRelay->subhostname;
         $serverIp= $serverMailRelay->ipaddress;
 
           // Prepare old and new values for auditing
