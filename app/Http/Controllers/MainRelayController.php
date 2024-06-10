@@ -102,6 +102,7 @@ class MainRelayController extends Controller
         $user = Auth::user();
         $smtpMailServers = DB::table('smtp_relay_req_form')->where('status',0)
         ->groupBy('form_id','id')
+        ->orderBy('created_at', 'asc')
         ->get();
 
         return view('mailrelay.register', compact('user','smtpMailServers'));
