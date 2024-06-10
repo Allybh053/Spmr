@@ -152,7 +152,8 @@
                 { data: 'project_name', name: 'project_name', class: 'text-center' },
                 { data: 'smtp_relay_server', name: 'smtp_relay_server', class: 'text-center' },
                 { data: 'ip_addr_server', name: 'ip_addr_server', class: 'text-center' },
-                { data: 'updated_at', name: 'updated_at', class: 'text-center' },
+                /*{ data: 'updated_at', name: 'updated_at', class: 'text-center' },*/
+                { data: 'date_verification_3', name: 'date_verification_3', class: 'text-center' },
                 { data: 'status', name: 'status', class: 'text-center' },
                 { data: 'action', name: 'type', class: 'text-center', orderable: false, searchable: false },
             ],
