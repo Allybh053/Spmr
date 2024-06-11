@@ -215,85 +215,75 @@
 @push('script')
 <script src="{{ asset('js/vendor/Chart.min.js') }}"></script>
 <script>
-  document.addEventListener('DOMContentLoaded', function () {
-    $('#spmrDatatable').DataTable({
-        "order": [[1, 'desc']], // Initial sorting on the second column (Mail Queue Count) in descending order
-        "language": {
-            "emptyTable": "No data available in table" // Custom message when table is empty
-        }
-    });
-
-    function getRandomColor() {
-        var letters = '0123456789ABCDEF';
-        var color = '#';
-        for (var i = 0; i < 6; i++) {
-            color += letters[Math.floor(Math.random() * 16)];
-        }
-        return color;
-    }
-
-    const serverListAgencies = @json($serverListAgencies);
-
-    serverListAgencies.forEach((server, index) => {
-        const chartId = `chart-${index}`;
-        const canvasElement = document.getElementById(chartId);
-
-        // Ensure the canvas element exists
-        if (!canvasElement) {
-            console.error(`Canvas element with id ${chartId} not found.`);
-            return;
+    document.addEventListener('DOMContentLoaded', function () {
+        function getRandomColor() {
+            var letters = '0123456789ABCDEF';
+            var color = '#';
+            for (var i = 0; i < 6; i++) {
+                color += letters[Math.floor(Math.random() * 16)];
+            }
+            return color;
         }
 
-        const ctx = canvasElement.getContext('2d');
-        const labels = server.agencies.map(item => item.agency); // Using 'agency' for x-axis labels
+        const serverListAgencies = @json($serverListAgencies);
 
-        const datasets = server.agencies.map(item => ({
-            label: item.agencies_name, // Using 'agencies_name' for legend
-            data: labels.map((label, j) => label === item.agency ? item.totalAgencies : 0),
-            backgroundColor: getRandomColor(),
-            borderColor: getRandomColor(),
-            borderWidth: 1,
-            barPercentage: 1.0,
-            categoryPercentage: 0.5
-        }));
+        serverListAgencies.forEach((server, index) => {
+            const chartId = `chart-${index}`;
+            const canvasElement = document.getElementById(chartId);
 
-        new Chart(ctx, {
-            type: 'bar',
-            data: {
-                labels: labels,
-                datasets: datasets
-            },
-            scales: {
-                y: {
-                    ticks: {
-                        beginAtZero: true
-                    }
+            // Ensure the canvas element exists
+            if (!canvasElement) {
+                console.error(`Canvas element with id ${chartId} not found.`);
+                return;
+            }
+
+            const ctx = canvasElement.getContext('2d');
+            const labels = server.agencies.map(item => item.agency); // Using 'agency' for x-axis labels
+
+            const datasets = [{
+                label: 'Agencies',
+                data: server.agencies.map(item => item.totalAgencies),
+                backgroundColor: server.agencies.map(() => getRandomColor()),
+                borderColor: server.agencies.map(() => getRandomColor()),
+                borderWidth: 1,
+                barPercentage: 1.0,
+                categoryPercentage: 0.5
+            }];
+
+            new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: labels,
+                    datasets: datasets
                 },
-                x: {
-                    display: false, // Hide x-axis
-                    gridLines: {
-                        display: false
+                options: {
+                    scales: {
+                        y: {
+                            beginAtZero: true
+                        },
+                        x: {
+                            display: false, // Hide x-axis
+                            grid: {
+                                display: false
+                            },
+                            ticks: {
+                                display: false // Ensure ticks are also hidden
+                            }
+                        }
                     },
-                    ticks: {
-                        display: false // Ensure ticks are also hidden
+                    responsive: true,
+                    plugins: {
+                        legend: {
+                            display: true // Display legend
+                        },
+                        title: {
+                            display: true,
+                            text: 'Agency Data'
+                        }
                     }
                 }
-            },
-                responsive: true,
-                plugins: {
-                    legend: {
-                        display: true // Hide legend
-                    },
-                    title: {
-                        display: true,
-                        text: 'Agency Data'
-                    }
-                }
-
+            });
         });
-    });
-
-
     });
 </script>
 
