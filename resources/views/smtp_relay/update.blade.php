@@ -26,7 +26,7 @@
                 <form id="formserver" action="{{ route('smtp_relay.kemaskinidata', ['id' => $formsmtp->form_id]) }}" method="post" enctype="multipart/form-data">
                 @csrf
                 <div class="col-md-6">
-                    <label for="form_id">Serial Number</label><br>
+                    <label>Serial Number</label><br>
                     <p style="color: #0061f2 !important;">{{ $formsmtp->form_id }}</p>
                     <input class="form-control" id="form_id" name="form_id" type="hidden" value="{{ $formsmtp->form_id }}" disabled/>
                 </div>
@@ -168,12 +168,12 @@
                         </select>
                     </div>
                     <div class="col-md-6">
-                        <label for=""></label>
+                        <label></label>
                     </div>
                 </div>
                 <div class="row gx-3 mb-3" id="smtp_username" style="display: none;">
                     <div class="col-md-6">
-                        <label for="smtp_username">SMTP Username</label>
+                        <label>SMTP Username</label>
                         <input type="text" name="smtp_username" id="smtp_username" value="{{ old('smtp_username', $formsmtp->smtp_username) }}" class="form-control" required>
                     </div>
                     <div class="col-md-6" id="authpassword">
@@ -259,7 +259,7 @@
                     <div class="mb-3 col-md-4">
                         <label class=" mb-1" for="verifier_1_position">Verifier Position:</label>
                         {{-- @if ($formsmtp->types_req == 1) --}}
-                        <input class="form-control" id="verifier_1_dept_div" name="verifier_1_dept_div" value="{{ old('verifier_1_dept_div', $formsmtp->verifier_1_dept_div) }}"/>
+                        <input class="form-control" id="verifier_1_position" name="verifier_1_position" value="{{ old('verifier_1_position', $formsmtp->verifier_1_position) }}"/>
                         {{-- @else
                         <select class="form-control select2" name="verifier_1_position" id="verifier_1_position" aria-label="Default select">
                             <option value="{{ old('verifier_1_position', $formsmtp->verifier_1_position) }}">{{ old('verifier_1_position', $formsmtp->verifier_1_position) }}</option>
@@ -342,7 +342,7 @@
                 </div>
                 <hr>
                 <div class="mb-3">
-                    <label for="attachement">Current Attachement</label><br>
+                    <label>Current Attachement</label><br>
                     @if ($formsmtp->upload_copy_attachment)
                         <a href="{{ route('smtp_relay.viewPdf',['filename' => $formsmtp->upload_copy_attachment]) }}" target="_blank">{{$formsmtp->upload_copy_attachment}}</a></a>
                     @else
@@ -376,12 +376,25 @@
 
 @endsection
 @push('script')
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
-<link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
-<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
-<script src="https://ajax.aspnetcdn.com/ajax/jquery.validate/1.19.2/jquery.validate.min.js"></script>
+
+<script src="{{ asset('js/jquery-3.6.4.min.js') }}"></script>
+<link rel="stylesheet" href="{{asset('css/select2.min.css')}}">
+<script src="{{asset('js/select2.min.js')}}"></script>
+<script src="{{asset('js/jquery.validate.min.js')}}"></script>
 
 <script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const form = document.getElementById('formserver');
+
+        form.addEventListener('keydown', function (event) {
+            if (event.key === 'Enter') {
+                event.preventDefault(); // Prevent the default form submission
+                // Perform any custom actions here
+                //alert("Click button Submit to sumit the form.");
+            }
+        });
+    });
+
     $(document).ready(function() {
 
     // Function to check for duplicate IP addresses
