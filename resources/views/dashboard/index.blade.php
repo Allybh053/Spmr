@@ -422,8 +422,13 @@ function connectAndProcess(hostname1, index) {
             y: parseInt(value)
         });
 
+        // Sort the data by timestamp
+        datasets[hostname1.hostname].data.sort((a, b) => new Date(a.x) - new Date(b.x));
+
         // Update chart data
-        mailQueueChart.data.labels = labels;
+        // mailQueueChart.data.labels = labels;
+        mailQueueChart.data.labels = datasets[hostname1.hostname].data.map(dataPoint => dataPoint.x);
+
         mailQueueChart.data.datasets = Object.values(datasets); // Convert object to array
         mailQueueChart.update();
 
@@ -554,6 +559,7 @@ sockets.forEach((socket, index) => {
         //console.log("Message received from " + socket.url + ": " + event.data);
         const response = event.data;
         outputs.push(response);
+        console.log(outputs);
         // Update the corresponding element based on the response
             $('#mailQueueCount' + index).text(outputs[0]);
 

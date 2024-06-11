@@ -86,7 +86,11 @@ class ServerController extends Controller
             'user_agent' => $request->userAgent(),
         ]);
 
-        return response()->json(['message' => 'Status updated successfully']);
+        return response()->json([
+            'status' => 'success',
+            'message' => 'Status updated successfully',
+        ]);
+
     }
 
     public function create()
@@ -103,7 +107,7 @@ class ServerController extends Controller
     public function uploadServer(Request $request)
     {
         $validatedData = $request->validate([
-            'hostname' => 'required',
+            'hostname' => 'required', //this the existing id
             'ipaddress' => 'nullable|ip',
             'primary1name' => 'nullable|string',
             'primary1ip' => 'nullable|ip',
@@ -114,92 +118,27 @@ class ServerController extends Controller
         DB::beginTransaction();
 
         try {
-
-            $getServer =Server::find($validatedData['hostname']);
+            $getServer = Server::find($validatedData['hostname']);
 
             // Check and insert primary1 (sub-server 1)
             if (!empty($validatedData['primary1name']) && !empty($validatedData['primary1ip'])) {
-                $existingHostname = Server::where('subhostname', $validatedData['primary1name'])->first();
-
-             if (isset($existingHostname) && $existingHostname != null) {
-                return redirect()->route('server.create',['id'=>$getServer->id])->with('error', 'Subhostname already exists for another server. Please select another subhostname.');
-             }
-
-             // Check if the IP address already exists for the provided serverId
-             $existingIpAddress = Server::where('ipaddress', $validatedData['primary1ip'])->first();
-
-             if ($existingIpAddress != null) {
-                return redirect()->route('server.create',['id'=>$getServer->id])->with('error', 'IP address already exists for another server. Please select another IP address.');
-             }
-
-                DB::table('servers')->insert([
-                    'hostname' => $getServer->hostname,
-                    'subhostname' => $validatedData['primary1name'],
-                    'ipaddress' => $validatedData['primary1ip'],
-                    'status' => null, // Assuming null status indicates a sub-server
-                    'server_type' => 1, // Assuming server_type = 1 indicates a sub-server
-                    'status_cluster' => 0, // Assuming status_cluster = 1 indicates active cluster
-                    'master_id' => $getServer->id,
-                ]);
-
-                $insertedId = DB::getPdo()->lastInsertId();
-
-                $roles = Role::get();
-
-                foreach ($roles as $role) {
-                    DB::insert('INSERT INTO role_servers (role_id, server_id) VALUES (?, ?)', [$role->id,$insertedId]);
-
-                }
+                $this->insertServer($getServer, $validatedData['primary1name'], $validatedData['primary1ip']);
             }
 
             // Check and insert primary2 (sub-server 2)
             if (!empty($validatedData['primary2name']) && !empty($validatedData['primary2ip'])) {
-                $existingHostname = Server::where('subhostname', $validatedData['primary2name'])->first();
-
-                if (isset($existingHostname) && $existingHostname != null) {
-                   return redirect()->route('server.create',['id'=>$getServer->id])->with('error', 'Subhostname already exists for another server. Please select another subhostname.');
-                }
-
-                // Check if the IP address already exists for the provided serverId
-                $existingIpAddress = Server::where('ipaddress', $validatedData['primary2ip'])->first();
-
-                if ($existingIpAddress != null) {
-                   return redirect()->route('server.create',['id'=>$getServer->id])->with('error', 'IP address already exists for another server. Please select another IP address.');
-                }
-
-                DB::table('servers')->insert([
-                    'hostname' => $getServer->hostname,
-                    'subhostname' => $validatedData['primary2name'],
-                    'ipaddress' => $validatedData['primary2ip'],
-                    'status' => null, // Assuming null status indicates a sub-server
-                    'server_type' => 1, // Assuming server_type = 1 indicates a sub-server
-                    'status_cluster' => 0, // Assuming status_cluster = 1 indicates active cluster
-                    'master_id' => $getServer->id,
-                ]);
-
-                $insertedId = DB::getPdo()->lastInsertId();
-
-                $roles2 = Role::get();
-
-                foreach ($roles2 as $role) {
-                    DB::insert('INSERT INTO role_servers (role_id, server_id) VALUES (?, ?)', [$role->id,$insertedId]);
-
-                }
+                $this->insertServer($getServer, $validatedData['primary2name'], $validatedData['primary2ip']);
             }
 
             // Commit the transaction
             DB::commit();
-
-
-
-
         } catch (\Exception $e) {
             // Rollback the transaction in case of error
             DB::rollBack();
 
             ActivityLog::create([
                 'user_id' => Auth::id(),
-                'activity_type' => 'Update Server',
+                'activity_type' => 'New Server',
                 'action' => $request->path(),
                 'url' => url()->full(),
                 'method' => $request->method(),
@@ -211,17 +150,16 @@ class ServerController extends Controller
                 'user_agent' => $request->userAgent(),
             ]);
 
-            return redirect()->route('server.index')->with('error', 'Failed to save server data. Please try again.');
+            if ($e->getMessage() === 'Subhostname already exists for another server.') {
+                return redirect()->route('server.create',['id'=>$getServer->id])->with('error', 'Subhostname already exists for another server. Please select another subhostname.');
+            } elseif ($e->getMessage() === 'IP address already exists for another server.') {
+                return redirect()->route('server.create',['id'=>$getServer->id])->with('error', 'IP address already exists for another server. Please select another IP address.');
+            } else {
+                return redirect()->route('server.index')->with('error', 'Failed to save server data. Please try again.');
+            }
         }
 
-        // $roles = Role::get();
-
-        // foreach ($roles as $role) {
-        //     DB::insert('INSERT INTO role_servers (role_id, server_id) VALUES (?, ?)', [$role->id, $server->id]);
-
-        // }
-
-        // return redirect()->route('server.index')->with('success', 'Server details added successfully');
+        // Success log and redirection
         ActivityLog::create([
             'user_id' => Auth::id(),
             'activity_type' => 'New Server',
@@ -238,6 +176,40 @@ class ServerController extends Controller
 
         return redirect()->route('server.index')->with('success', 'Server details added successfully');
     }
+
+    private function insertServer($getServer, $subhostname, $ipaddress)
+    {
+        $existingHostname = Server::where('subhostname', $subhostname)->first();
+        if ($existingHostname) {
+            throw new \Exception('Subhostname already exists for another server.');
+        }
+
+        $existingIpAddress = Server::where('ipaddress', $ipaddress)->first();
+        if ($existingIpAddress) {
+            throw new \Exception('IP address already exists for another server.');
+        }
+
+        $insertedId = DB::table('servers')->insertGetId([
+            'hostname' => $getServer->hostname,
+            'subhostname' => $subhostname,
+            'ipaddress' => $ipaddress,
+            'status' => null, // Assuming null status indicates a sub-server
+            'server_type' => 1, // Assuming server_type = 1 indicates a sub-server
+            'status_cluster' => 0, // Assuming status_cluster = 1 indicates active cluster
+            'master_id' => $getServer->id,
+            'created_at' => now(),
+            'updated_at' => now()
+        ]);
+
+        $roles = Role::get();
+        foreach ($roles as $role) {
+            DB::table('role_servers')->insert([
+                'role_id' => $role->id,
+                'server_id' => $insertedId
+            ]);
+        }
+    }
+
     /**
      * Store a newly created resource in storage.
      */
@@ -316,23 +288,6 @@ class ServerController extends Controller
             array_push($subServersData,$serverSub);
         }
 
-        // Handle the sub-servers update
-        // $subServersData = [
-        //     [
-        //         'hostname' => $getServer->hostname,
-        //         'master_id' => $getServer->id,
-        //         'subhostname' => $validatedData['primary1name'],
-        //         'ipaddress' => $validatedData['primary1ip'],
-        //     ],
-        //     [
-        //         'hostname' => $getServer->hostname,
-        //         'master_id' => $getServer->id,
-        //         'subhostname' => $validatedData['primary2name'],
-        //         'ipaddress' => $validatedData['primary2ip'],
-        //     ]
-        // ];
-
-
         // return redirect()->route('server.index')->with('success', 'Server details updated successfully');
 
         foreach ($subServersData as $subData) {
@@ -378,10 +333,11 @@ class ServerController extends Controller
                             'hostname' => $subData['hostname'],
                             'subhostname' => $subData['subhostname'],
                             'ipaddress' => $subData['ipaddress'],
-                            'status'=>1,
+                            'status_cluster'=>0,
                             'server_type' => 1,  // Assuming server_type = 1 indicates a sub-server
                             //'status_cluster' => 1, // Assuming status_cluster = 1 indicates active cluster
                             'master_id' => $server->id,
+                            'created_at' =>now()
                         ]);
 
                         $insertedId = DB::getPdo()->lastInsertId();
@@ -398,8 +354,6 @@ class ServerController extends Controller
                 }
             }
 
-
-
         ActivityLog::create([
             'user_id' => Auth::id(),
             'activity_type' => 'Update Server',
@@ -415,41 +369,7 @@ class ServerController extends Controller
         ]);
 
         return redirect()->route('server.index')->with('success', 'Server details updated successfully');
-    }
-
-    public function downloadFile(Request $request,$id)
-    {
-        $server = Server::find($id);
-
-        if (!$server || empty($server->sshkey)) {
-            return response()->json(['error' => 'File not found1'], 404);
-        }
-
-        $filePath = storage_path('/key/' . basename($server->sshkey));
-
-        ActivityLog::create([
-            'user_id' => Auth::id(),
-            'activity_type' => 'Download File',
-            'action' => $request->path(),
-            'url' => url()->full(),
-            'method' => $request->method(),
-            'ip_address' => $request->ip(),
-            'input' => json_encode([
-                'server' => $server,
-                'request' => $request->except(['password']),
-            ]),
-            'user_agent' => $request->userAgent(),
-        ]);
-
-        // Check if the file exists
-        if (file_exists($filePath)) {
-            // Return the file as a downloadable response
-            return response()->download($filePath, basename($server->sshkey));
-        } else {
-            // File not found
-            return response()->json(['error' => 'File not found2'], 404);
-        }
-    }
+    } 
 
     /**
      * Remove the specified resource from storage.
@@ -504,13 +424,17 @@ class ServerController extends Controller
 
 
     public function virtualServer(Request $request){
+
         $messages = [
-            'hostname.required' => 'Hostname Required.',
-            'hostname.max'      => 'Hostname must not exceed 255 characters.'
+            'hostname.required' => 'Hostname is required.',
+            'hostname.max'      => 'Hostname must not exceed 255 characters.',
+            'ipaddress.required' => 'IP address is required.',
+            'ipaddress.ip' => 'Please provide a valid IP address.',
         ];
 
         $validation = [
-            'hostname' => 'required|max:255'
+            'hostname' => 'required|max:255',
+            'ipaddress' => 'required|ip'
         ];
 
         $request->validate($validation, $messages);
@@ -520,7 +444,7 @@ class ServerController extends Controller
         $ipaddress = $request->ipaddress;
         $serverId = $request->serverId;
 
-// Check if serverId is not null
+        // Check if serverId is not null
         if ($serverId !== null) {
 
             // Check if the hostname already exists for the provided serverId
@@ -590,7 +514,7 @@ class ServerController extends Controller
             if (!Server::where('hostname', $hostname)->exists() && !Server::where('ipaddress', $ipaddress)->exists()) {
                 $server = new Server;
                 $server->id = $newId;
-                $server->status = 1;
+                $server->status = 0;
                 $server->server_type = 0;
                 $server->hostname = $hostname;
                 $server->ipaddress = $ipaddress;

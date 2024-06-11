@@ -30,20 +30,16 @@
             </nav>
             <hr class="mt-0 mb-4" />
             <div class="row">
-                <div class="col-xl-4" hidden @disabled(true)>
-                    <!-- Profile picture card-->
+                {{-- <div class="col-xl-4">
                     <div class="card mb-4 mb-xl-0">
                         <div class="card-header">Profile Picture</div>
                         <div class="card-body text-center">
-                            <!-- Profile picture image-->
                             <img class="img-account-profile rounded-circle mb-2" src="assets/img/illustrations/profiles/profile-1.png" alt="" />
-                            <!-- Profile picture help block-->
                             <div class="small font-italic text-muted mb-4">JPG or PNG no larger than 5 MB</div>
-                            <!-- Profile picture upload button-->
                             <button class="btn btn-primary" type="button">Upload new image</button>
                         </div>
                     </div>
-                </div>
+                </div> --}}
                 <div class="col-xl-8">
                     <!-- Account details card-->
                     <div class="card mb-4">
@@ -86,7 +82,7 @@
                                         <input class="form-control" id="position_id" name="position_id" type="text" placeholder="" value="{{ $profile->position_id ?? '' }}" disabled/>
                                     </div>
                                     <div class="col-md-6">
-                                        <label class="small mb-1" for="department">Department</label>
+                                        <label class="small mb-1" for="department_id">Department</label>
                                         <input class="form-control" id="department_id" name="department_id" type="text" placeholder="" value="{{ $profile->department_id ?? '' }}" disabled/>
                                     </div>
                                 </div>

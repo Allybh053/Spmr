@@ -45,7 +45,7 @@
                     });
                 </script>
             @endif
-            
+
             <div class="card-header">New Server Connection Configuration</div>
             <div class="card-body">
                 <strong><h3 style="color:blue;">Virtual Server</h3></strong><hr>
@@ -190,11 +190,11 @@ document.addEventListener('DOMContentLoaded', function () {
                     method: 'GET',
                     data: { hostname: selectedHostname },
                     success: function(response) {
-                        console.log(response);
+                        // console.log(response);
                         $('#ipaddress').val(response.ip_address);
                     },
                     error: function(xhr, status, error) {
-                        console.error(error);
+                        // console.error(error);
                     }
                 });
             } else {

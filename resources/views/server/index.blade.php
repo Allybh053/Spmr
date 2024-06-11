@@ -75,8 +75,8 @@
                     </div>
                     <div class="col-md-6 @if ($errors->has('ipaddress')) has-error @endif">
                         <label class="small mb-1" for="ipaddress">Ip Address</label>
-                            {!! Form::text('ipaddress', null, ['id' => 'ipaddress', 'class' => 'form-control','pattern'=>'((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)|([0-9a-fA-F]{1,4}:){7}([0-9a-fA-F]{1,4})', 'required']) !!}
-                            @if ($errors->has('ipaddress')) <p class="help-block">{{ $errors->first('ipaddress') }}</p> @endif
+                        {!! Form::text('ipaddress', null, ['id' => 'ipaddress', 'class' => 'form-control', 'pattern' => '^(?:\d{1,3}\.){3}\d{1,3}$|^([0-9a-fA-F]{1,4}:){7}([0-9a-fA-F]{1,4})$', 'required']) !!}
+                        @if ($errors->has('ipaddress')) <p class="help-block">{{ $errors->first('ipaddress') }}</p> @endif
                         </div>
                 </div>
                 </div>
@@ -115,10 +115,11 @@
                                             <a class="btn btn-sm btn-light text-primary rename me-3" data-bs-toggle="modal" data-bs-target="#serverModal" data-id="{{ $dataserver->id }}" data-hostname="{{ $dataserver->hostname }}" data-ipaddress="{{ $dataserver->ipaddress }}">Update Virtual Server</a>
                                         </div>
                                     </div>
-
+                                    @if($dataserver->subServers->isNotEmpty())
                                     @can('server_update')
                                     <a class="text-primary" style="margin-left: 30px;margin-top:10px; margin-bottom:5px;" href="{{ route('server.edit', ['id' => $dataserver->id]) }}">Edit Configuration</a>
                                     @endcan
+                                    @endif
 
                                     <div class="card-footer d-flex align-items-center justify-content-between small">
                                         @can('server_delete')
@@ -201,32 +202,51 @@
             });
 
         });
-    function updateStatus(serverId, checkbox) {
-
-        // Assuming you have the server/update-status route
-        fetch('/server/update-status', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'X-CSRF-TOKEN': '{{ csrf_token() }}',
-            },
-            body: JSON.stringify({
-                id: serverId,
-                status: checkbox.checked ? 1 : 0,
-            }),
-        })
-        .then(response => response.json())
-        .then(data => {
-            //console.log(data);
-            location.reload();
-        })
-        .catch(error => {
-            //console.error(error);
-            // Rollback checkbox state on error
-            checkbox.checked = !checkbox.checked;
-        });
-    }
-
+        function updateStatus(serverId, checkbox) {
+            fetch('/server/update-status', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
+                },
+                body: JSON.stringify({
+                    id: serverId,
+                    status: checkbox.checked ? 1 : 0,
+                }),
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.status === 'success') {
+                    Swal.fire({
+                        title: 'Success!',
+                        text: data.message,
+                        icon: 'success',
+                        confirmButtonText: 'OK'
+                    }).then(() => {
+                        // Optionally reload the page or update the UI as needed
+                        location.reload();
+                    });
+                } else {
+                    Swal.fire({
+                        title: 'Error!',
+                        text: data.message || 'An error occurred.',
+                        icon: 'error',
+                        confirmButtonText: 'OK'
+                    });
+                    checkbox.checked = !checkbox.checked;
+                }
+            })
+            .catch(error => {
+                Swal.fire({
+                    title: 'Error!',
+                    text: 'An error occurred while updating the status.',
+                    icon: 'error',
+                    confirmButtonText: 'OK'
+                });
+                // Rollback checkbox state on error
+                checkbox.checked = !checkbox.checked;
+            });
+        }
 
     document.addEventListener('DOMContentLoaded', function () {
         document.querySelectorAll('.delete-btn').forEach(function (button) {

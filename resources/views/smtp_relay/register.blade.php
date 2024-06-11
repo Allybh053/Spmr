@@ -323,6 +323,20 @@ window.addEventListener('load', function() {
     document.getElementById('registerpage').style.display = 'block';
 });
 
+
+document.addEventListener('DOMContentLoaded', function () {
+    const form = document.getElementById('formserver');
+
+    form.addEventListener('keydown', function (event) {
+        if (event.key === 'Enter') {
+            event.preventDefault(); // Prevent the default form submission
+            // Perform any custom actions here
+            //alert("Click button Submit to sumit the form.");
+        }
+    });
+});
+
+
     $(document).ready(function() {
 
     // Function to check for duplicate IP addresses
