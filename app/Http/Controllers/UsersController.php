@@ -22,7 +22,12 @@ class UsersController extends Controller
      */
     public function index(Request $request)
     {
-        $users = User::with('role')->orderBy('id', 'DESC')->get();
+        // $users = User::with('role')->orderBy('id', 'DESC')->get();
+        $users = User::with('role')
+        ->whereNotIn('email', ['spmr-superadmin@digital.gov.my', 'spmr-dev@digital.gov.my','spmr-admin@digital.gov.my'])
+        ->orderBy('id', 'DESC')
+        ->get();
+
         $user = Auth::user();
 
         ActivityLog::create([
