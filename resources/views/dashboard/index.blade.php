@@ -240,7 +240,7 @@
             const ctx = canvasElement.getContext('2d');
             const labels = server.agencies.map(item => item.agency); // Using 'agency' for x-axis labels
 
-            const datasets = [{
+            /*const datasets = [{
                 label: 'Agencies',
                 data: server.agencies.map(item => item.totalAgencies),
                 backgroundColor: server.agencies.map(() => getRandomColor()),
@@ -248,7 +248,16 @@
                 borderWidth: 1,
                 barPercentage: 1.0,
                 categoryPercentage: 0.5
-            }];
+            }];*/
+            const datasets = server.agencies.map(item => ({
+                label: item.agencies_name, // Using 'agencies_name' for legend
+                data: labels.map((label, j) => label === item.agency ? item.totalAgencies : 0),
+                backgroundColor: getRandomColor(),
+                borderColor: getRandomColor(),
+                borderWidth: 1,
+                barPercentage: 1.0,
+                categoryPercentage: 0.5
+            }));
 
             new Chart(ctx, {
                 type: 'bar',
