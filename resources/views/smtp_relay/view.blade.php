@@ -25,11 +25,11 @@
             <div class="card-body">
                 <div class="row gx-3 mb-3">
                     <div class="col-md-6">
-                        <label for="form_id">Serial Number</label>
+                        <label>Serial Number</label>
                         <p>{{ $datasmtp->form_id}}</p>
                     </div>
                     <div class="col-md-6">
-                        <label for="status">Status</label>
+                        <label>Status</label>
                         <p>
                         @if ($datasmtp->status == 0)
                             Pending
@@ -42,11 +42,11 @@
                 </div>
                 <div class="row gx-3 mb-3">
                     <div class="col-md-6">
-                        <label for="ticketno">Ticket Number</label>
+                        <label>Ticket Number</label>
                         <p>{{ $datasmtp->ticket_id}}</p>
                     </div>
                     <div class="col-md-6">
-                        <label for="type_req">Type Of Request</label>
+                        <label>Type Of Request</label>
                         <p>
                         @if ($datasmtp->types_req == 1)
                             New Application
@@ -58,52 +58,52 @@
                     </div>
                 </div>
                 <div class="mb-3" hidden @disabled(true)>
-                    <label for="fqdn">System Fully Qualified Domain Name (FQDN)</label>
+                    <label>System Fully Qualified Domain Name (FQDN)</label>
                     <p></p>
                 </div>
                 <div class="mb-3">
-                    <label for="projectname">Project Name</label>
+                    <label>Project Name</label>
                     <p>{{ $datasmtp->project_name}}</p>
                 </div>
                 <div class="mb-3">
-                    <label for="ownername">System Owner Name</label>
+                    <label>System Owner Name</label>
                     <p>{{ $datasmtp->system_owner_name}}</p>
                 </div>
                 <div class="row gx-3 mb-3">
                     <div class="col-md-6">
-                        <label for="emailadd">Email Address</label>
+                        <label>Email Address</label>
                         <p>{{ $datasmtp->owner_email_addr}}</p>
                     </div>
                     <div class="col-md-6">
-                        <label for="phone">Phone Number</label>
+                        <label>Phone Number</label>
                         <p>{{ $datasmtp->owner_phone_number}}</p>
                     </div>
                 </div>
                 <div class="mb-3">
-                    <label for="ministry">Ministry</label>
+                    <label>Ministry</label>
                     <p>{{ $datasmtp->ministry_name }}</p>
                 </div>
                 <div class="row gx-3 mb-3">
                     <div class="col-md-6">
-                        <label for="agency">Agency</label>
+                        <label>Agency</label>
                         <p>{{ $datasmtp->agencies_name}}</p>
                     </div>
                     <div class="col-md-6">
-                        <label for="departowner">Department/Division/Unit</label>
+                        <label>Department/Division/Unit</label>
                         <p>{{ $datasmtp->dept_div_unit}}</p>
                     </div>
                 </div>
                 <div class="mb-3">
-                    <label for="agencyadd">Agency Address</label>
+                    <label>Agency Address</label>
                     <p>{{ $datasmtp->agencies_addr}}</p>
                 </div>
                 <div class="mb-3">
-                    <label for="justification">Justification</label>
+                    <label>Justification</label>
                     <p>{{ $datasmtp->req_justifications}}</p>
                 </div>
-                @if ($datasmtp->smtp_relay_auth_method == 1)
+
                 <div class="mb-3">
-                    <label for="authmethod">Mail Relay Authentication Method</label>
+                    <label>Mail Relay Authentication Method</label>
                     <p>
                         @if ($datasmtp->smtp_relay_auth_method == 1)
                             IP Based Authentication Relay
@@ -112,9 +112,9 @@
                         @endif
                     </p>
                 </div>
-                @endif
+
                 <div class="mb-3">
-                    <label for="mailrelay">Server Mail Relay</label>
+                    <label>Server Mail Relay</label>
                     <p>{{ $datasmtp->smtp_relay_server ?? 'Not Available' }}</p>
                 </div><hr>
                 <div class="mb-3">
@@ -144,32 +144,32 @@
                 @if ($datasmtp->smtp_relay_auth_method == 2)
                 <div class="row gx-3 mb-3" id="authusername">
                     <div class="col-md-6">
-                        <label for="authusername">SMTP Username</label>
+                        <label>SMTP Username</label>
                         <p>{{ $datasmtp->smtp_username}}</p>
                     </div>
                     <div class="col-md-6" id="authpassword">
-                        <label for="authpassword">SMTP Password</label>
+                        <label>SMTP Password</label>
                         <p>{{ $datasmtp->smtp_password}}</p>
                     </div>
                 </div>
                 @endif
                 <div class="row gx-3 mb-3">
                     <div class="col-md-6">
-                        <label for="ports">SMTP Port Number</label>
+                        <label>SMTP Port Number</label>
                         {{--<p>{{ $datasmtp->smtp_port}} /tcp</p>--}}
                         <p id="smtpPortDescription"></p>
                     </div>
                     <div class="col-md-6">
-                        <label for=""></label>
+                        <label></label>
                     </div>
                 </div>
                 <div class="row gx-3 mb-3">
                     <div class="col-md-6" hidden @disabled(true)>
-                        <label for="emailaddfrom">Email Address System (MAILFROM)</label>
+                        <label>Email Address System (MAILFROM)</label>
                         <p>{{ $datasmtp->mailfrom_email_addr}}</p>
                     </div>
                     <div class="col-md-6">
-                        <label for="mailbox">MailBox</label>
+                        <label>MailBox</label>
                         <p>
                         @if($datasmtp->mailbox_created == 0 )
                             None
@@ -182,11 +182,11 @@
                 </div>
                 <div class="row gx-3 mb-3">
                     <div class="col-md-6">
-                        <label for="enday">Estimated number of system users (per day)</label>
+                        <label>Estimated number of system users (per day)</label>
                         <p>{{ $datasmtp->est_no_system_users_per_day}} /per day</p>
                     </div>
                     <div class="col-md-6">
-                        <label for="ensystem">Estimated number of emails sent from the system (per day)</label>
+                        <label>Estimated number of emails sent from the system (per day)</label>
                         <p>{{ $datasmtp->est_no_email_sent_from_system_users_per_day}} /per day</p>
                     </div>
                 </div>
@@ -194,40 +194,40 @@
                 <div class="card-header text-center"><h4 class=" text-primary">Application Verification</h4></div><br>
                 <span>I hereby confirm that all information and statements provided in this application form are <b>TRUE</b> and <b>VALID</b>:</span><br><br>
                 <div class="mb-3">
-                    <label for="applicantname">Applicant Name</label>
+                    <label>Applicant Name</label>
                     <p>{{ $datasmtp->applicant_name}}</p>
                 </div>
                 <div class="row col-12">
                     <div class="mb-3 col-md-4">
-                        <label class=" mb-1" for="applicantposition">Applicant's Position:</label>
+                        <label class=" mb-1">Applicant's Position:</label>
                         <p>{{ $datasmtp->applicant_position}}</p>
                     </div>
                     <div class="mb-3 col-md-4">
-                        <label class=" mb-1" for="applicantdepart">Applicant's Department / Division:</label>
+                        <label class=" mb-1">Applicant's Department / Division:</label>
                         <p>{{ $datasmtp->applicant_dept_div}}</p>
                     </div>
                     <div class="mb-3 col-md-4">
-                        <label class=" mb-1" for="applicantdate">Date:</label>
+                        <label class=" mb-1">Date:</label>
                         <p>{{ $datasmtp->date_application ? date('d/m/Y', strtotime($datasmtp->date_application)) : 'null' }}</p>
                     </div>
                 </div>
                 <hr>
                 <div class="card-header text-center"><h4 class=" text-primary">Verifier I</h4></div><br>
                 <div class="mb-3">
-                    <label for="verifiername">Verifier Name</label>
+                    <label>Verifier Name</label>
                     <p>{{ $datasmtp->verifier_1_name}}</p>
                 </div>
                 <div class="row col-12">
                     <div class="mb-3 col-md-4">
-                        <label class=" mb-1" for="verifierposition">Verifier Position:</label>
+                        <label class=" mb-1">Verifier Position:</label>
                         <p>{{ $datasmtp->verifier_1_position}}</p>
                     </div>
                     <div class="mb-3 col-md-4">
-                        <label class=" mb-1" for="verifierdepart">Verifier Department / Division:</label>
+                        <label class=" mb-1">Verifier Department / Division:</label>
                         <p>{{ $datasmtp->verifier_1_dept_div}}</p>
                     </div>
                     <div class="mb-3 col-md-4">
-                        <label class=" mb-1" for="verifierdate">Date:</label>
+                        <label class=" mb-1">Date:</label>
                         <p>{{ $datasmtp->date_verification_1 ? date('d/m/Y', strtotime($datasmtp->date_verification_1)) : 'null' }}</p>
                     </div>
                 </div>
@@ -235,37 +235,37 @@
                 <div class="card-header text-center"><h4 class=" text-primary">Helpdesk Officer</h4></div><br>
                 <div class="row gx-3 mb-3">
                     <div class="col-md-6">
-                        <label for="officername">Officer Name</label>
+                        <label>Officer Name</label>
                         <p>{{ $datasmtp->verifier_2_name}}</p>
                     </div>
                     <div class="col-md-6">
-                        <label for="officerdate">Date:</label>
+                        <label>Date:</label>
                         <p>{{ $datasmtp->date_verification_2 ? date('d/m/Y', strtotime($datasmtp->date_verification_2)) : 'null' }}</p>
                     </div>
                 </div>
                 <hr>
                 <div class="card-header text-center"><h4 class=" text-primary">Approval JDN</h4></div><br>
                 <div class="mb-3">
-                    <label for="approvalname">Approval Name</label>
+                    <label>Approval Name</label>
                     <p>{{ $datasmtp->verifier_3_name}}</p>
                 </div>
                 <div class="row col-12">
                     <div class="mb-3 col-md-4">
-                        <label class=" mb-1" for="approvalposition">Approval Position</label>
+                        <label class=" mb-1">Approval Position</label>
                         <p>{{ $datasmtp->verifier_3_position}}</p>
                     </div>
                     <div class="mb-3 col-md-4">
-                        <label class=" mb-1" for="approvaldepart">Approval Department / Division:</label>
+                        <label class=" mb-1">Approval Department / Division:</label>
                         <p>{{ $datasmtp->verifier_3_dept_div}}</p>
                     </div>
                     <div class="mb-3 col-md-4">
-                        <label class=" mb-1" for="approvaldate">Date:</label>
+                        <label class=" mb-1">Date:</label>
                         <p>{{ $datasmtp->date_verification_3 ? date('d/m/Y', strtotime($datasmtp->date_verification_3)) : 'null' }}</p>
                     </div>
                 </div>
                 <hr>
                 <div class="mb-3">
-                    <label for="attachement">Attachement</label><br>
+                    <label>Attachement</label><br>
 
                     @if ($datasmtp->upload_copy_attachment)
                     <a href="{{ route('smtp_relay.viewPdf', ['filename' => $datasmtp->upload_copy_attachment]) }}" target="_blank">{{ $datasmtp->upload_copy_attachment }}</a><br>
@@ -281,7 +281,7 @@
 
                 </div>
                 <div class="mb-3">
-                    <label for="Comments">Comments</label>
+                    <label>Comments</label>
                     <p>{{ $datasmtp->comments}}</p>
                 </div><hr>
                 <div class="mb-3">
