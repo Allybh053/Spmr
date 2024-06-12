@@ -572,7 +572,7 @@ sockets.forEach((socket, index) => {
         //console.log("Message received from " + socket.url + ": " + event.data);
         const response = event.data;
         outputs.push(response);
-        console.log(outputs[5]);
+        // console.log(outputs[5]);
         // Update the corresponding element based on the response
             $('#mailQueueCount' + index).text(outputs[0]);
 
