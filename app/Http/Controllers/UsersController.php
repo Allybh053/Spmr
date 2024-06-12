@@ -135,7 +135,7 @@ class UsersController extends Controller
             ]);
 
             if ($user) {
-                //Mail::to($user->email)->send(new WelcomeNewUser($user,$plaintextPassword));
+                Mail::to($user->email)->send(new WelcomeNewUser($user,$plaintextPassword));
                 // Redirect back or to another page
                 return redirect()->route('usermanagements.index')->with('success', 'User added successfully');
             } else {
@@ -170,10 +170,10 @@ class UsersController extends Controller
     {
         $user = User::findOrFail($id);
         $roles = Role::whereNotIn('name', ['Developer', 'Superadmin'])->get();
-        $departments = Department::where('status',1)->get();
-        $positions = Position::where('status',1)->get();
+        // $departments = Department::where('status',1)->get();
+        // $positions = Position::where('status',1)->get();
 
-        return view('users.usermanagements.edit', compact('user','roles','departments','positions'));
+        return view('users.usermanagements.edit', compact('user','roles'));
     }
 
     /**

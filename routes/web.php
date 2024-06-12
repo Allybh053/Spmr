@@ -112,6 +112,8 @@ Route::group(['middleware' => ['auth', 'nocache','log.user.activity']], function
         Route::get('/mailupstream', [MainRelayController::class, 'mailupstream'])->name('mailrelay.mailupstream')->middleware('auth.resource:mail_upstream_routing_view');
         Route::get('/getServer', [MainRelayController::class, 'api'])->name('mailrelay.api');
         Route::get('/index/searching', [MainRelayController::class, 'search'])->name('mailrelay.index.search');
+        Route::post('/check-server-status', [MainRelayController::class, 'checkServerStatus'])->name('check.server.status');
+
 
     });
 

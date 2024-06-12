@@ -355,6 +355,12 @@
                     <input class="form-control btn-outline-primary" type="file" name="upload_copy_attachment" id="upload_copy_attachment" accept=".pdf"/>
                     <span class="text-xs text-danger">Upload File format .pdf</span>
                 </div><hr>
+
+                <div class="mb-3" @if($formsmtp->comments) style="display:block;" @else style="display:none;" @endif>
+                    <label>Comments</label>
+                    <p>{{ $formsmtp->comments }}</p>
+                </div>
+                <hr>
                 <a class="btn btn-danger me-2 my-1" type="button" href="{{ route('smtp_relay.smtp_relay_req')}}">Cancel</a>
                 @can('smtp_mail_relay_update')
                 <button class="btn btn-primary me-2 my-1" id="submit" name="submit" type="submit">Update Request Form</button>

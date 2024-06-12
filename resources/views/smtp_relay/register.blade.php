@@ -615,6 +615,7 @@ document.addEventListener('DOMContentLoaded', function () {
                         } else {
                             submitBtn.disabled = false;
                             $('#resultContainer').empty();
+                            $(this).removeClass('is-invalid');
                         }
                     } else if (selectedValuetype_req == 2) {
                         if (response.includes('IP address already Terminated!')) {
@@ -631,6 +632,10 @@ document.addEventListener('DOMContentLoaded', function () {
                             //console.log("IP address Registered to Terminate: " + response);
                             submitBtn.disabled = false;
                             $('#resultContainer').empty();
+                        }else{
+                            submitBtn.disabled = false;
+                            $('#resultContainer').empty();
+                            $(this).removeClass('is-invalid');
                         }
                     }
                     socket.close();
@@ -648,6 +653,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 // Clear result container if input is invalid
                 submitBtn.disabled = false;
                 $('#resultContainer').empty();
+                $(this).removeClass('is-invalid');
             }
 
         });
@@ -682,6 +688,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 success: function(response) {
                     // Check if hostname is present in the response
                     if (response.subhostname) {
+                        // console.log(response.subhostname);
                         document.getElementById("subhostname").value = response.subhostname;
                         // Enable all input fields inside the tbody
                         var inputs = tbody.querySelectorAll("input");

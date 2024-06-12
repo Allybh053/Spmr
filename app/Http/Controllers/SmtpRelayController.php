@@ -441,10 +441,19 @@ class SmtpRelayController extends Controller
                 smtp_relay_server::create($data);
             }
 
-            // $adminEmails = User::where('role_id', 3)->pluck('email')->toArray(); //role admin will receive the email and cc to the helpdesk
-            // Mail::to($adminEmails)
-            // ->cc($request->input('emailadd'))
-            // ->send(new MailForm($request));
+            // Retrieve admin emails
+            $adminEmails = User::where('role_id', 11)->pluck('email')->toArray();
+
+            // Check if there are admin emails before sending the email
+            if (!empty($adminEmails)) {
+                Mail::to($adminEmails)
+                    ->cc($request->input('emailadd'))
+                    ->send(new MailForm($request));
+            } else {
+                // If no admin emails, send to emailadd from the request
+                Mail::to($request->input('emailadd'))
+                    ->send(new MailForm($request));
+            }
 
             return redirect()->route('smtp_relay.smtp_relay_req')->with('success', 'Form added successfully');
             // return redirect()->route('smtp_relay.smtp_relay_req')->with('message', 'Form added successfully');
@@ -498,63 +507,6 @@ class SmtpRelayController extends Controller
                 // No file was uploaded, set fileName to null
                 $fileName = null;
             }
-
-            // $ministry = $request->input('ministry');
-            // $agency = $request->input('agency');
-
-            // $existingMinistry = Ministry::where('name', $ministry)->first();
-            // if (!$existingMinistry) {
-            //     Ministry::create([
-            //         'name' => $ministry,
-            //         'status'=> 1,
-            //     ]);
-            // }
-
-            // $existingagency = Agency::where('name', $agency)->first();
-            // if (!$existingagency) {
-            //     Agency::create([
-            //         'name' => $agency,
-            //         'status'=> 1,
-            //     ]);
-            // }
-
-            // $departowner = $request->input('departowner');
-            // $existingdepartonwer = Department::where('name', $departowner)->first();
-            // if(!$existingdepartonwer){
-            //     Department::create(['name'=>$departowner, 'status'=>1]);
-            // }
-            // $applicantdepart = $request->input('applicantdepart');
-            // $existingapplicantdepart = Department::where('name', $applicantdepart)->first();
-            // if(!$existingapplicantdepart){
-            //     Department::create(['name'=>$applicantdepart, 'status'=>1]);
-            // }
-            // $verifierdepart = $request->input('verifierdepart');
-            // $existingverifierdepart = Department::where('name', $verifierdepart)->first();
-            // if(!$existingverifierdepart){
-            //     Department::create(['name'=>$verifierdepart, 'status'=>1]);
-            // }
-            // $approvaldepart = $request->input('approvaldepart');
-            // $existingapprovaldepart = Department::where('name', $approvaldepart)->first();
-            // if(!$existingapprovaldepart){
-            //     Department::create(['name'=>$approvaldepart, 'status'=>1]);
-            // }
-
-            // $applicantposition = $request->input('applicantposition');
-            // $existingapplicantposition = Position::where('name', $applicantposition)->first();
-            // if(!$existingapplicantposition){
-            //     Position::create(['name'=>$applicantposition, 'status'=>1]);
-            // }
-            // $verifierposition = $request->input('verifierposition');
-            // $existingverifierposition = Position::where('name', $verifierposition)->first();
-            // if(!$existingverifierposition){
-            //     Position::create(['name'=>$verifierposition, 'status'=>1]);
-            // }
-
-            // $approvalposition =$request->input('approvalposition');
-            // $existingapprovalposition = Position::where('name', $approvalposition)->first();
-            // if(!$existingapprovalposition){
-            //     Position::create(['name'=>$approvalposition, 'status'=>1]);
-            // }
 
             $formdata = SmtpRelayReqForm::create([
                 'form_id'=> $formIds,
@@ -665,10 +617,19 @@ class SmtpRelayController extends Controller
                 smtp_relay_server::create($data);
             }
 
-            // $adminEmails = User::where('role_id', 3)->pluck('email')->toArray(); //role admin will receive the email and cc to the helpdesk
-            // Mail::to($adminEmails)
-            // ->cc($request->input('emailadd'))
-            // ->send(new MailForm($request));
+            // Retrieve admin emails
+            $adminEmails = User::where('role_id', 11)->pluck('email')->toArray();
+
+            // Check if there are admin emails before sending the email
+            if (!empty($adminEmails)) {
+                Mail::to($adminEmails)
+                    ->cc($request->input('emailadd'))
+                    ->send(new MailForm($request));
+            } else {
+                // If no admin emails, send to emailadd from the request
+                Mail::to($request->input('emailadd'))
+                    ->send(new MailForm($request));
+            }
 
             ActivityLog::create([
                 'user_id' => Auth::id(),
@@ -779,12 +740,18 @@ class SmtpRelayController extends Controller
             'est_no_email_sent_from_system_users_per_day', 'applicant_name', 'applicant_position', 'applicant_dept_div',
             'date_application', 'verifier_1_name', 'verifier_1_position', 'verifier_1_dept_div', 'date_verification_1',
             'verifier_2_name', 'date_verification_2', 'verifier_3_name', 'verifier_3_position', 'verifier_3_dept_div',
-            'date_verification_3','status','sub_smtp_relay_server'
+            'date_verification_3','status','sub_smtp_relay_server','smtp_username','smtp_password'
         ]);
 
         $formdata['form_id'] = $id;
         $types_req = $request->input('types_req');
         $formdata['status'] = 0;
+
+        if ($formdata['smtp_relay_auth_method'] == 1) {
+            $formdata['smtp_username'] = null;
+            $formdata['smtp_password'] = null;
+        }
+
         // Conditionally update the upload_copy_attachment field
         if ($fileName !== null) {
             $formdata['upload_copy_attachment'] = $fileName;
@@ -958,14 +925,26 @@ class SmtpRelayController extends Controller
         $selectedValue = $request->input('selectedValue');
 
         // Query the Server table to get the hostname based on the selected value
-        $serverId  = Server::where('hostname', $selectedValue)->value('id');
+        $serverId = Server::where('hostname', $selectedValue)->where('status', 1)->value('id');
 
-        // $subhostname = Server::where('master_id',$serverId)->where('status_cluster','=',1)->value('hostname');
-        $server = Server::where('master_id', $serverId)->where('status_cluster', 1)->first();
-        $subhostname = $server ? $server->subhostname : null;
+        // Retrieve all servers with the given master_id and status_cluster equal to 1
+        $servers = Server::where('master_id', $serverId)->where('status_cluster', 1)->get();
+
+        // Initialize subhostname variable
+        $subhostname = null;
+
+        // Loop through the retrieved servers to find the one with status_cluster equal to 1
+        foreach ($servers as $server) {
+            if ($server->status_cluster == 1) {
+                // If status_cluster is 1, set the subhostname and break the loop
+                $subhostname = $server->subhostname;
+                break;
+            }
+        }
 
         // Return the hostname as JSON response
         return response()->json(['subhostname' => $subhostname]);
     }
+
 
 }

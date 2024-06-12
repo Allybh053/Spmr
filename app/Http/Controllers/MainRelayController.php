@@ -320,6 +320,22 @@ class MainRelayController extends Controller
         ]);
     }
 
+    public function checkServerStatus(Request $request)
+    {
+        // Get the sub_smtp_relay_server value from the request
+        $subSmtpRelayServer = $request->input('sub_smtp_relay_server');
+
+        // Check the status of the server in the database
+        $server = Server::where('subhostname', $subSmtpRelayServer)->first();
+
+        if ($server && $server->status_cluster == 1) {
+            // Server is active
+            return response()->json(['status' => 1]);
+        } else {
+            // Server is inactive
+            return response()->json(['status' => 0]);
+        }
+    }
 
 
 }

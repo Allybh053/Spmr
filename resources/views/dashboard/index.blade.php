@@ -233,7 +233,7 @@
 
             // Ensure the canvas element exists
             if (!canvasElement) {
-                console.error(`Canvas element with id ${chartId} not found.`);
+                // console.error(`Canvas element with id ${chartId} not found.`);
                 return;
             }
 
@@ -410,11 +410,15 @@ function connectAndProcess(hostname1, index) {
         }
         const [timestamp, value] = message.split(',');
 
-         // Push timestamp to labels array if it's not already present
-         if (!labels.includes(timestamp)) {
-            labels.push(timestamp);
+        // Check if the data is valid
+        if (!timestamp || value === undefined || isNaN(value)) {
+            // console.log(`Invalid data received: Timestamp = ${timestamp}, Value = ${value}`);
+            return;
         }
 
+        if (!labels.includes(timestamp)) {
+            labels.push(timestamp);
+        }
         // Add value to the dataset corresponding to the hostname
         if (!datasets[hostname1.hostname]) {
             datasets[hostname1.hostname] = {
@@ -432,11 +436,11 @@ function connectAndProcess(hostname1, index) {
         });
 
         // Sort the data by timestamp
-        datasets[hostname1.hostname].data.sort((a, b) => new Date(a.x) - new Date(b.x));
+        // datasets[hostname1.hostname].data.sort((a, b) => new Date(a.x) - new Date(b.x));
 
         // Update chart data
-        // mailQueueChart.data.labels = labels;
-        mailQueueChart.data.labels = datasets[hostname1.hostname].data.map(dataPoint => dataPoint.x);
+        mailQueueChart.data.labels = labels;
+        // mailQueueChart.data.labels = datasets[hostname1.hostname].data.map(dataPoint => dataPoint.x);
 
         mailQueueChart.data.datasets = Object.values(datasets); // Convert object to array
         mailQueueChart.update();
@@ -568,7 +572,7 @@ sockets.forEach((socket, index) => {
         //console.log("Message received from " + socket.url + ": " + event.data);
         const response = event.data;
         outputs.push(response);
-        console.log(outputs);
+        // console.log(outputs[5]);
         // Update the corresponding element based on the response
             $('#mailQueueCount' + index).text(outputs[0]);
 
