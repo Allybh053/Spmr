@@ -27,31 +27,16 @@
                 </div>
             </div>
         </header>
-        <div class="container-fluid px-4 mt-4">
+        <div class="container-fluid px-4 mt-4 ">
             <div class="row">
-                 {{-- <div class="col-xl-12">
+                 <div class="col-xl-12 mb-4">
                     <div class="card">
                         <div class="card-header">Filter</div>
                         <div class="card-body">
                             <form id="searchForm">
 
-                                <div  id="searchBox">--}}
-
-                                    {{-- not in use for choose type --}}
-                                    {{-- <div class="row gx-3 mb-3">
-                                        <div class="col-md-6">
-                                            <div class="mb-3" id="calendarSelect">
-                                                <label class="small mb-1" for="calendarType">Filter Type:</label>
-                                                <select class="form-control select2" id="calendarType" name="calendarType">
-                                                    <option selected disabled></option>
-                                                    <option value="range">Date Range</option>
-                                                    <option value="month">Month</option>
-                                                    <option value="year">Year</option>
-                                                </select>
-                                            </div>
-                                        </div>
-                                    </div> --}}
-                                     {{-- <div class="mb-3" id="calendarInputs">
+                                <div  id="searchBox">
+                                     <div class="mb-3" id="calendarInputs">
                                         <div class="row">
                                             <div class="col-md-6">
                                                 <label for="start_date">Start Date:</label>
@@ -71,8 +56,8 @@
                             </form>
                         </div>
                     </div>
-                </div>--}}
-                <br>
+                </div>
+
 
                 <div class="col-xl-12">
                     <!-- Account details card-->
@@ -254,35 +239,59 @@
         data: formData,
         success: function(response) {
             console.log(response);
-             // Clear existing data from the DataTable
-             if (typeof response.data === 'object' && response.data !== null) {
-        // Convert response.data object into an array
-        var dataArray = Object.values(response.data);
 
-        // Clear existing data from the DataTable
-        table.clear().draw();
+            console.log(dataArray); // Log dataArray for debugging
+            if (response.data) {
+                var dataArray = Object.values(response.data);
+            // Check if dataArray is not empty
+            if (dataArray.length > 0) {
+                // Clear existing data from the DataTable
+                table.clear();
 
-        // Populate DataTable with new data
-        dataArray.forEach(function(item) {
-            table.row.add([
-                item.user_id, // Assuming these are the respective fields, adjust as needed
-                item.activity_type,
-                item.action,
-                item.ip_address,
-                item.user_agent,
-                item.url,
-                item.old_values,
-                item.new_values,
-                item.event,
-                item.created_at // Assuming this is the timestamp field
-            ]).draw(false);
-        });
-    } else {
-        console.error('Response data is not in expected format:', response.data);
-    }
+                // Populate DataTable with new data
+                dataArray.forEach(function(item) {
+                    table.row.add([
+                        item.user_id,
+                        item.activity_type,
+                        item.action,
+                        item.ip_address,
+                        item.user_agent,
+                        item.url,
+                        item.old_values,
+                        item.new_values,
+                        item.input,
+                        item.created_at
+                    ]);
+                });
+
+                // Redraw the DataTable
+                table.draw(false);
+            } else {
+                console.error('Response data is not in expected format or empty:', response.data);
+            }
+        }
         },
         error: function(xhr, status, error) {
-            console.error('Error:', error);
+            if (xhr.status === 422) {
+                var errors = xhr.responseJSON.errors;
+
+                // Display validation errors to the user (example using alert)
+                var errorMessages = '';
+                for (var field in errors) {
+                    if (errors.hasOwnProperty(field)) {
+                        errorMessages += errors[field].join(', ') + '\n';
+                    }
+                }
+                Swal.fire({
+                        title: 'Warning!',
+                        text: 'Validation Errors:\n' + errorMessages,
+                        icon: 'warning',
+                        confirmButtonColor: '#3085d6',
+                        confirmButtonText: 'OK'
+                    });
+            } else {
+                console.error('Error:', error);
+            }
         }
     });
 });

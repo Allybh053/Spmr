@@ -42,25 +42,49 @@ class ActivityLogController extends Controller
 
         public function filter(Request $request)
         {
-            $logs = $this->query($request);
 
+            $messages = [
+                'end_date.after_or_equal' => 'End Date Must Be Greater Than Start Date',
+            ];
 
-             // Transform logs to add display date
-            $logs->transform(function ($log) {
-                // Assuming $log->user is nullable, handle it gracefully
-                $username = $log->user ? $log->user->username : 'Guest';
+            $validation = [
+                'start_date' => 'nullable',
+                'end_date' => 'nullable|after_or_equal:start_date',
+            ];
 
-                $log->created_at_display = Carbon::parse($log->created_at)
-                    ->setTimezone('Asia/Kuala_Lumpur')
-                    ->format('d/m/Y h:i:s A');
-                $log->username = $username; // Add username to log object
-                $log->activity_type_display = $log->activity_type ?? $log->event; // Add activity_type_display
+            try {
+                $request->validate($validation, $messages);
 
-                return $log;
-            });
+                $logs = $this->query($request);
 
-            // Assuming you want to pass the logs to a view named 'activityLog.index'
-            return response()->json(['data' => $logs]);
+                // Transform logs to format expected by DataTables
+                $data = $logs->map(function ($log) {
+                    $username = $log->user ? $log->user->username : 'Guest';
+
+                    return [
+                        'user_id' => $username,
+                        'activity_type' => $log->activity_type ?? $log->event,
+                        'action' => $log->action,
+                        'ip_address' => $log->ip_address,
+                        'user_agent' => $log->user_agent,
+                        'url' => $log->url,
+                        'old_values' => $log->old_values,
+                        'new_values' => $log->new_values,
+                        'input' => $log->input,
+                        'created_at' => Carbon::parse($log->created_at)
+                                            ->setTimezone('Asia/Kuala_Lumpur')
+                                            ->format('d/m/Y h:i:s A'), // Assuming this is properly formatted
+                    ];
+                });
+
+                // Return the formatted data as JSON response
+                return response()->json(['data' => $data]);
+
+            } catch (\Illuminate\Validation\ValidationException $e) {
+                return response()->json([
+                    'errors' => $e->errors()
+                ], 422);
+            }
         }
 
 
@@ -70,8 +94,8 @@ class ActivityLogController extends Controller
         $dateType = $request->input('input2') ?? '';
         $monthType = $request->input('input2_month') ?? '';
         $yearType = $request->input('input2_year') ?? '';
-        $dateFromType = $request->input('input2_from') ?? '';
-        $dateToType = $request->input('input2_to') ?? '';
+        $dateFromType = $request->input('start_date') ?? '';
+        $dateToType = $request->input('end_date') ?? '';
 
             // Fetch audit logs with old and new values
             $auditLogs = AuditLog::whereNotNull('old_values')
