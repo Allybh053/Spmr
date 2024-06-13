@@ -410,16 +410,15 @@ function connectAndProcess(hostname1, index) {
         }
         const [timestamp, value] = message.split(',');
 
-        // Check if the data is valid
-        if (!timestamp || value === undefined || isNaN(value)) {
-            // console.log(`Invalid data received: Timestamp = ${timestamp}, Value = ${value}`);
-            return;
-        }
+        console.log(timestamp, value);
 
+        // Push timestamp to labels array if it's not already present
         if (!labels.includes(timestamp)) {
             labels.push(timestamp);
+            labels.sort(); // Ensure labels are sorted
         }
-        // Add value to the dataset corresponding to the hostname
+
+        // Initialize dataset for the hostname if it doesn't exist
         if (!datasets[hostname1.hostname]) {
             datasets[hostname1.hostname] = {
                 label: hostname1.hostname,
@@ -430,23 +429,35 @@ function connectAndProcess(hostname1, index) {
             };
         }
 
-        datasets[hostname1.hostname].data.push({
-            x: timestamp,
-            y: parseInt(value)
-        });
+        // Update or add the value in the dataset for the current hostname
+        const dataPoint = { x: timestamp, y: parseInt(value) };
+                const dataset = datasets[hostname1.hostname].data;
+                const existingIndex = dataset.findIndex(point => point.x === timestamp);
 
-        // Sort the data by timestamp
-        // datasets[hostname1.hostname].data.sort((a, b) => new Date(a.x) - new Date(b.x));
+                if (existingIndex >= 0) {
+                    dataset[existingIndex] = dataPoint; // Update existing data point
+                } else {
+                    dataset.push(dataPoint); // Add new data point
+                }
+
+        // Sort the data by timestamp (although it's already sorted in your case)
+        datasets[hostname1.hostname].data.sort((a, b) => new Date(a.x) - new Date(b.x));
+        // Ensure other datasets have the same timestamp with value 0 if not present
+        labels.forEach(label => {
+                    Object.keys(datasets).forEach(key => {
+                        const dataset = datasets[key].data;
+                        if (!dataset.some(point => point.x === label)) {
+                            dataset.push({ x: label, y: 0 }); // Push zero value for missing timestamp
+                            dataset.sort((a, b) => new Date(a.x) - new Date(b.x));
+                        }
+                    });
+                });
 
         // Update chart data
         mailQueueChart.data.labels = labels;
-        // mailQueueChart.data.labels = datasets[hostname1.hostname].data.map(dataPoint => dataPoint.x);
-
         mailQueueChart.data.datasets = Object.values(datasets); // Convert object to array
         mailQueueChart.update();
-
-    };
-
+};
     socket1.onerror = function(error) {
         //console.error("WebSocket Error for " + serverAddress1 + ": ", error);
     };
@@ -468,7 +479,7 @@ var mailQueueChart = new Chart(ctx, {
     type: 'line',
     data: {
         labels: labels,
-        datasets: datasets
+        datasets: Object.values(datasets)
     },
     options: {
         scales: {
@@ -498,7 +509,18 @@ var mailQueueChart = new Chart(ctx, {
             legend: {
                 display: true,
                 position: 'bottom', // Adjust legend position if needed
-                onHover: function (event, legendItem) {
+                labels: {
+                    // Sync legend labels with dataset labels
+                    generateLabels: function(chart) {
+                        return chart.data.datasets.map(dataset => ({
+                            text: dataset.label,
+                            fillStyle: dataset.borderColor, // Match line color
+                            strokeStyle: dataset.borderColor,
+                            lineWidth: dataset.borderWidth
+                        }));
+                    }
+                },
+                onHover: function(event, legendItem) {
                     event.target.style.cursor = 'pointer';
                 }
             }
