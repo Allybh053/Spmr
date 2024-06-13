@@ -263,7 +263,7 @@
                 if (finalCommandIndex >= finalCommandQueue.length) {
                     Swal.fire({
                         title: `Successfully submitted Mail Relay`,
-                        html: `<p>Successful commands: ${successCount}</p><p>Failed commands: ${failCount}</p><p>${failedCommands.join('<br>')}</p>`,
+                        // html: `<p>Successful commands: ${successCount}</p><p>Failed commands: ${failCount}</p><p>${failedCommands.join('<br>')}</p>`,
                         allowOutsideClick: false,
                         showConfirmButton: true,
                         icon: 'success'
