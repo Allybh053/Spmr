@@ -13,13 +13,15 @@ class mailApproved extends Mailable
 {
     use Queueable, SerializesModels;
     public $request;
+    public $user;
 
     /**
      * Create a new message instance.
      */
-    public function __construct($request)
+    public function __construct($request, $user)
     {
         $this->data = $request;
+        $this->user = $user;
     }
 
     /**
@@ -39,7 +41,7 @@ class mailApproved extends Mailable
     {
         $content = new Content(
             view: 'emails.emailapproved',
-            with: ['data' => $this->data]
+            with: ['data' => $this->data, 'user' => $this->user]
         );
 
         return $content;
