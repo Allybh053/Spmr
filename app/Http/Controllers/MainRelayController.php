@@ -174,13 +174,14 @@ class MainRelayController extends Controller
              // Check if there are admin emails before sending the email
              if (!empty($adminEmails)) {
                  Mail::to($adminEmails)
-                     ->cc($request->input('owner_email_addr'))
-                     ->send(new mailReject($request));
-             } else {
-                 // If no admin emails, send to emailadd from the request
-                 Mail::to($request->input('owner_email_addr'))
+                     //->cc($request->input('owner_email_addr'))
                      ->send(new mailReject($request));
              }
+//             else {
+                 // If no admin emails, send to emailadd from the request
+                 /*Mail::to($request->input('owner_email_addr'))
+                     ->send(new mailReject($request));*/
+//             }
         // $adminEmails = User::where('role_id', 11)->pluck('email')->toArray(); //role admin will receive the email and cc to the helpdesk
         // Mail::to($adminEmails)
         // ->cc($request->input('owner_email_addr'))
@@ -247,13 +248,14 @@ class MainRelayController extends Controller
              // Check if there are admin emails before sending the email
              if (!empty($adminEmails)) {
                  Mail::to($adminEmails)
-                     ->cc($request->input('owner_email_addr'))
-                     ->send(new mailApproved($request));
-             } else {
-                 // If no admin emails, send to emailadd from the request
-                 Mail::to($request->input('owner_email_addr'))
-                     ->send(new mailApproved($request));
+                     //->cc($request->input('owner_email_addr'))
+                     ->send(new mailApproved($request, $user));
              }
+//             else {
+                 // If no admin emails, send to emailadd from the request
+                 /*Mail::to($request->input('owner_email_addr'))
+                     ->send(new mailApproved($request));*/
+//             }
 
             // $adminEmails = User::where('role_id', 11)->pluck('email')->toArray(); //role admin will receive the email and cc to the helpdesk
             // Mail::to($adminEmails)
