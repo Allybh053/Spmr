@@ -410,7 +410,7 @@ function connectAndProcess(hostname1, index) {
         }
         const [timestamp, value] = message.split(',');
 
-        console.log(timestamp, value);
+        // console.log(timestamp, value);
 
         // Push timestamp to labels array if it's not already present
         if (!labels.includes(timestamp)) {
