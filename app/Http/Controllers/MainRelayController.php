@@ -222,6 +222,7 @@ class MainRelayController extends Controller
 
         $smtp_username = $request->input("smtp_username");
         $smtp_password = $request->input("smtp_password");
+        $smtp_port = $request->input("smtp_port");
         $comment = $request->input("comment");
         $user = Auth::user();
         $update = SmtpRelayReqForm::where('id', $request->input('smtpid'))->update(['comments' => $comment,'status'=>1,'implementation_name'=>$user->username,'smtp_password'=>$smtp_password,'smtp_username'=>$smtp_username]);
