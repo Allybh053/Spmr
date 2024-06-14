@@ -246,6 +246,11 @@
 @push('script')
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.4/Chart.min.js" crossorigin="anonymous"></script>
 <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels"></script>
+<!-- Moment.js -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js" crossorigin="anonymous"></script>
+
+<!-- Chart.js Adapter for Moment.js from jsDelivr CDN -->
+<script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-moment"></script>
 <script>
 
     $(document).ready(function () {
@@ -693,14 +698,24 @@
                                             title: {
                                                 display: true,
                                                 text: 'Date'
-                                            }
+                                            },
+                                            labels: dates,  // Ensure labels are explicitly set
+                                            autoSkip: false,
+                                            maxRotation: 0,  // Set rotation to 0 degrees to prevent any rotation
+                                            minRotation: 0
                                         },
                                         y: {
                                             title: {
                                                 display: true,
                                                 text: 'Count'
                                             },
-                                            beginAtZero: true
+                                            beginAtZero: true,
+                                            ticks: {
+                                                // Include a dollar sign in the ticks
+                                                callback: function(value, index, values) {
+                                                    return value.toLocaleString(); // Format number with commas
+                                                }
+                                            }
                                         }
                                     },
                                     plugins: {
@@ -832,16 +847,37 @@
                                         responsive: true,
                                         scales: {
                                             x: {
-                                                type: 'category',
-                                                title: {
-                                                    display: true,
-                                                    text: 'Time'
-                                                }
-                                            },
+                                                    type: 'category',
+                                                    title: {
+                                                        display: true,
+                                                        text: 'Time'
+                                                    },
+                                                    labels: labels,  // Ensure labels are explicitly set
+                                                    autoSkip: false,
+                                                    maxRotation: 0,  // Set rotation to 0 degrees to prevent any rotation
+                                                    minRotation: 0
+                                                },
                                             y: {
+                                                type: 'linear',
                                                 title: {
                                                     display: true,
                                                     text: 'Count'
+                                                },
+                                                beginAtZero: true,
+                                                ticks: {
+                                                    callback: function(value, index, values) {
+                                                        console.log(value);
+                                                        // Number formatting logic
+                                                        if (value >= 1e9) {
+                                                            return (value / 1e9).toFixed(1).replace(/\.0$/, '') + 'B'; // Billion
+                                                        } else if (value >= 1e6) {
+                                                            return (value / 1e6).toFixed(1).replace(/\.0$/, '') + 'M'; // Million
+                                                        } else if (value >= 1e3) {
+                                                            return (value / 1e3).toFixed(1).replace(/\.0$/, '') + 'K'; // Thousand
+                                                        } else {
+                                                            return value.toLocaleString(); // Standard formatting for values less than 1000
+                                                        }
+                                                    }
                                                 }
                                             }
                                         }
@@ -902,7 +938,21 @@
                                 options: {
                                     scales: {
                                         y: {
-                                            beginAtZero: true
+                                            beginAtZero: true,
+                                            ticks: {
+                                                callback: function(value, index, values) {
+                                                    // Check for value ranges and format accordingly
+                                                    if (value >= 1e9) {
+                                                        return (value / 1e9).toFixed(1).replace(/\.0$/, '') + 'B'; // Billion
+                                                    } else if (value >= 1e6) {
+                                                        return (value / 1e6).toFixed(1).replace(/\.0$/, '') + 'M'; // Million
+                                                    } else if (value >= 1e3) {
+                                                        return (value / 1e3).toFixed(1).replace(/\.0$/, '') + 'K'; // Thousand
+                                                    } else {
+                                                        return value.toLocaleString(); // Standard formatting for values less than 1000
+                                                    }
+                                                }
+                                            }
                                         }
                                     }
                                 }
@@ -962,7 +1012,21 @@
                                 options: {
                                     scales: {
                                         y: {
-                                            beginAtZero: true
+                                            beginAtZero: true,
+                                            ticks: {
+                                                callback: function(value, index, values) {
+                                                    // Check for value ranges and format accordingly
+                                                    if (value >= 1e9) {
+                                                        return (value / 1e9).toFixed(1).replace(/\.0$/, '') + 'B'; // Billion
+                                                    } else if (value >= 1e6) {
+                                                        return (value / 1e6).toFixed(1).replace(/\.0$/, '') + 'M'; // Million
+                                                    } else if (value >= 1e3) {
+                                                        return (value / 1e3).toFixed(1).replace(/\.0$/, '') + 'K'; // Thousand
+                                                    } else {
+                                                        return value.toLocaleString(); // Standard formatting for values less than 1000
+                                                    }
+                                                }
+                                            }
                                         }
                                     }
                                 }
