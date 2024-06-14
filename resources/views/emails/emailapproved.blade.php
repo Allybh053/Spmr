@@ -27,9 +27,7 @@
                 @if ($data->types_req == 1)
                     : New Application
                 @elseif ($data->types_req == 2)
-                    : Termination
-                @else
-                    : Ongoing
+                    : Termination 
                 @endif
             </td>
         </tr>
@@ -42,6 +40,40 @@
             <th>Project Name</th>
             <td>: {{ $data->project_name }}</td>
         </tr>
+        @if($data->smtp_username)
+        <tr>
+            <th>Username</th>
+            <td>: {{ $data->smtp_username }}</td>
+        </tr>
+        <tr>
+            <th>Password</th>
+            <td>: {{ $data->smtp_password }}</td>
+        </tr>
+        <tr>
+            <th>Port</th>
+            <td>:
+                @if ($smtpreq->smtp_port == 0)
+                    Not Answered
+                @elseif ($data->smtp_port == 1)
+                    25/tcp
+                @elseif ($data->smtp_port == 2)
+                    465/tcp
+                @elseif ($data->smtp_port == 3)
+                    587/tcp
+                @elseif ($data->smtp_port == 4)
+                    25/tcp & 465/tcp
+                @elseif ($data->smtp_port == 5)
+                    25/tcp & 587/tcp
+                @elseif ($data->smtp_port == 6)
+                    465/tcp & 587/tcp
+                @elseif ($data->smtp_port == 7)
+                    All
+                @else
+                    Not Answered
+                @endif
+            </td>
+        </tr>
+        @endif
 
         <tr>
             <th>Mail Relay server</th>

@@ -117,6 +117,7 @@
                                 Not Answered
                             @endif
                         </p>
+                        <input class="form-control" type="hidden" id="smtp_port" name="smtp_port" value="{{ $smtpreq->smtp_port }}"/>
                     </div>
                 </div>
             </div>
