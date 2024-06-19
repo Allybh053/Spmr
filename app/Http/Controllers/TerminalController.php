@@ -22,7 +22,7 @@ class TerminalController extends Controller {
     public function __construct()
     {
         // Open SSH connection when the controller is instantiated
-        $this->openSSHConnection();
+        // $this->openSSHConnection();
     }
     public function executeCommand(Request $request)
     {
