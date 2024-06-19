@@ -27,7 +27,7 @@
                 @if ($data->types_req == 1)
                     : New Application
                 @elseif ($data->types_req == 2)
-                    : Termination 
+                    : Termination
                 @endif
             </td>
         </tr>
@@ -52,7 +52,7 @@
         <tr>
             <th>Port</th>
             <td>:
-                @if ($smtpreq->smtp_port == 0)
+                @if ($data->smtp_port == 0)
                     Not Answered
                 @elseif ($data->smtp_port == 1)
                     25/tcp
