@@ -329,11 +329,13 @@
         // Add saslpasswd2 commands to finalCommandQueue
         if (smtp_username !== "") {
             if (smtpMailServers.some(smtpMailServer => smtpMailServer.types_req == 1)) {
-                finalCommandQueue.push(`echo '${smtp_password}:' | /usr/sbin/saslpasswd2 -c '${smtp_username}'`);
+                //finalCommandQueue.push(`echo '${smtp_password}:' | /usr/sbin/saslpasswd2 -c '${smtp_username}'`);
+                finalCommandQueue.push(`echo '${smtp_password}:' | /usr/sbin/saslpasswd2 -c '${smtp_username}' ; scp /etc/sasldb2 mypair:/etc/sasldb2`);
             }
 
             if (smtpMailServers.some(smtpMailServer => smtpMailServer.types_req == 2)) {
-                finalCommandQueue.push(`/usr/sbin/saslpasswd2 -d '${smtp_username}'`);
+                //finalCommandQueue.push(`/usr/sbin/saslpasswd2 -d '${smtp_username}'`);
+                finalCommandQueue.push(`/usr/sbin/saslpasswd2 -d '${smtp_username}' ; scp /etc/sasldb2 mypair:/etc/sasldb2`);
             }
         }
 
