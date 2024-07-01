@@ -119,7 +119,7 @@ class MainRelayController extends Controller
                     ->first();*/
 
         // Retrieve all servers with the given master_id and status_cluster equal to 1
-        $servers = Server::where('master_id', $mailhostname->master_id)->where('status_cluster', 1)->get();
+        $servers = Server::where('master_id', $mailhostname->id)->where('status_cluster', 1)->get();
 
         // Initialize subhostname variable
         $subhostname = null;
