@@ -39,7 +39,8 @@
                     <div class="col-md-4">
                         <label>Server Mail Relay</label>
                         <p class="text-primary">{{ $smtpreq->smtp_relay_server }}</p>
-                        <input type="hidden" id="sub_smtp_relay_server" name="sub_smtp_relay_server" value="{{ $smtpreq->sub_smtp_relay_server }}">
+                        {{--<input type="hidden" id="sub_smtp_relay_server" name="sub_smtp_relay_server" value="{{ $smtpreq->sub_smtp_relay_server }}">--}}
+                        <input type="hidden" id="sub_smtp_relay_server" name="sub_smtp_relay_server" value="{{ $subhostname }}">
                     </div>
                     <div class="col-md-4">
                         <label>Auth Method</label>

@@ -114,13 +114,28 @@ class MainRelayController extends Controller
 
         $smtpreq = SmtpRelayReqForm::find($id);
         $mailhostname = Server::where('hostname',$smtpreq->smtp_relay_server)->first();
-        $subhostname = Server::where('master_id',$mailhostname->id)
+        /*$subhostname = Server::where('master_id',$mailhostname->id)
                     ->where('status_cluster',1)
-                    ->first();
+                    ->first();*/
+
+        // Retrieve all servers with the given master_id and status_cluster equal to 1
+        $servers = Server::where('master_id', $mailhostname->master_id)->where('status_cluster', 1)->get();
+
+        // Initialize subhostname variable
+        $subhostname = null;
+
+        // Loop through the retrieved servers to find the one with status_cluster equal to 1
+        foreach ($servers as $server) {
+            if ($server->status_cluster == 1) {
+                // If status_cluster is 1, set the subhostname and break the loop
+                $subhostname = $server->subhostname;
+                break;
+            }
+        }
 
         $smtpMailServers = smtp_relay_server::where('form_id',$smtpreq->form_id)
-                ->where('types_req',$smtpreq->types_req)
-                ->get();
+            ->where('types_req',$smtpreq->types_req)
+            ->get();
 
 
         return view('mailrelay.edit', compact('user','smtpMailServers','smtpreq','subhostname'));
