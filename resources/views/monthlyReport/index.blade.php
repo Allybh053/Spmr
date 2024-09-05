@@ -70,21 +70,25 @@
                         </div>
 
                         <div  id="searchBox">
-                            <div class="row gx-3 mb-3">
+                            {{--<div class="row gx-3 mb-3">
                                 <div class="col-md-6">
                                     <div class="mb-3" id="calendarSelect">
                                         <label class="small mb-1" for="calendarType">Filter Type:</label>
                                         <select class="form-control select2" id="calendarType" name="calendarType">
                                             <option selected disabled></option>
-                                            {{-- <option value="range">Date Range</option> --}}
+                                            --}}{{-- <option value="range">Date Range</option> --}}{{--
                                             <option value="month">Month</option>
                                             <option value="year">Year</option>
                                         </select>
                                     </div>
                                 </div>
-                            </div>
+                            </div>--}}
                             <div class="mb-3" id="calendarInputs">
                                 <!-- Inputs for date, month, year, and date range will be dynamically appended here -->
+                                <div class="col-md-6">
+                                    <label for="input2_month">Month:</label>
+                                    <input type="month" class="form-control" name="input2_month" id="month">
+                                </div>
                             </div>
                             <div class="text-end"> <!-- Align the button to the right -->
                                 <button type="button" class="btn btn-secondary" id="reset">Reset</button>
@@ -259,7 +263,7 @@
         $('#downloadButtonJadual10').fadeOut();
         $('#downloadButtonJadual14').fadeOut();
 
-        $('#calendarType').change(function () {
+/*        $('#calendarType').change(function () {
         var selectedType = $(this).val();
         $('#calendarInputs').empty(); // Clear previous inputs
 
@@ -278,7 +282,7 @@
         } else {
             $('#calendarInputs').append('<div class="col-md-6"><label for="input2">Calendar:</label><input type="date" class="form-control" name="input2" placeholder="Calendar"></div>');
         }
-    });;
+    });*/
 
         var tableJad2 = $('#listJad2').DataTable({
             ordering: true,
