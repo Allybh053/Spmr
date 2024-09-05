@@ -47,7 +47,7 @@
                     <select class="form-control select2" name="status" id="status" required>
                         <option selected disabled>Select Status</option>
                         <option value="1" selected>Active</option>
-                        <option value="2">Inactive</option>
+                        <option value="0">Inactive</option>
                     </select>
                 </div>
                 <div class="mb-3 text-center">
