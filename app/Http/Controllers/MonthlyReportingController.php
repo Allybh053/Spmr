@@ -61,7 +61,8 @@ class MonthlyReportingController extends Controller
 
         // Retrieve other inputs from the request
         $serverIds = $request->input('server');
-        $input2Type = $request->input('calendarType');
+        //$input2Type = $request->input('calendarType');
+        $input2Type = 'month';
         $monthType = $request->input('input2_month');
         $yearType = $request->input('input2_year');
 
