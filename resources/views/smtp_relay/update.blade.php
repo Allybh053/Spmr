@@ -352,8 +352,8 @@
                 </div>
                 <div class="mb-3">
                     <label for="upload_copy_attachment">Replace current Attachement (Optional)</label>
-                    <input class="form-control btn-outline-primary" type="file" name="upload_copy_attachment" id="upload_copy_attachment" accept=".pdf"/>
-                    <span class="text-xs text-danger">Upload File format .pdf</span>
+                    <input class="form-control btn-outline-primary" id="upload" type="file" name="upload_copy_attachment" id="upload_copy_attachment" accept=".pdf"/>
+                    <span class="text-xs text-danger">Upload a file in PDF format that is no larger than 5MB.</span>
                 </div><hr>
 
                 <div class="mb-3" @if($formsmtp->comments) style="display:block;" @else style="display:none;" @endif>
@@ -402,6 +402,16 @@
     });
 
     $(document).ready(function() {
+
+        $('#upload').on('change', function(e) {
+            let size = this.files[0].size;
+            //$('#size').text(size);
+
+            if (size > 5000000) {
+                alert('The file size is greater than 5MB.');
+                $(this).val('');
+            }
+        });
 
     // Function to check for duplicate IP addresses
     function checkDuplicateIP() {
