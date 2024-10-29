@@ -481,7 +481,7 @@ $(document).on('click', '.remove-row', function() {
 
 
             if (/^(?:[0-9]{1,3}\.){3}[0-9]{1,3}$/.test(ipAddress)) {
-                const serverAddress = 'wss://spmr.mygovuc.gov.my/' + subhostname;
+                const serverAddress = 'wss://myspmr:Rb1NAPzM57Ycq9z8Uur65g1JaF2xVixKtTGStvPfh65P9HK29Abe0QcxiZC9yV9n@spmr.mygovuc.gov.my/' + subhostname;
                 const socket = new WebSocket(serverAddress);
 
                 socket.addEventListener('open', (event) => {
@@ -489,12 +489,11 @@ $(document).on('click', '.remove-row', function() {
 
                     if (selectedValuetype_req == 1) {
                         // Construct your command
-                        command = `grep -q '^${ipAddress}' /opt/cluster/postfix/access_list && echo "IP address already Registered!"`;
+                        command = `/opt/scripts/websocket/cmd4` + ` ` + "{{ $user->email }}" + ` ` + `${ipAddress}`;
                     }
                     if (selectedValuetype_req == 2) {
                         // Construct your command
-                        command = `grep -q '^#${ipAddress}' /opt/cluster/postfix/access_list && echo "IP address already Terminated!" || (grep -q '^${ipAddress}' /opt/cluster/postfix/access_list || echo "IP address not Registered to Terminate!")`;
-                        // command = `grep -q '^#${ipAddress}' /opt/cluster/postfix/access_list && echo "IP address already Terminated!"`;
+                        command = `/opt/scripts/websocket/cmd5` + ` ` + "{{ $user->email }}" + ` ` + `${ipAddress}`;
                     }
 
                     // Send the command through the WebSocket if it's not empty
@@ -506,21 +505,21 @@ $(document).on('click', '.remove-row', function() {
                 socket.addEventListener('message', (event) => {
                     const response = event.data;
                     if (selectedValuetype_req == 1) {
-                    if (response.includes('IP address already Registered!')) {
+                    if (response.includes('IP address already registered!')) {
                             $('#resultContainer').html(response);
                         } else {
                             $('#resultContainer').empty();
                         }
                     }
                     if (selectedValuetype_req == 2) {
-                    if (response.includes('IP address already Terminated!')) {
+                    if (response.includes('IP address already terminated.')) {
                         $('#resultContainer').html(response);
                         submitBtn.disabled = true;
-                    } else if (response.includes('IP address not Registered to Terminate!')) {
+                    } else if (response.includes('IP address not registered, but ready for termination.')) {
                         $('#resultContainer').html(response);
                         submitBtn.disabled = true;
                     } else {
-                        const messages = "IP Address not Registered to Terminate";
+                        const messages = "IP address registered and ready for termination.";
                         $('#resultContainer').empty();
                         submitBtn.disabled = false;
                     }

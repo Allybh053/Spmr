@@ -250,7 +250,7 @@ class SmtpRelayController extends Controller
         $positionsArray = Position::where('status', 1)->get()->toArray();
         $ministriesArray = Ministry::where('status', 1)->get()->toArray();
         $agenciesArray = Agency::where('status', 1)->get()->toArray();
-        return view('smtp_relay.register', compact('serversArray','domainsArray','departmentsArray','positionsArray','ministriesArray','agenciesArray'));
+        return view('smtp_relay.register', compact('user','serversArray','domainsArray','departmentsArray','positionsArray','ministriesArray','agenciesArray'));
     }
 
     public function saving(Request $request)
