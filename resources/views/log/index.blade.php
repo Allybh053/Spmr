@@ -117,7 +117,7 @@
             function websocket(hostname){
                 let sockets = [];
 
-                const serverAddress = 'wss://spmr.mygovuc.gov.my/' + hostname;
+                const serverAddress = 'wss://myspmr:Rb1NAPzM57Ycq9z8Uur65g1JaF2xVixKtTGStvPfh65P9HK29Abe0QcxiZC9yV9n@spmr.mygovuc.gov.my/' + hostname;
                         const socket = new WebSocket(serverAddress);
 
                         sockets.push(socket);
@@ -128,23 +128,24 @@
 
                         function getDataServerOverview() {
                             const commands = [
-                                'uptime',
-                                'status=$(systemctl --no-pager status postfix | grep Active:); if echo "$status" | grep -q "active (exited) since"; then echo "Postfix is running"; elif echo "$status" | grep -q "inactive (dead) since"; then echo "Postfix is down"; else echo "Something is wrong"; fi',
-                                '/usr/bin/tail -1 /data/collections/spmr/PostfixSASLauthFailed.txt',
-                                '/usr/bin/tail -1 /data/collections/spmr/PostfixSMTPDconnectionLost.txt',
-                                '/usr/bin/tail -1 /data/collections/spmr/PostfixSMTPDtimedOut.txt',
-                                '/usr/bin/tail -1 /data/collections/spmr/PostfixBounceNondeliveryNotification.txt',
-                                '/usr/bin/bash /opt/scripts/spmr/grand-totals-received.sh',
-                                '/usr/bin/bash /opt/scripts/spmr/grand-totals-delivered.sh',
-                                '/usr/bin/bash /opt/scripts/spmr/grand-totals-deffered.sh',
-                                '/usr/bin/bash /opt/scripts/spmr/grand-totals-bounced.sh',
-                                '/usr/bin/bash /opt/scripts/spmr/grand-totals-rejected.sh',
-                                '/usr/bin/bash /opt/scripts/spmr/grand-totals-senders.sh',
-                                '/usr/bin/bash /opt/scripts/spmr/grand-totals-sending-hosts.sh',
-                                '/usr/bin/bash /opt/scripts/spmr/grand-totals-recipients.sh',
-                                '/usr/bin/bash /opt/scripts/spmr/grand-totals-recipient-hosts.sh',
-                                '/usr/bin/bash /opt/scripts/spmr/host-domain-messages-received.sh',
-                                '/usr/bin/bash /opt/scripts/spmr/per-hour-traffic-summary.sh',
+                                '/opt/scripts/websocket/cmd11' + ' ' + '{{ $user->email }}',
+                                '/opt/scripts/websocket/cmd2' + ' ' + '{{ $user->email }}' + ' ' + 'postfix',
+                                '/opt/scripts/websocket/cmd12' + ' ' + '{{ $user->email }}' + ' ' + 'PostfixSASLauthFailed',
+                                '/opt/scripts/websocket/cmd12' + ' ' + '{{ $user->email }}' + ' ' + 'PostfixSASLauthFailed',
+                                '/opt/scripts/websocket/cmd12' + ' ' + '{{ $user->email }}' + ' ' + 'PostfixSMTPDconnectionLost',
+                                '/opt/scripts/websocket/cmd12' + ' ' + '{{ $user->email }}' + ' ' + 'PostfixSMTPDtimedOut',
+                                '/opt/scripts/websocket/cmd12' + ' ' + '{{ $user->email }}' + ' ' + 'PostfixBounceNondeliveryNotification',
+                                '/opt/scripts/websocket/cmd13' + ' ' + '{{ $user->email }}' + ' ' + 'grand-totals-received',
+                                '/opt/scripts/websocket/cmd13' + ' ' + '{{ $user->email }}' + ' ' + 'grand-totals-delivered',
+                                '/opt/scripts/websocket/cmd13' + ' ' + '{{ $user->email }}' + ' ' + 'grand-totals-deffered',
+                                '/opt/scripts/websocket/cmd13' + ' ' + '{{ $user->email }}' + ' ' + 'grand-totals-bounced',
+                                '/opt/scripts/websocket/cmd13' + ' ' + '{{ $user->email }}' + ' ' + 'grand-totals-rejected',
+                                '/opt/scripts/websocket/cmd13' + ' ' + '{{ $user->email }}' + ' ' + 'grand-totals-senders',
+                                '/opt/scripts/websocket/cmd13' + ' ' + '{{ $user->email }}' + ' ' + 'grand-totals-sending-hosts',
+                                '/opt/scripts/websocket/cmd13' + ' ' + '{{ $user->email }}' + ' ' + 'grand-totals-recipients',
+                                '/opt/scripts/websocket/cmd13' + ' ' + '{{ $user->email }}' + ' ' + 'grand-totals-recipient-hosts',
+                                '/opt/scripts/websocket/cmd13' + ' ' + '{{ $user->email }}' + ' ' + 'host-domain-messages-received',
+                                '/opt/scripts/websocket/cmd13' + ' ' + '{{ $user->email }}' + ' ' + 'per-hour-traffic-summary',
                             ];
 
                             const outputs = [];
