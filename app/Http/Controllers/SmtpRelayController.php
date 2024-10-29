@@ -216,6 +216,13 @@ class SmtpRelayController extends Controller
         // Check if count is less than or equal to 1
         if ($datacount <= 1) {
             $tbldetail->delete();
+            $filePath = '../storage/app/attachments/' . $application->upload_copy_attachment;
+            $spmrPurgePath = '../storage/app/attachments/spmrPurge/' . $application->upload_copy_attachment;
+
+            // Check attachment and move it to the spmrPurge directory
+            if (file_exists($filePath)) {
+                rename($filePath, $spmrPurgePath);
+            }
 
             $application->delete();
         } else {
@@ -709,10 +716,38 @@ class SmtpRelayController extends Controller
         if ($request->hasFile('upload_copy_attachment')) {
             $relayDetails = SmtpRelayReqForm::where('form_id',$id)->first();
 
-            $historyAttachment = HistoryCopyAttachment::create([
+            // Check if has old attachment and move it to the spmrPurge directory and new attachment in the attachment directory
+            if ($relayDetails->upload_copy_attachment) {
+                $oldFilePath = '../storage/app/attachments/' . $relayDetails->upload_copy_attachment;
+                $newFilePath = '../storage/app/attachments/spmrPurge/' . $relayDetails->upload_copy_attachment;
+
+                /*if (file_exists($oldFilePath)) {
+                    // Move the old file
+                    rename($oldFilePath, $newFilePath);
+                }*/
+
+                if (file_exists($oldFilePath)) {
+                    // Ensure the target directory exists
+                    if (!file_exists(dirname($newFilePath))) {
+                        mkdir(dirname($newFilePath), 0755, true);
+                    }
+                    // Move the old file
+                    rename($oldFilePath, $newFilePath);
+                }
+            }
+
+            /*$historyAttachment = HistoryCopyAttachment::create([
                 'form_id' => $relayDetails->id,
                 'attachment_path' => $relayDetails->upload_copy_attachment,
-            ]);
+            ]);*/
+
+            // Save the history of the old attachment, if it existed
+            if ($relayDetails && $relayDetails->upload_copy_attachment) {
+                HistoryCopyAttachment::create([
+                    'form_id' => $relayDetails->id,
+                    'attachment_path' => $relayDetails->upload_copy_attachment,
+                ]);
+            }
 
             // Retrieve the uploaded file
             $files = $request->file('upload_copy_attachment');
