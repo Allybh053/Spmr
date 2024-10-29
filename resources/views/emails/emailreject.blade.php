@@ -14,7 +14,7 @@
 <body>
     <p>SPMR Notification Email,</p>
 
-    <p>The mail relay request has been rejected. Below are the details:</p>
+    <p>The mail relay request has been rejected by {{ $user->username }}. Below are the details:</p>
 
     <table>
         <tr>
