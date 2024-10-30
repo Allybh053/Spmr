@@ -191,7 +191,7 @@ class MainRelayController extends Controller
              if (!empty($adminEmails)) {
                  Mail::to($adminEmails)
                      //->cc($request->input('owner_email_addr'))
-                     ->send(new mailReject($request));
+                     ->send(new mailReject($request, $user));
              }
 //             else {
                  // If no admin emails, send to emailadd from the request

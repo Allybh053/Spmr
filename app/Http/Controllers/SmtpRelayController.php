@@ -262,6 +262,7 @@ class SmtpRelayController extends Controller
         //     return redirect()->route('smtp_relay.smtp_relay_req')->with('error', 'Date Verifier must be greater than Applicant Date!');
         // }
 
+        $user = Auth::user();
         $type_reqs = $request->input('type_req');
 
         if ($type_reqs == 1) {
@@ -456,7 +457,7 @@ class SmtpRelayController extends Controller
             if (!empty($adminEmails)) {
                 Mail::to($adminEmails)
                     //->cc($request->input('emailadd'))
-                    ->send(new MailForm($request));
+                    ->send(new MailForm($request, $user));
             } /*else {
                 // If no admin emails, send to emailadd from the request
                 Mail::to($request->input('emailadd'))
@@ -633,7 +634,7 @@ class SmtpRelayController extends Controller
             if (!empty($adminEmails)) {
                 Mail::to($adminEmails)
                     //->cc($request->input('emailadd'))
-                    ->send(new MailForm($request));
+                    ->send(new MailForm($request, $user));
             } /*else {
                 // If no admin emails, send to emailadd from the request
                 Mail::to($request->input('emailadd'))
