@@ -317,7 +317,7 @@
                     if (smtpMailServer.types_req == 1) {
                         const ipAddress = smtpMailServer.ip_addr_server;
                         const formIds = smtpMailServer.form_id;
-                        commandQueue.push(`/opt/scripts/websocket/cmd4` + ` ` + "{{ $user->email }}" + ` ` + `${ipAddress}` + ` ` + `${formIds}`);
+                        commandQueue.push(`/opt/scripts/websocket/cmd6` + ` ` + "{{ $user->email }}" + ` ` + `${ipAddress}` + ` ` + `${formIds}`);
                     }
 
                     if (smtpMailServer.types_req == 2) {
