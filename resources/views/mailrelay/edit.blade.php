@@ -330,7 +330,7 @@
                 // Add saslpasswd2 commands to finalCommandQueue
                 if (smtp_username !== "") {
                     if (smtpMailServers.some(smtpMailServer => smtpMailServer.types_req == 1)) {
-                        finalCommandQueue.push(`/opt/scripts/websocket/cmd7` + ` ` + "{{ $user->email }}" + ` ` + `${smtp_username}` + ` ` + `${smtp_password}`);
+                        finalCommandQueue.push(`/opt/scripts/websocket/cmd7` + ` ` + "{{ $user->email }}" + ` ` + `${smtp_username}` + ` ` + `"${smtp_password}"`);
                     }
 
                     if (smtpMailServers.some(smtpMailServer => smtpMailServer.types_req == 2)) {
