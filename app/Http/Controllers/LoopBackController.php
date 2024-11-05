@@ -55,7 +55,7 @@ class LoopBackController extends Controller
             'user_agent' => $request->userAgent(),
         ]);
 
-        return view('validationVerification.loopback.index',compact( 'serverName'));
+        return view('validationVerification.loopback.index',compact( 'user','serverName'));
     }
 
     public function api(Request $request)

@@ -208,21 +208,21 @@ cleanlSubhostnames.push(cleanSubhostname{{ $loop->index }});
 
 var commands = [
 {
-    command: 'status=$(systemctl --no-pager status postfix | grep Active:); if echo "$status" | grep -q "active (exited) since"; then echo "Postfix is running"; elif echo "$status" | grep -q "inactive (dead) since"; then echo "Postfix is down"; else echo "Something is wrong"; fi',
+    command: '/opt/scripts/websocket/cmd2' + ' ' + '{{ $user->email }}' + ' ' + 'postfix',
     id: 'statusPostfix'
 },
 {
-    command: 'status=$(systemctl --no-pager status webmin | grep Active:); if echo "$status" | grep -q "active (running) since"; then echo "Webmin is running"; elif echo "$status" | grep -q "inactive (dead) since"; then echo "Webmin is down"; else echo "Something is wrong"; fi',
+    command: '/opt/scripts/websocket/cmd2' + ' ' + '{{ $user->email }}' + ' ' + 'webmin',
     id: 'statusWebmin'
 },
 {
-    command: 'status=$(systemctl --no-pager status apache2 | grep Active:); if echo "$status" | grep -q "active (running) since"; then echo "Apache2 is running"; elif echo "$status" | grep -q "inactive (dead)"; then echo "Apache2 is down"; else echo "Something is wrong"; fi',
+    command: '/opt/scripts/websocket/cmd2' + ' ' + '{{ $user->email }}' + ' ' + 'apache2',
     id: 'statusApache2'
 }
 ];
 
 serverIpaddresses.forEach((subhostname, index) => {
-const serverAddress = 'wss://spmr.mygovuc.gov.my/' + subhostname;
+const serverAddress = 'wss://myspmr:Rb1NAPzM57Ycq9z8Uur65g1JaF2xVixKtTGStvPfh65P9HK29Abe0QcxiZC9yV9n@spmr.mygovuc.gov.my/' + subhostname;
 // console.log(serverAddress);
 
 const socket = new WebSocket(serverAddress);
@@ -287,12 +287,12 @@ $('#' + imageId).attr('src', imageSrc).attr('alt', altText);
     function startPostfixServices(subhostname) {
         const selectedServer = $('#postfixStart'+subhostname).data('value');
         // console.log(selectedServer);
-        const serverAddress = 'wss://spmr.mygovuc.gov.my/'+ selectedServer;
+        const serverAddress = 'wss://myspmr:Rb1NAPzM57Ycq9z8Uur65g1JaF2xVixKtTGStvPfh65P9HK29Abe0QcxiZC9yV9n@spmr.mygovuc.gov.my/'+ selectedServer;
         // console.log(selectedServer);
         const socket = new WebSocket(serverAddress);
 
         socket.addEventListener('open', (event) => {
-            const command = 'sudo systemctl --no-pager start postfix';
+            const command = '/opt/scripts/websocket/cmd15' + ' ' + '{{ $user->email }}' + ' ' + 'start' + ' ' + 'postfix';
             socket.send(command);
         });
 
@@ -355,12 +355,12 @@ $('#' + imageId).attr('src', imageSrc).attr('alt', altText);
     function stopPostfixServices(subhostname) {
         const selectedServer = $('#postfixStop'+subhostname).data('value');
         // const serverAddress = 'wss://' + selectedServer + '/wss/';
-        const serverAddress = 'wss://spmr.mygovuc.gov.my/'+ selectedServer;
+        const serverAddress = 'wss://myspmr:Rb1NAPzM57Ycq9z8Uur65g1JaF2xVixKtTGStvPfh65P9HK29Abe0QcxiZC9yV9n@spmr.mygovuc.gov.my/'+ selectedServer;
         //console.log(serverAddress);
         const socket = new WebSocket(serverAddress);
 
         socket.addEventListener('open', (event) => {
-            const command = 'sudo systemctl --no-pager stop postfix';
+            const command = '/opt/scripts/websocket/cmd15' + ' ' + '{{ $user->email }}' + ' ' + 'stop' + ' ' + 'postfix';
             socket.send(command);
         });
 
@@ -423,12 +423,12 @@ $('#' + imageId).attr('src', imageSrc).attr('alt', altText);
     function restartPostfixServices(subhostname) {
         const selectedServer = $('#postfixRestart'+subhostname).data('value');
         // const serverAddress = 'wss://' + selectedServer + '/wss/';
-        const serverAddress = 'wss://spmr.mygovuc.gov.my/'+ selectedServer;
+        const serverAddress = 'wss://myspmr:Rb1NAPzM57Ycq9z8Uur65g1JaF2xVixKtTGStvPfh65P9HK29Abe0QcxiZC9yV9n@spmr.mygovuc.gov.my/'+ selectedServer;
         //console.log(serverAddress);
         const socket = new WebSocket(serverAddress);
 
         socket.addEventListener('open', (event) => {
-            const command = 'sudo systemctl --no-pager restart postfix';
+            const command = '/opt/scripts/websocket/cmd15' + ' ' + '{{ $user->email }}' + ' ' + 'restart' + ' ' + 'postfix';
             socket.send(command);
         });
 
@@ -496,12 +496,12 @@ $('#' + imageId).attr('src', imageSrc).attr('alt', altText);
     function startApacheServices(subhostname) {
         const selectedServer = $('#apacheStart'+subhostname).val();
         // const serverAddress = 'wss://' + selectedServer + '/wss/';
-        const serverAddress = 'wss://spmr.mygovuc.gov.my/'+ selectedServer;
+        const serverAddress = 'wss://myspmr:Rb1NAPzM57Ycq9z8Uur65g1JaF2xVixKtTGStvPfh65P9HK29Abe0QcxiZC9yV9n@spmr.mygovuc.gov.my/'+ selectedServer;
         //console.log(serverAddress);
         const socket = new WebSocket(serverAddress);
 
         socket.addEventListener('open', (event) => {
-            const command = 'sudo systemctl --no-pager start apache2';
+            const command = '/opt/scripts/websocket/cmd15' + ' ' + '{{ $user->email }}' + ' ' + 'start' + ' ' + 'apache2';
             socket.send(command);
         });
 
@@ -563,12 +563,12 @@ $('#' + imageId).attr('src', imageSrc).attr('alt', altText);
     function stopApacheServices(subhostname) {
         const selectedServer = $('#apacheStop'+subhostname).val();
         // const serverAddress = 'wss://' + selectedServer + '/wss/';
-        const serverAddress = 'wss://spmr.mygovuc.gov.my/'+ selectedServer;
+        const serverAddress = 'wss://myspmr:Rb1NAPzM57Ycq9z8Uur65g1JaF2xVixKtTGStvPfh65P9HK29Abe0QcxiZC9yV9n@spmr.mygovuc.gov.my/'+ selectedServer;
         //console.log(serverAddress);
         const socket = new WebSocket(serverAddress);
 
         socket.addEventListener('open', (event) => {
-            const command = 'sudo systemctl --no-pager stop apache2';
+            const command = '/opt/scripts/websocket/cmd15' + ' ' + '{{ $user->email }}' + ' ' + 'stop' + ' ' + 'apache2';
             socket.send(command);
         });
 
@@ -629,12 +629,12 @@ $('#' + imageId).attr('src', imageSrc).attr('alt', altText);
     function restartApacheServices(subhostname) {
         const selectedServer = $('#apacheRestart'+subhostname).val();
         // const serverAddress = 'wss://' + selectedServer + '/wss/';
-        const serverAddress = 'wss://spmr.mygovuc.gov.my/'+ selectedServer;
+        const serverAddress = 'wss://myspmr:Rb1NAPzM57Ycq9z8Uur65g1JaF2xVixKtTGStvPfh65P9HK29Abe0QcxiZC9yV9n@spmr.mygovuc.gov.my/'+ selectedServer;
         //console.log(serverAddress);
         const socket = new WebSocket(serverAddress);
 
         socket.addEventListener('open', (event) => {
-            const command = 'sudo systemctl --no-pager restart apache2';
+            const command = '/opt/scripts/websocket/cmd15' + ' ' + '{{ $user->email }}' + ' ' + 'restart' + ' ' + 'apache2';
             socket.send(command);
         });
 
@@ -701,12 +701,12 @@ $('#' + imageId).attr('src', imageSrc).attr('alt', altText);
     function startWebminServices(subhostname) {
         const selectedServer = $('#webminStart'+subhostname).val();
         // const serverAddress = 'wss://' + selectedServer + '/wss/';
-        const serverAddress = 'wss://spmr.mygovuc.gov.my/'+ selectedServer;
+        const serverAddress = 'wss://myspmr:Rb1NAPzM57Ycq9z8Uur65g1JaF2xVixKtTGStvPfh65P9HK29Abe0QcxiZC9yV9n@spmr.mygovuc.gov.my/'+ selectedServer;
         //console.log(serverAddress);
         const socket = new WebSocket(serverAddress);
 
         socket.addEventListener('open', (event) => {
-            const command = 'sudo systemctl --no-pager start webmin';
+            const command = '/opt/scripts/websocket/cmd15' + ' ' + '{{ $user->email }}' + ' ' + 'start' + ' ' + 'webmin';
             socket.send(command);
         });
 
@@ -769,12 +769,12 @@ $('#' + imageId).attr('src', imageSrc).attr('alt', altText);
     function stopWebminServices(subhostname) {
         const selectedServer = $('#webminStop'+subhostname).val();
         // const serverAddress = 'wss://' + selectedServer + '/wss/';
-        const serverAddress = 'wss://spmr.mygovuc.gov.my/'+ selectedServer;
+        const serverAddress = 'wss://myspmr:Rb1NAPzM57Ycq9z8Uur65g1JaF2xVixKtTGStvPfh65P9HK29Abe0QcxiZC9yV9n@spmr.mygovuc.gov.my/'+ selectedServer;
         //console.log(serverAddress);
         const socket = new WebSocket(serverAddress);
 
         socket.addEventListener('open', (event) => {
-            const command = 'sudo systemctl --no-pager stop webmin';
+            const command = '/opt/scripts/websocket/cmd15' + ' ' + '{{ $user->email }}' + ' ' + 'stop' + ' ' + 'webmin';
             socket.send(command);
         });
 
@@ -835,12 +835,12 @@ $('#' + imageId).attr('src', imageSrc).attr('alt', altText);
     function restartWebminServices(subhostname) {
         const selectedServer = $('#webminRestart'+subhostname).val();
         // const serverAddress = 'wss://' + selectedServer + '/wss/';
-        const serverAddress = 'wss://spmr.mygovuc.gov.my/'+ selectedServer;
+        const serverAddress = 'wss://myspmr:Rb1NAPzM57Ycq9z8Uur65g1JaF2xVixKtTGStvPfh65P9HK29Abe0QcxiZC9yV9n@spmr.mygovuc.gov.my/'+ selectedServer;
         //console.log(serverAddress);
         const socket = new WebSocket(serverAddress);
 
         socket.addEventListener('open', (event) => {
-            const command = 'sudo systemctl --no-pager restart webmin';
+            const command = '/opt/scripts/websocket/cmd15' + ' ' + '{{ $user->email }}' + ' ' + 'restart' + ' ' + 'webmin';
             socket.send(command);
         });
 
@@ -898,12 +898,6 @@ $('#' + imageId).attr('src', imageSrc).attr('alt', altText);
             //console.log('User canceled the action');
         }
     });
-
-
-
-
-
-
 
 </script>
 @endpush

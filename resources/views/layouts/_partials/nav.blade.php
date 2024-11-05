@@ -58,8 +58,8 @@
                     Manage SMTP Relay Request
                     <div class="sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
                 </a>
-                <div class="collapse" id="collapseMailPages" data-bs-parent="#accordionSidenav">
-                    <nav class="sidenav-menu-nested nav accordion" id="accordionSidenavPages">
+                <div class="collapse show" id="collapseMailPages" data-bs-parent="#accordionSidenav">
+                    <nav class="sidenav-menu-nested nav accordion" id="accordionSidenavPages" style="background-color: #1c1c1c">
                         <a hidden class="nav-link" href="{{ route('mailrelay.index')}}">View Mail Relay Server</a>
                         <a class="nav-link" href="{{ route('mailrelay.register')}}">Register Mail Relay</a>
                     </nav>
@@ -155,8 +155,8 @@
                     Validation & Verification
                     <div class="sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
                 </a>
-                <div class="collapse" id="collapseValidation" data-bs-parent="#accordionSidenav">
-                    <nav class="sidenav-menu-nested nav accordion" id="accordionSidenavPages">
+                <div class="collapse show" id="collapseValidation" data-bs-parent="#accordionSidenav">
+                    <nav class="sidenav-menu-nested nav accordion" id="accordionSidenavPages" style="background-color: #1c1c1c">
                         @can('loopback_smtp_test_view')
                             <a class="nav-link" href="{{ route('loopback.index') }}">Loopback SMTP Test</a>
                         @endcan
@@ -233,8 +233,8 @@
                     Settings
                     <div class="sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
                 </a>
-                <div class="collapse" id="collapseAppsetting" data-bs-parent="#accordionSidenav">
-                    <nav class="sidenav-menu-nested nav accordion" id="accordionSidenavAppsMenu">
+                <div class="collapse show" id="collapseAppsetting" data-bs-parent="#accordionSidenav">
+                    <nav class="sidenav-menu-nested nav accordion" id="accordionSidenavAppsMenu" style="background-color: #1c1c1c">
                            <!-- Nested Sidenav Accordion (Apps -> User Management)-->
                            <!-- <a class="nav-link collapsed" href="javascript:void(0);" data-bs-toggle="collapse" data-bs-target="#appsCollapseUserManagement" aria-expanded="false" aria-controls="appsCollapseUserManagement">
                             Application Users

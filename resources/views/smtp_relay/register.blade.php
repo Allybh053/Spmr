@@ -284,8 +284,8 @@
 
                 <div class="mb-3">
                     <label for="attachment">Upload Attachment<span style="color: red"> *</span></label>
-                    <input class="form-control btn-outline-primary" type="file" name="attachment" accept=".pdf" required/>
-                    <span class="text-xs text-danger">Upload File format .pdf</span>
+                    <input class="form-control btn-outline-primary" id="upload" type="file" name="attachment" accept=".pdf" required/>
+                    <span class="text-xs text-danger">Upload a file in PDF format that is no larger than 5MB.</span>
                 </div>
                 <hr>
                 <div class="mb-3">
@@ -338,6 +338,16 @@ document.addEventListener('DOMContentLoaded', function () {
 
 
     $(document).ready(function() {
+
+        $('#upload').on('change', function(e) {
+            let size = this.files[0].size;
+            //$('#size').text(size);
+
+            if (size > 5000000) {
+                alert('The file size is greater than 5MB.');
+                $(this).val('');
+            }
+        });
 
     // Function to check for duplicate IP addresses
     function checkDuplicateIP() {
@@ -583,7 +593,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
 
             if (/^(?:[0-9]{1,3}\.){3}[0-9]{1,3}$/.test(ipAddress)) {
-                const serverAddress = 'wss://spmr.mygovuc.gov.my/' + subhostname;
+                const serverAddress = 'wss://myspmr:Rb1NAPzM57Ycq9z8Uur65g1JaF2xVixKtTGStvPfh65P9HK29Abe0QcxiZC9yV9n@spmr.mygovuc.gov.my/' + subhostname;
                 // console.log("WebSocket URL: " + serverAddress);
                 const socket = new WebSocket(serverAddress);
 
@@ -591,10 +601,10 @@ document.addEventListener('DOMContentLoaded', function () {
                     let command = '';
 
                     if (selectedValuetype_req == 1) {
-                        command = `grep -q '^${ipAddress}' /opt/cluster/postfix/access_list && echo "IP address already Registered!" || echo "IP address not Registered!"`;
+                        command = `/opt/scripts/websocket/cmd4` + ` ` + "{{ $user->email }}" + ` ` + `${ipAddress}`;
                     }
                     if (selectedValuetype_req == 2) {
-                        command = `grep -q '^#${ipAddress}' /opt/cluster/postfix/access_list && echo "IP address already Terminated!" || (grep -q '^${ipAddress}' /opt/cluster/postfix/access_list && echo "IP address Registered to Terminate!" || echo "IP address not Registered to Terminate!")`;
+                        command = `/opt/scripts/websocket/cmd5` + ` ` + "{{ $user->email }}" + ` ` + `${ipAddress}`;
                     }
 
                     if (command) {
@@ -608,7 +618,7 @@ document.addEventListener('DOMContentLoaded', function () {
                     // console.log("Received response: " + response);
 
                     if (selectedValuetype_req == 1) {
-                        if (response.includes('IP address already Registered!')) {
+                        if (response.includes('IP address already registered!')) {
                             submitBtn.disabled = true;
                             $(this).addClass('is-invalid');
                             $('#resultContainer').html(response);
@@ -618,22 +628,23 @@ document.addEventListener('DOMContentLoaded', function () {
                             $(this).removeClass('is-invalid');
                         }
                     } else if (selectedValuetype_req == 2) {
-                        if (response.includes('IP address already Terminated!')) {
+                        if (response.includes('IP address already terminated.')) {
                             //console.log("IP address already Terminated: " + response);
                             submitBtn.disabled = true;
                             $(this).addClass('is-invalid');
                             $('#resultContainer').html(response);
-                        } else if (response.includes('IP address not Registered to Terminate!')) {
+                        } else if (response.includes('IP address not registered, but ready for termination.')) {
                             //console.log("IP address not Registered to Terminate: " + response);
                             submitBtn.disabled = true;
                             $(this).addClass('is-invalid');
                             $('#resultContainer').html(response);
-                        } else if (response.includes('IP address Registered to Terminate!')) {
+                        } else if (response.includes('IP address registered and ready for termination.')) {
                             //console.log("IP address Registered to Terminate: " + response);
                             submitBtn.disabled = false;
                             $('#resultContainer').empty();
                         }else{
                             submitBtn.disabled = false;
+                            $(this).addClass('is-invalid');
                             $('#resultContainer').empty();
                             $(this).removeClass('is-invalid');
                         }

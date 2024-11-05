@@ -14,7 +14,7 @@
 <body>
     <p>SPMR Notification Email,</p>
 
-    <p>A new mail relay request has been submitted. Below are the details:</p>
+    <p>A new mail relay request has been submitted by {{ $user->username }}. Below are the details:</p>
 
     <table>
         <tr>

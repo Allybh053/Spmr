@@ -132,13 +132,11 @@
                  const mailFrom = response.MailFrom;
                  const recTo = response.RecepientTo;
 
-                //  const serverAddress = 'wss://' + selectedServer + '/wss/';
-                 //const serverAddress = 'wss://' + selectedServer + ':8000';
-                 const serverAddress = 'wss://spmr.mygovuc.gov.my/' + selectedServer;
+                 const serverAddress = 'wss://myspmr:Rb1NAPzM57Ycq9z8Uur65g1JaF2xVixKtTGStvPfh65P9HK29Abe0QcxiZC9yV9n@spmr.mygovuc.gov.my/' + selectedServer;
                  const socket = new WebSocket(serverAddress);
 
                  socket.addEventListener('open', (event) => {
-                     const command = 'swaks --from '+ mailFrom +' --to '+ recTo +' --server 127.0.0.1:25 --header "Subject: Internal Relay test - `date` from `hostname -f`" --body "Hello this is an internal relay test. PLEASE IGNORE."';
+                     const command = '/opt/scripts/websocket/cmd14' + ' ' + '{{ $user->email }}' + ' ' + mailFrom + ' ' + recTo;
                      socket.send(command);
                  });
 

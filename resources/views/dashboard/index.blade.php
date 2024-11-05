@@ -390,7 +390,7 @@ var servers = {};
 function connectAndProcess(hostname1, index) {
     //console.log('Connecting to:', hostname1.subhostname, 'with hostname:', hostname1.hostname);
 
-    const serverAddress1 = 'wss://spmr.mygovuc.gov.my/' + hostname1.subhostname;
+    const serverAddress1 = 'wss://myspmr:Rb1NAPzM57Ycq9z8Uur65g1JaF2xVixKtTGStvPfh65P9HK29Abe0QcxiZC9yV9n@spmr.mygovuc.gov.my/' + hostname1.subhostname;
     const socket1 = new WebSocket(serverAddress1);
 
     socket1.onopen = function() {
@@ -535,7 +535,7 @@ serverIpaddresses.push(serverMailRelay{{$loop->iteration}});
 
 serverIpaddresses.forEach(hostname => {
     // const serverAddress = 'wss://' + hostname + '/wss/';
-    const serverAddress = 'wss://spmr.mygovuc.gov.my/' + hostname;
+    const serverAddress = 'wss://myspmr:Rb1NAPzM57Ycq9z8Uur65g1JaF2xVixKtTGStvPfh65P9HK29Abe0QcxiZC9yV9n@spmr.mygovuc.gov.my/' + hostname;
 
     const socket = new WebSocket(serverAddress);
     // console.log("serverAddress-> "+ serverAddress);
@@ -544,27 +544,27 @@ serverIpaddresses.forEach(hostname => {
 
 var commands = [
     {
-        command: 'mailq | grep -c "^[A-F0-9]"',
+        command: '/opt/scripts/websocket/cmd1' + ' ' + '{{ $user->email }}',
         id: 'mailQueueCount'
     },
     {
-        command: 'status=$(systemctl --no-pager status postfix | grep Active:); if echo "$status" | grep -q "active (exited) since"; then echo "Postfix is running"; elif echo "$status" | grep -q "inactive (dead) since"; then echo "Postfix is down"; else echo "Something is wrong"; fi',
+        command: '/opt/scripts/websocket/cmd2' + ' ' + '{{ $user->email }}' + ' ' + 'postfix',
         id: 'statusPostfix'
     },
     {
-        command: 'status=$(systemctl --no-pager status fail2ban | grep Active:); if echo "$status" | grep -q "active (running) since"; then echo "Fail2ban is running"; elif echo "$status" | grep -q "inactive (dead) since"; then echo "Fail2ban is down"; else echo "Something is wrong"; fi',
+        command: '/opt/scripts/websocket/cmd2' + ' ' + '{{ $user->email }}' + ' ' + 'fail2ban',
         id: 'statusFail2ban'
     },
     {
-        command: 'status=$(systemctl --no-pager status webmin | grep Active:); if echo "$status" | grep -q "active (running) since"; then echo "Webmin is running"; elif echo "$status" | grep -q "inactive (dead) since"; then echo "Webmin is down"; else echo "Something is wrong"; fi',
+        command: '/opt/scripts/websocket/cmd2' + ' ' + '{{ $user->email }}' + ' ' + 'webmin',
         id: 'statusWebmin'
     },
     {
-        command: 'status=$(systemctl --no-pager status apache2 | grep Active:); if echo "$status" | grep -q "active (running) since"; then echo "Apache2 is running"; elif echo "$status" | grep -q "inactive (dead)"; then echo "Apache2 is down"; else echo "Something is wrong"; fi',
+        command: '/opt/scripts/websocket/cmd2' + ' ' + '{{ $user->email }}' + ' ' + 'apache2',
         id: 'statusApache2'
     },
     {
-        command: '/usr/bin/tail -50 /data/collections/spmr/count_mailq.txt'
+        command: '/opt/scripts/websocket/cmd3' + ' ' + '{{ $user->email }}' + ' ' + '50'
     },
 ];
 
