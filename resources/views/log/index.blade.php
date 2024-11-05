@@ -187,7 +187,7 @@
             grandTotalTableBody.innerHTML = '';
 
             var labels = ['received', 'delivered','deferred',  'bounced','rejected' ,'senders','sending hosts/domains','recipients', 'recipient hosts/domains'];
-            var grandTotals = [outputs[6], outputs[7], outputs[8],outputs[9], outputs[10], outputs[11], outputs[12], outputs[13], outputs[14]];
+            var grandTotals = [outputs[7], outputs[8], outputs[9],outputs[10], outputs[11], outputs[12], outputs[13], outputs[14], outputs[15]];
 
             // Format numbers in grandTotals array
             var formattedGrandTotals = grandTotals.map(function(total) {
