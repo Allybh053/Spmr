@@ -19,67 +19,79 @@ use App\Models\DomainServer;
 use App\Models\RoleServer;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\File;
+use App\Models\HistoryCopyAttachment;
+use App\Models\ActivityLog;
 
 
 class MainRelayController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
         // Get the currently authenticated user
         $user = Auth::user();
 
         $smtpMailServers = DB::table('smtp_relay_req_form')
+        ->orderBy('status', 'desc')
         ->get();
+
+        ActivityLog::create([
+            'user_id' => Auth::id(),
+            'activity_type' => 'View Mail Relay',
+            'action' => $request->path(),
+            'url' => url()->full(),
+            'method' => $request->method(),
+            'ip_address' => $request->ip(),
+            'input' => json_encode([
+                'mail relay' => 'Retrieve related data for viewing mail relay page',
+                'request' => $request->except(['password']),
+            ]),
+            'user_agent' => $request->userAgent(),
+        ]);
+
 
         return view('mailrelay.index', compact('user','smtpMailServers'));
     }
     public function checkIpAddress(Request $request)
     {
         // Get the IP address from the request
-        $ipAddress = $request->input('tableSpmr.0.ipaddress');
-        $selectedValuetype_req = $request->input('selectedValuetype_req');
-        $selectedValue = $request->input('selectedValue');
-        //think how to add identify
-        if ($selectedValue == 'postmaster1a-dev.mygovuc.gov.my'){
-            $filePath = storage_path('postmaster.mygovuc.gov.my/postfix/access_list');
-        }
+        $ipAddress = $request->input('ipAddress');
+        $mailrelay = $request->input('mailrelay');
+        $type_req = $request->input('type_req');
 
-        try {
-            // Check the IP address in the database
-            $count = smtp_relay_server::where('ip_addr_server', $ipAddress)
-                                       ->where('types_req', $selectedValuetype_req)
-                                       ->count();
+        $result = DB::select("
+            SELECT srs.* FROM smtp_relay_req_form srrf
+            JOIN smtp_relay_server srs ON srrf.id = srs.smtpid
+            WHERE srrf.smtp_relay_server = ?
+              AND srrf.status = 0
+              AND srs.ip_addr_server = ?
+              AND srs.types_req = ?
+        ", [$mailrelay, $ipAddress, $type_req]);
 
-            if ($count > 0) {
-                if ($selectedValuetype_req == 1) {
-                    return "<span style='color: red'>The IP address $ipAddress already exists in the system.</span>";
-                } elseif ($selectedValuetype_req == 2) {
-                    return "<span style='color: red'>The IP address $ipAddress already terminated in the system.</span>";
-                }
-            }
 
-            // Read the file content and check the IP address in the file
-            $fileContent = file_get_contents($filePath);
-            $lines = explode("\n", $fileContent);
+        ActivityLog::create([
+            'user_id' => Auth::id(),
+            'activity_type' => 'Checking Ip Address',
+            'action' => $request->path(),
+            'url' => url()->full(),
+            'method' => $request->method(),
+            'ip_address' => $request->ip(),
+            'input' => json_encode([
+                'mail relay' => [
+                    'ip_address' => $request->input('ipAddress'),
+                    'mail_relay' => $request->input('mailrelay'),
+                    'type_req' => $request->input('type_req'),
+                    'output' => $result
+                ],
+                'request' => $request->except(['password']),
+            ]),
+            'user_agent' => $request->userAgent(),
+        ]);
 
-            foreach ($lines as $line) {
-                $trimmed_line = trim($line);
-
-                if ($selectedValuetype_req == 1) {
-                    // Check if the line matches the IP address exactly
-                    $file_ip = trim(explode('#', $trimmed_line)[0]);
-                    if ($file_ip === $ipAddress) {
-                        return "<span style='color: red'>The IP address $ipAddress already existed in the Server Access List.</span>";
-                    }
-                } elseif ($selectedValuetype_req == 2) {
-                    // Check if the line starts with '#' followed by the IP address
-                    if (strpos($trimmed_line, "#$ipAddress") === 0) {
-                        return "<span style='color: red'>The IP address $ipAddress already terminated in the Server Access List.</span>";
-                    }
-                }
-            }
-        } catch (\Exception $e) {
-            return "Database Error: " . $e->getMessage();
+        if (count($result) > 0) {
+            $form_id = $result[0]->form_id;
+            return response()->json(['exists' => true, 'message' => 'IP address found in Pending Listing Request Form, Serial Number '.$form_id]);
+        } else {
+            return response()->json(['exists' => false, 'message' => 'IP address not found in the database']);
         }
     }
 
@@ -90,6 +102,7 @@ class MainRelayController extends Controller
         $user = Auth::user();
         $smtpMailServers = DB::table('smtp_relay_req_form')->where('status',0)
         ->groupBy('form_id','id')
+        ->orderBy('created_at', 'asc')
         ->get();
 
         return view('mailrelay.register', compact('user','smtpMailServers'));
@@ -100,43 +113,109 @@ class MainRelayController extends Controller
         $user = Auth::user();
 
         $smtpreq = SmtpRelayReqForm::find($id);
+        $mailhostname = Server::where('hostname',$smtpreq->smtp_relay_server)->first();
+        /*$subhostname = Server::where('master_id',$mailhostname->id)
+                    ->where('status_cluster',1)
+                    ->first();*/
+
+        // Retrieve all servers with the given master_id and status_cluster equal to 1
+        $servers = Server::where('master_id', $mailhostname->id)->where('status_cluster', 1)->get();
+
+        // Initialize subhostname variable
+        $subhostname = null;
+
+        // Loop through the retrieved servers to find the one with status_cluster equal to 1
+        foreach ($servers as $server) {
+            if ($server->status_cluster == 1) {
+                // If status_cluster is 1, set the subhostname and break the loop
+                $subhostname = $server->subhostname;
+                break;
+            }
+        }
 
         $smtpMailServers = smtp_relay_server::where('form_id',$smtpreq->form_id)
-                ->where('types_req',$smtpreq->types_req)
-                ->get();
+            ->where('types_req',$smtpreq->types_req)
+            ->get();
 
-        // $filePath = 'storage/data/postmaster1/postfix/access_list';
 
-        // $logFilePath = storage_path('data/postmaster1/postfix/access_list');
-        // if (File::exists($logFilePath)) {
-        //     // Read the contents
-        //     $logContent = File::get($logFilePath);
-
-        // }
-
-        return view('mailrelay.edit', compact('user','smtpMailServers','smtpreq'));
+        return view('mailrelay.edit', compact('user','smtpMailServers','smtpreq','subhostname'));
     }
 
-    public function papar($id, $type){
-        $datasmtp = SmtpRelayReqForm::where('id', $id)->where('types_req', $type)->first();
+    public function papar(Request $request,$id, $type){
+
+        $datasmtp = SmtpRelayReqForm::select('smtp_relay_req_form.*','ministrys.name as ministry_name','agencies.name as agencies_name')
+        ->leftJoin('ministrys','ministrys.id',DB::raw('CAST(smtp_relay_req_form.ministry AS bigint)'))
+        ->leftJoin('agencies','agencies.id',DB::raw('CAST(smtp_relay_req_form.agencies AS bigint)'))
+        ->where('smtp_relay_req_form.id', $id)
+        ->where('smtp_relay_req_form.types_req', $type)
+        ->first();
+
         $details = smtp_relay_server::where('form_id', $datasmtp->form_id)
                     ->where('types_req', $datasmtp->types_req)
                     ->get();
-        return view('smtp_relay.view',compact('datasmtp','details'));
+        $attachment = HistoryCopyAttachment::select('sm.upload_copy_attachment','history_copy_attachment.attachment_path');
+
+
+        ActivityLog::create([
+            'user_id' => Auth::id(),
+            'activity_type' => 'View Smtp Mail Relay',
+            'action' => $request->path(),
+            'url' => url()->full(),
+            'method' => $request->method(),
+            'ip_address' => $request->ip(),
+            'input' => json_encode([
+                'mail relay' => 'Retrieve related data for viewing smtp mail relay page',
+                'request' => $request->except(['password']),
+            ]),
+            'user_agent' => $request->userAgent(),
+        ]);
+
+        return view('smtp_relay.view',compact('datasmtp','details','attachment'));
     }
 
     public function submitrejForm(Request $request){
 
         $comment = $request->input("comment");
+        $smtp_username = $request->input("smtp_username");
+        $smtp_password = $request->input("smtp_password");
         $user = Auth::user();
 
-        $update = SmtpRelayReqForm::where('id', $request->input('smtpid'))->update(['comments' => $comment,'status'=>2,'implementation_name'=>$user->username]);
+        $update = SmtpRelayReqForm::where('id', $request->input('smtpid'))->update(['comments' => $comment,'status'=>2,'implementation_name'=>$user->username,'smtp_password'=>$smtp_password,'smtp_username'=>$smtp_username]);
         return response()->json(['message' => $update]);
         if ($update) {
-        $adminEmails = User::where('role_id', 3)->pluck('email')->toArray(); //role admin will receive the email and cc to the helpdesk
-        Mail::to($adminEmails)
-        ->cc($request->input('owner_email_addr'))
-        ->send(new mailReject($request));
+             // Retrieve admin emails
+             //$adminEmails = User::where('role_id', 11)->pluck('email')->toArray();
+             $adminEmails = User::where('role_id', [11, 9, 17])->where('enabled', 1)->pluck('email')->toArray();
+
+            // Check if there are admin emails before sending the email
+             if (!empty($adminEmails)) {
+                 Mail::to($adminEmails)
+                     //->cc($request->input('owner_email_addr'))
+                     ->send(new mailReject($request, $user));
+             }
+//             else {
+                 // If no admin emails, send to emailadd from the request
+                 /*Mail::to($request->input('owner_email_addr'))
+                     ->send(new mailReject($request));*/
+//             }
+        // $adminEmails = User::where('role_id', 11)->pluck('email')->toArray(); //role admin will receive the email and cc to the helpdesk
+        // Mail::to($adminEmails)
+        // ->cc($request->input('owner_email_addr'))
+        // ->send(new mailReject($request));
+
+        ActivityLog::create([
+            'user_id' => Auth::id(),
+            'activity_type' => 'Submit Reject Form',
+            'action' => $request->path(),
+            'url' => url()->full(),
+            'method' => $request->method(),
+            'ip_address' => $request->ip(),
+            'input' => json_encode([
+                'submit form' => 'Submit Reject Form',
+                'request' => $request->except(['password']),
+            ]),
+            'user_agent' => $request->userAgent(),
+        ]);
 
         $successMessage = 'Form updated!';
         return response()->json(['message' => $successMessage]);
@@ -144,6 +223,7 @@ class MainRelayController extends Controller
         $Message = 'Error!';
         return response()->json(['message' => $Message]);
         }
+
 
     }
 
@@ -155,121 +235,59 @@ class MainRelayController extends Controller
         $types_req = $request->input("types_req");
         $form_id = $request->input("form_id");
 
-        if ($types_req == 1 ){
-            // $access_list = preg_replace('/^.*$/m', '$0;', $access_list);
-            $lines = explode("\n", $access_list);
 
-            foreach ($lines as &$line) {
-                $line = trim($line) . $request->get('formId');
-            }
-            $access_list = implode("\n", $lines);
-
-            $filePath = storage_path('postmaster.mygovuc.gov.my/postfix/access_list');
-
-            $file = fopen($filePath, 'a');
-
-            fwrite($file, $access_list . PHP_EOL);
-
-            fclose($file);
-        } else if ($types_req == 2){
-            $filePath = storage_path('postmaster.mygovuc.gov.my/postfix/access_list');
-
-            $fileContent = file_get_contents($filePath);
-            $lines = explode("\n", $fileContent);
-            $ipFound = false;
-
-            foreach (explode("\n", $access_list) as $access_line) {
-
-                $access_ip = explode('#', $access_line)[0];
-                $access_ip = trim($access_ip);
-
-                if (!empty($access_ip)) {
-                    foreach ($lines as &$line) {
-                        // Trim leading and trailing whitespace from the file content line
-                        $trimmed_line = trim($line);
-
-                        // Split the file content line by '#' and take the first part
-                        $file_ip = explode('#', $trimmed_line)[0];
-
-                        // Trim leading and trailing whitespace from the file IP
-                        $file_ip = trim($file_ip);
-
-                        // Check if the access IP matches the file IP
-                        if ($file_ip === $access_ip) {
-                            // If the access IP is found, prepend '#' to the line
-                            $line = '#' . $line;
-                            $ipFound = true;
-                            break;
-                        }
-
-                    }
-                    // If the IP was not found in the existing lines, add it as a new line
-                    if (!$ipFound) {
-                        $lines[] = "#$access_ip #";
-                    }
-
-                    $record = smtp_relay_server::where('ip_addr_server', $access_ip)
-                    ->where('form_id', $form_id)
-                    ->first();
-                    if ($record) {
-                        // If the record exists, update the deactivated field
-                        $record->update(['deactivated' => 1]);
-                    }
-                }
-
-            }
-
-            // Join the lines back together
-            $newContent = implode("\n", $lines);
-
-            // Write the modified content back to the file
-            file_put_contents($filePath, $newContent);
-
-        }else{
-            //
-        }
-
+        $smtp_username = $request->input("smtp_username");
+        $smtp_password = $request->input("smtp_password");
+        $smtp_port = $request->input("smtp_port");
         $comment = $request->input("comment");
         $user = Auth::user();
+        $update = SmtpRelayReqForm::where('id', $request->input('smtpid'))->update(['comments' => $comment,'status'=>1,'implementation_name'=>$user->username,'smtp_password'=>$smtp_password,'smtp_username'=>$smtp_username]);
 
-        $update = SmtpRelayReqForm::where('id', $request->input('smtpid'))->update(['comments' => $comment,'status'=>1,'implementation_name'=>$user->username]);
+        // $update = SmtpRelayReqForm::where('id', $request->input('smtpid'))->update(['comments' => $comment,'status'=>1,'implementation_name'=>$user->username]);
+
+        ActivityLog::create([
+            'user_id' => Auth::id(),
+            'activity_type' => 'Submit Application Form',
+            'action' => $request->path(),
+            'url' => url()->full(),
+            'method' => $request->method(),
+            'ip_address' => $request->ip(),
+            'input' => json_encode([
+                'mail relay' => 'Submit Application Form',
+                'request' => $request->except(['password']),
+            ]),
+            'user_agent' => $request->userAgent(),
+        ]);
 
         if ($update) {
+            //$adminEmails = User::where('role_id', 11)->pluck('email')->toArray();
+            $adminEmails = User::where('role_id', [11, 9, 17])->where('enabled', 1)->pluck('email')->toArray();
 
-            $adminEmails = User::where('role_id', 3)->pluck('email')->toArray(); //role admin will receive the email and cc to the helpdesk
-            Mail::to($adminEmails)
-            ->cc($request->input('owner_email_addr'))
-            ->send(new mailApproved($request));
+             // Check if there are admin emails before sending the email
+             if (!empty($adminEmails)) {
+                 Mail::to($adminEmails)
+                     //->cc($request->input('owner_email_addr'))
+                     ->send(new mailApproved($request, $user));
+             }
+//             else {
+                 // If no admin emails, send to emailadd from the request
+                 /*Mail::to($request->input('owner_email_addr'))
+                     ->send(new mailApproved($request));*/
+//             }
+
+            // $adminEmails = User::where('role_id', 11)->pluck('email')->toArray(); //role admin will receive the email and cc to the helpdesk
+            // Mail::to($adminEmails)
+            // ->cc($request->input('owner_email_addr'))
+            // ->send(new mailApproved($request));
 
         $successMessage = 'Form updated';
 
         return response()->json(['message' => $successMessage, 'serverhost'=> $smtp_relay_server]);
         }else{
-        $Message = 'Error!';
+        $Message = 'Error 404!';
         return response()->json(['message' => $Message]);
         }
     }
-
-    // public function executeCommand (Request $request)
-    // {
-    //     $server = '20.6.33.199';
-    //     $username = 'pentadbir';
-    //     $privateKey = storage_path('key/postmaster_key.pem');
-
-    //     $ssh = new SSH2($server);
-    //     if(!$ssh->login($username, $privateKey)){
-    //         return response()->json(['output' => 'Login Failed!']);
-    //     }
-
-    //     $command = $request->input('command');
-    //     $output = $ssh->exec($command);
-
-    //     $ssh->disconnect();
-
-    //     return response()->json(['output' => 'Login Failed!']);
-
-    // }
-
 
     public function mailupstream(Request $request)
     {
@@ -277,21 +295,36 @@ class MainRelayController extends Controller
 
         $user = Auth::user();
         $role = $user->roles->isNotEmpty() ? $user->roles->pluck('name')->first() : null;
-        $serverIds = RoleServer::whereIn('role_id', $user->roles->pluck('id')->all())
-            ->pluck('server_id');
+
+        $serverIds = RoleServer::whereIn('role_servers.role_id', $user->roles->pluck('id')->all())
+        ->leftJoin('servers','servers.id','role_servers.server_id')
+        ->whereNull('servers.subhostname')
+        ->pluck('server_id');
 
         //$serverconfig = Server::where('status', 1)->get();
 
         //$serverdetail = DomainServer::where('server_id', $ff)->get();
 
-        $defaultServerId = 1;
+        $defaultServerId = $serverIds->min();
 
         // Filter servers based on the fetched IDs
-        $serverconfig = Server::whereIn('id', $serverIds)
-            ->where('status', 1)->orderBy('id', 'asc')
+        $serverconfig = Server::whereNull('subhostname')->orderBy('id', 'asc')
             ->pluck('hostname', 'id');
 
 
+            ActivityLog::create([
+                'user_id' => Auth::id(),
+                'activity_type' => 'View Mail Upstream',
+                'action' => $request->path(),
+                'url' => url()->full(),
+                'method' => $request->method(),
+                'ip_address' => $request->ip(),
+                'input' => json_encode([
+                    'mail upstream' => 'Retrieve data for viewing Mail Upstream Page',
+                    'request' => $request->except(['password']),
+                ]),
+                'user_agent' => $request->userAgent(),
+            ]);
 
         return view('mailrelay.mailupstream', compact('user','serverconfig', 'defaultServerId'));
     }
@@ -306,11 +339,13 @@ class MainRelayController extends Controller
 
     public function search(Request $request)
     {
+
         // Retrieve other inputs from the request
         $serverIds = $request->input('server');
 
         // You can adjust the search logic based on the selected calendar type and agency here
-        $serverMailRelay = Server::find($serverIds);
+        $serverMailRelay = Server::where('id',$serverIds)->first();
+
         $serverName = $serverMailRelay->hostname;
 
         $queryMailRoute = Mailrouting::where('server', $serverName);
@@ -329,5 +364,23 @@ class MainRelayController extends Controller
             'dataMailRoute' => $valDataMailRoute,
         ]);
     }
+
+    public function checkServerStatus(Request $request)
+    {
+        // Get the sub_smtp_relay_server value from the request
+        $subSmtpRelayServer = $request->input('sub_smtp_relay_server');
+
+        // Check the status of the server in the database
+        $server = Server::where('subhostname', $subSmtpRelayServer)->first();
+
+        if ($server && $server->status_cluster == 1) {
+            // Server is active
+            return response()->json(['status' => 1]);
+        } else {
+            // Server is inactive
+            return response()->json(['status' => 0]);
+        }
+    }
+
 
 }

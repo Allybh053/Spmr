@@ -10,6 +10,8 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Storage;
 use phpseclib3\Net\SSH2;
+use OwenIt\Auditing\Models\Audit;
+use App\Models\ActivityLog;
 
 class ManageServiceController extends Controller
 {
@@ -18,27 +20,135 @@ class ManageServiceController extends Controller
         $user = Auth::user();
 
         $role = $user->roles->isNotEmpty() ? $user->roles->pluck('name')->first() : null;
-        $serverIds = RoleServer::whereIn('role_id', $user->roles->pluck('id')->all())->pluck('server_id');
+        $serverIds = RoleServer::whereIn('role_servers.role_id', $user->roles->pluck('id')->all())
+        ->leftJoin('servers','servers.id','role_servers.server_id')
+        ->where('servers.status',1)
+        ->pluck('server_id');
 
-        $defaultServerId = 1;
+        $defaultServerId = $serverIds->min();
 
         // Filter servers based on the fetched IDs
-        $serverconfig =  Server::whereIn('id', $serverIds)
-            ->where('status', 1)->orderBy('id', 'asc')
-            ->select('id', 'hostname', 'ipaddress')
+        $serverconfig =  Server::whereIn('master_id', $serverIds)
+            ->whereIn('status_cluster', [1,0])->orderBy('status_cluster', 'asc')
+            ->select('id', 'subhostname', 'ipaddress')
             ->get();
 
         $serverList = [];
         $listServer = Server::whereIn('id', $serverIds)->where('status', 1)->orderBy('id', 'asc')->get();
         foreach ($listServer as $server) {
+            $subServer = Server::where('master_id',$server->id)->orderBy('status_cluster','desc')->get();
+
+            $subs=[];
+            foreach($subServer as $subServers){
+                $subs[] = [
+                    'subsid' => $subServers->id,
+                    'subhostname' => $subServers->subhostname,
+                    'subIpaddress' => $subServers -> ipaddress
+                ];
+            }
+
             $serverList[] = [
-                'hostname' => $server->hostname
+                'id' => $server->id,
+                'hostname' => $server->hostname,
+                'ipaddress' => $server ->ipaddress,
+                'subsDataHostname' => $subs
             ];
         }
 
+        ActivityLog::create([
+            'user_id' => Auth::id(),
+            'activity_type' => 'View Manage Service',
+            'action' => $request->path(),
+            'url' => url()->full(),
+            'method' => $request->method(),
+            'ip_address' => $request->ip(),
+            'input' => json_encode([
+                'manage service' => 'Retrieve related data for manage service page',
+                'request' => $request->except(['password']),
+            ]),
+            'user_agent' => $request->userAgent(),
+        ]);
+
         //return view('manageService.index');
-        return view('manageService.index',
-            compact('user', 'role', 'serverconfig', 'serverList','defaultServerId'));
+        return view('manageService.index',compact('user', 'role', 'serverconfig', 'serverList','defaultServerId','serverList'));
+    }
+
+
+
+    public function start(Request $request){
+        $serverId = Server::where('subhostname', $request->input('server'))->first();
+        $oldValues = [];
+        $oldValuesJson = json_encode($oldValues);
+        $newValues=[
+            'server' => $request->input('server'),
+            'service_type' => $request->input('type'),
+            'process' => 'start'
+        ];
+
+        $newValuesJson = json_encode($newValues);
+
+        $audit = new Audit();
+        $audit->auditable_type = Server::class;
+        $audit->auditable_id = $serverId->id;
+        $audit->old_values = $oldValuesJson; // Empty for creation
+        $audit->new_values = $newValuesJson;
+        $audit->user_id = Auth::user()->id;
+        $audit->event = 'start server';
+        $audit->url = request()->fullUrl();
+        $audit->ip_address = request()->ip();
+        $audit->user_agent = request()->userAgent();
+        $audit->tags = json_encode(['manual-audit']); // Ensure tags are in JSON format
+        $audit->save();
+    }
+
+    public function stop(Request $request){
+        $serverId = Server::where('subhostname', $request->input('server'))->first();
+        $oldValues = [];
+        $oldValuesJson = json_encode($oldValues);
+        $newValues=[
+            'server' => $request->input('server'),
+            'service_type' => $request->input('type'),
+            'process' => 'stop'
+        ];
+        $newValuesJson = json_encode($newValues);
+
+        $audit = new Audit();
+        $audit->auditable_type = Server::class;
+        $audit->auditable_id = $serverId->id;
+        $audit->old_values = $oldValuesJson; // Empty for creation
+        $audit->new_values = $newValuesJson;
+        $audit->user_id = Auth::user()->id;
+        $audit->event = 'stop server';
+        $audit->url = request()->fullUrl();
+        $audit->ip_address = request()->ip();
+        $audit->user_agent = request()->userAgent();
+        $audit->tags = json_encode(['manual-audit']); // Ensure tags are in JSON format
+        $audit->save();
+    }
+
+    public function restart(Request $request){
+        $serverId = Server::where('subhostname', $request->input('server'))->first();
+        $oldValues = [];
+        $oldValuesJson = json_encode($oldValues);
+        $newValues=[
+            'server' => $request->input('server'),
+            'service_type' => $request->input('type'),
+            'process' => 'restart'
+        ];
+        $newValuesJson = json_encode($newValues);
+
+        $audit = new Audit();
+        $audit->auditable_type = Server::class;
+        $audit->auditable_id = $serverId->id;
+        $audit->old_values = $oldValuesJson; // Empty for creation
+        $audit->new_values = $newValuesJson;
+        $audit->user_id = Auth::user()->id;
+        $audit->event = 'restart server';
+        $audit->url = request()->fullUrl();
+        $audit->ip_address = request()->ip();
+        $audit->user_agent = request()->userAgent();
+        $audit->tags = json_encode(['manual-audit']); // Ensure tags are in JSON format
+        $audit->save();
     }
 
 }

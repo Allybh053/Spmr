@@ -22,7 +22,7 @@ class smtp_relay_server extends Model  implements Auditable
         'deactivated',
         'smtp_relay_server',
         'smtp_port',
-        // 'smtp_username',
+        'mailfrom',
         'smtpid',
         'types_req',
     ];

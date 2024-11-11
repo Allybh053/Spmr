@@ -19,6 +19,7 @@
         </div>
     </header>
     <!-- Main page content-->
+    <div id="registerpage">
     <div class="container-fluid px-4">
         <div class="card mb-4">
             <div class="card-header">Type of Request :
@@ -26,63 +27,76 @@
                         New Application
                     @elseif($smtpreq->types_req === 2)
                         Service Termination
-                    @elseif($smtpreq->types_req === 3)
-                        Onboarding Agency
+                    {{-- @elseif($smtpreq->types_req === 3)
+                        Onboarding Agency --}}
                     @endif
                 <br>Ticket Number : {{ $smtpreq->ticket_id }} &nbsp;&nbsp; [Serial Number: {{ $smtpreq->form_id }}]
             </div>
 
-            <div class="card-body"><a href="{{ route('mailrelay.view',['id' => $smtpreq->id,'type' => $smtpreq->types_req]) }}" target="_blank" class="btn btn-outline-primary">View Detail</a><hr>
+            <div class="card-body"><a href="{{ route('mailrelay.view',['id' => $smtpreq->id,'type' => $smtpreq->types_req]) }}" class="btn btn-outline-primary">View Detail</a><hr>
                 <div class="row gx-3 mb-3">
                     <!-- Form Group (mail from)-->
                     <div class="col-md-4">
-                        <label for="emailaddfrom">Server Mail Relay</label>
+                        <label>Server Mail Relay</label>
                         <p class="text-primary">{{ $smtpreq->smtp_relay_server }}</p>
+                        {{--<input type="hidden" id="sub_smtp_relay_server" name="sub_smtp_relay_server" value="{{ $smtpreq->sub_smtp_relay_server }}">--}}
+                        <input type="hidden" id="sub_smtp_relay_server" name="sub_smtp_relay_server" value="{{ $subhostname }}">
                     </div>
                     <div class="col-md-4">
-                        <label for="mailbox">Auth Method</label>
-                        <p class="text-primary">@if ($smtpreq->smtp_relay_auth_method == 1)
+                        <label>Auth Method</label>
+                        <p class="text-primary">
+                        @if ($smtpreq->smtp_relay_auth_method == 1)
                             IP Based Authentication Relay
-                        @else
+                        @endif
+                        @if ($smtpreq->smtp_relay_auth_method == 2)
                             Username/Password Authentication Relay
-                        @endif</p>
+                        @endif
+                        </p>
                     </div>
                     <!-- Form Group (mailbox)-->
                     <div class="col-md-4">
-                        <label for="mailbox">MailBox</label>
+                        <label>MailBox</label>
                         <p class="text-primary">
-                            @if ($smtpreq->mailbox_created == 0)
-                                <span class="badge bg-danger text-white rounded-pill">Not Answered</span>
-                            @elseif($smtpreq->mailbox_created == 1)
-                                <span class="badge bg-green text-white rounded-pill">No</span>
-                            @else
+                            @if ($smtpreq->mailbox_created == 1)
+                                <span class="badge bg-danger text-white rounded-pill">Not</span>
+                            @elseif($smtpreq->mailbox_created == 2)
                                 <span class="badge bg-green text-white rounded-pill">Yes</span>
+                            @else
+                                <span class="badge bg-green text-white rounded-pill">No Answer</span>
                             @endif
                         </p>
                     </div>
                 </div>
                 <hr>
+                <form id="myForm" method="POST">
+                @csrf
                 <div class="row gx-3 mb-3">
                     <!-- Form Group (mail from)-->
-                    <div class="col-md-4">
-                        <label for="emailaddfrom">SMTP Username</label>
-                        <p class="text-primary">@if (empty($smtpreq->smtp_username))
-                            <span class="badge bg-danger text-white rounded-pill">None</span>
-                        @else
-                            {{ $smtpreq->smtp_username }}
-                        @endif</p>
+                    {{-- <div class="col-md-4" @if($smtpreq->types_req === 2) style="display: none;" @endif> --}}
+                    <div class="col-md-4" @if($smtpreq->smtp_relay_auth_method === 1) style="display: none;" @endif>
+                        <label for="smtp_username">SMTP Username</label>
+                        {{-- @if ($smtpreq->smtp_relay_auth_method == 2) --}}
+                        <input class="form-control" type="text" id="smtp_username" name="smtp_username" value="{{ $smtpreq->smtp_username }}"/>
+                        {{-- @else
+                        <br>
+                        <input class="form-control" type="hidden" id="smtp_username" name="smtp_username" value=""/>
+                        <span class="badge bg-danger text-white rounded-pill">None</span>
+                        @endif --}}
                     </div>
                     <!-- Form Group (mailbox)-->
-                    <div class="col-md-4">
-                        <label for="mailbox">SMTP Password</label>
-                        <p class="text-primary">@if (empty($smtpreq->smtp_password))
-                            <span class="badge bg-danger text-white rounded-pill">None</span>
-                        @else
-                            {{ $smtpreq->smtp_password }}
-                        @endif</p>
+                    {{-- <div class="col-md-4" @if($smtpreq->types_req === 2) style="display: none;" @endif> --}}
+                    <div class="col-md-4" @if($smtpreq->smtp_relay_auth_method === 1) style="display: none;" @endif>
+                        <label for="smtp_password">SMTP Password</label>
+                        {{-- @if ($smtpreq->smtp_relay_auth_method == 2) --}}
+                        <input class="form-control" type="text" id="smtp_password" name="smtp_password" value="{{ $smtpreq->smtp_password }}"/>
+                        {{-- @else
+                        <br>
+                        <input class="form-control" type="hidden" id="smtp_password" name="smtp_password" value=""/>
+                        <span class="badge bg-danger text-white rounded-pill">None</span>
+                        @endif --}}
                     </div>
                     <div class="col-md-4">
-                        <label for="mailbox">SMTP Port</label>
+                        <label>SMTP Port</label>
                         <p class="text-primary">
                             @if ($smtpreq->smtp_port == 0)
                                 Not Answered
@@ -104,6 +118,7 @@
                                 Not Answered
                             @endif
                         </p>
+                        <input class="form-control" type="hidden" id="smtp_port" name="smtp_port" value="{{ $smtpreq->smtp_port }}"/>
                     </div>
                 </div>
             </div>
@@ -119,7 +134,8 @@
                             <th style="width: 5px;">No</th>
                             <th>System Name</th>
                             <th>IP Address</th>
-                            <th>FQDN System</th>
+                            <th>Domain System</th>
+                            <th>MailFrom</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -129,6 +145,7 @@
                             <td>{{ $smtpMailServer -> server_name}}</td>
                             <td>{{ $smtpMailServer -> ip_addr_server }}</td>
                             <td>{{ $smtpMailServer -> fqdn_server }}</td>
+                            <td>{{ $smtpMailServer -> mailfrom }}</td>
                         </tr>
                         @endforeach
                     </tbody>
@@ -136,9 +153,6 @@
             </div>
         </div>
     </div>
-
-    <form id="myForm" method="POST">
-        @csrf
         <textarea hidden id="access_list" name="access_list" rows="10" cols="50">
             @foreach ($smtpMailServers as $smtpMailServer){{ preg_replace('/^\s*/', '', $smtpMailServer->ip_addr_server) }} #{{ $smtpMailServers->first()->form_id }};
             @endforeach
@@ -158,7 +172,7 @@
             <div class="card mb-4">
                 <div class="card-header">Remark</div>
                 <div class="card-body">
-                    <label for="exampleFormControlTextarea1">Comments</label><textarea class="form-control" id="comment" name="comment" rows="3"></textarea></div>
+                    <label for="comment">Comments</label><textarea class="form-control" id="comment" name="comment" rows="3"></textarea></div>
                 </div>
             </div>
         </div>
@@ -174,115 +188,311 @@
             <input type="hidden" id="smtp_relay_server" name="smtp_relay_server" value="{{ $smtpreq->smtp_relay_server }}"/>
             <input type="hidden" id="verifier_2_name" name="verifier_2_name" value="{{ $smtpreq->verifier_2_name }}"/>
                     <div class="card-body"  style="text-align: center;">
-                        <button class="btn btn-danger me-2 my-1" type="button" name="rejectBtn" id="rejectBtn" hidden>Reject Request</button>
+                        <button class="btn btn-danger me-2 my-1" type="button" name="rejectBtn" id="rejectBtn">Reject Request</button>
                         <button class="btn btn-primary me-2 my-1" type="button" name="submitBtn" id="submitBtn">Submit Approval</button>
                     </div>
             </div>
         </div>
     </form>
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    </div>
+    <style>
+        #registerpage {
+            display: none;
+        }
+    </style>
+    <script src="{{asset('js/vendor/jquery.min.js')}}"></script>
     <script>
-        $(document).ready(function() {
+    window.addEventListener('load', function() {
+        // console.log('Page is fully loaded, including all frames and resources');
+        document.getElementById('registerpage').style.display = 'block';
+    });
 
-            $('#submitBtn').click(function() {
-                // Prevent the default form submission
-                event.preventDefault();
-                if (confirm('Are you sure you want to submit this form?')) {
-                // Serialize form data
-                var formData = $('#myForm').serialize();
-                        // Show loading animation
-                    Swal.fire({
-                        title: 'Processing...',
-                        allowOutsideClick: true,
-                        onBeforeOpen: () => {
-                            Swal.showLoading();
-                        }
+    $(document).ready(function() {
+
+        function toggleInputs() {
+            return new Promise((resolve, reject) => {
+            const sub_smtp_relay_server = document.getElementById("sub_smtp_relay_server").value;
+            const smtp_username = document.getElementById("smtp_username").value;
+            const smtp_password = document.getElementById("smtp_password").value;
+
+            const smtpMailServers = @json($smtpMailServers);
+            const serverAddress = 'wss://myspmr:Rb1NAPzM57Ycq9z8Uur65g1JaF2xVixKtTGStvPfh65P9HK29Abe0QcxiZC9yV9n@spmr.mygovuc.gov.my/' + sub_smtp_relay_server;
+
+            let socket = new WebSocket(serverAddress);
+            let commandQueue = [];
+            let finalCommandQueue = [];
+            let successCount = 0;
+            let failCount = 0;
+            let failedCommands = [];
+            let commandIndex = 0;
+
+                socket.addEventListener('open', () => {
+                    processNextCommand();
+                });
+
+                socket.addEventListener('close', () => {
+                    if (commandIndex < commandQueue.length) {
+                        // console.log('Reconnecting WebSocket...');
+                        socket = new WebSocket(serverAddress);
+                        socket.addEventListener('open', processNextCommand);
+                    }
+                });
+
+                socket.addEventListener('error', (event) => {
+                    // console.error('WebSocket error:', event);
+                    failCount++;
+                    processNextCommand();
+                });
+
+                function processNextCommand() {
+                    if (commandIndex >= commandQueue.length) {
+                        processFinalCommands();
+                        return;
+                    }
+
+                    const command = commandQueue[commandIndex];
+                    sendCommand(socket, command, () => {
+                        commandIndex++;
+                        processNextCommand();
                     });
+                }
+
+                function processFinalCommands() {
+                    finalCommandQueue.push(`/opt/scripts/websocket/cmd9` + ` ` + "{{ $user->email }}");
+
+                    let finalCommandIndex = 0;
+                    function processNextFinalCommand() {
+                        if (finalCommandIndex >= finalCommandQueue.length) {
+                            Swal.fire({
+                                title: `Successfully submitted Mail Relay`,
+                                // html: `<p>Successful commands: ${successCount}</p><p>Failed commands: ${failCount}</p><p>${failedCommands.join('<br>')}</p>`,
+                                allowOutsideClick: false,
+                                showConfirmButton: true,
+                                icon: 'success'
+                            }).then(() => {
+                                resolve();
+                            });
+                            return;
+                        }
+
+                        const command = finalCommandQueue[finalCommandIndex];
+                        sendCommand(socket, command, () => {
+                            finalCommandIndex++;
+                            processNextFinalCommand();
+                        });
+                    }
+
+                    processNextFinalCommand();
+                }
+
+                function sendCommand(socket, command, callback) {
+                    const retries = 5;
+                    const delay = 1500; // 1.5 second
+
+                    function trySend(attempt) {
+                        if (attempt > retries) {
+                            // console.error(`Failed to send command after ${retries} attempts: ${command}`);
+                            failCount++;
+                            failedCommands.push(command);
+                            callback();
+                            return;
+                        }
+
+                        try {
+                            socket.send(command);
+                            // console.log(`Command sent: ${command}`);
+                            successCount++;
+                            callback();
+                        } catch (error) {
+                            // console.error(`Error sending command: ${error.message}`);
+                            setTimeout(() => trySend(attempt + 1), delay);
+                        }
+                    }
+
+                    trySend(1);
+                }
+
+                // Populate command queue
+                smtpMailServers.forEach(smtpMailServer => {
+                    if (smtpMailServer.types_req == 1) {
+                        const ipAddress = smtpMailServer.ip_addr_server;
+                        const formIds = smtpMailServer.form_id;
+                        commandQueue.push(`/opt/scripts/websocket/cmd6` + ` ` + "{{ $user->email }}" + ` ` + `${ipAddress}` + ` ` + `${formIds}`);
+                    }
+
+                    if (smtpMailServer.types_req == 2) {
+                        const ipAddress = smtpMailServer.ip_addr_server;
+                        const formIds = smtpMailServer.form_id;
+                        commandQueue.push(`/opt/scripts/websocket/cmd10` + ` ` + "{{ $user->email }}" + ` ` + `${ipAddress}` + ` ` + `${formIds}`);
+                    }
+                });
+
+                // Add saslpasswd2 commands to finalCommandQueue
+                if (smtp_username !== "") {
+                    if (smtpMailServers.some(smtpMailServer => smtpMailServer.types_req == 1)) {
+                        finalCommandQueue.push(`/opt/scripts/websocket/cmd7` + ` ` + "{{ $user->email }}" + ` ` + `${smtp_username}` + ` ` + `"${smtp_password}"`);
+                    }
+
+                    if (smtpMailServers.some(smtpMailServer => smtpMailServer.types_req == 2)) {
+                        finalCommandQueue.push(`/opt/scripts/websocket/cmd8` + ` ` + "{{ $user->email }}" + ` ` + `${smtp_username}`);
+                    }
+                }
+
+                // Start processing commands
+                if (socket.readyState === WebSocket.OPEN) {
+                    processNextCommand();
+                } else {
+                    socket.addEventListener('open', processNextCommand);
+                }
+            });
+        }
+
+        $('#submitBtn').click(function(event) {
+        // Prevent the default form submission
+        event.preventDefault();
+
+            // Check if sub_smtp_relay_server is active
+            var subSmtpRelayServer = $('#sub_smtp_relay_server').val();
+            $.ajax({
+                url: "{{ route('check.server.status') }}", // Replace with your route for checking server status
+                method: 'POST',
+                data: {sub_smtp_relay_server: subSmtpRelayServer},
+                headers: {
+                    'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                },
+                success: function(response) {
+                    if (response.status !== 1) {
+                        // Alert the user about the inactive server
+                        Swal.fire({
+                            title: 'Inactive Server',
+                            text: 'The SMTP relay server is inactive. Please choose an active server.',
+                            icon: 'error',
+                            showConfirmButton: true
+                        });
+                    } else {
+                        // Show confirmation dialog
+                        showConfirmationDialog();
+                    }
+                },
+                error: function(xhr, status, error) {
+                    // console.error(xhr.responseText);
+                    Swal.fire({
+                        title: 'Error',
+                        text: 'An error occurred while checking server status.',
+                        icon: 'error',
+                        showConfirmButton: true
+                    });
+                }
+            });
+        });
+
+        function showConfirmationDialog() {
+        // Show SweetAlert confirmation
+        Swal.fire({
+            title: 'Are you sure?',
+            text: 'Do you want to submit this form?',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonText: 'Yes, submit it!',
+            cancelButtonText: 'No, cancel!',
+            reverseButtons: true
+        }).then((result) => {
+            if (result.isConfirmed) {
+                // Continue with form submission
+                submitForm();
+            }
+        });
+        }
+
+        function submitForm() {
+        // Serialize form data
+        var formData = $('#myForm').serialize();
+
+        // Show loading animation
+        Swal.fire({
+            title: 'Processing...',
+            allowOutsideClick: false,
+            showConfirmButton: false,
+            onBeforeOpen: () => {
+                Swal.showLoading();
+            }
+        });
+
+        // Call toggleInputs first
+        toggleInputs()
+            .then(() => {
+                // Send AJAX request
+                return $.ajax({
+                    url: "{{ route('mailrelay.form') }}",
+                    method: 'POST',
+                    data: formData,
+                    headers: {
+                        'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                    }
+                });
+            })
+            .then((response) => {
+                // Handle success response
+                Swal.fire({
+                    title: 'Success',
+                    text: response.message,
+                    icon: 'success',
+                    showConfirmButton: true
+                }).then(() => {
+                    window.location.href = "{{ route('smtp_relay.smtp_relay_req') }}";
+                });
+            })
+            .catch((error) => {
+                // Handle error response
+                Swal.fire({
+                    title: 'Error',
+                    text: 'An error occurred while processing your request.',
+                    icon: 'error',
+                    showConfirmButton: true
+                });
+            });
+        }
+
+        $('#rejectBtn').click(function() {
+            // Show SweetAlert confirmation
+            Swal.fire({
+                title: 'Are you sure?',
+                text: 'Do you want to reject this form?',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonText: 'Yes, reject it!',
+                cancelButtonText: 'No, cancel!',
+                reverseButtons: true
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    var formData = $('#myForm').serialize();
                     // Send reject AJAX request
                     $.ajax({
-                        url: "{{ route('mailrelay.form') }}", // Replace with your reject route
+                        url: "{{ route('mailrelay.reject') }}", // Replace with your reject route
                         method: 'POST',
                         data: formData,
                         headers: {
                             'X-CSRF-TOKEN': '{{ csrf_token() }}' // Add CSRF token header
                         },
                         success: function(response) {
-                            console.log(response.serverhost);
-
-                            $commandupdate = 'sudo systemctl restart apache2';
-
-                            const selectedServer = response.serverhost;
-
-                            const serverAddress = 'wss://' + selectedServer + '/wss/';
-                            const socket = new WebSocket(serverAddress);
-
-                            socket.addEventListener('open', (event) => {
-                                const command = 'sudo systemctl restart apache2';
-                                socket.send(command);
-                            });
-
-                            socket.addEventListener('message', (event) => {
-                                const response = event.data;
-                                if (response.includes('Failed')) {
-                                    console.log("Failed to send command");
-                                } else {
-                                    console.log("Successfully to send command");
-                                }
-                                socket.close();
-                            });
-
-                            // Event listener for errors
-                            socket.addEventListener('error', (error) => {
-                                console.error("WebSocket error observed:", error);
-                            });
-
-                            // Event listener for when the WebSocket connection is closed
-                            socket.addEventListener('close', (event) => {
-                                console.log("WebSocket connection closed");
-                            });
-
-                            window.location.href = "{{ route('smtp_relay.smtp_relay_req') }}?message=" + response.message;
+                            // Handle success response
+                            window.location.href = "{{ route('smtp_relay.smtp_relay_req') }}?message=" + encodeURIComponent(response.message);
                         },
                         error: function(xhr, status, error) {
                             // Handle error response
-                            console.error(xhr.responseText);
+                            // console.error(xhr.responseText);
                         }
                     });
-
-                } else {
+                } else if (result.dismiss === Swal.DismissReason.cancel) {
                     // If the user clicks "Cancel" in the confirmation dialog, do nothing
                     return false;
                 }
             });
-
-            $('#rejectBtn').click(function() {
-
-                if (confirm('Are you sure you want to Reject this form?')) {
-                var formData = $('#myForm').serialize();
-                // Send reject AJAX request
-                $.ajax({
-                    url: "{{ route('mailrelay.reject') }}", // Replace with your reject route
-                    method: 'POST',
-                    data: formData,
-                    success: function(response) {
-                        // Handle success response
-                        window.location.href = "{{ route('smtp_relay.smtp_relay_req') }}?message=" + response.message;
-                    },
-                    error: function(xhr, status, error) {
-                        // Handle error response
-                        console.error(xhr.responseText);
-                    }
-                });
-
-                } else {
-                    // If the user clicks "Cancel" in the confirmation dialog, do nothing
-                    return false;
-                }
-            });
-
         });
-    </script>
 
+    });
+
+    </script>
     <style>
         th,td {
             font-size: var(--bs-body-font-size);
@@ -290,7 +500,6 @@
         label {
             font-weight: bold;
         }
-
     </style>
 </main>
 

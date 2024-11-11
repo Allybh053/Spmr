@@ -35,7 +35,7 @@
                         <div class="serverBox col-md-6">
                             <div class="mb-3">
                                 <label class="small mb-1" for="inputAgencies">Choose Server:</label>
-                                {!! Form::select('server', $serverconfig,  null,  ['id'=>'server', 'name'=>'server', 'class'=>'form-control select2', 'placeholder'=>config('params.dropdown_default')]) !!}
+                                {!! Form::select('server', $serverconfig,  $defaultServerId ?? 1,  ['id'=>'server', 'name'=>'server', 'class'=>'form-control select2', 'placeholder'=>config('params.dropdown_default')]) !!}
                                 <p class="card-text mt-1 mb-1" id="ipAddress"></p>
                                 <div class="small text-muted"></div>
                             </div>
@@ -46,19 +46,42 @@
                     <div class="row gx-3 mb-3">
                         <div class="col-md-6">
                             <div class="mb-3">
-                                <label class="small mb-1" for="inputAgencies">Ministry/Agency/SUK:</label>
+                                <label class="small mb-1" for="inputMinistry">Ministry:</label>
                                 {{--{!! Form::select('agency', $agency, isset($applicantInfo) ? $applicantInfo->agencies : null,  ['id'=>'agency', 'name'=>'agency', 'class'=>'form-control select2', 'placeholder'=>config('params.dropdown_default')]) !!}--}}
                                 <select class="form-control select2" name="ministry" id="ministry" aria-label="Default select">
-                                    <option selected disabled>Select Ministry/Agency/SUK</option>
+                                    <option selected disabled>Select Ministry</option>
                                     {{--@foreach ($domainsArray as $domain)
                                         <option value="{{ $domain['agencies_name'] }}">{{ $domain['agencies_name'] }}</option>
                                     @endforeach--}}
-                                    @foreach ($allMinistryAgency as $ministryAgency)
-                                        <option value="{{ $ministryAgency }}">{{ $ministryAgency }}</option>
-                                    @endforeach
+
+                                    @foreach ($ministries as $code => $name)
+                                    <option value="{{ $code }}">{{ $name }}</option>
+                                @endforeach
                                 </select>
                             </div>
                         </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label class="small mb-1" for="inputAgencies">Agency/SUK:</label>
+                                <select class="form-control select2" name="agency" id="agency" aria-label="Default select" disabled>
+                                    <option selected disabled>Select Agency/SUK</option>
+
+                                </select>
+                            </div>
+                        </div>
+                        {{-- <div class="col-md-6">
+                            <div class="mb-3">
+                                <label class="small mb-1" for="inputAgencies">Agency/SUK:</label>
+                                {{--{!! Form::select('agency', $agency, isset($applicantInfo) ? $applicantInfo->agencies : null,  ['id'=>'agency', 'name'=>'agency', 'class'=>'form-control select2', 'placeholder'=>config('params.dropdown_default')]) !!}--}}
+                                {{-- <select class="form-control select2" name="agency" id="agency" aria-label="Default select">
+                                    <option selected disabled>Select Agency/SUK</option> --}}
+
+                                    {{-- @foreach ($agencies as $agency)
+                                        <option value="{{ $agency }}">{{ $agency }}</option>
+                                    @endforeach
+                                </select>
+                            </div> --}}
+                        {{-- </div>  --}}
                         <div class="col-md-6">
                             <div class="mb-3" id="calendarSelect">
                                 <label class="small mb-1" for="calendarType">Filter Type:</label>
@@ -118,7 +141,7 @@
                       </a>
                     </div>--}}
                     <div class="col-xl-6 mb-4">
-                        <a class="card lift h-100" href="#!">
+                        <div class="card h-100">
                             <div class="card-body d-flex justify-content-center flex-column">
                                 <div class="d-flex align-items-center justify-content-between">
                                     <div class="me-3">
@@ -132,10 +155,10 @@
                                     {{--<img src="{{asset ('assets/img/illustrations/dash_app.svg')}}" alt="..." style="width: 8rem" />--}}
                                 </div>
                             </div>
-                        </a>
+                        </div>
                     </div>
                     <div class="col-xl-6 mb-4">
-                      <a class="card lift h-100" href="#!">
+                      <div class="card h-100">
                         <div class="card-body d-flex justify-content-center flex-column">
                           <div class="d-flex align-items-center justify-content-between">
                             <div class="me-3">
@@ -149,7 +172,7 @@
                             {{--<img src="{{asset ('assets/img/illustrations/dash_domain.svg')}}" alt="..." style="width: 8rem" />--}}
                           </div>
                         </div>
-                      </a>
+                    </div>
                     </div>
                       {{--<div class="col-xl-6 mb-4">
                           <a class="card lift h-100" href="#!">
@@ -222,7 +245,7 @@
                                         <th>Project Name</th>
                                         <th>System Name</th>
                                         <th>IP Address</th>
-                                        <th>FQDN Name</th>
+                                        <th>Domain Name</th>
                                         <th>Status Activated</th>
 
                                     </tr>
@@ -244,7 +267,7 @@
                                         <th>Project Name</th>
                                         <th>System Name</th>
                                         <th>IP Address</th>
-                                        <th>FQDN Name</th>
+                                        <th>Domain Name</th>
                                         <th>Status Activated</th>
 
                                     </tr>
@@ -265,10 +288,11 @@
                                         <th>Ticket No.</th>
                                         <th>Types Request</th>
                                         <th>Agency Name</th>
-                                        <th>Project Name</th>
-                                        <th>SMTP Relay Authentication Method</th>
-                                        <th>SMTP Port</th>
+                                        <th>System Name</th>
+                                        <th>Ip Address</th>
+                                        <th>Mail From</th>
                                         <th>SMTP Username</th>
+                                        <th>SMTP Port</th>
                                         <th>Date Approval</th>
                                     </tr>
                                     </thead>
@@ -288,8 +312,9 @@
                                         <th>Ticket No.</th>
                                         <th>Types Request</th>
                                         <th>Agency Name</th>
-                                        <th>Project Name</th>
-                                        <th>SMTP Relay Authentication Method</th>
+                                        <th>System Name</th>
+                                        <th>Ip Address</th>
+                                        <th>Mail From</th>
                                         <th>SMTP Port</th>
                                         <th>Date Approval</th>
                                     </tr>
@@ -385,6 +410,37 @@
         }
     });
 
+    $('#ministry').on('change', function() {
+    var selectedValue = $(this).val();
+    var agencySelect = document.getElementById('agency');
+
+    // Clear existing options
+    agencySelect.innerHTML = '<option selected disabled>Select Agency/SUK</option>';
+
+    // Enable the agency select
+    agencySelect.disabled = false;
+
+    // Fetch agencies based on the selected ministry using jQuery's ajax method
+    $.ajax({
+        url: '/getAgencies',
+        type: 'POST',
+        data: { ministry: selectedValue },
+        success: function(data) {
+            data.forEach(function(agency) {
+                var option = document.createElement("option");
+                option.text = agency.name;
+                option.value = agency.id; // or whatever unique identifier you have
+                agencySelect.appendChild(option);
+            });
+        },
+        error: function(error) {
+            console.error('Error:', error);
+        }
+    });
+});
+
+
+
         // Initialize DataTable
         var table2 = $('#listAgencyDomain').DataTable({
             ordering: true,
@@ -400,7 +456,7 @@
                         return meta.row + 1; // This will render the index starting from 1
                     }
                 },
-                { data: 'agencies', name: 'agencies', class: 'text-center' },
+                { data: 'agenciesName', name: 'agenciesName', class: 'text-center' },
                 { data: 'project_name', name: 'project_name', class: 'text-center' },
                 { data: 'server_name', name: 'server_name', class: 'text-center' },
                 { data: 'ip_addr_server', name: 'ip_addr_server', class: 'text-center' },
@@ -473,7 +529,7 @@
                         return meta.row + 1; // This will render the index starting from 1
                     }
                 },
-                { data: 'agencies', name: 'agencies', class: 'text-center' },
+                { data: 'agenciesName', name: 'agenciesName', class: 'text-center' },
                 { data: 'project_name', name: 'project_name', class: 'text-center' },
                 { data: 'server_name', name: 'server_name', class: 'text-center' },
                 { data: 'ip_addr_server', name: 'ip_addr_server', class: 'text-center' },
@@ -550,26 +606,14 @@
                 {
                     data: 'types_req',
                     name: 'types_req',
-                    class: 'text-center',
-                    render: function(data, type, row) {
-                        // Define options based on the integer value of types_req
-                        switch (data) {
-                            case 1:
-                                return 'New Application';
-                            case 2:
-                                return 'Service Termination';
-                            case 3:
-                                return 'Onboarding Agency';
-                            default:
-                                return 'Unknown';
-                        }
-                    }
+                    class: 'text-center'
                 },
-                { data: 'agencies', name: 'agencies', class: 'text-center' },
-                { data: 'project_name', name: 'project_name', class: 'text-center' },
-                { data: 'smtp_relay_auth_method', name: 'smtp_relay_auth_method', class: 'text-center' },
-                { data: 'smtp_port', name: 'smtp_port', class: 'text-center' },
+                { data: 'agenciesName', name: 'agenciesName', class: 'text-center' },
+                { data: 'server_name', name: 'server_name', class: 'text-center' },
+                { data: 'ip_addr_server', name: 'ip_addr_server', class: 'text-center' },
+                { data: 'mailfrom', name: 'mailfrom', class: 'text-center' },
                 { data: 'smtp_username', name: 'smtp_username', class: 'text-center' },
+                { data: 'smtp_port', name: 'smtp_port', class: 'text-center' },
                 {
                     data: 'date_verification_3',
                     name: 'date_verification_3',
@@ -654,24 +698,12 @@
                 {
                     data: 'types_req',
                     name: 'types_req',
-                    class: 'text-center',
-                    render: function(data, type, row) {
-                        // Define options based on the integer value of types_req
-                        switch (data) {
-                            case 1:
-                                return 'New Application';
-                            case 2:
-                                return 'Service Termination';
-                            case 3:
-                                return 'Onboarding Agency';
-                            default:
-                                return 'Unknown';
-                        }
-                    }
+                    class: 'text-center'
                 },
-                { data: 'agencies', name: 'agencies', class: 'text-center' },
-                { data: 'project_name', name: 'project_name', class: 'text-center' },
-                { data: 'smtp_relay_auth_method', name: 'smtp_relay_auth_method', class: 'text-center' },
+                { data: 'agenciesName', name: 'agenciesName', class: 'text-center' },
+                { data: 'server_name', name: 'server_name', class: 'text-center' },
+                { data: 'ip_addr_server', name: 'ip_addr_server', class: 'text-center' },
+                { data: 'mailfrom', name: 'mailfrom', class: 'text-center' },
                 { data: 'smtp_port', name: 'smtp_port', class: 'text-center' },
                 {
                     data: 'date_verification_3',
@@ -877,86 +909,86 @@
                         Swal.close();
 
                         // Update UI with the response data
-                        $('#totalIP').text(response.totalIP || "Not Found");
-                        $('#totalDeactivated').text(response.totalDeactivated || "Not Found");
-                        $('#totalDomain').text(response.totalDomain || "Not Found");
+                        $('#totalIP').text(response.totalIP || "0");
+                        $('#totalDeactivated').text(response.totalDeactivated || "0");
+                        $('#totalDomain').text(response.totalDomain || "0");
 
-                        // Add index to each row
-                        $.each(response.dataTbl1, function (index, row) {
-                            row['DT_RowIndex'] = index + 1;
-                            switch (row['smtp_relay_auth_method']) {
-                                case 1:
-                                    row['smtp_relay_auth_method'] = 'IP Based Authentication Relay';
-                                    break;
-                                case 2:
-                                    row['smtp_relay_auth_method'] = 'Username/Password Authentication Relay';
-                                    break;
-                            }
-                            switch (row['smtp_port']) {
-                                case 0:
-                                    row['smtp_port'] = 'Not Answered';
-                                    break;
-                                case 1:
-                                    row['smtp_port'] = '25/tcp';
-                                    break;
-                                case 2:
-                                    row['smtp_port'] = '465/tcp';
-                                    break;
-                                case 3:
-                                    row['smtp_port'] = '587/tcp';
-                                    break;
-                                case 4:
-                                    row['smtp_port'] = '25/tcp & 465/tcp';
-                                    break;
-                                case 5:
-                                    row['smtp_port'] = '25/tcp & 587/tcp';
-                                    break;
-                                case 6:
-                                    row['smtp_port'] = '465/tcp & 587/tcp';
-                                    break;
-                                case 7:
-                                    row['smtp_port'] = 'All';
-                                    break;
-                            }
-                        });
+                        // Combining iteration over both tables
+                            $.each([response.dataTbl1, response.dataTbl2], function (tableIndex, dataTable) {
+                                $.each(dataTable, function (index, row) {
+                                    row['DT_RowIndex'] = index + 1;
 
-                        $.each(response.dataTbl2, function (index, row) {
-                            row['DT_RowIndex'] = index + 1;
-                            switch (row['smtp_relay_auth_method']) {
-                                case 1:
-                                    row['smtp_relay_auth_method'] = 'IP Based Authentication Relay';
-                                    break;
-                                case 2:
-                                    row['smtp_relay_auth_method'] = 'Username/Password Authentication Relay';
-                                    break;
-                            }
-                            switch (row['smtp_port']) {
-                                case 0:
-                                    row['smtp_port'] = 'Not Answered';
-                                    break;
-                                case 1:
-                                    row['smtp_port'] = '25/tcp';
-                                    break;
-                                case 2:
-                                    row['smtp_port'] = '465/tcp';
-                                    break;
-                                case 3:
-                                    row['smtp_port'] = '587/tcp';
-                                    break;
-                                case 4:
-                                    row['smtp_port'] = '25/tcp & 465/tcp';
-                                    break;
-                                case 5:
-                                    row['smtp_port'] = '25/tcp & 587/tcp';
-                                    break;
-                                case 6:
-                                    row['smtp_port'] = '465/tcp & 587/tcp';
-                                    break;
-                                case 7:
-                                    row['smtp_port'] = 'All';
-                                    break;
-                            }
-                        });
+                                    // Determine the prefix for the switch statements based on the table index
+                                    var prefix = (tableIndex === 0) ? "Request" : "RequestIp";
+                                    var typ_req = "Request"+row['types_req'];
+                                    // Switch statement for 'types_req'
+                                    switch (typ_req) {
+                                        case "Request1":
+                                            row['types_req'] = 'New Application';
+                                            break;
+                                        case "Request2":
+                                            row['types_req'] = 'Service Termination';
+                                            break;
+                                        case "Request3":
+                                            row['types_req'] = 'Onboarding Agency';
+                                            break;
+                                        default:
+                                            console.log("Unknown types_req:", row['types_req']);
+                                            row['types_req'] = 'Unknown';
+                                    }
+
+                                    // Switch statement for 'smtp_relay_auth_method'
+                                    switch (row['smtp_relay_auth_method']) {
+                                        case 1:
+                                            row['smtp_relay_auth_method'] = 'IP Based Authentication Relay';
+                                            break;
+                                        case 2:
+                                            row['smtp_relay_auth_method'] = 'Username/Password Authentication Relay';
+                                            break;
+                                        default:
+                                            console.log("Unknown smtp_relay_auth_method:", row['smtp_relay_auth_method']);
+                                            row['smtp_relay_auth_method'] = '';
+                                    }
+
+                                    // Switch statement for 'smtp_port'
+                                    switch (row['smtp_port']) {
+                                        case 0:
+                                            row['smtp_port'] = 'Not Answered';
+                                            break;
+                                        case 1:
+                                            row['smtp_port'] = '25/tcp';
+                                            break;
+                                        case 2:
+                                            row['smtp_port'] = '465/tcp';
+                                            break;
+                                        case 3:
+                                            row['smtp_port'] = '587/tcp';
+                                            break;
+                                        case 4:
+                                            row['smtp_port'] = '25/tcp & 465/tcp';
+                                            break;
+                                        case 5:
+                                            row['smtp_port'] = '25/tcp & 587/tcp';
+                                            break;
+                                        case 6:
+                                            row['smtp_port'] = '465/tcp & 587/tcp';
+                                            break;
+                                        case 7:
+                                            row['smtp_port'] = 'All';
+                                            break;
+                                        default:
+                                            console.log("Unknown smtp_port:", row['smtp_port']);
+                                            row['smtp_port'] = '';
+                                    }
+
+                                    console.log('After switch:', row);
+                                });
+                            });
+
+                            // Drawing the tables
+                            table.clear().rows.add(response.dataTbl1).draw();
+                            table4.clear().rows.add(response.dataTbl2).draw();
+
 
                         $.each(response.data2, function (index, row) {
                             row['DT_RowIndex2'] = index + 1;
@@ -968,9 +1000,7 @@
                             row['types_req'] = row['types_req'] === 2 ? 'Activated' : 'Deactivated';
                         });
 
-                        // Clear existing data and add new data to the DataTable
-                        table.clear().rows.add(response.dataTbl1).draw();
-                        table4.clear().rows.add(response.dataTbl2).draw();
+
                         table2.clear().rows.add(response.data2).draw();
                         table3.clear().rows.add(response.data3).draw();
 

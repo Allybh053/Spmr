@@ -11000,10 +11000,16 @@ textarea.form-control-lg {
   background-color: rgba(var(--bs-light-rgb), var(--bs-bg-opacity)) !important;
 }
 
-.bg-dark {
+/* .bg-dark {
   --bs-bg-opacity: 1;
   background-color: rgba(var(--bs-dark-rgb), var(--bs-bg-opacity)) !important;
-}
+} */
+
+.bg-dark {
+    --bs-bg-opacity: 1;
+    /* background-color: #011027 !important; */
+    background: linear-gradient(90deg, rgba(2,0,36,1) 0%, rgba(9,9,121,1) 44%, rgba(0,212,255,1) 100%) !important;
+  }
 
 .bg-black {
   --bs-bg-opacity: 1;
@@ -16469,10 +16475,15 @@ body {
           animation-timing-function: opacity cubic-bezier(0, 1, 0.4, 1);
 }
 
-.bg-gradient-primary-to-secondary {
+/* .bg-gradient-primary-to-secondary {
   background-color: #0061f2 !important;
   background-image: linear-gradient(135deg, #0061f2 0%, rgba(105, 0, 199, 0.8) 100%) !important;
-}
+} */
+
+.bg-gradient-primary-to-secondary {
+    background-color: rgb(2,0,36) !important;
+    background-image: linear-gradient(90deg, rgba(2,0,36,1) 0%, rgba(9,9,121,1) 44%, rgba(0,212,255,1) 100%) !important;
+  }
 
 .bg-transparent-light {
   color: rgba(255, 255, 255, 0.5) !important;
@@ -20048,10 +20059,14 @@ body {
   font-weight: 500;
 }
 
-.sidenav-dark {
+/* .sidenav-dark {
   background-color: #272f3b;
   color: rgba(255, 255, 255, 0.5);
-}
+} */
+.sidenav-dark {
+    background-color: #011027;
+    color: rgba(255, 255, 255, 0.5);
+  }
 .sidenav-dark .sidenav-menu .sidenav-menu-heading {
   color: rgba(255, 255, 255, 0.25);
 }
@@ -20096,7 +20111,7 @@ body {
 .sidenav-light .sidenav-menu .nav-link .sidenav-collapse-arrow {
   color: #a7aeb8;
 }
-.sidenav-light .sidenav-menu .nav-link:hover {
+/* .sidenav-light .sidenav-menu .nav-link:hover {
   color: #0061f2;
 }
 .sidenav-light .sidenav-menu .nav-link.active {
@@ -20104,7 +20119,21 @@ body {
 }
 .sidenav-light .sidenav-menu .nav-link.active .nav-link-icon {
   color: #0061f2;
-}
+} */
+
+.sidenav-light .sidenav-menu .nav-link:hover {
+    color: rgb(2,0,36);
+  }
+  .sidenav-light .sidenav-menu .nav-link.active {
+    color: rgb(228 228 237);
+    background-color: #171818;
+  }
+  .sidenav-light .sidenav-menu .nav-link.active .nav-link-icon {
+    color: rgb(228 228 237);
+    background-color: #171818;
+  }
+
+
 .sidenav-light .sidenav-menu-nested {
   border-left-color: #d4dae3;
 }

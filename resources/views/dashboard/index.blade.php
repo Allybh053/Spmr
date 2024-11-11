@@ -3,300 +3,307 @@
 <header class="py-10 mb-4 bg-gradient-primary-to-secondary">
   <div class="container-xl px-4">
     <div class="text-center">
-      <h1 class="text-white">Welcome to SPMR System</h1>
-      <p class="lead mb-0 text-white-50">Dashboard For Mail Relay Server</p>
+      <h1 class="text-white">{{ trans('indexMessage.dashboard.welcome') }}</h1>
+      <p class="lead mb-0 text-white-50">{{ trans('indexMessage.dashboard.dashboarMailRelay') }}</p>
     </div>
   </div>
 </header>
 <!-- Main page content-->
-<div class="container-xl px-4 mt-n10">
-  <!-- <a class="card card-icon lift lift-sm mb-4" href="#"><div class="row"><div class="col-auto card-icon-aside bg-primary"><i class="text-white-50" data-feather="server"></i></div><div class="col"><div class="card-body py-4">
-                                        {{-- {!! Form::select('server', $serverconfig,  $defaultServerId,  ['id'=>'server', 'name'=>'server', 'class'=>'form-control select2', 'placeholder'=>config('params.dropdown_default')]) !!} --}}
-                                        <p class="card-text mt-1 mb-1" id="ipAddress"></p><div class="small text-muted"></div></div></div></div></a> -->
-
-<!-- Start Loop By Server Here -->
-    @foreach ($totalCountDashboard as $server)
+<div class="container-fluid px-4 mt-n10">
   <div class="row mb-4">
     <div class="col-xxl-12">
       <div class="card">
-        <div class="card-header text-center p-5">
-          <h5 style="text-align:left;">
-              {{ $server['hostname']}}
-              <p>{{ $server['ipAddress'] }}</p>
-          </h5>
-        </div>
         <div class="card-body">
-          <div class="row">
-            <div class="col-xl-6 mb-6">
-              <a class="card lift h-100" href="#!">
-                <div class="card-body d-flex justify-content-center flex-column">
-                  <div class="d-flex align-items-center justify-content-between">
-                    <div class="me-3">
-                      <i class="feather-xl text-primary mb-3" data-feather="activity"></i>
-                      <h5>Total Application Registered</h5>
-                      <div class="inline">
-                        <i class="feather-l text-primary" data-feather="corner-down-right"></i>
-                        <h2 id="totalApplications" style="display: inline-block; margin-left: 5px;">{{$server['totalApplicationRegistered'] ?? '-'}}</h2>
-                      </div>
-                    </div>
-                    <img src="{{asset ('assets/img/illustrations/dash_app.svg')}}" alt="..." style="width: 8rem" />
-                  </div>
+
+            <div class="table-responsive">
+                <div style="width: 100%; overflow-x: auto; height: 355px;">
+                <table id="spmrDatatable" class="display table table-striped table-bordered" cellspacing="0" width="60%">
+                    @foreach ($serverList as $server)
+                    @php
+                        $col = (auth()->user()->can('manage_service_update')) ? 3 : 2;
+                    @endphp
+                    <thead>
+                        @if($loop->index != 0)
+                        <tr><th colspan="2">&nbsp;</th></tr>@endif
+                        <tr  style="background-color: rgb(11, 135, 244);">
+                            <th colspan="2">
+                                <h5 style="text-align:left; color:white; font-weight: bold;">
+                                   Virtual Server: {{ $server['hostname']}}
+                                    <p>{{ $server['ipaddress'] }}</p>
+                                </h5>
+                            </th>
+                        </tr>
+                    </thead>
+                    @foreach ($server['subsDataHostname'] as $serverSubs)
+                    <tr>
+                        <thead>
+                            @if($loop->index != 0)
+                            <tr><th colspan="2">&nbsp;</th></tr>@endif
+                            <tr  style="background-color: rgb(179, 189, 183);">
+                                <th colspan="{{ $col }}">
+                                    <h5 style="text-align:left; font-weight: bold;">
+                                        Primary Server: {{ $serverSubs['subhostname']}}
+                                        <p>{{ $serverSubs['subIpaddress'] }}</p>
+                                    </h5>
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @can('total_application_registered')
+                                <tr>
+                                    <th width="45%"><h6><b>Total Application Registered</b></h6></th>
+                                    <td width="15%"><h6>{{ $serverSubs['subTotalApplicationRegistered'] ?? '0' }}</h6></td>
+                                </tr>
+                            @endcan
+                            @can('total_domain_registered')
+                                <tr>
+                                    <th width="45%"><h6><b>Total Domain Registered</b></h6>
+                                        <div class="small text-muted">Updated every 30 minutes</div>
+                                    </th>
+                                    <td width="15%"><h6>{{ $serverSubs['subTotalDomain'] ?? '0' }}</h6></td>
+                                </tr>
+                            @endcan
+                            @can('number_of_registered_sasl')
+                                <tr>
+                                    <th width="45%"><h6><b>Total SASL based (SMTP relay request form registered)</b></h6></th>
+                                    {{-- <td width="15%"><h6>{{$server['totalSasl'] ?? '0'}}</h6></td> --}}
+                                    <td width="15%"><h6>{{ $serverSubs['subTotalSasl'] ?? '0' }}</h6></td>
+                                </tr>
+                            @endcan
+                            @can('total_ip_based_registered')
+                                <tr>
+                                    <th width="45%"><h6><b>Total IP based (SMTP relay request form registered)</b></h6></th>
+                                    {{-- <td width="15%"><h6>{{$server['totalIpBased'] ?? '0'}}</h6></td> --}}
+                                    <td width="15%"><h6>{{ $serverSubs['subTotalIpBased'] ?? '0' }}</h6></td>
+                                </tr>
+                            @endcan
+                        </tbody>
+                    </tr>
+                    @endforeach
+
+
+                    @endforeach
+                </table>
                 </div>
-              </a>
             </div>
-            <div class="col-xl-6 mb-6">
-              <a class="card lift h-100" href="#!">
-                <div class="card-body d-flex justify-content-center flex-column">
-                  <div class="d-flex align-items-center justify-content-between">
-                    <div class="me-3">
-                      <i class="feather-xl text-secondary mb-3" data-feather="zap"></i>
-                      <h5>Total Domain Registered</h5>
-                      <div class="inline">
-                        <i class="feather-l text-primary" data-feather="corner-down-right"></i>
-                        <h2 id="totalDomains" style="display: inline-block; margin-left: 5px;">{{$server['totalDomain'] ?? '-'}}</h2>
-                      </div>
-                    </div>
-                    <img src="{{asset ('assets/img/illustrations/dash_domain.svg')}}" alt="..." style="width: 8rem" />
-                  </div>
-                </div>
-              </a>
-            </div>
-          </div>
-          <br>
-          <div class="row">
-            <div class="col-xl-6 mb-6">
-                <a class="card lift h-100" href="#!">
-                    <div class="card-body d-flex justify-content-center flex-column">
-                        <div class="d-flex align-items-center justify-content-between">
-                            <div class="me-3">
-                                <i class="feather-xl text-green mb-3" data-feather="shield"></i>
-                                <h5>Numbers of Registered SASL</h5>
-                                <div class="inline">
-                                    <i class="feather-l text-primary" data-feather="corner-down-right"></i>
-                                    <h2 id="totalSASL" style="display: inline-block; margin-left: 5px;">{{$server['totalSasl'] ?? '-'}}</h2>
-                                </div>
-                            </div>
-                            <img src="{{asset ('assets/img/illustrations/dash_sasl.svg')}}" alt="..." style="width: 8rem" />
-                        </div>
-                    </div>
-                </a>
-            </div>
-            <div class="col-xl-6 mb-6">
-                <a class="card lift h-100" href="#!">
-                    <div class="card-body d-flex justify-content-center flex-column">
-                        <div class="d-flex align-items-center justify-content-between">
-                            <div class="me-3">
-                                <i class="feather-xl text-green mb-3" data-feather=""></i>
-                                <h5>Total IP Based Registered </h5>
-                                <div class="inline">
-                                    <i class="feather-l text-primary" data-feather="corner-down-right"></i>
-                                    <h2 id="totalIPBased" style="display: inline-block; margin-left: 5px;">{{$server['totalIpBased'] ?? '-'}}</h2>
-                                </div>
-                            </div>
-                            <img src="{{asset ('assets/img/illustrations/browser-stats.svg')}}" alt="..." style="width: 8rem" />
-                        </div>
-                    </div>
-                </a>
-            </div>
-          </div>
         </div>
       </div>
     </div>
   </div>
-    @endforeach
-<!-- End Loop By Server Here -->
 
   <div class="row mb-4">
-    <div class="col-xxl-6">
-      <div class="card">
-        <div class="card-header text-center p-5">
-          <h5>Top 5 List Ministry/Agency/SUK</h5>
+    @can('top_5_list_ministry')
+    <div class="col-xxl-6 mb-4">
+        <div class="card" style="height: 455px;">
+            <div class="card-header text-center p-3">
+                <h5>TOP 5 LIST OF MINISTRY/AGENCY/SUK</h5>
+            </div>
+            <div class="card-body" style="overflow-y: auto;">
+                @foreach($serverListAgencies as $server)
+                    <div class="mb-4">
+                        <h6>{{ $server['hostname'] }}</h6>
+                        <p>{{ $server['ipAddress'] }}</p>
+                        <canvas id="chart-{{ $loop->index }}"  width="729" height="217"></canvas>
+                    </div>
+                @endforeach
+            </div>
         </div>
-        <div class="card-body">
-          <!-- <label for="limitSelectKementerian">Select Limit:</label><select name="limitKementerian" id="limitSelectKementerian"><option value="all" {{ $limit === 'all' ? 'selected' : '' }}>All</option><option value="10" {{ $limit == 10 ? 'selected' : '' }}>Top 10</option><option value="20" {{ $limit == 20 ? 'selected' : '' }}>Top 20</option><option value="50" {{ $limit == 50 ? 'selected' : '' }}>Top 50</option></select> -->
-          <canvas id="kementerianChart"></canvas>
-        </div>
-      </div>
     </div>
-    <div class="col-xxl-6">
-      <div class="card">
-        <div class="card-header text-center p-5">
-          <h5>Top 5 List Department/Division/Unit</h5>
+    @endcan
+
+    @can('view_current_mail_queue_count')
+    <div class="col-xxl-6 mb-4">
+        <div class="card">
+            <div class="card-header text-center p-3">
+                <h5>View Current MailQueue Count</h5>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <div style="width: 100%; overflow-x: auto; height: 355px;">
+                    <table id="spmrDatatable" class="display table table-striped table-bordered" cellspacing="0" width="60%">
+                        <tbody>
+                            @foreach ($serverconfig as $index => $server)
+                                <tr>
+                                    <th width="45%"><h6>{{ $server->hostname }}</h6></th>
+                                    <td id="mailQueueCount{{ $index }}"  width="15%"><h6>--</h6></td>
+                                </tr>
+                            @endforeach
+                        </tbody>
+                    </table>
+                    </div>
+                </div>
+            </div>
         </div>
-        <div class="card-body">
-          <!-- <label for="limitSelect">Select Limit:</label><select name="limit" id="limitSelect"><option value="all" {{ $limit === 'all' ? 'selected' : '' }}>All</option><option value="10" {{ $limit == 10 ? 'selected' : '' }}>Top 10</option><option value="20" {{ $limit == 20 ? 'selected' : '' }}>Top 20</option><option value="50" {{ $limit == 50 ? 'selected' : '' }}>Top 50</option></select> -->
-          <canvas id="departmentChart"></canvas>
-        </div>
-      </div>
     </div>
+    @endcan
+
   </div>
-  <!-- <div class="row mb-4"><div class="col-xxl-4"><div class="card"><div class="card-header text-center p-5"><h5>Graf serial apps vs day</h5></div><div class="card-body"><canvas id="appsChart"></canvas></div></div></div><div class="col-xxl-4"><div class="card"><div class="card-header text-center p-5"><h5>Graf serial domain vs day</h5></div><div class="card-body"><canvas id="domainChart"></canvas></div></div></div><div class="col-xxl-4"><div class="card"><div class="card-header text-center p-5"><h5>Graf serial sasl vs day</h5></div><div class="card-body"><canvas id="saslChart"></canvas></div></div></div></div> -->
   <div class="row">
+    @can('serial_mail_queue_chart')
     <div class="col-xxl-12">
         <div class="card">
-            <div class="card-header text-center p-5">
-                <h5>Graf serial Mail Queue vs Time</h5>
+            <div class="card-header text-center p-3">
+                <h5>Graph Serial Mail Queue vs Time</h5>
             </div>
             <div class="card-body">
                 <canvas id="mailQueueChart"></canvas>
             </div>
         </div>
     </div>
+    @endcan
 
-    <div class="col-xxl-12 mt-5">
-      <div class="card">
-        <div class="card-header text-center p-5">
-          <h5>View Current MailQueue Count</h5>
-        </div>
-        <div class="card-body">
-          <div class="table-responsive">
-            <table id="spmrDatatable" class="display table table-striped table-bordered" cellspacing="0" width="100%">
-              <thead>
-                <tr>
-                    @foreach ($serverconfig as $server)
-                        <th>{{ $server->hostname }}</th>
-                    @endforeach
-                </tr>
-              </thead>
-              <tbody>
-                <tr>
-                    @foreach ($serverconfig as $server)
-                        <td id="mailQueueCount">--</td>
-                    @endforeach
-                </tr>
-              </tbody>
-            </table>
-          </div>
-        </div>
-      </div>
-    </div>
+
 </div>
-  <div class="row  mt-5">
+@can('realtime_service_status')
+<div class="row  mt-5">
     <div class="col-xxl-12">
       <div class="card">
-        <div class="card-header text-center p-5">
+        <div class="card-header text-center p-3">
           <h5>RealTime Service Status</h5> @php $status = 'Online'; @endphp
         </div>
-        {{--<div class="card-body mainRealtime" style="min-height: auto; max-height: 800px;overflow-y: auto;">--}}
-        <div class="card-body mainRealtime">
-            @foreach ($serverconfig as $server)
-                <div class="card" style="margin: 15px">
-                    <div class="card-header">{{ $server->hostname }}</div>
-                    <div class="card-body">
-                        <div class="row">
-                            <div class="col-xl-4 mb-4">
-                                <a class="card lift h-100 mService" href="{{ route('manageService.index', ['server_id' => $server->id, 'server_type' => 'postfix']) }}">
-                                    <div class="card-body cardService d-flex justify-content-center flex-column">
-                                        <div class="d-flex align-items-center justify-content-between">
-                                            <div class="me-3">
-                                                <h5>Postfix</h5>
-                                            </div>
-                                            <img id="statusPostfixImage" src="{{ asset('assets/img/demo/offline.png') }}" alt="Postfix is down" style="width: 5rem">
-                                        </div>
-                                        <p id="statusPostfix" style="display: inline-block; margin-left: 5px;">--</p>
-                                    </div>
-                                    <!-- <div class="col-md-6 d-flex justify-content-center" style="padding-left: 150px;padding-bottom: 15px;"><div class="btn-group" role="group" aria-label="Button group with nested dropdown"><button type="button" class="btn btn-primary"><i class="fas fa-play"></i></button><button type="button" class="btn btn-danger"><i class="fas fa-stop"></i></button><button type="button" class="btn btn-warning"><i class="fas fa-redo"></i></button><button type="button" class="btn btn-info"><i class="fas fa-sync-alt"></i></button></div></div> -->
-                                </a>
-                            </div>
-                            {{--<div class="col-xl-4 mb-4">
-                              <a class="card lift h-100" href="#!">
-                                <div class="card-body cardService d-flex justify-content-center flex-column">
-                                  <div class="d-flex align-items-center justify-content-between">
-                                    <div class="me-3">
-                                      <h5>Fail-To-Ban</h5>
-                                    </div>
-                                    <img src="{{ isset($status) && $status === 'Online' ? asset('assets/img/demo/online.png') : asset('assets/img/demo/offline.png') }}" alt="{{ $status === 'Online' ? 'Online' : 'Offline' }}" style="width: 5rem">
-                                  </div>
-                                    <p id="statusFail2ban" style="display: inline-block; margin-left: 5px;">--</p>
-                                </div>
-                              </a>
-                            </div>--}}
-                            <div class="col-xl-4 mb-4">
-                                <a class="card lift h-100 mService" href="{{ route('manageService.index', ['server_id' => $server->id , 'server_type' => 'apache']) }}">
-                                    <div class="card-body cardService d-flex justify-content-center flex-column">
-                                        <div class="d-flex align-items-center justify-content-between">
-                                            <div class="me-3">
-                                                <h5>Apache</h5>
-                                            </div>
-                                            <img id="statusApache2Image" src="{{ asset('assets/img/demo/offline.png') }}" alt="Apache2 is down" style="width: 5rem">
-                                        </div>
-                                        <p id="statusApache2" style="display: inline-block; margin-left: 5px;">--</p>
-                                    </div>
-                                    <!-- <div class="col-md-6 d-flex justify-content-center" style="padding-left: 150px;padding-bottom: 15px;"><div class="btn-group" role="group" aria-label="Button group with nested dropdown"><button type="button" class="btn btn-primary"><i class="fas fa-play"></i></button><button type="button" class="btn btn-danger"><i class="fas fa-stop"></i></button><button type="button" class="btn btn-warning"><i class="fas fa-redo"></i></button><button type="button" class="btn btn-info"><i class="fas fa-sync-alt"></i></button></div></div> -->
-                                </a>
-                            </div>
-                            <div class="col-xl-4 mb-4">
-                                <a class="card lift h-100 mService" href="{{ route('manageService.index', ['server_id' => $server->id, 'server_type' => 'webmin']) }}">
-                                    <div class="card-body cardService d-flex justify-content-center flex-column">
-                                        <div class="d-flex align-items-center justify-content-between">
-                                            <div class="me-3">
-                                                <h5>Webmin</h5>
-                                            </div>
-                                            <img id="statusWebminImage" src="{{ asset('assets/img/demo/offline.png') }}" alt="Webmin is down" style="width: 5rem">
-                                        </div>
-                                        <p id="statusWebmin" style="display: inline-block; margin-left: 5px;">--</p>
-                                    </div>
-                                </a>
-                            </div>
-                            {{--<div class="col-xl-4 mb-4">
-                              <a class="card lift h-100" href="#!">
-                                <div class="card-body cardService d-flex justify-content-center flex-column">
-                                  <div class="d-flex align-items-center justify-content-between">
-                                    <div class="me-3">
-                                      <h5>Replicate Mail Relay</h5>
-                                    </div>
-                                    <img src="{{ isset($status) && $status === 'Online' ? asset('assets/img/demo/online.png') : asset('assets/img/demo/offline.png') }}" alt="{{ $status === 'Online' ? 'Online' : 'Offline' }}" style="width: 5rem">
-                                  </div>
-                                </div>
-                              </a>
-                            </div>--}}
-                            {{--<div class="col-xl-4 mb-4">
-                              <a class="card lift h-100" href="#!">
-                                <div class="card-body cardService d-flex justify-content-center flex-column">
-                                  <div class="d-flex align-items-center justify-content-between">
-                                    <div class="me-3">
-                                      <h5>Policy Server</h5>
-                                    </div>
-                                    <img src="{{ isset($status) && $status === 'Online' ? asset('assets/img/demo/online.png') : asset('assets/img/demo/offline.png') }}" alt="{{ $status === 'Online' ? 'Online' : 'Offline' }}" style="width: 5rem">
-                                  </div>
-                                </div>
-                              </a>
-                            </div>--}}
-                            {{--<div class="col-xl-4 mb-4">
-                              <a class="card lift h-100" href="#!">
-                                <div class="card-body cardService d-flex justify-content-center flex-column">
-                                  <div class="d-flex align-items-center justify-content-between">
-                                    <div class="me-3">
-                                      <h5>Keep Alive</h5>
-                                    </div>
-                                    <img src="{{ isset($status) && $status === 'Online' ? asset('assets/img/demo/online.png') : asset('assets/img/demo/offline.png') }}" alt="{{ $status === 'Online' ? 'Online' : 'Offline' }}" style="width: 5rem">
-                                  </div>
-                                </div>
-                              </a>
-                            </div>--}}
-                        </div>
-                    </div>
+        <div class="card-body mainRealtime"  style="overflow-y: auto;">
+
+            <div class="table-responsive">
+                <div style="width: 100%; overflow-x: auto; height: 355px;">
+                <table id="spmrDatatable" class="display table table-striped table-bordered" cellspacing="0" width="60%">
+                    @foreach ($serverconfig as $server)
+                    <thead>
+                        @if($loop->index != 0)
+                        <tr><th colspan="2">&nbsp;</th></tr>@endif
+                        <tr  style="background-color: rgb(197, 204, 210);">
+                            <th colspan="2">
+                                <h5 style="text-align:left;">
+                                    {{ $server['hostname']}}
+                                    <p>{{ $server['ipAddress'] }}</p>
+                                </h5>
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                            <tr>
+                                <th width="25%"><a class="mService" href="{{ route('manageService.index', ['server_id' => $server->id, 'server_type' => 'postfix']) }}">
+                                    <h6><b>Postfix</b></h6>
+                                </a></th>
+                                <td width="35%"><h6 id="statusPostfix{{ $loop->index }}">--</h6></td>
+                            </tr>
+                            <tr>
+                                <th width="25%"><a class="mService" href="{{ route('manageService.index', ['server_id' => $server->id , 'server_type' => 'apache']) }}">
+                                    <h6><b>Apache</b></h6>
+                                    </a>
+                                </th>
+                                <td width="35%"><h6 id="statusApache2{{ $loop->index }}">--</h6></td>
+                            </tr>
+                            <tr>
+                                <th width="25%"><a class="mService" href="{{ route('manageService.index', ['server_id' => $server->id, 'server_type' => 'webmin']) }}">
+                                    <h6><b>Webmin</b></h6>
+                                </a></th>
+                                <td width="35%"><h6 id="statusWebmin{{ $loop->index }}">--</h6></td>
+                            </tr>
+                    </tbody>
+                    @endforeach
+                </table>
                 </div>
-            @endforeach
+            </div>
         </div>
       </div>
     </div>
   </div>
 </div>
+@endcan
+
 @endsection
 @push('script')
-<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.4/Chart.min.js" crossorigin="anonymous"></script>
+<script src="{{ asset('js/vendor/Chart.min.js') }}"></script>
 <script>
-    (Chart.defaults.global.defaultFontFamily = "Metropolis"),
-    '-apple-system,system-ui,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif';
-    Chart.defaults.global.defaultFontColor = "#858796";
+    document.addEventListener('DOMContentLoaded', function () {
+        function getRandomColor() {
+            var letters = '0123456789ABCDEF';
+            var color = '#';
+            for (var i = 0; i < 6; i++) {
+                color += letters[Math.floor(Math.random() * 16)];
+            }
+            return color;
+        }
+
+        const serverListAgencies = @json($serverListAgencies);
+
+        serverListAgencies.forEach((server, index) => {
+            const chartId = `chart-${index}`;
+            const canvasElement = document.getElementById(chartId);
+
+            // Ensure the canvas element exists
+            if (!canvasElement) {
+                // console.error(`Canvas element with id ${chartId} not found.`);
+                return;
+            }
+
+            const ctx = canvasElement.getContext('2d');
+            const labels = server.agencies.map(item => item.agency); // Using 'agency' for x-axis labels
+
+            /*const datasets = [{
+                label: 'Agencies',
+                data: server.agencies.map(item => item.totalAgencies),
+                backgroundColor: server.agencies.map(() => getRandomColor()),
+                borderColor: server.agencies.map(() => getRandomColor()),
+                borderWidth: 1,
+                barPercentage: 1.0,
+                categoryPercentage: 0.5
+            }];*/
+            const datasets = server.agencies.map(item => ({
+                label: item.agencies_name, // Using 'agencies_name' for legend
+                data: labels.map((label, j) => label === item.agency ? item.totalAgencies : 0),
+                backgroundColor: getRandomColor(),
+                borderColor: getRandomColor(),
+                borderWidth: 1,
+                barPercentage: 1.0,
+                categoryPercentage: 0.5
+            }));
+
+            new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: labels,
+                    datasets: datasets
+                },
+                options: {
+                    scales: {
+                        y: {
+                            beginAtZero: true
+                        },
+                        x: {
+                            display: false, // Hide x-axis
+                            grid: {
+                                display: false
+                            },
+                            ticks: {
+                                display: false // Ensure ticks are also hidden
+                            }
+                        }
+                    },
+                    responsive: true,
+                    plugins: {
+                        legend: {
+                            display: true // Display legend
+                        },
+                        title: {
+                            display: true,
+                            text: 'Agency Data'
+                        }
+                    }
+                }
+            });
+        });
+    });
 </script>
+
 <script>
 
-let data = [];
-let sockets = [];
-let serverIpaddresses = [];
-let serverIpaddresses1 = [];
+var data = [];
+var sockets = [];
+var serverIpaddresses = [];
+var serverIpaddresses1 = [];
+var labels = [];
+var datasets = {};
 $(document).ready(function() {
 
 $('a.mService').click(function(e) {
@@ -309,101 +316,18 @@ $('a.mService').click(function(e) {
 });
 
 function getRandomColor() {
-    var red = Math.floor(Math.random() * 128) + 128; // Range: 128-255
-    var green = Math.floor(Math.random() * 128) + 128; // Range: 128-255
-    var blue = Math.floor(Math.random() * 128) + 128; // Range: 128-255
-    return 'rgb(' + red + ',' + green + ',' + blue + ')';
+    var letters = '0123456789ABCDEF';
+    var color = '#';
+    for (var i = 0; i < 6; i++) {
+        color += letters[Math.floor(Math.random() * 16)];
+    }
+    return color;
 }
 
-renderChartKementerian();
-function renderChartKementerian() {
-    var ctx = document.getElementById('kementerianChart').getContext('2d');
-    window.kementerianChart = new Chart(ctx, {
-        type: 'bar',
-        data: {
-            labels: <?php echo json_encode($filteredMinistries); ?>,
-            datasets: <?php
-                      $datasets = [];
-                      foreach ($serverList as $server) {
-                          $serverHostname = $server['hostname'];
-                          $color = sprintf('#%06X', mt_rand(0, 0xFFFFFF));
-                          $data = collect($departmentCounts)->map(function ($data) use ($serverHostname) {
-                              return $data['postmasters'] === $serverHostname ? $data['count'] : 0;
-                          })->values()->toArray(); // Convert to array
-                          $datasets[] = [
-                              'label' => $serverHostname,
-                              'data' => $data,
-                              'backgroundColor' => $color, // Corrected syntax
-                              'borderColor' => '#4e73df',
-                              'borderWidth' => 1
-                          ];
-                  }
-                      echo json_encode($datasets);
-                      ?>
-        },
-        options: {
-            scales: {
-                y: {
-                    beginAtZero: true
-                }
-            },
-            plugins: {
-                legend: {
-                    display: true,
-                    position: 'bottom',
-                }
-            }
-        }
-    });
-}
-
-renderChart();
-function renderChart() {
-    var departmentChart = document.getElementById('departmentChart').getContext('2d');
-    window.chart = new Chart(departmentChart, {
-        type: 'bar',
-        data: {
-            labels: <?php echo json_encode($filteredDept); ?>,
-            datasets: <?php
-                      $datasets = [];
-                      foreach ($serverList as $server) {
-                          $serverHostname = $server['hostname'];
-                          $color = sprintf('#%06X', mt_rand(0, 0xFFFFFF));
-                          $data = collect($departmentCounts2)->map(function ($data) use ($serverHostname) {
-                              return $data['postmasters'] === $serverHostname ? $data['count'] : 0;
-                          })->values()->toArray(); // Convert to array
-                          $datasets[] = [
-                              'label' => $serverHostname,
-                              'data' => $data,
-                              'backgroundColor' => $color, // Corrected syntax
-                              'borderColor' => '#4e73df',
-                              'borderWidth' => 1
-                          ];
-                      }
-                      echo json_encode($datasets);
-                      ?>
-        },
-        options: {
-            scales: {
-                y: {
-                    beginAtZero: true
-                }
-            },
-            plugins: {
-                legend: {
-                    display: true,
-                    position: 'bottom',
-                }
-            }
-        }
-    });
-}
 
 function randomColor() {
     return '#' + Math.floor(Math.random() * 16777215).toString(16);
 }
-
-// var data = [];
 
 function generateServerData(serverName, cleanResponse) {
 
@@ -451,65 +375,132 @@ function formatDate(date) {
     return day + '/' + month + '/' + year + ' ' + hours + ':' + minutes + ':' + seconds;
 }
 
-// Generate random data for multiple servers
 
 
 @foreach ($serverconfig as $server)
-let serverMailRelay1{{$loop->iteration}} = "{{ $server->hostname }}";
+var serverMailRelay1{{$loop->iteration}} = {
+    subhostname: "{{ $server->subhostname }}",
+    hostname: "{{ $server->hostname }}"};
 serverIpaddresses1.push(serverMailRelay1{{$loop->iteration}});
 @endforeach
 
 var servers = {};
 
+// Function to handle WebSocket connection and data processing
+function connectAndProcess(hostname1, index) {
+    //console.log('Connecting to:', hostname1.subhostname, 'with hostname:', hostname1.hostname);
+
+    const serverAddress1 = 'wss://myspmr:Rb1NAPzM57Ycq9z8Uur65g1JaF2xVixKtTGStvPfh65P9HK29Abe0QcxiZC9yV9n@spmr.mygovuc.gov.my/' + hostname1.subhostname;
+    const socket1 = new WebSocket(serverAddress1);
+
+    socket1.onopen = function() {
+        //console.log("Connected to " + serverAddress1);
+
+        // Send any initial message if needed
+        // socket.send("Initial message or request data");
+    };
+
+    socket1.onmessage = function(event1) {
+        var message = event1.data.trim();
+
+        // Check if the message matches the desired format
+        if (!/^\d{4}-\d{2}-\d{2} \d{2}:\d{2},\d+$/.test(message)) {
+            // console.log("Skipping message from " + serverAddress1 + ":", message);
+            return; // Skip processing if the message does not match the format
+        }
+        const [timestamp, value] = message.split(',');
+
+        // console.log(timestamp, value);
+
+        // Push timestamp to labels array if it's not already present
+        if (!labels.includes(timestamp)) {
+            labels.push(timestamp);
+            labels.sort(); // Ensure labels are sorted
+        }
+
+        // Initialize dataset for the hostname if it doesn't exist
+        if (!datasets[hostname1.hostname]) {
+            datasets[hostname1.hostname] = {
+                label: hostname1.hostname,
+                data: [],
+                borderColor: getRandomColor(), // Random color for the line
+                borderWidth: 2, // Bold line
+                fill: false
+            };
+        }
+
+        // Update or add the value in the dataset for the current hostname
+        const dataPoint = { x: timestamp, y: parseInt(value) };
+                const dataset = datasets[hostname1.hostname].data;
+                const existingIndex = dataset.findIndex(point => point.x === timestamp);
+
+                if (existingIndex >= 0) {
+                    dataset[existingIndex] = dataPoint; // Update existing data point
+                } else {
+                    dataset.push(dataPoint); // Add new data point
+                }
+
+        // Sort the data by timestamp (although it's already sorted in your case)
+        datasets[hostname1.hostname].data.sort((a, b) => new Date(a.x) - new Date(b.x));
+        // Ensure other datasets have the same timestamp with value 0 if not present
+        labels.forEach(label => {
+                    Object.keys(datasets).forEach(key => {
+                        const dataset = datasets[key].data;
+                        if (!dataset.some(point => point.x === label)) {
+                            dataset.push({ x: label, y: 0 }); // Push zero value for missing timestamp
+                            dataset.sort((a, b) => new Date(a.x) - new Date(b.x));
+                        }
+                    });
+                });
+
+        // Update chart data
+        mailQueueChart.data.labels = labels;
+        mailQueueChart.data.datasets = Object.values(datasets); // Convert object to array
+        mailQueueChart.update();
+};
+    socket1.onerror = function(error) {
+        //console.error("WebSocket Error for " + serverAddress1 + ": ", error);
+    };
+
+    socket1.onclose = function() {
+        //console.log("WebSocket connection closed for " + serverAddress1);
+    };
+
+    sockets.push(socket1);
+}
+
 // Iterate over the serverIpaddresses array and generate server data
 serverIpaddresses1.forEach(function(hostname, index) {
-    servers['server' + (index + 1)] = generateServerData(hostname);
+    connectAndProcess(hostname, index);
 });
 
-// Prepare datasets for Chart.js
-var datasets = Object.values(servers);
-
-var xValues = datasets[0].data.map(function(dataPoint) {
-    return dataPoint.x;
-});
-
-mailQueueChart();
-function mailQueueChart() {
-
-// Create a new Chart.js instance
 var ctx = document.getElementById('mailQueueChart').getContext('2d');
-
-
-var labels = datasets[0].data.map(function(dataPoint) {
-    return dataPoint.x;
-});
-
 var mailQueueChart = new Chart(ctx, {
     type: 'line',
     data: {
         labels: labels,
-        datasets: datasets
+        datasets: Object.values(datasets)
     },
     options: {
         scales: {
             x: [{
                 type: 'time',
                 time: {
-                    parser: 'DD/MM/YYYY HH:mm:ss', // Custom parser for the format
+                    parser: 'YYYY-MM-DD HH:mm', // Adjust parser for the format
                     unit: 'minute', // Display unit as minute
                     displayFormats: {
                         minute: 'HH:mm' // Format for minute display
                     }
                 },
                 title: {
-                    display: false,
+                    display: true,
                     text: 'Time'
                 }
             }],
             y: [{
                 title: {
                     display: true,
-                    text: 'Mail Count'
+                    text: 'Value'
                 },
                 beginAtZero: true
             }]
@@ -518,120 +509,128 @@ var mailQueueChart = new Chart(ctx, {
             legend: {
                 display: true,
                 position: 'bottom', // Adjust legend position if needed
-                onHover: function (event, legendItem) {
+                labels: {
+                    // Sync legend labels with dataset labels
+                    generateLabels: function(chart) {
+                        return chart.data.datasets.map(dataset => ({
+                            text: dataset.label,
+                            fillStyle: dataset.borderColor, // Match line color
+                            strokeStyle: dataset.borderColor,
+                            lineWidth: dataset.borderWidth
+                        }));
+                    }
+                },
+                onHover: function(event, legendItem) {
                     event.target.style.cursor = 'pointer';
                 }
             }
         }
     }
 });
-}
-window.onload = function() {
-    mailQueueChart();
-};
 
 @foreach ($serverconfig as $server)
-let serverMailRelay{{$loop->iteration}} = "{{ $server->hostname }}";
+let serverMailRelay{{$loop->iteration}} = "{{ $server->subhostname }}";
 serverIpaddresses.push(serverMailRelay{{$loop->iteration}});
 @endforeach
 
 serverIpaddresses.forEach(hostname => {
-    const serverAddress = 'wss://' + hostname + '/wss/';
+    // const serverAddress = 'wss://' + hostname + '/wss/';
+    const serverAddress = 'wss://myspmr:Rb1NAPzM57Ycq9z8Uur65g1JaF2xVixKtTGStvPfh65P9HK29Abe0QcxiZC9yV9n@spmr.mygovuc.gov.my/' + hostname;
 
     const socket = new WebSocket(serverAddress);
+    // console.log("serverAddress-> "+ serverAddress);
     sockets.push(socket);
 });
 
+var commands = [
+    {
+        command: '/opt/scripts/websocket/cmd1' + ' ' + '{{ $user->email }}',
+        id: 'mailQueueCount'
+    },
+    {
+        command: '/opt/scripts/websocket/cmd2' + ' ' + '{{ $user->email }}' + ' ' + 'postfix',
+        id: 'statusPostfix'
+    },
+    {
+        command: '/opt/scripts/websocket/cmd2' + ' ' + '{{ $user->email }}' + ' ' + 'fail2ban',
+        id: 'statusFail2ban'
+    },
+    {
+        command: '/opt/scripts/websocket/cmd2' + ' ' + '{{ $user->email }}' + ' ' + 'webmin',
+        id: 'statusWebmin'
+    },
+    {
+        command: '/opt/scripts/websocket/cmd2' + ' ' + '{{ $user->email }}' + ' ' + 'apache2',
+        id: 'statusApache2'
+    },
+    {
+        command: '/opt/scripts/websocket/cmd3' + ' ' + '{{ $user->email }}' + ' ' + '50'
+    },
+];
+
 sockets.forEach((socket, index) => {
-    getDataMailServer1(socket);
+
     socket.addEventListener('open', (event) => {
+        //console.log("WebSocket connection opened to " + socket.url);
+        // Function to send each command with delay
+        commands.forEach((commandObj, commandIndex) => {
+            setTimeout(() => {
+                //console.log("Sending command to : " + commandObj.command);
+                socket.send(commandObj.command);
+            }, commandIndex * 1000); // Delay each command by 1 second
+        });
 
     });
 
     socket.addEventListener('close', (event) => {
-
+        //console.log("WebSocket connection closed to " + socket.url);
     });
 
     socket.addEventListener('error', (event) => {
-
+        //console.error("WebSocket error occurred with " + socket.url + ": " + event);
     });
-
+    var outputs = [];
     socket.addEventListener('message', (event) => {
-
-    });
-});
-
-// function updateChart() {
-//     mailQueueChart.update();
-// }
-
-function getDataMailServer1(socket) {
-
-    const commands = [
-        //'wc -l /opt/cluster/postfix/access_list | cut -d " " -f1',
-        //'wc -l /opt/cluster/postfix/sender_relay_maps | cut -d " " -f1',
-        //'/usr/sbin/sasldblistusers2 | wc -l',
-        'mailq | grep -c "^[A-F0-9]"',
-        'status=$(systemctl --no-pager status postfix | grep Active:); if echo "$status" | grep -q "active (exited) since"; then echo "Postfix is running"; elif echo "$status" | grep -q "inactive (dead) since"; then echo "Postfix is down"; else echo "Something is wrong"; fi',
-        'status=$(systemctl --no-pager status fail2ban | grep Active:); if echo "$status" | grep -q "active (running) since"; then echo "Fail2ban is running"; elif echo "$status" | grep -q "inactive (dead) since"; then echo "Fail2ban is down"; else echo "Something is wrong"; fi',
-        'status=$(systemctl --no-pager status webmin | grep Active:); if echo "$status" | grep -q "active (running) since"; then echo "Webmin is running"; elif echo "$status" | grep -q "inactive (dead) since"; then echo "Webmin is down"; else echo "Something is wrong"; fi',
-        'status=$(systemctl --no-pager status apache2 | grep Active:); if echo "$status" | grep -q "active (running) since"; then echo "Apache2 is running"; elif echo "$status" | grep -q "inactive (dead) since"; then echo "Apache2 is down"; else echo "Something is wrong"; fi',
-        '/usr/bin/tail -120 /data/collections/spmr/count_mailq.txt',
-
-    ];
-
-    const outputs = [];
-
-    socket.addEventListener('open', (event) => {
-
-        commands.forEach(command => {
-            socket.send(command);
-        });
-    });
-
-    socket.addEventListener('message', (event) => {
-
+        //console.log("Message received from " + socket.url + ": " + event.data);
         const response = event.data;
-        // console.log(event.data);
+        outputs.push(response);
+        // console.log(outputs[5]);
+        // Update the corresponding element based on the response
+            $('#mailQueueCount' + index).text(outputs[0]);
 
-        const output = extractOutput(response);
-        if (output !== null) {
+            $('#statusPostfix' + index).text(outputs[1]);
 
+            var postfixStatus = outputs[1];
+            var postfixAlt;
+            if(postfixStatus == "Postfix is running"){
+                postfixStatus = "Online";
+                postfixAlt = "Postfix is running";
+            }else{
+                postfixStatus = "Offline";
+                postfixAlt = "Postfix is down";
+            }
+            var postfixImageSrc = postfixStatus === 'Online' ? 'assets/img/demo/online.png' : 'assets/img/demo/offline.png';
 
-            outputs.push(output);
+            $('#statusPostfixImage'+ index).attr('src', postfixImageSrc).attr('alt', postfixAlt);
 
-            if (outputs.length > commands.length) {
+            $('#statusFail2ban' + index).text(outputs[2]);
 
-                //$('#totalApplications').text(outputs[1]);
-                //$('#totalDomains').text(outputs[3]);
-                //$('#totalSASL').text(outputs[5]);
-                //$('#mailQueueCount').text(outputs[7]);
-                //$('#statusPostfix').text(outputs[9]);
-                //$('#statusFail2ban').text(outputs[11]);
-                //$('#statusWebmin').text(outputs[13]);
-                //$('#statusApache2').text(outputs[15]);
+            $('#statusWebmin' + index).text(outputs[3]);
+            var WebminStatus = outputs[3];
+            var WebminAlt;
+            if(WebminStatus == "Webmin is running"){
+                WebminStatus = "Online";
+                WebminAlt = "Webmin is running";
+            }else{
+                WebminStatus = "Offline";
+                WebminAlt = "Webmin is down";
+            }
+            var WebminImageSrc = WebminStatus === 'Online' ? 'assets/img/demo/online.png' : 'assets/img/demo/offline.png';
+            $('#statusWebminImage'+ index).attr('src', WebminImageSrc).attr('alt', WebminAlt);
 
-                $('#mailQueueCount').text(outputs[1]);
-                $('#statusPostfix').text(outputs[3]);
-                $('#statusFail2ban').text(outputs[5]);
-                $('#statusWebmin').text(outputs[7]);
-                $('#statusApache2').text(outputs[9]);
+            $('#statusApache2' + index).text(outputs[4]);
 
-                //var postfixStatus = outputs[9];
-                var postfixStatus = outputs[3];
-                var postfixAlt;
-                if(postfixStatus == "Postfix is running"){
-                    postfixStatus = "Online";
-                    postfixAlt = "Postfix is running";
-                }else{
-                    postfixStatus = "Offline";
-                    postfixAlt = "Postfix is down";
-                }
-                var postfixImageSrc = postfixStatus === 'Online' ? 'assets/img/demo/online.png' : 'assets/img/demo/offline.png';
-                $('#statusPostfixImage').attr('src', postfixImageSrc).attr('alt', postfixAlt);
-
-                //var Apache2Status = outputs[15];
-                var Apache2Status = outputs[9];
+            var Apache2Status = outputs[4];
                 var Apache2Alt;
                 if(Apache2Status == "Apache2 is running"){
                     Apache2Status = "Online";
@@ -641,46 +640,35 @@ function getDataMailServer1(socket) {
                     Apache2Alt = "Apache2 is down";
                 }
                 var Apache2ImageSrc = Apache2Status === 'Online' ? 'assets/img/demo/online.png' : 'assets/img/demo/offline.png';
-                $('#statusApache2Image').attr('src', Apache2ImageSrc).attr('alt', Apache2Alt);
+                $('#statusApache2Image'+ index).attr('src', Apache2ImageSrc).attr('alt', Apache2Alt);
 
-                //var WebminStatus = outputs[13];
-                var WebminStatus = outputs[7];
-                var WebminAlt;
-                if(WebminStatus == "Webmin is running"){
-                    WebminStatus = "Online";
-                    WebminAlt = "Webmin is running";
-                }else{
-                    WebminStatus = "Offline";
-                    WebminAlt = "Webmin is down";
-                }
-                var WebminImageSrc = WebminStatus === 'Online' ? 'assets/img/demo/online.png' : 'assets/img/demo/offline.png';
-                $('#statusWebminImage').attr('src', WebminImageSrc).attr('alt', WebminAlt);
+                // console.log(outputs[5]);
+                extractOutput(response);
 
-
-
-            }
-        }
     });
+});
 
-    function extractOutput(response) {
+function extractOutput(response) {
 
-        const cleanResponse = response.replace(/\[\d;?\d*m/g, '').trim();
-        generateServerData('Mailq Server', cleanResponse);
+const cleanResponse = response.replace(/\[\d;?\d*m/g, '').trim();
+generateServerData('Mailq Server', cleanResponse);
 
-        const outputMatch = cleanResponse.match(/\[.*?\]#\S (.*)/);
+const outputMatch = cleanResponse.match(/\[.*?\]#\S (.*)/);
 
-        const outputs = [];
+const outputs = [];
 
-        if (outputMatch && outputMatch.length > 1) {
+if (outputMatch && outputMatch.length > 1) {
 
-            outputs.push(outputMatch[1]);
+    outputs.push(outputMatch[1]);
 
-            return outputs;
-        } else {
-            return null;
-        }
-    }
+    return outputs;
+} else {
+    return null;
+}
+}
 
+function updateChart() {
+    mailQueueChart.update();
 }
 
 });

@@ -17,12 +17,14 @@ class mailForm extends Mailable
 {
     use Queueable, SerializesModels;
     public $request;
+    public $user;
     /**
      * Create a new message instance.
      */
-    public function __construct($request)
+    public function __construct($request, $user)
     {
         $this->data = $request;
+        $this->user = $user;
 
     }
 
@@ -43,7 +45,7 @@ class mailForm extends Mailable
     {
         $content = new Content(
             view: 'emails.emailnotification',
-            with: ['data' => $this->data]
+            with: ['data' => $this->data, 'user' => $this->user]
         );
         // Attach files to the email
         if ($this->data->hasFile('attachment')) {

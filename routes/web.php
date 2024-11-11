@@ -32,7 +32,7 @@ use App\Http\Controllers\TerminalController;
 use App\Http\Controllers\AgencyController;
 use App\Http\Controllers\MinistryController;
 use App\Http\Controllers\MonthlyReportingController;
-
+use App\Http\Controllers\LanguageController;
 
 /*
 |--------------------------------------------------------------------------
@@ -71,7 +71,7 @@ Route::get('/logout', [LoginController::class, 'logout'])->name('logout' );
 
 
 
-Route::group(['middleware' => ['auth']], function () {
+Route::group(['middleware' => ['auth', 'nocache','log.user.activity']], function () {
 
     //testing route
     Route::get('/home', [DashboardController::class, 'index'])->name('dashboard.index');
@@ -98,9 +98,9 @@ Route::group(['middleware' => ['auth']], function () {
         Route::get('/', [MainRelayController::class, 'index'])->name('mailrelay.index')->middleware('auth.resource:manage_mail_relay_view');
         Route::get('/register', [MainRelayController::class, 'show'])->name('mailrelay.register');
         Route::post('/check-ip-address', [MainRelayController::class, 'checkIpAddress'])->name('check.ip.address');
-        Route::get('/mailupstream', [MainRelayController::class, 'mailupstream'])->name('mailrelay.mailupstream');
+        // Route::get('/mailupstream', [MainRelayController::class, 'mailupstream'])->name('mailrelay.mailupstream');
         Route::get('/detail/{id}/{type}', [MainRelayController::class, 'view'])->name('mailrelay.edit');
-        Route::get('/reject/{id}', [MainRelayController::class, 'reject'])->name('mailrelay.reject');
+        // Route::get('/reject/{id}', [MainRelayController::class, 'reject'])->name('mailrelay.reject');
         Route::post('/submit-form', [MainRelayController::class, 'submitappForm'])->name('mailrelay.form');
         Route::post('/submit-rej-form', [MainRelayController::class, 'submitrejForm'])->name('mailrelay.reject');
 
@@ -109,9 +109,12 @@ Route::group(['middleware' => ['auth']], function () {
 
         // Route::get('/detail/{id}', [MainRelayController::class, 'updatestatus']);
 
-        Route::get('/mailupstream', [MainRelayController::class, 'mailupstream'])->name('mailrelay.mailupstream')->middleware('auth.resource:mail_upstream_view');
+        Route::get('/mailupstream', [MainRelayController::class, 'mailupstream'])->name('mailrelay.mailupstream')->middleware('auth.resource:mail_upstream_routing_view');
         Route::get('/getServer', [MainRelayController::class, 'api'])->name('mailrelay.api');
         Route::get('/index/searching', [MainRelayController::class, 'search'])->name('mailrelay.index.search');
+        Route::post('/check-server-status', [MainRelayController::class, 'checkServerStatus'])->name('check.server.status');
+
+
     });
 
     //SMTP Relay Request
@@ -124,7 +127,7 @@ Route::group(['middleware' => ['auth']], function () {
         Route::post('/form_application_smtp_relay/delete/{id}/{ip}/{idapp}', [SmtpRelayController::class, 'delete'])->name('smtp_relay.delete');
         Route::post('/form_application_smtp_relay/datatable', [SmtpRelayController::class, 'datatable'])->name('smtp_relay.datatable');
 
-        //code sidi
+        Route::get('/agency/{ministry}',[SmtpRelayController::class, 'getAgency']);
         Route::get('/register', [SmtpRelayController::class, 'daftar'])->name('smtp_relay.daftar');
         Route::post('/saving', [SmtpRelayController::class, 'saving'])->name('smtp_relay.saving');
         Route::get('/view/{id}/{type}', [SmtpRelayController::class, 'papar'])->name('smtp_relay.view');
@@ -134,6 +137,9 @@ Route::group(['middleware' => ['auth']], function () {
         Route::post('/import', [SmtpRelayController::class, 'import'])->name('smtp_relay.import');
 
         Route::get('/index/searching', [SmtpRelayController::class, 'search'])->name('smtp_relay.index.search');
+        Route::get('/view-pdf/{filename}',[SmtpRelayController::class, 'showPdf'])->name('smtp_relay.viewPdf');
+
+        Route::post('/getHostname', [SmtpRelayController::class, 'getHostname'])->name('check.subhostname.unique');
 
     });
 
@@ -147,6 +153,11 @@ Route::group(['middleware' => ['auth']], function () {
 
         Route::get('/{id}/file/download', [ServerController::class, 'downloadFile'])->name('server.file.download');
         Route::post('/servers/{id}', [ServerController::class, 'deleteServer'])->name('server.delete');
+        Route::post('/check-hostname-unique', [ServerController::class, 'checkHostnameUnique'])->name('check.hostname.unique');
+
+        Route::post('/add/virtual-server', [ServerController::class, 'virtualServer'])->name('server.virtualServer.add');
+        Route::get('/get-ip-address', [ServerController::class, 'getIp'])->name('server.virtualServer.getIp');
+        Route::get('/check-server/{serverId}', [ServerController::class, 'checkServer'])->name('server.check-server');
 
     });
 
@@ -265,7 +276,7 @@ Route::group(['middleware' => ['auth']], function () {
 
     Route::group(['prefix' => 'generate-report'], function () {
         Route::get('/', [GenerateReportingController::class, 'index'])->name('generateReport.index')
-        ->middleware('auth.resource:generate_report_view');
+        ->middleware('auth.resource:agencies_report_view');
         Route::get('/getServer', [GenerateReportingController::class, 'api'])->name('generateReport.api');
         Route::get('/index/searching', [GenerateReportingController::class, 'search'])->name('generateReport.index.search');
     });
@@ -305,15 +316,49 @@ Route::group(['middleware' => ['auth']], function () {
 
     Route::get('/activity-logs', [ActivityLogController::class,'showActivityLogs'])->name('activityLog.index')
       ->middleware('auth.resource:spmr_activity_log_view');
-    });
+      Route::post('/activity-logs/filter', [ActivityLogController::class,'filter'])->name('activityLog.filter');
+
 
     Route::group(['prefix' => 'monthly-report'], function () {
         Route::get('/', [MonthlyReportingController::class, 'index'])->name('monthlyReport.index')
-        ->middleware('auth.resource:monthly_report_view');
+        ->middleware('auth.resource:usage_report_view');
         Route::get('/getServer', [MonthlyReportingController::class, 'api'])->name('monthlyReport.api');
         Route::post('/index/searching', [MonthlyReportingController::class, 'search'])->name('monthlyReport.index.search');
     });
 
+    Route::post('/start-services', [ManageServiceController::class, 'start'])->name('start-postfix-services');
+    Route::post('/stop-services', [ManageServiceController::class, 'stop'])->name('stop-postfix-services');
+    Route::post('/restart-services', [ManageServiceController::class, 'restart'])->name('restart-postfix-services');
+
+    Route::get('/lang/{locale}', [LanguageController::class, 'switchLang'])->name('lang.switch');
+
+    Route::post('/getAgencies', [GenerateReportingController::class, 'getAgencies'])->name('get-agencies-by-report');
+
+    Route::get('/get-server-ip', function () {
+        // Get the server's hostname
+        $hostname = gethostname();
+
+        // Get IPv4 and IPv6 addresses
+        $ips = gethostbynamel($hostname);
+        $ipv4 = null;
+        $ipv6 = null;
+
+        foreach ($ips as $ip) {
+            if (filter_var($ip, FILTER_VALIDATE_IP, FILTER_FLAG_IPV4)) {
+                $ipv4 = $ip;
+            }
+            if (filter_var($ip, FILTER_VALIDATE_IP, FILTER_FLAG_IPV6)) {
+                $ipv6 = $ip;
+            }
+        }
+
+        return response()->json([
+            'ipv4' => $ipv4,
+            'ipv6' => $ipv6,
+        ]);
+    });
+
+});
 
 
 

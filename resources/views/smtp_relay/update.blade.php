@@ -8,7 +8,7 @@
                     <div class="col-auto mb-3">
                         <h1 class="page-header-title">
                             <div class="page-header-icon"><i data-feather="mail"></i></div>
-                            Update SMTP Relay Request MyGovUC3.0
+                            Update SMTP Relay Request MyGovUC
                         </h1>
                     </div>
                     <div class="col-12 col-xl-auto mb-3">
@@ -21,20 +21,19 @@
     <!-- Main page content-->
     <div class="container-fluid px-4">
         <div class="card mb-4">
-            <div class="card-header text-center"><h3 class=" text-primary">Update SMTP Relay Request MyGovUC3.0</h3></div>
+            <div class="card-header text-center"><h3 class=" text-primary">Update SMTP Relay Request MyGovUC</h3></div>
             <div class="card-body">
                 <form id="formserver" action="{{ route('smtp_relay.kemaskinidata', ['id' => $formsmtp->form_id]) }}" method="post" enctype="multipart/form-data">
                 @csrf
                 <div class="col-md-6">
-                    <label for="form_id">Serial Number</label><br>
+                    <label>Serial Number</label><br>
                     <p style="color: #0061f2 !important;">{{ $formsmtp->form_id }}</p>
                     <input class="form-control" id="form_id" name="form_id" type="hidden" value="{{ $formsmtp->form_id }}" disabled/>
                 </div>
                 <div class="row gx-3 mb-3">
                     <div class="col-md-6">
                         <label for="ticket_id">Ticket Number</label><br>
-                        {{--<p style="color: #0061f2 !important;">{{ $formsmtp->ticket_id }}</p>--}}
-                        <input class="form-control" id="ticket_id" name="ticket_id" type="text" value="{{ old('ticket_id', $formsmtp->ticket_id) }}">
+                        <input class="form-control" id="ticket_id" name="ticket_id" type="text" value="{{ old('ticket_id', $formsmtp->ticket_id) }}" required>
                     </div>
                     <div class="col-md-6">
                         <label for="types_req">Type Of Request</label>
@@ -48,15 +47,12 @@
                                 Onboarding Agency
                             @endif
                             </option>
-                            {{-- <option value="1">New Application</option>
-                            <option value="2">Service Termination</option>
-                            <option value="3">Onboarding Agency</option> --}}
                         </select>
                     </div>
                 </div>
                 <div class="mb-3">
                     <label for="project_name">Project Name</label>
-                    <input class="form-control" id="project_name" name="project_name" type="text" value="{{ old('project_name', $formsmtp->project_name) }}" required>
+                    <input class="form-control" id="project_name" name="project_name" type="text" value="{{ old('project_name', $formsmtp->project_name) }}">
                 </div>
                 <div class="mb-3">
                     <label for="system_owner_name">System Owner Name</label>
@@ -69,16 +65,15 @@
                     </div>
                     <div class="col-md-6">
                         <label for="owner_phone_number">Phone Number</label>
-                        <input class="form-control" id="owner_phone_number" name="owner_phone_number" type="phone" value="{{ old('owner_phone_number', $formsmtp->owner_phone_number) }}" required/>
+                        <input class="form-control" id="owner_phone_number" name="owner_phone_number" type="number" value="{{ old('owner_phone_number', $formsmtp->owner_phone_number) }}" required/>
                     </div>
                 </div>
                 <div class="mb-3">
                     <label for="ministry">Ministry</label>
-                    <select class="form-control select2" name="ministry" id="ministry" aria-label="Default select">
-                        {{--<option selected disabled>Select Department/Division/Unit</option>--}}
-                        <option value="{{ old('ministry', $formsmtp->ministry) }}">{{ old('ministry', $formsmtp->ministry) }}</option>
+                    <select class="form-control select2" name="ministry" id="ministry">
+                        <option value="{{ old('ministry', $formsmtp->ministry) }}">{{ old('ministry', $formsmtp->ministry_name) }}</option>
                         @foreach ($ministriesArray as $ministry)
-                        <option value="{{ $ministry['name'] }}">{{ $ministry['name'] }}</option>
+                        <option value="{{ $ministry['id'] }}" data-code="{{ $ministry['id'] }}">{{ $ministry['name'] }}</option>
                         @endforeach
                     </select>
                 </div>
@@ -86,20 +81,12 @@
                     <div class="col-md-6">
                         <label for="agencies">Agency</label>
                         <select class="form-control select2" name="agencies" id="agencies" aria-label="Default select">
-                            <option value="{{ old('agencies', $formsmtp->agencies) }}">{{ old('agencies', $formsmtp->agencies) }}</option>
-                            @foreach ($agenciesArray as $agency)
-                            <option value="{{ $agency['name'] }}">{{ $agency['name'] }}</option>
-                            @endforeach
+                            <option value="{{ old('agencies', $formsmtp->agencies) }}">{{ old('agencies', $formsmtp->agencies_name) }}</option>
                         </select>
                     </div>
                     <div class="col-md-6">
                         <label for="dept_div_unit">Department/Division/Unit</label>
-                        <select class="form-control select2" name="dept_div_unit" id="dept_div_unit" aria-label="Default select">
-                            <option value="{{ old('dept_div_unit', $formsmtp->dept_div_unit) }}">{{ old('dept_div_unit', $formsmtp->dept_div_unit) }}</option>
-                            @foreach ($departmentsArray as $department)
-                            <option value="{{ $department['name'] }}">{{ $department['name'] }}</option>
-                            @endforeach
-                        </select>
+                        <input class="form-control" id="dept_div_unit" name="dept_div_unit" value="{{ old('dept_div_unit', $formsmtp->dept_div_unit) }}"/>
                     </div>
                 </div>
                 <div class="mb-3">
@@ -112,8 +99,9 @@
                 </div>
                 <div class="mb-3">
                     <label for="smtp_relay_auth_method">Mail Relay Authentication Method</label>
-                    <select class="form-control select2" name="smtp_relay_auth_method" id="smtp_relay_auth_method" required>
-                        <option value="{{ old('smtp_relay_auth_method', $formsmtp->smtp_relay_auth_method) }}">@if ($formsmtp->smtp_relay_auth_method == 1)
+                    <select class="form-control select2" name="smtp_relay_auth_method" id="smtp_relay_auth_method" @if ($formsmtp->types_req == 1) required @endif>
+                        <option value="{{ old('smtp_relay_auth_method', $formsmtp->smtp_relay_auth_method) }}">
+                        @if ($formsmtp->smtp_relay_auth_method == 1)
                             IP Based Authentication Relay
                         @else
                             Username/Password Authentication Relay
@@ -123,13 +111,14 @@
                     </select>
                 </div>
                 <div class="mb-3">
-                    <label for="smtp_relay_server">Server Mail Relay</label>
-                    <select class="form-control select2" name="smtp_relay_server" id="smtp_relay_server" aria-label="Default select" required>
+                    <label for="smtp_relay_server">Server Mail Relays</label>
+                    <select class="form-control select2" name="smtp_relay_server" id="smtp_relay_server" aria-label="Default select" required onchange="toggleInputs()">
                         <option value="{{ old('smtp_relay_server', $formsmtp->smtp_relay_server) }}">{{ old('smtp_relay_server', $formsmtp->smtp_relay_server) }} </option>
                         @foreach ($serversArray as $server)
                         <option value="{{ $server['hostname'] }}">{{ $server['hostname'] }}</option>
                         @endforeach
                     </select>
+                    <input type="hidden" name="sub_smtp_relay_server" id="sub_smtp_relay_server" value="{{ old('sub_smtp_relay_server', $formsmtp->sub_smtp_relay_server) }}">
                 </div>
                 <div class="mb-3">
                     <table class="table table-striped" id="tableA">
@@ -137,33 +126,37 @@
                             <tr>
                                 <th scope="col">System Name</th>
                                 <th scope="col">IP Address</th>
-                                <th scope="col">FQDN System</th>
+                                <th scope="col">Domain System</th>
+                                <th scope="col">MailFrom</th>
                                 <th scope="col">Actions</th>
                             </tr>
                         </thead>
                         <tbody id="dynamic-inputs-container">
                             @foreach ($details as $detail)
                                 <tr class="dynamic-input-row">
-                                    <td hidden><input type="text" name="tableSpmr[{{ $loop->index }}][form_id]" id="form_id" value="{{ old('tableSpmr.' . $loop->index . '.form_id', $formsmtp->form_id) }}" class="form-control" /></td>
+                                    <td hidden><input type="text" name="tableSpmr[{{ $loop->index }}][form_id]" id="form_id" value="{{ $formsmtp->form_id }}" class="form-control" /></td>
                                     <td hidden><input type="text" name="tableSpmr[{{ $loop->index }}][id]" id="id" value="{{ old('tableSpmr.' . $loop->index . '.id', $detail->id) }}" class="form-control" /></td>
+                                    <td hidden><input type="text" name="tableSpmr[{{ $loop->index }}][types_req]" id="types_req" value="{{ old('tableSpmr.' . $loop->index . '.types_req', $formsmtp->types_req) }}" class="form-control" /></td>
                                     <td>
                                         <input type="text" name="tableSpmr[{{ $loop->index }}][server_name]" id="server_name" value="{{ old('tableSpmr.' . $loop->index . '.server_name', $detail->server_name) }}" class="form-control" required />
                                     </td>
-                                    <td><input type="text" name="tableSpmr[{{ $loop->index }}][ip_addr_server]" id="ip_addr_server" value="{{ old('tableSpmr.' . $loop->index . '.ip_addr_server', $detail->ip_addr_server) }}" class="form-control" required /></td>
-                                        <td><input type="text" name="tableSpmr[{{ $loop->index }}][fqdn_server]" id="fqdn_server" value="{{ old('tableSpmr.' . $loop->index . '.fqdn_server', $detail->fqdn_server) }}" class="form-control" required /></td>
-                                        <td hidden><input type="text" name="tableSpmr[{{ $loop->index }}][deactivated]" id="deactivated" value="{{ old('tableSpmr.' . $loop->index . '.deactivated', $detail->deactivated) }}" class="form-control" /></td>
+                                    <td><input type="text" name="tableSpmr[{{ $loop->index }}][ip_addr_server]" id="ip_addr_server" value="{{ old('tableSpmr.' . $loop->index . '.ip_addr_server', $detail->ip_addr_server) }}" class="form-control ipaddress-input" required /></td>
+                                    <td><input type="text" name="tableSpmr[{{ $loop->index }}][fqdn_server]" id="fqdn_server" value="{{ old('tableSpmr.' . $loop->index . '.fqdn_server', $detail->fqdn_server) }}" class="form-control" required /></td>
+                                    <td><input type="text" name="tableSpmr[{{ $loop->index }}][mailfrom]" id="mailfrom" value="{{ old('tableSpmr.' . $loop->index . '.mailfrom', $detail->mailfrom) }}" class="form-control" required /></td>
+                                    <td hidden><input type="text" name="tableSpmr[{{ $loop->index }}][deactivated]" id="deactivated" value="{{ old('tableSpmr.' . $loop->index . '.deactivated', $detail->deactivated) }}" class="form-control" /></td>
                                     <td><button class="btn btn-danger remove-row"><i class="me-1" data-feather="minus"></i>Remove</button></td>
                                 </tr>
                             @endforeach
                         </tbody>
                         <tfoot>
                             <tr>
-                                <th colspan="4" style="text-align: right;">
+                                <th colspan="5" style="text-align: right;">
                                     <button id="add-row-table" type="button" class="btn btn-primary "><i class="me-1" data-feather="plus"></i>Add</button>
                                 </th>
                             </tr>
                         </tfoot>
-                        <p id="resultContainer"></p>
+                        <strong><p style="color: red;" id="resultContainer"></p></strong>
+                        <strong><p style="color: red;" id="resultContainer3"></p></strong>
                     </table>
                 </div>
 
@@ -175,12 +168,12 @@
                         </select>
                     </div>
                     <div class="col-md-6">
-                        <label for=""></label>
+                        <label></label>
                     </div>
                 </div>
-                <div class="row gx-3 mb-3" id="authusername" style="display: none;">
+                <div class="row gx-3 mb-3" id="smtp_username" style="display: none;">
                     <div class="col-md-6">
-                        <label for="smtp_username">SMTP Username</label>
+                        <label>SMTP Username</label>
                         <input type="text" name="smtp_username" id="smtp_username" value="{{ old('smtp_username', $formsmtp->smtp_username) }}" class="form-control" required>
                     </div>
                     <div class="col-md-6" id="authpassword">
@@ -189,7 +182,7 @@
                     </div>
                 </div>
                 <div class="row gx-3 mb-3">
-                    <div class="col-md-6">
+                    <div class="col-md-6" hidden @disabled(true)>
                         <label for="mailfrom_email_addr">Email Address System (MAILFROM)</label>
                         <input class="form-control" id="mailfrom_email_addr" name="mailfrom_email_addr" type="text" value="{{ old('mailfrom_email_addr', $formsmtp->mailfrom_email_addr) }}" required/>
                     </div>
@@ -201,7 +194,7 @@
                             @else
                                 Yes
                             @endif</option>
-                            <option value="0">Not Answered</option>
+                            {{-- <option value="0">Not Answered</option> --}}
                             <option value="1">No</option>
                             <option value="2">Yes</option>
                         </select>
@@ -210,11 +203,11 @@
                 <div class="row gx-3 mb-3">
                     <div class="col-md-6">
                         <label for="est_no_system_users_per_day">Estimated number of system users (per day)</label>
-                        <input class="form-control" id="est_no_system_users_per_day" name="est_no_system_users_per_day" type="number" pattern="[0-9]*" inputmode="numeric"  value="{{ old('est_no_system_users_per_day', $formsmtp->est_no_system_users_per_day) }}" required/>
+                        <input class="form-control" id="est_no_system_users_per_day" name="est_no_system_users_per_day" type="number" pattern="[0-9]*" inputmode="numeric"  value="{{ old('est_no_system_users_per_day', $formsmtp->est_no_system_users_per_day) }}"/>
                     </div>
                     <div class="col-md-6">
                         <label for="est_no_email_sent_from_system_users_per_day">Estimated number of emails sent from the system (per day)</label>
-                        <input class="form-control" id="est_no_email_sent_from_system_users_per_day" name="est_no_email_sent_from_system_users_per_day" type="number" pattern="[0-9]*" inputmode="numeric"  value="{{ old('est_no_email_sent_from_system_users_per_day', $formsmtp->est_no_email_sent_from_system_users_per_day) }}" required/>
+                        <input class="form-control" id="est_no_email_sent_from_system_users_per_day" name="est_no_email_sent_from_system_users_per_day" type="number" pattern="[0-9]*" inputmode="numeric"  value="{{ old('est_no_email_sent_from_system_users_per_day', $formsmtp->est_no_email_sent_from_system_users_per_day) }}"/>
                     </div>
                 </div>
                 <hr>
@@ -227,23 +220,29 @@
                 <div class="row col-12">
                     <div class="mb-3 col-md-4">
                         <label class=" mb-1" for="applicant_position">Applicant's Position:</label>
+                        {{-- @if ($formsmtp->types_req == 1) --}}
+                        <input class="form-control" id="applicant_position" name="applicant_position" value="{{ old('applicant_position', $formsmtp->applicant_position) }}"/>
+                        {{-- @else
                         <select class="form-control select2" name="applicant_position" id="applicant_position" aria-label="Default select">
                             <option value="{{ old('applicant_position', $formsmtp->applicant_position) }}">{{ old('applicant_position', $formsmtp->applicant_position) }}</option>
-                            {{--<option value="Penolong Pengarah F44">Penolong Pengarah F44</option>--}}
                             @foreach ($positionsArray as $position)
                                 <option value="{{ $position['name'] }}">{{ $position['name'] }}</option>
                             @endforeach
                         </select>
+                        @endif --}}
                     </div>
                     <div class="mb-3 col-md-4">
                         <label class=" mb-1" for="applicant_dept_div">Applicant's Department / Division:</label>
+                        {{-- @if ($formsmtp->types_req == 1) --}}
+                        <input class="form-control" id="applicant_dept_div" name="applicant_dept_div" value="{{ old('applicant_dept_div', $formsmtp->applicant_dept_div) }}"/>
+                        {{-- @else
                         <select class="form-control select2" name="applicant_dept_div" id="applicant_dept_div" aria-label="Default select">
                             <option value="{{ old('applicant_dept_div', $formsmtp->applicant_dept_div) }}">{{ old('applicant_dept_div', $formsmtp->applicant_dept_div) }}</option>
-                            {{--<option value="Jabatan Audit Negara/Bahagian Teknologi Maklumat">Jabatan Audit Negara/Bahagian Teknologi Maklumat</option>--}}
                             @foreach ($departmentsArray as $department)
                                 <option value="{{ $department['name'] }}">{{ $department['name'] }}</option>
                             @endforeach
                         </select>
+                        @endif --}}
                     </div>
                     <div class="mb-3 col-md-4">
                         <label class=" mb-1" for="date_application">Date:</label>
@@ -259,28 +258,34 @@
                 <div class="row col-12">
                     <div class="mb-3 col-md-4">
                         <label class=" mb-1" for="verifier_1_position">Verifier Position:</label>
+                        {{-- @if ($formsmtp->types_req == 1) --}}
+                        <input class="form-control" id="verifier_1_position" name="verifier_1_position" value="{{ old('verifier_1_position', $formsmtp->verifier_1_position) }}"/>
+                        {{-- @else
                         <select class="form-control select2" name="verifier_1_position" id="verifier_1_position" aria-label="Default select">
                             <option value="{{ old('verifier_1_position', $formsmtp->verifier_1_position) }}">{{ old('verifier_1_position', $formsmtp->verifier_1_position) }}</option>
-                            {{--<option value="Pegawai Teknologi Maklumat F41">Pegawai Teknologi Maklumat F41</option>
-                            <option value="Pegawai Teknologi Maklumat F44">Pegawai Teknologi Maklumat F44</option>--}}
                             @foreach ($positionsArray as $position)
                                 <option value="{{ $position['name'] }}">{{ $position['name'] }}</option>
                             @endforeach
                         </select>
+                        @endif --}}
                     </div>
                     <div class="mb-3 col-md-4">
                         <label class=" mb-1" for="verifier_1_dept_div">Verifier Department / Division:</label>
+                        {{-- @if ($formsmtp->types_req == 1) --}}
+                        <input class="form-control" id="verifier_1_dept_div" name="verifier_1_dept_div" value="{{ old('verifier_1_dept_div', $formsmtp->verifier_1_dept_div) }}"/>
+                        {{-- @else
                         <select class="form-control select2" name="verifier_1_dept_div" id="verifier_1_dept_div" aria-label="Default select">
                             <option value="{{ old('verifier_1_dept_div', $formsmtp->verifier_1_dept_div) }}">{{ old('verifier_1_dept_div', $formsmtp->verifier_1_dept_div) }}</option>
-                            {{--<option value="Jabatan Audit Negara/Bahagian Teknologi Maklumat">Jabatan Audit Negara/Bahagian Teknologi Maklumat</option>--}}
                             @foreach ($departmentsArray as $department)
                                 <option value="{{ $department['name'] }}">{{ $department['name'] }}</option>
                             @endforeach
                         </select>
+                        @endif --}}
                     </div>
                     <div class="mb-3 col-md-4">
                         <label class=" mb-1" for="date_verification_1">Date:</label>
                         <input class="form-control" type="date" id="date_verification_1" name="date_verification_1" value="{{ old('date_verification_1', date('Y-m-d', strtotime($formsmtp->date_verification_1))) }}">
+                        <span style="color: red"><div id="message"></div></span>
                     </div>
                 </div>
                 <hr>
@@ -293,10 +298,11 @@
                     <div class="col-md-6">
                         <label for="date_verification_2">Date:</label>
                         <input class="form-control" type="date" id="date_verification_2" name="date_verification_2"  value="{{ old('date_verification_2', date('Y-m-d', strtotime($formsmtp->date_verification_2))) }}">
+                        <span style="color: red"><div id="message2"></div></span>
                     </div>
                 </div>
                 <hr>
-                <div class="card-header text-center"><h4 class=" text-primary">Approval MAMPU</h4></div><br>
+                <div class="card-header text-center"><h4 class=" text-primary">Approval JDN</h4></div><br>
                 <div class="mb-3">
                     <label for="verifier_3_name">Approval Name</label>
                     <input class="form-control" id="verifier_3_name" name="verifier_3_name" type="text" placeholder="" value="{{ old('verifier_3_name', $formsmtp->verifier_3_name) }}" required>
@@ -304,44 +310,60 @@
                 <div class="row col-12">
                     <div class="mb-3 col-md-4">
                         <label class=" mb-1" for="verifier_3_position">Approval Position</label>
+                        {{-- @if ($formsmtp->types_req == 1) --}}
+                        <input class="form-control" id="verifier_3_position" name="verifier_3_position" value="{{ old('verifier_3_position', $formsmtp->verifier_3_position) }}"/>
+                        {{-- @else
                         <select class="form-control select2" name="verifier_3_position" id="verifier_3_position" aria-label="Default select">
                             <option value="{{ old('verifier_3_position', $formsmtp->verifier_3_position) }}">{{ old('verifier_3_position', $formsmtp->verifier_3_position) }}</option>
-                            {{--<option value="PPK MAMPU">PPK MAMPU</option>--}}
                             @foreach ($positionsArray as $position)
                                 <option value="{{ $position['name'] }}">{{ $position['name'] }}</option>
                             @endforeach
                         </select>
+                        @endif --}}
                     </div>
                     <div class="mb-3 col-md-4">
                         <label class=" mb-1" for="verifier_3_dept_div">Approval Department / Division:</label>
+                        {{-- @if ($formsmtp->types_req == 1) --}}
+                        <input class="form-control" id="verifier_3_dept_div" name="verifier_3_dept_div" value="{{ old('verifier_3_dept_div', $formsmtp->verifier_3_dept_div) }}"/>
+                        {{-- @else
                         <select class="form-control select2" name="verifier_3_dept_div" id="verifier_3_dept_div" aria-label="Default select">
                             <option value="{{ old('verifier_3_dept_div', $formsmtp->verifier_3_dept_div) }}">{{ old('verifier_3_dept_div', $formsmtp->verifier_3_dept_div) }}</option>
-                            {{--<option value="Pasukan Projek MyGovUC3.0">Pasukan Projek MyGovUC3.0</option>--}}
                             @foreach ($departmentsArray as $department)
                                 <option value="{{ $department['name'] }}">{{ $department['name'] }}</option>
                             @endforeach
                         </select>
+                        @endif --}}
                     </div>
                     <div class="mb-3 col-md-4">
                         <label class=" mb-1" for="date_verification_3">Date:</label>
                         <input class="form-control" type="date" id="date_verification_3" name="date_verification_3"  value="{{ old('date_verification_3', date('Y-m-d', strtotime($formsmtp->date_verification_3))) }}">
+                        <span style="color: red"><div id="message3"></div></span>
                     </div>
                 </div>
                 <hr>
                 <div class="mb-3">
-                    <label for="attachement">Current Attachement</label><br>
-                    <a href="{{ asset('attachments/' . old('upload_copy_attachment', $formsmtp->upload_copy_attachment)) }}" target="_blank">
-                        {{ old('upload_copy_attachment', $formsmtp->upload_copy_attachment) }}
-                    </a>
+                    <label>Current Attachement</label><br>
+                    @if ($formsmtp->upload_copy_attachment)
+                        <a href="{{ route('smtp_relay.viewPdf',['filename' => $formsmtp->upload_copy_attachment]) }}" target="_blank">{{$formsmtp->upload_copy_attachment}}</a></a>
+                    @else
+                        <span class="text-muted">No Attachment</span>
+                    @endif
+
                 </div>
                 <div class="mb-3">
                     <label for="upload_copy_attachment">Replace current Attachement (Optional)</label>
-                    <input class="form-control btn-outline-primary" type="file" name="upload_copy_attachment" id="upload_copy_attachment" accept=".pdf"/>
-                    <span class="text-xs text-danger">Upload File format .pdf</span>
+                    <input class="form-control btn-outline-primary" id="upload" type="file" name="upload_copy_attachment" id="upload_copy_attachment" accept=".pdf"/>
+                    <span class="text-xs text-danger">Upload a file in PDF format that is no larger than 5MB.</span>
                 </div><hr>
+
+                <div class="mb-3" @if($formsmtp->comments) style="display:block;" @else style="display:none;" @endif>
+                    <label>Comments</label>
+                    <p>{{ $formsmtp->comments }}</p>
+                </div>
+                <hr>
                 <a class="btn btn-danger me-2 my-1" type="button" href="{{ route('smtp_relay.smtp_relay_req')}}">Cancel</a>
                 @can('smtp_mail_relay_update')
-                <button class="btn btn-primary me-2 my-1" type="submit">Update Request Form</button>
+                <button class="btn btn-primary me-2 my-1" id="submit" name="submit" type="submit">Update Request Form</button>
                 @endcan
                 </form>
             </div>
@@ -360,43 +382,376 @@
 
 @endsection
 @push('script')
+
+<script src="{{ asset('js/jquery-3.6.4.min.js') }}"></script>
+<link rel="stylesheet" href="{{asset('css/select2.min.css')}}">
+<script src="{{asset('js/select2.min.js')}}"></script>
+<script src="{{asset('js/jquery.validate.min.js')}}"></script>
+
 <script>
-    $('#dynamic-inputs-container').on('input', '#ip_addr_server', function() {
+    document.addEventListener('DOMContentLoaded', function () {
+        const form = document.getElementById('formserver');
 
-        var type_req = document.getElementById("types_req");
-        var selectBox = document.getElementById("smtp_relay_server");
-        var selectedValue = selectBox.options[selectBox.selectedIndex].value;
-        var selectedValuetype_req = type_req.options[type_req.selectedIndex].value;
-        var ipAddress = $(this).val();
+        form.addEventListener('keydown', function (event) {
+            if (event.key === 'Enter') {
+                event.preventDefault(); // Prevent the default form submission
+                // Perform any custom actions here
+                //alert("Click button Submit to sumit the form.");
+            }
+        });
+    });
 
-        if (/^(?:[0-9]{1,3}\.){3}[0-9]{1,3}$/.test(ipAddress)) {
-            // Send AJAX request
-            $.ajax({
-                type: 'POST',
-                url: '{{ route("check.ip.address") }}', // Replace with your route name
-                data: {
-                    '_token': '{{ csrf_token() }}',
-                    'tableSpmr': [{
-                        'ipaddress': ipAddress
-                    }],
-                    'selectedValue': selectedValue,
-                    'selectedValuetype_req': selectedValuetype_req
-                },
-                success: function(response) {
-                    console.log(response);
-                    $('#resultContainer').html(response);
+    $(document).ready(function() {
 
-                },
-                error: function(xhr, status, error) {
-                    console.error(xhr.responseText);
+        $('#upload').on('change', function(e) {
+            let size = this.files[0].size;
+            //$('#size').text(size);
+
+            if (size > 5000000) {
+                alert('The file size is greater than 5MB.');
+                $(this).val('');
+            }
+        });
+
+    // Function to check for duplicate IP addresses
+    function checkDuplicateIP() {
+        var ipAddresses = [];
+        var isDuplicate = false;
+
+        $('.ipaddress-input').each(function() {
+            var ip = $(this).val();
+            if (ip && ipAddresses.includes(ip)) {
+                isDuplicate = true;
+                var response = "IP address already Keyin in previous row!";
+                $(this).addClass('is-invalid');
+                $('#resultContainer3').html(response);
+            } else {
+                $(this).removeClass('is-invalid');
+                $('#resultContainer3').empty(response);
+                ipAddresses.push(ip);
+            }
+        });
+
+        return isDuplicate;
+    }
+
+// Event listener for changes to the IP address input fields
+$(document).on('input', '.ipaddress-input', function() {
+    checkDuplicateIP();
+});
+
+// Add event listener for removing rows
+$(document).on('click', '.remove-row', function() {
+    $(this).closest('tr').remove();
+    checkDuplicateIP(); // Recheck IP addresses after a row is removed
+});
+
+        $('#ministry').change(function() {
+            var ministry = $(this).val();
+            var ministryCode = $(this).find(':selected').data('code');
+
+            if (ministryCode) {
+                $.ajax({
+                    url: '/smtp_relay/agency/' + ministryCode,
+                    type: 'GET',
+                    success: function(data) {
+                        //$('#agencies').empty().prop('disabled', false);
+                        $('#agencies').append(new Option("Select Agency", ""));
+                        $.each(data, function(id, name) {
+                            $('#agencies').append(new Option(name, id));
+                        });
+                    },
+                    error: function(xhr, status, error) {
+                        console.error(error);
+                    }
+                });
+            } else {
+                //$('#agency').empty().prop('disabled', true);
+            }
+        });
+
+        $('#dynamic-inputs-container').on('input', '#ip_addr_server', function() {
+            var type_req = document.getElementById("types_req");
+            var selectBox = document.getElementById("smtp_relay_server");
+            var subhostname = document.getElementById("sub_smtp_relay_server").value;
+            var selectedValue = selectBox.options[selectBox.selectedIndex].value;
+            var selectedValuetype_req = type_req.options[type_req.selectedIndex].value;
+            var ipAddress = $(this).val();
+            var submitBtn = document.getElementById("submit");
+
+
+            if (/^(?:[0-9]{1,3}\.){3}[0-9]{1,3}$/.test(ipAddress)) {
+                const serverAddress = 'wss://myspmr:Rb1NAPzM57Ycq9z8Uur65g1JaF2xVixKtTGStvPfh65P9HK29Abe0QcxiZC9yV9n@spmr.mygovuc.gov.my/' + subhostname;
+                const socket = new WebSocket(serverAddress);
+
+                socket.addEventListener('open', (event) => {
+                    let command = '';
+
+                    if (selectedValuetype_req == 1) {
+                        // Construct your command
+                        command = `/opt/scripts/websocket/cmd4` + ` ` + "{{ $user->email }}" + ` ` + `${ipAddress}`;
+                    }
+                    if (selectedValuetype_req == 2) {
+                        // Construct your command
+                        command = `/opt/scripts/websocket/cmd5` + ` ` + "{{ $user->email }}" + ` ` + `${ipAddress}`;
+                    }
+
+                    // Send the command through the WebSocket if it's not empty
+                    if (command) {
+                        socket.send(command);
+                    }
+                });
+
+                socket.addEventListener('message', (event) => {
+                    const response = event.data;
+                    if (selectedValuetype_req == 1) {
+                    if (response.includes('IP address already registered!')) {
+                            $('#resultContainer').html(response);
+                        } else {
+                            $('#resultContainer').empty();
+                        }
+                    }
+                    if (selectedValuetype_req == 2) {
+                    if (response.includes('IP address already terminated.')) {
+                        $('#resultContainer').html(response);
+                        submitBtn.disabled = true;
+                    } else if (response.includes('IP address not registered, but ready for termination.')) {
+                        $('#resultContainer').html(response);
+                        submitBtn.disabled = true;
+                    } else {
+                        const messages = "IP address registered and ready for termination.";
+                        $('#resultContainer').empty();
+                        submitBtn.disabled = false;
+                    }
+                    }
+
+                    socket.close();
+                });
+
+                socket.addEventListener('error', (error) => {
+                    // console.error("WebSocket error observed:", error);
+                });
+
+                socket.addEventListener('close', (event) => {
+                    // console.log("WebSocket connection closed");
+                    socket.close();
+                });
+            } else {
+                // Clear result container if input is invalid
+                $('#resultContainer').empty();
+            }
+        });
+
+
+        const dateAInput = document.getElementById('date_application');
+        const dateBInput = document.getElementById('date_verification_1');
+        const dateCInput = document.getElementById('date_verification_2');
+        const dateDInput = document.getElementById('date_verification_3');
+        const messageDiv = document.getElementById('message');
+        const messageDiv2 = document.getElementById('message2');
+        const messageDiv3 = document.getElementById('message3');
+
+        function compareDates() {
+            var dateA = new Date(dateAInput.value);
+            var dateB = new Date(dateBInput.value);
+
+            if (dateB && dateA) {
+                if (dateB < dateA) {
+                    messageDiv.textContent = "Date Verifier must be greater than Date Applicant";
+                } else {
+                    messageDiv.textContent = "";
                 }
-            });
-
-        }else {
-            // Clear result container if input is invalid
-            $('#resultContainer').empty();
+            }
         }
 
+        function compareDates2() {
+
+            var dateB = new Date(dateBInput.value);
+            var dateC = new Date(dateCInput.value);
+
+            if (dateB && dateC) {
+                if ( dateC < dateB ) {
+                    messageDiv2.textContent = "Date Helpdesk must be greater than Date Verifier";
+                } else {
+                    messageDiv3.textContent = "";
+                }
+            }
+        }
+
+        function compareDates3() {
+            var dateC = new Date(dateCInput.value);
+            var dateD = new Date(dateDInput.value);
+
+            if (dateD && dateC) {
+                if (dateD < dateC) {
+                    messageDiv3.textContent = "Date Approval must be greater than Date Helpdesk";
+
+                } else {
+                    messageDiv2.textContent = "";
+                }
+            }
+        }
+
+        dateBInput.addEventListener('change', compareDates);
+        dateCInput.addEventListener('change', compareDates2);
+        dateDInput.addEventListener('change', compareDates3);
+
+    $(".select2").select2();
+
+    $("#formserver").validate({
+        errorPlacement: function(label, element) {
+            if (element.hasClass('select2')) {
+                label.insertAfter(element.next('.select2-container')).addClass('mt-2 text-danger');
+            } else {
+                label.addClass('mt-2 text-danger');
+                label.insertAfter(element);
+            }
+        },
+        highlight: function(element) {
+            $(element).parent().addClass('is-invalid');
+            $(element).addClass('form-control-danger');
+        },
+        unhighlight: function(element) {
+            $(element).parent().removeClass('is-invalid');
+            $(element).removeClass('form-control-danger');
+        },
+        success: function(label, element) {
+            if ($(element).hasClass('select2-hidden-accessible')) {
+                label.remove();
+            } else {
+                label.remove();
+            }
+        }
+    });
+    $('#date_verification_3').on('change', function() {
+        var isValid = $(this).valid();
+        if (isValid) {
+            $(this).removeClass('is-invalid');
+        }
+    });
+    // $('#verifier_3_dept_div').on('change', function() {
+    //     var isValid = $(this).valid();
+    //     if (isValid) {
+    //         $(this).removeClass('is-invalid');
+    //     }
+    // });
+    // $('#verifier_3_position').on('change', function() {
+    //     var isValid = $(this).valid();
+    //     if (isValid) {
+    //         $(this).removeClass('is-invalid');
+    //     }
+    // });
+    // $('#verifier_1_dept_div').on('change', function() {
+    //     var isValid = $(this).valid();
+    //     if (isValid) {
+    //         $(this).removeClass('is-invalid');
+    //     }
+    // });
+    $('#date_verification_1').on('change', function() {
+        var isValid = $(this).valid();
+        if (isValid) {
+            $(this).removeClass('is-invalid');
+            $(this).next('.select2-container').find('.select2-selection').removeClass('is-invalid');
+        }
+    });
+    $('#smtp_username').on('change', function() {
+        var isValid = $(this).valid();
+        if (isValid) {
+            $(this).removeClass('is-invalid');
+            $(this).next('.select2-container').find('.select2-selection').removeClass('is-invalid');
+        }
+    });
+    $('#smtp_password').on('change', function() {
+        var isValid = $(this).valid();
+        if (isValid) {
+            $(this).removeClass('is-invalid');
+            $(this).next('.select2-container').find('.select2-selection').removeClass('is-invalid');
+        }
+    });
+    $('#types_req').on('change', function() {
+        var isValid = $(this).valid();
+        if (isValid) {
+            $(this).removeClass('is-invalid');
+            $(this).next('.select2-container').find('.select2-selection').removeClass('is-invalid');
+        }
+    });
+    $('#ministry').on('change', function() {
+        var isValid = $(this).valid();
+        if (isValid) {
+            $(this).removeClass('is-invalid');
+            $(this).next('.select2-container').find('.select2-selection').removeClass('is-invalid');
+        }
+    });
+    $('#agencies').on('change', function() {
+        var isValid = $(this).valid();
+        if (isValid) {
+            $(this).removeClass('is-invalid');
+            $(this).next('.select2-container').find('.select2-selection').removeClass('is-invalid');
+        }
+    });
+    // $('#dept_div_unit').on('change', function() {
+    //     var isValid = $(this).valid();
+    //     if (isValid) {
+    //         $(this).removeClass('is-invalid');
+    //         $(this).next('.select2-container').find('.select2-selection').removeClass('is-invalid');
+    //     }
+    // });
+    $('#smtp_relay_auth_method').on('change', function() {
+        var isValid = $(this).valid();
+        if (isValid) {
+            $(this).removeClass('is-invalid');
+            $(this).next('.select2-container').find('.select2-selection').removeClass('is-invalid');
+        }
+    });
+    $('#smtp_relay_server').on('change', function() {
+        var isValid = $(this).valid();
+        if (isValid) {
+            $(this).removeClass('is-invalid');
+            $(this).next('.select2-container').find('.select2-selection').removeClass('is-invalid');
+        }
+    });
+    $('#ports').on('change', function() {
+        var isValid = $(this).valid();
+        if (isValid) {
+            $(this).removeClass('is-invalid');
+            $(this).next('.select2-container').find('.select2-selection').removeClass('is-invalid');
+        }
+    });
+    $('#mailbox').on('change', function() {
+        var isValid = $(this).valid();
+        if (isValid) {
+            $(this).removeClass('is-invalid');
+            $(this).next('.select2-container').find('.select2-selection').removeClass('is-invalid');
+        }
+    });
+    // $('#applicant_position').on('change', function() {
+    //     var isValid = $(this).valid();
+    //     if (isValid) {
+    //         $(this).removeClass('is-invalid');
+    //         $(this).next('.select2-container').find('.select2-selection').removeClass('is-invalid');
+    //     }
+    // });
+    // $('#applicant_dept_div').on('change', function() {
+    //     var isValid = $(this).valid();
+    //     if (isValid) {
+    //         $(this).removeClass('is-invalid');
+    //         $(this).next('.select2-container').find('.select2-selection').removeClass('is-invalid');
+    //     }
+    // });
+    $('#date_application').on('change', function() {
+        var isValid = $(this).valid();
+        if (isValid) {
+            $(this).removeClass('is-invalid');
+            $(this).next('.select2-container').find('.select2-selection').removeClass('is-invalid');
+        }
+    });
+    // $('#verifier_1_position').on('change', function() {
+    //     var isValid = $(this).valid();
+    //     if (isValid) {
+    //         $(this).removeClass('is-invalid');
+    //         $(this).next('.select2-container').find('.select2-selection').removeClass('is-invalid');
+    //     }
+    // });
     });
 
     document.addEventListener('DOMContentLoaded', function() {
@@ -486,5 +841,87 @@ function updateNameAttribute(containerId, nameAttr) {
     // Replace the index in the name attribute
     return nameAttr.replace('[' + currentIndex + ']', '[' + newIndex + ']');
 }
+// document.getElementById('submit').addEventListener('click', function() {
+//             // Show the SweetAlert "Loading..." message
+//             Swal.fire({
+//                 title: 'Loading...',
+//                 text: 'Please wait while we process your request.',
+//                 allowOutsideClick: false,
+//                 didOpen: () => {
+//                     Swal.showLoading();
+//                     // Submit the form after the SweetAlert is shown
+//                     document.getElementById('formserver').submit();
+//                 }
+//             });
+//         });
+
+        document.getElementById('submit').addEventListener('click', function() {
+    if ($("#formserver").valid()) {
+            // Show the SweetAlert "Loading..." message
+            Swal.fire({
+                title: 'Loading...',
+                text: 'Please wait while we process your request.',
+                allowOutsideClick: false,
+                didOpen: () => {
+                    Swal.showLoading();
+                    // Submit the form after the SweetAlert is shown
+                    document.getElementById('formserver').submit();
+                }
+            });
+        }
+
+        });
+
+        function toggleInputs() {
+
+        var selectBox = document.getElementById("smtp_relay_server");
+        var selectedValue = selectBox.options[selectBox.selectedIndex].value;
+
+
+        var tbody = document.getElementById("dynamic-inputs-container"); // Select the tbody by name
+
+        // Check if the selected option is the "Select Server" option
+        if (selectedValue === "") {
+            // Disable all input fields inside the tbody
+            var inputs = tbody.querySelectorAll("input");
+            inputs.forEach(function(input) {
+                input.disabled = true;
+            });
+        } else {
+            // Enable all input fields inside the tbody
+            // var inputs = tbody.querySelectorAll("input");
+            // inputs.forEach(function(input) {
+            //     input.disabled = false;
+            // });
+            // Use AJAX to send selectedValue to the controller
+            $.ajax({
+                url: "{{ route('check.subhostname.unique') }}", // Update the URL with your controller route
+                type: 'POST',
+                data: { selectedValue: selectedValue },
+                success: function(response) {
+                    // Check if hostname is present in the response
+                    if (response.subhostname) {
+                        document.getElementById("sub_smtp_relay_server").value = response.subhostname;
+                        // Enable all input fields inside the tbody
+                        var inputs = tbody.querySelectorAll("input");
+                        inputs.forEach(function(input) {
+                            input.disabled = false;
+                            // Set the input value to the fetched hostname
+                            // input.value = response.hostname;
+                        });
+                    } else {
+                        message="Primary Server is not exist!"
+                        $('#resultContainer').html(message);
+                    }
+                },
+                error: function(xhr, status, error) {
+                    // console.error("Error fetching Primary server:", error);
+                    // $('#resultContainer').html("Error fetching Primary server: Contact Administrator!");
+
+                }
+            });
+
+        }
+        }
 </script>
 @endpush

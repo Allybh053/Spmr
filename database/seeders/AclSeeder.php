@@ -18,6 +18,17 @@ class AclSeeder extends Seeder
 	{
 		// Create Permissions
 		$permissions = [
+            "dashboard" => [
+				'total_application_registered',
+				'total_domain_registered',
+				'number_of_registered_sasl',
+				'total_ip_based_registered',
+                'top_5_list_ministry',
+                'top_5_list_department',
+                'serial_mail_queue_chart',
+                'view_current_mail_queue_count',
+                'realtime_service_status'
+			],
 			"smtp_mail_relay" => [
 				'smtp_mail_relay_view',
 				'smtp_mail_relay_add',
@@ -30,6 +41,9 @@ class AclSeeder extends Seeder
 				'manage_mail_relay_edit',
 				'manage_mail_relay_delete'
 			],
+            "mail_upstream_routing" => [
+               'mail_upstream_routing_view',
+            ],
 			// "history_connection" => [
 			// 	'view_blacklist_firewall',
 			// 	'view_whitelist_firewall',
@@ -119,12 +133,12 @@ class AclSeeder extends Seeder
 					'agencies_update',
 					'agencies_delete',
 				],
-				"mail_upstream" => [
-					'mail_upstream_view',
-					'mail_upstream_add',
-					'mail_upstream_update',
-					'mail_upstream_delete',
-				],
+				// "mail_upstream" => [
+				// 	'mail_upstream_view',
+				// 	'mail_upstream_add',
+				// 	'mail_upstream_update',
+				// 	'mail_upstream_delete',
+				// ],
 				"version" => [
 					'version_view'
 				],

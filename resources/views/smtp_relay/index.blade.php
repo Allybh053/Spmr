@@ -10,7 +10,7 @@
                                 <div class="page-header-icon"></div>
                                 <nav aria-label="breadcrumb">
                                     <ol class="breadcrumb">
-                                         <li class="breadcrumb-item">SMTP Relay Request MyGovUC3.0</li>
+                                         <li class="breadcrumb-item">SMTP Relay Request MyGovUC</li>
                                     </ol>
                                 </nav>
                             </h1>
@@ -32,8 +32,22 @@
                 </div>
             </div>
         </header>
-        <div class="container-fluid px-4 mb-4">
-            @if(request()->has('message'))
+        <!-- Main page content-->
+        <div class="container-fluid px-4">
+            @if(session('success'))
+            <script>
+                document.addEventListener('DOMContentLoaded', function() {
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Success!',
+                        text: '{{ session('success') }}',
+                        showConfirmButton: false,
+                        timer: 2500 // milliseconds
+                    });
+                });
+            </script>
+            @endif
+            {{-- @if(request()->has('success'))
             <script>
                 document.addEventListener('DOMContentLoaded', function () {
                     Swal.fire({
@@ -41,45 +55,28 @@
                         title: 'Message',
                         text: '{{ request()->get('message') }}',
                         showConfirmButton: false,
-                        timer: 3000  // Automatically close after 3 seconds
+                        timer: 5000  // Automatically close after 3 seconds
                     });
                 });
             </script>
-            @endif
-        </div>
-
-
-            <!-- add choose by server then show this searchong by server -->
-
-
-
-        <!-- Main page content-->
-        <div class="container-fluid px-4">
-            {{-- @if(session('success'))
-                <div class="alert alert-primary alert-dismissible fade show" role="alert">
-                    <h5 class="alert-heading">Message</h5>
-                    {{ session('success') }}
-                    <button class="btn-close" type="button" data-bs-dismiss="alert" aria-label="Close"></button>
-                </div>
             @endif --}}
             <div class="card">
-                 <div class="card-header">List SMTP Relay Request MyGovUC3.0</div>
+                 <div class="card-header">List SMTP Relay Request MyGovUC</div>
                 <div class="card-body">
                 <div class="table-responsive">
                     <table id="spmrDatatable"  class="display table table-striped table-bordered" cellspacing="0" width="100%">
                         <thead>
                             <tr>
                                 <th>No.</th>
+                                <th>Date Created</th>
                                 <th>Serial No.</th>
                                 <th>Ticket No.</th>
                                 <th>Types Application</th>
                                 <th>Agency Name</th>
                                 <th>Project Name</th>
                                 <th>Server Mail Relay</th>
-                                {{--<th>Total Ip Address</th>--}}
                                 <th>Ip Address</th>
                                 <th>Date Approval</th>
-                                <th>Date Created</th>
                                 <th>Status</th>
                                 <th>Action</th>
                             </tr>
@@ -117,7 +114,9 @@
  @endsection
 
 @push('script')
-    <script>
+
+<script src="{{ asset('js/vendor/moment.min.js') }}"></script>
+<script>
   $(document).ready(function() {
         var table = $('#spmrDatatable').DataTable({
             processing: true,
@@ -145,6 +144,7 @@
             },
             columns: [
                 { data: 'DT_RowIndex', name: 'DT_RowIndex', orderable: false, searchable: false, class: 'text-center' },
+                { data: 'created_at', name: 'created_at', class: 'text-center' },
                 { data: 'form_id', name: 'form_id', class: 'text-center' },
                 { data: 'ticket_id', name: 'ticket_number', class: 'text-center' },
                 { data: 'types_req', name: 'types_req', class: 'text-center' },
@@ -152,8 +152,8 @@
                 { data: 'project_name', name: 'project_name', class: 'text-center' },
                 { data: 'smtp_relay_server', name: 'smtp_relay_server', class: 'text-center' },
                 { data: 'ip_addr_server', name: 'ip_addr_server', class: 'text-center' },
+                /*{ data: 'updated_at', name: 'updated_at', class: 'text-center' },*/
                 { data: 'date_verification_3', name: 'date_verification_3', class: 'text-center' },
-                { data: 'created_at', name: 'created_at', class: 'text-center' },
                 { data: 'status', name: 'status', class: 'text-center' },
                 { data: 'action', name: 'type', class: 'text-center', orderable: false, searchable: false },
             ],
@@ -162,41 +162,71 @@
             {
                 extend: 'copy',
                 text: 'Copy',
-                title: 'List SMTP Relay Request MyGovUC3.0',
+                title: 'List SMTP Relay Request MyGovUC',
                 exportOptions: {
-                    columns: ':visible'
+                    columns: ':not(:last-child)', // Exclude the last column
+                    format: {
+                        body: function (data, row, column, node) {
+                            // Add row number for the first column
+                            return column === 0 ? row + 1 : data;
+                        }
+                    }
                 }
             },
             {
                 extend: 'csv',
                 text: 'CSV',
-                title: 'List SMTP Relay Request MyGovUC3.0',
+                title: 'List SMTP Relay Request MyGovUC',
                 exportOptions: {
-                    columns: ':visible'
+                    columns: ':not(:last-child)', // Exclude the last column
+                    format: {
+                        body: function (data, row, column, node) {
+                            // Add row number for the first column
+                            return column === 0 ? row + 1 : data;
+                        }
+                    }
                 }
             },
             {
                 extend: 'excel',
                 text: 'Excel',
-                title: 'List SMTP Relay Request MyGovUC3.0',
+                title: 'List SMTP Relay Request MyGovUC',
                 exportOptions: {
-                    columns: ':visible'
+                    columns: ':not(:last-child)', // Exclude the last column
+                    format: {
+                        body: function (data, row, column, node) {
+                            // Add row number for the first column
+                            return column === 0 ? row + 1 : data;
+                        }
+                    }
                 }
             },
             {
                 extend: 'pdf',
                 text: 'PDF',
-                title: 'List SMTP Relay Request MyGovUC3.0',
+                title: 'List SMTP Relay Request MyGovUC',
                 exportOptions: {
-                    columns: ':visible'
+                    columns: ':not(:last-child)', // Exclude the last column
+                    format: {
+                        body: function (data, row, column, node) {
+                            // Add row number for the first column
+                            return column === 0 ? row + 1 : data;
+                        }
+                    }
                 }
             },
             {
                 extend: 'print',
                 text: 'Print',
-                title: 'List SMTP Relay Request MyGovUC3.0',
+                title: 'List SMTP Relay Request MyGovUC',
                 exportOptions: {
-                    columns: ':visible'
+                    columns: ':not(:last-child)', // Exclude the last column
+                    format: {
+                        body: function (data, row, column, node) {
+                            // Add row number for the first column
+                            return column === 0 ? row + 1 : data;
+                        }
+                    }
                 }
             }
         ],

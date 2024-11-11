@@ -12,21 +12,38 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Collection;
 use Carbon\Carbon;
+use App\Models\ActivityLog;
 
 class MonthlyReportingController extends Controller
 {
-    public function index() {
+    public function index(Request $request) {
         $user = Auth::user();
         $role = $user->roles->isNotEmpty() ? $user->roles->pluck('name')->first() : null;
-        $serverIds = RoleServer::whereIn('role_id', $user->roles->pluck('id')->all())
-            ->pluck('server_id');
+        $serverIds = RoleServer::whereIn('role_servers.role_id', $user->roles->pluck('id')->all())
+        ->leftJoin('servers','servers.id','role_servers.server_id')
+        ->where('servers.status',1)
+        ->pluck('server_id');
 
-        $defaultServerId = 1;
+        $defaultServerId = $serverIds->min();
 
         // Filter servers based on the fetched IDs
         $serverconfig = Server::whereIn('id', $serverIds)
             ->where('status', 1)->orderBy('id', 'asc')
             ->pluck('hostname', 'id');
+
+        ActivityLog::create([
+            'user_id' => Auth::id(),
+            'activity_type' => 'View Usage Reporting',
+            'action' => $request->path(),
+            'url' => url()->full(),
+            'method' => $request->method(),
+            'ip_address' => $request->ip(),
+            'input' => json_encode([
+                'usage report' => 'Retrieve data for viewing monthly reporting Page',
+                'request' => $request->except(['password']),
+            ]),
+            'user_agent' => $request->userAgent(),
+        ]);
 
         return view('monthlyReport.index',compact('defaultServerId','serverconfig'));
     }
@@ -41,9 +58,11 @@ class MonthlyReportingController extends Controller
 
     public function search(Request $request)
     {
+
         // Retrieve other inputs from the request
         $serverIds = $request->input('server');
-        $input2Type = $request->input('calendarType');
+        //$input2Type = $request->input('calendarType');
+        $input2Type = 'month';
         $monthType = $request->input('input2_month');
         $yearType = $request->input('input2_year');
 
@@ -59,10 +78,15 @@ class MonthlyReportingController extends Controller
         // Apply filter based on $input2Type
         if ($input2Type !== null) {
             if ($input2Type === "month") {
-                $queryJad2->where('month', $monthType);
-                $queryJad6->where('month', $monthType);
-                $queryJad10->where('month', $monthType);
-                $queryJad14->where('month', $monthType);
+                $date = $request->input('input2_month');
+                $year = intval(substr($date, 0, 4));
+                $month = intval(substr($date, 5, 2));
+
+                // Apply the year and month filters to multiple queries
+                $queryJad2->where('year', $year)->where('month', $month);
+                $queryJad6->where('year', $year)->where('month', $month);
+                $queryJad10->where('year', $year)->where('month', $month);
+                $queryJad14->where('year', $year)->where('month', $month);
             } elseif ($input2Type === "year") {
                 $queryJad2->where('year', $yearType);
                 $queryJad6->where('year', $yearType);
@@ -80,11 +104,38 @@ class MonthlyReportingController extends Controller
         $valDataJad14 = $queryJad14->get();
 
 
+
+        // Apply formatting
+        $valDataJad2 = $this->formatData($valDataJad2);
+        $valDataJad6 =  $this->formatData($valDataJad6);
+        $valDataJad10 = $this->formatDataEmail($valDataJad10);
+        $valDataJad14 =  $this->formatDataEmail($valDataJad14);
+
+
+
+
+        // this will use for date range
+
+        // ->when($request->date_from != null && $request->date_to != null, function ($query) use ($request) {
+        //     $query->where('transaction_headers.transaction_date', '>=', Carbon::parse($request->date_from)->startOfDay())
+        //         ->where('transaction_headers.transaction_date', '<=', Carbon::parse($request->date_to)->endOfDay());
+        // })
+        // ->when($request->date_from != null && $request->date_to == null, function ($query) use ($request) {
+        //     $query->where('transaction_headers.transaction_date', '>=', Carbon::parse($request->date_from)->startOfDay());
+        // })
+        // ->when($request->date_to != null && $request->date_from == null, function ($query) use ($request) {
+        //     $query->where('transaction_headers.transaction_date', '<=', Carbon::parse($request->date_to)->endOfDay());
+        // })
+
+
         $chartJadual2 = Jadual2::when(isset($serverName) && $serverName != null, function ($query) use ($serverName) {
             $query->where('server', $serverName);
         })
         ->when(isset($request->input2_month) && $request->input('input2_month') != null, function ($query) use ($request) {
-            $query->where('month', $request->input('input2_month'));
+            $date = $request->input('input2_month');
+            $year = intval(substr($date, 0, 4));
+            $month = intval(substr($date, 5, 2));
+            $query->where('year', $year)->where('month', $month);
         })
         ->when(isset($request->input2_year) && $request->input('input2_year') != null, function ($query) use ($request) {
             $query->where('year', $request->input('input2_year'));
@@ -100,7 +151,10 @@ class MonthlyReportingController extends Controller
             $query->where('server', $serverName);
         })
         ->when(isset($request->input2_month) && $request->input('input2_month') != null, function ($query) use ($request) {
-            $query->where('month', $request->input('input2_month'));
+            $date = $request->input('input2_month');
+            $year = intval(substr($date, 0, 4));
+            $month = intval(substr($date, 5, 2));
+            $query->where('year', $year)->where('month', $month);
         })
         ->when(isset($request->input2_year) && $request->input('input2_year') != null, function ($query) use ($request) {
             $query->where('year', $request->input('input2_year'));
@@ -111,7 +165,10 @@ class MonthlyReportingController extends Controller
             $query->where('server', $serverName);
         })
         ->when(isset($request->input2_month) && $request->input('input2_month') != null, function ($query) use ($request) {
-            $query->where('month', $request->input('input2_month'));
+            $date = $request->input('input2_month');
+            $year = intval(substr($date, 0, 4));
+            $month = intval(substr($date, 5, 2));
+            $query->where('year', $year)->where('month', $month);
         })
         ->when(isset($request->input2_year) && $request->input('input2_year') != null, function ($query) use ($request) {
             $query->where('year', $request->input('input2_year'));
@@ -124,7 +181,10 @@ class MonthlyReportingController extends Controller
             $query->where('server', $serverName);
         })
         ->when(isset($request->input2_month) && $request->input('input2_month') != null, function ($query) use ($request) {
-            $query->where('month', $request->input('input2_month'));
+            $date = $request->input('input2_month');
+            $year = intval(substr($date, 0, 4));
+            $month = intval(substr($date, 5, 2));
+            $query->where('year', $year)->where('month', $month);
         })
         ->when(isset($request->input2_year) && $request->input('input2_year') != null, function ($query) use ($request) {
             $query->where('year', $request->input('input2_year'));
@@ -132,6 +192,21 @@ class MonthlyReportingController extends Controller
         ->orderBy('total_email', 'desc')
         ->limit(20)
         ->get();
+
+
+        ActivityLog::create([
+            'user_id' => Auth::id(),
+            'activity_type' => 'Searching Usage Reporting',
+            'action' => $request->path(),
+            'url' => url()->full(),
+            'method' => $request->method(),
+            'ip_address' => $request->ip(),
+            'input' => json_encode([
+                'usage report' => 'Retrieve data for searching monthly reporting Page',
+                'request' => $request->except(['password']),
+            ]),
+            'user_agent' => $request->userAgent(),
+        ]);
 
         return response()->json([
             'dataTbl2' => $valDataJad2,
@@ -146,4 +221,27 @@ class MonthlyReportingController extends Controller
         ]);
     }
 
+
+    private function formatData(Collection $data)
+    {
+        return $data->map(function ($item) {
+            $item->received = number_format($item->received);
+            $item->delivered = number_format($item->delivered);
+            $item->deferred = number_format($item->deferred);
+            $item->bounced = number_format($item->bounced);
+            $item->rejected = number_format($item->rejected);
+            return $item;
+        });
+    }
+    private function formatDataEmail(Collection $data)
+    {
+        return $data->map(function ($item) {
+            $item->total_email = number_format($item->total_email);
+            return $item;
+        });
+    }
+
+
 }
+
+

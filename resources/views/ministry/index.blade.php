@@ -2,7 +2,7 @@
 @section('content')
     <main>
         <header class="page-header page-header-compact page-header-light border-bottom bg-white mb-4">
-            <div class="container-xl px-4">
+            <div class="container-fluid px-4">
                 <div class="page-header-content">
                     <div class="row align-items-center justify-content-between pt-3">
                         <div class="col-auto mb-3">
@@ -15,7 +15,7 @@
                 </div>
             </div>
         </header>
-        <div class="container-xl px-4">
+        <div class="container-fluid px-4">
             @if(session('success'))
             <script>
                 document.addEventListener('DOMContentLoaded', function () {
@@ -49,6 +49,7 @@
                         <thead>
                             <tr>
                                 <th>No</th>
+                                <th>Code Name</th>
                                 <th>Name</th>
                                 <th>Remark</th>
                                 <th>Status</th>
@@ -60,6 +61,7 @@
                              @foreach ($ministrys as $ministry)
                             <tr>
                                 <td>{{ $loop->iteration }}.</td>
+                                <td>{{ $ministry->code_name }}</td>
                                 <td>{{ $ministry->name }}</td>
                                 <td>{{ $ministry->remark }}</td>
                                 <td>
@@ -107,35 +109,90 @@
                 extend: 'copy',
                 text: 'Copy',
                 exportOptions: {
-                    columns: ':visible'
+                    columns:  ':not(:last-child)',
+                    format: {
+                        body: function (data, row, column, node) {
+                        var textContent = $('<div>').html(data).text(); // Use jQuery to strip HTML tags
+                        // Handle date formatting if necessary
+                        if (/\d{2}\/\d{2}\/\d{4}/.test(textContent)) {
+                            var dateParts = textContent.split('/');
+                            textContent = new Date(dateParts[2], dateParts[1] - 1, dateParts[0]).toLocaleDateString();
+                        }
+                        return column === 0 ? row + 1 : textContent;
+                    }
+                    }
                 }
             },
             {
                 extend: 'csv',
                 text: 'CSV',
                 exportOptions: {
-                    columns: ':visible'
+                    columns:  ':not(:last-child)',
+                    format: {
+                        body: function (data, row, column, node) {
+                        var textContent = $('<div>').html(data).text(); // Use jQuery to strip HTML tags
+                        // Handle date formatting if necessary
+                        if (/\d{2}\/\d{2}\/\d{4}/.test(textContent)) {
+                            var dateParts = textContent.split('/');
+                            textContent = new Date(dateParts[2], dateParts[1] - 1, dateParts[0]).toLocaleDateString();
+                        }
+                        return column === 0 ? row + 1 : textContent;
+                    }
+                    }
                 }
             },
             {
                 extend: 'excel',
                 text: 'Excel',
                 exportOptions: {
-                    columns: ':visible'
+                    columns:  ':not(:last-child)',
+                    format: {
+                        body: function (data, row, column, node) {
+                        var textContent = $('<div>').html(data).text(); // Use jQuery to strip HTML tags
+                        // Handle date formatting if necessary
+                        if (/\d{2}\/\d{2}\/\d{4}/.test(textContent)) {
+                            var dateParts = textContent.split('/');
+                            textContent = new Date(dateParts[2], dateParts[1] - 1, dateParts[0]).toLocaleDateString();
+                        }
+                        return column === 0 ? row + 1 : textContent;
+                    }
+                    }
                 }
             },
             {
                 extend: 'pdf',
                 text: 'PDF',
                 exportOptions: {
-                    columns: ':visible'
+                    columns:  ':not(:last-child)',
+                    format: {
+                        body: function (data, row, column, node) {
+                        var textContent = $('<div>').html(data).text(); // Use jQuery to strip HTML tags
+                        // Handle date formatting if necessary
+                        if (/\d{2}\/\d{2}\/\d{4}/.test(textContent)) {
+                            var dateParts = textContent.split('/');
+                            textContent = new Date(dateParts[2], dateParts[1] - 1, dateParts[0]).toLocaleDateString();
+                        }
+                        return column === 0 ? row + 1 : textContent;
+                    }
+                    }
                 }
             },
             {
                 extend: 'print',
                 text: 'Print',
                 exportOptions: {
-                    columns: ':visible'
+                    columns:  ':not(:last-child)',
+                    format: {
+                        body: function (data, row, column, node) {
+                        var textContent = $('<div>').html(data).text(); // Use jQuery to strip HTML tags
+                        // Handle date formatting if necessary
+                        if (/\d{2}\/\d{2}\/\d{4}/.test(textContent)) {
+                            var dateParts = textContent.split('/');
+                            textContent = new Date(dateParts[2], dateParts[1] - 1, dateParts[0]).toLocaleDateString();
+                        }
+                        return column === 0 ? row + 1 : textContent;
+                    }
+                    }
                 }
             }
         ],
@@ -169,35 +226,65 @@
                 extend: 'copy',
                 text: 'Copy',
                 exportOptions: {
-                    columns: ':visible'
+                    columns: ':visible',
+                    format: {
+                        body: function (data, row, column, node) {
+                            // Add row number for the first column
+                            return column === 0 ? row + 1 : data;
+                        }
+                    }
                 }
             },
             {
                 extend: 'csv',
                 text: 'CSV',
                 exportOptions: {
-                    columns: ':visible'
+                    columns: ':visible',
+                    format: {
+                        body: function (data, row, column, node) {
+                            // Add row number for the first column
+                            return column === 0 ? row + 1 : data;
+                        }
+                    }
                 }
             },
             {
                 extend: 'excel',
                 text: 'Excel',
                 exportOptions: {
-                    columns: ':visible'
+                    columns: ':visible',
+                    format: {
+                        body: function (data, row, column, node) {
+                            // Add row number for the first column
+                            return column === 0 ? row + 1 : data;
+                        }
+                    }
                 }
             },
             {
                 extend: 'pdf',
                 text: 'PDF',
                 exportOptions: {
-                    columns: ':visible'
+                    columns: ':visible',
+                    format: {
+                        body: function (data, row, column, node) {
+                            // Add row number for the first column
+                            return column === 0 ? row + 1 : data;
+                        }
+                    }
                 }
             },
             {
                 extend: 'print',
                 text: 'Print',
                 exportOptions: {
-                    columns: ':visible'
+                    columns: ':visible',
+                    format: {
+                        body: function (data, row, column, node) {
+                            // Add row number for the first column
+                            return column === 0 ? row + 1 : data;
+                        }
+                    }
                 }
             }
         ],

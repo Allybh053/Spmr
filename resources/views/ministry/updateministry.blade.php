@@ -29,6 +29,10 @@
                         @csrf
                         @method('PUT')
                         <div class="mb-3">
+                            <label for="name">Ministry Code Name</label>
+                            <input class="form-control" id="code_name" name="code_name" type="text" placeholder="" value="{{ $ministry->code_name }}" required>
+                        </div>
+                        <div class="mb-3">
                             <label for="name">Ministry Name</label>
                             <input class="form-control" id="name" name="name" type="text" placeholder="" value="{{ $ministry->name }}" required>
                         </div>
@@ -55,4 +59,9 @@
             </div>
         </div>
     </main>
+    <style>
+        label {
+            font-weight: bold;
+        }
+    </style>
 @endsection

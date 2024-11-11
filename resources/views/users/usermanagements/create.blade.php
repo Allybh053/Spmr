@@ -2,7 +2,7 @@
 @section('content')
 <main>
     <header class="page-header page-header-compact page-header-light border-bottom bg-white mb-4">
-        <div class="container-xl px-4">
+        <div class="container-fluid px-4">
             <div class="page-header-content">
                 <div class="row align-items-center justify-content-between pt-3">
                     <div class="col-auto mb-3">
@@ -16,7 +16,7 @@
         </div>
     </header>
     <!-- Main page content-->
-    <div class="container-xl px-4 mt-4">
+    <div class="container-fluid px-4 mt-4">
         <!-- Account page navigation-->
         <nav class="nav nav-borders">
             <a class="nav-link active ms-0" href="account-profile.html">Details</a>
@@ -26,20 +26,6 @@
         </nav>
         <hr class="mt-0 mb-4" />
         <div class="row">
-            <div class="col-xl-4" @disabled(true) hidden>
-                <!-- Profile picture card-->
-                <div class="card mb-4 mb-xl-0">
-                    <div class="card-header">User Picture</div>
-                    <div class="card-body text-center">
-                        <!-- Profile picture image-->
-                        <img class="img-account-profile rounded-circle mb-2" src="assets/img/illustrations/profiles/profile-1.png" alt="" />
-                        <!-- Profile picture help block-->
-                        <div class="small font-italic text-muted mb-4">JPG or PNG no larger than 5 MB</div>
-                        <!-- Profile picture upload button-->
-                        <button class="btn btn-primary" type="button">Upload new image</button>
-                    </div>
-                </div>
-            </div>
             <div class="col-xl-8">
                 <!-- Account details card-->
                 <div class="card mb-4">
@@ -50,7 +36,8 @@
                             <!-- Form Group (username)-->
                             <div class="mb-3">
                                 <label class="small mb-1" for="username">Username (how the name will appear to other users on the site)</label>
-                                <input class="form-control" id="username" name="username" type="text" placeholder="Enter your username" value="" oninput="this.value = this.value.toLowerCase()" required/>
+                                <input readonly class="form-control" id="username" name="username" type="text" value="" oninput="validateInput(this)" required/>
+                                <span id="errorMessage" style="color: red;"></span>
                             </div>
                             <!-- Form Row-->
                             <div class="row gx-3 mb-3">
@@ -66,7 +53,6 @@
                                 </div>
                             </div>
                             <!-- Form Row        -->
-                            {{-- <div class="row gx-3 mb-3"> --}}
                                 <!-- Form Group (organization name)-->
                                 <div class="col-md-6" hidden @disabled(true)>
                                     <label class="small mb-1" for="acct_types">Account Type</label>
@@ -88,32 +74,21 @@
                                     @endforeach
                                     </select>
                                 </div>
-                            {{-- </div> --}}
                             <!-- Form Group (email address)-->
                             <div class="mb-3">
                                 <label class="small mb-1" for="email">Email address</label>
-                                <input class="form-control" id="email" name="email" type="email" placeholder="Enter email address" value="" oninput="this.value = this.value.toLowerCase()" required/>
+                                <input class="form-control" id="email" name="email" type="email" placeholder="Enter email address" value="" oninput="this.value = this.value.toLowerCase()" onchange="handleEmailChange()" required/>
                             </div>
                             <!-- Form Row-->
                             <div class="row gx-3 mb-3">
                                 <div class="col-md-6">
                                     <label class="small mb-1" for="position">Position</label>
-                                    <select class="form-control select2" name="position" aria-label="Default select2" required>
-                                        <option selected disabled>Select Position:</option>
-                                        @foreach ($positions as $position)
-                                        <option value="{{ $position->name }}">{{ $position->name }}</option>
-                                        @endforeach
-                                    </select>
+                                    <input class="form-control" id="position" name="position" type="text" placeholder="" value="" required/>
                                 </div>
                                 <!-- Form Group (phone number)-->
                                 <div class="col-md-6">
                                     <label class="small mb-1" for="department">Department</label>
-                                    <select class="form-control select2" name="department" aria-label="Default select2" required>
-                                        <option selected disabled>Select Department:</option>
-                                        @foreach ($departments as $department)
-                                        <option value="{{ $department->name }}">{{ $department->name }}</option>
-                                        @endforeach
-                                    </select>
+                                    <input class="form-control" id="department" name="department" type="text" placeholder="" value="" required/>
                                 </div>
                             </div>
                             <div class="row gx-3 mb-3">
@@ -127,9 +102,9 @@
                                     </select>
                                 </div>
                                 <!-- Form Group (phone number)-->
-                                <div class="col-md-6" @disabled(true)>
+                                <div class="col-md-6">
                                     <label class="small mb-1" for="phone">Phone No</label>
-                                    <input class="form-control" id="phone" name="phone" type="text" value=""/>
+                                    <input class="form-control" id="phone" name="phone" type="text" value="" minlength="10"/>
                                 </div>
                             </div>
                             <!-- Form Group (inputPassword)-->
@@ -143,8 +118,8 @@
                                     <label class="small mb-1" for="enabled">Account Status</label>
                                     <select class="form-control select2" name="enabled" aria-label="Default select " required>
                                         <option selected disabled>Select Account Status:</option>
-                                        <option value="1">Active</option>
-                                        <option value="0">In-Active</option>
+                                        <option value="1" selected>Active</option>
+                                        <option value="0">Inactive</option>
                                     </select>
                                 </div>
                             </div>
@@ -160,71 +135,128 @@
         </div>
     </div>
 @push('script')
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+{{-- <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script> --}}
 <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-beta.1/dist/css/select2.min.css" rel="stylesheet" />
 <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-beta.1/dist/js/select2.min.js"></script>
 <script src="https://ajax.aspnetcdn.com/ajax/jquery.validate/1.11.1/jquery.validate.min.js"></script>
 
 <script>
-var mySelect2 = $('#type_reqs');
 
-mySelect2.select2();
+    function allowOnlyNumbers(event) {
+        var charCode = event.which ? event.which : event.keyCode;
+        // Only allow number keys (0-9) and control keys (backspace, delete, arrow keys)
+        if (charCode < 48 || charCode > 57) {
+            event.preventDefault();
+        }
+    }
 
-$("#formserver").validate({
+    // Attach the event listener to the phone input field
+    document.getElementById('phone').addEventListener('keypress', allowOnlyNumbers);
 
-rules: {
-//   systemtype: {
-//     required: true
-//   }
-},
-messages: {
-//   systemtype: {
-//     required: "Please choose the system type",
-//   },
+function handleEmailChange() {
+    const emailInput = document.getElementById('email');
+    let emailValue = emailInput.value;
+    emailValue = emailValue.replace(/[_-]/g, '');
 
-},
-errorPlacement: function(label, element) {
-  if (element.hasClass('select2')) {
-    label.insertAfter(element.next('.select2-container')).addClass('mt-2 text-danger');
-    select2label = label
-  } else {
-    label.addClass('mt-2 text-danger');
-    label.insertAfter(element);
-  }
-},
-highlight: function(element) {
-  $(element).parent().addClass('is-invalid')
-  $(element).addClass('form-control-danger')
-},
-success: function(label, element) {
-  $(element).parent().removeClass('is-invalid')
-  $(element).removeClass('form-control-danger')
-  label.remove();
+    const usernameInput = document.getElementById('username');
+    usernameInput.value = emailValue;
 }
-});
 
-mySelect2.on("change", function(e) {
-  select2label.remove(); //remove label
-});
+$(document).ready(function() {
 
-        document.getElementById('userForm').addEventListener('submit', function(event) {
-            var requiredFields = document.querySelectorAll('#userForm [required]');
-            var formValid = true;
 
-            requiredFields.forEach(function(field) {
-                if (!field.value.trim()) {
-                    field.classList.add('is-invalid');
-                    formValid = false;
+    $(".select2").select2();
+
+        $("#formserver").validate({
+            errorPlacement: function(label, element) {
+                if (element.hasClass('select2')) {
+                    label.insertAfter(element.next('.select2-container')).addClass('mt-2 text-danger');
                 } else {
-                    field.classList.remove('is-invalid');
+                    label.addClass('mt-2 text-danger');
+                    label.insertAfter(element);
                 }
-            });
-
-            if (!formValid) {
-                event.preventDefault();
-                alert('Please fill in all required fields.');
+            },
+            highlight: function(element) {
+                $(element).parent().addClass('is-invalid');
+                $(element).addClass('form-control-danger');
+            },
+            unhighlight: function(element) {
+                $(element).parent().removeClass('is-invalid');
+                $(element).removeClass('form-control-danger');
+            },
+            success: function(label, element) {
+                if ($(element).hasClass('select2-hidden-accessible')) {
+                    label.remove();
+                } else {
+                    label.remove();
+                }
             }
         });
+        $('#role_id').on('change', function() {
+            var isValid = $(this).valid();
+            if (isValid) {
+                $(this).removeClass('is-invalid');
+            }
+        });
+        // $('#position').on('change', function() {
+        //     var isValid = $(this).valid();
+        //     if (isValid) {
+        //         $(this).removeClass('is-invalid');
+        //     }
+        // });
+        // $('#department').on('change', function() {
+        //     var isValid = $(this).valid();
+        //     if (isValid) {
+        //         $(this).removeClass('is-invalid');
+        //     }
+        // });
+
+    function matchCustom(params, data) {
+                // If there are no search terms, return all data
+                if ($.trim(params.term) === '') {
+                    return data;
+                }
+
+                // Do not display the item if there is no 'text' property
+                if (typeof data.text === 'undefined') {
+                    return null;
+                }
+
+                // Check if the search term is contained in the text
+                if (data.text.toLowerCase().indexOf(params.term.toLowerCase()) > -1) {
+                    return data;
+                }
+
+                // Return `null` if the term should not be displayed
+                return null;
+            }
+
+            // $('#position').select2({
+            //     matcher: matchCustom,
+            //     placeholder: 'Select an option',
+            //     allowClear: true
+            // });
+            // $('#department').select2({
+            //     matcher: matchCustom,
+            //     placeholder: 'Select an option',
+            //     allowClear: true
+            // });
+        });
+
+        function validateInput(input) {
+            // Regular expression to match only alias, underscore, numbering, and letters (uppercase or lowercase)
+            var regex = /^[a-zA-Z0-9_@]+$/;
+            var inputValue = input.value;
+            var errorMessage = document.getElementById('errorMessage');
+
+            if (regex.test(inputValue)) {
+                errorMessage.textContent = ''; // Clear error message if input is valid
+            } else {
+                errorMessage.textContent = 'Only letters, numbers, underscore, and alias are allowed.';
+                // Remove invalid characters from the input
+                input.value = inputValue.replace(/[^a-zA-Z0-9_]/g, '');
+            }
+        }
     </script>
     @endpush
     <style>

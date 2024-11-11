@@ -19,13 +19,15 @@ class UcOverviewController extends Controller
     {
         $user = Auth::user();
 
-        $serverIds = RoleServer::whereIn('role_id', $user->roles->pluck('id')->all())
+        $serverIds = RoleServer::whereIn('role_servers.role_id', $user->roles->pluck('id')->all())
+        ->leftJoin('servers','servers.id','role_servers.server_id')
+        ->where('servers.status',1)
         ->pluck('server_id');
 
         // Filter servers based on the fetched IDs
         $serverconfig = Server::whereIn('id', $serverIds)
         ->where('status', 1)
-        ->pluck('hostname', 'id'); 
+        ->pluck('hostname', 'id');
 
         return view('ucOverview.index', compact('serverconfig'));
     }
@@ -48,7 +50,7 @@ class UcOverviewController extends Controller
                     ],
                     // Add more rows as needed
                 ];
-    
+
                 return datatables()->of($application)
                 ->addIndexColumn()
                 ->addColumn('ticket_number', function ($row) {

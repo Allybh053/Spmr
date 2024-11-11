@@ -32,7 +32,7 @@
                             <div class="row gx-3 mb-3">
                                 <div class="col-md-6">
                                     <label class="small mb-1" for="serverName">Server Mail Relay Name:</label>
-                                    {!! Form::select('serverName', $serverName, null, ['id'=>'serverName', 'name'=>'serverName', 'class'=>'form-control select2', 'placeholder'=>config('params.dropdown_default')]) !!}
+                                    {!! Form::select('serverName', $serverName, $defaultServerId ?? 1, ['id'=>'serverName', 'name'=>'serverName', 'class'=>'form-control select2', 'placeholder'=>config('params.dropdown_default')]) !!}
                                 </div>
                                 <div class="col-md-4">
                                     <!-- Save and Back button-->
@@ -58,6 +58,29 @@
     <script>
         let dataHostDom = [];
         $(document).ready(function() {
+            $.ajax({
+                    type: 'POST',
+                    url: '{!! route('log.api.getServerName') !!}',
+                    data: {serverName: $('#serverName').val()},
+                    success: function(response) {
+                        // Handle the response from the controller
+                        // console.log(response);
+
+                        $('#card-title-header').text(response.subhostname);
+                        $('#ip-address').text(response.ipaddress);
+
+                        //Websocket connections
+
+                        let hostname = response.subhostname;
+                        // const serverAddress = 'wss://' + hostname + '/wss/';
+                        websocket(hostname);
+                  },
+                  error: function(xhr, status, error) {
+                    //console.error(xhr.responseText);
+                    }
+                });
+
+         // form submit
             $('#searching').click(function(e) {
                 e.preventDefault();
                 var formData = $('#searchForm').serialize();
@@ -70,14 +93,33 @@
                         // Handle the response from the controller
                         //console.log(response);
 
-                        $('#card-title-header').text(response.serverName);
-                        $('#ip-address').text(response.ipAddress);
+                        $('#card-title-header').text(response.subhostname);
+                        $('#ip-address').text(response.ipaddress);
 
                         //Websocket connections
-                        let sockets = [];
-                        let hostname = response.serverName[0];
-                        const serverAddress = 'wss://' + hostname + '/wss/';
+
+                        let hostname = response.subhostname;
+                        // const serverAddress = 'wss://' + hostname + '/wss/';
+                        websocket(hostname);
+
+
+
+
+                  },
+                    error: function(xhr, status, error) {
+                        // Handle errors
+                        //console.error(xhr.responseText);
+                    }
+                });
+            });
+
+
+            function websocket(hostname){
+                let sockets = [];
+
+                const serverAddress = 'wss://myspmr:Rb1NAPzM57Ycq9z8Uur65g1JaF2xVixKtTGStvPfh65P9HK29Abe0QcxiZC9yV9n@spmr.mygovuc.gov.my/' + hostname;
                         const socket = new WebSocket(serverAddress);
+
                         sockets.push(socket);
 
                         sockets.forEach((socket, index) => {
@@ -86,20 +128,24 @@
 
                         function getDataServerOverview() {
                             const commands = [
-                                'uptime',
-                                'status=$(systemctl --no-pager status postfix | grep Active:); if echo "$status" | grep -q "active (exited) since"; then echo "Postfix is running"; elif echo "$status" | grep -q "inactive (dead) since"; then echo "Postfix is down"; else echo "Something is wrong"; fi',
-                                '/usr/bin/tail -1 /data/collections/spmr/PostfixSASLauthFailed.txt',
-                                '/usr/bin/tail -1 /data/collections/spmr/PostfixSMTPDconnectionLost.txt',
-                                '/usr/bin/tail -1 /data/collections/spmr/PostfixSMTPDtimedOut.txt',
-                                '/usr/bin/tail -1 /data/collections/spmr/PostfixBounceNondeliveryNotification.txt',
-                                '/usr/bin/bash /opt/scripts/spmr/grand-totals-received.sh',
-                                '/usr/bin/bash /opt/scripts/spmr/grand-totals-deffered.sh',
-                                '/usr/bin/bash /opt/scripts/spmr/grand-totals-delivered.sh',
-                                '/usr/bin/bash /opt/scripts/spmr/grand-totals-bounced.sh',
-                                '/usr/bin/bash /opt/scripts/spmr/grand-totals-recipients.sh',
-                                '/usr/bin/bash /opt/scripts/spmr/grand-totals-sending-hosts.sh',
-                                '/usr/bin/bash /opt/scripts/spmr/host-domain-messages-received.sh',
-                                '/usr/bin/bash /opt/scripts/spmr/per-hour-traffic-summary.sh',
+                                '/opt/scripts/websocket/cmd11' + ' ' + '{{ $user->email }}',
+                                '/opt/scripts/websocket/cmd2' + ' ' + '{{ $user->email }}' + ' ' + 'postfix',
+                                '/opt/scripts/websocket/cmd12' + ' ' + '{{ $user->email }}' + ' ' + 'PostfixSASLauthFailed',
+                                '/opt/scripts/websocket/cmd12' + ' ' + '{{ $user->email }}' + ' ' + 'PostfixSASLauthFailed',
+                                '/opt/scripts/websocket/cmd12' + ' ' + '{{ $user->email }}' + ' ' + 'PostfixSMTPDconnectionLost',
+                                '/opt/scripts/websocket/cmd12' + ' ' + '{{ $user->email }}' + ' ' + 'PostfixSMTPDtimedOut',
+                                '/opt/scripts/websocket/cmd12' + ' ' + '{{ $user->email }}' + ' ' + 'PostfixBounceNondeliveryNotification',
+                                '/opt/scripts/websocket/cmd13' + ' ' + '{{ $user->email }}' + ' ' + 'grand-totals-received',
+                                '/opt/scripts/websocket/cmd13' + ' ' + '{{ $user->email }}' + ' ' + 'grand-totals-delivered',
+                                '/opt/scripts/websocket/cmd13' + ' ' + '{{ $user->email }}' + ' ' + 'grand-totals-deffered',
+                                '/opt/scripts/websocket/cmd13' + ' ' + '{{ $user->email }}' + ' ' + 'grand-totals-bounced',
+                                '/opt/scripts/websocket/cmd13' + ' ' + '{{ $user->email }}' + ' ' + 'grand-totals-rejected',
+                                '/opt/scripts/websocket/cmd13' + ' ' + '{{ $user->email }}' + ' ' + 'grand-totals-senders',
+                                '/opt/scripts/websocket/cmd13' + ' ' + '{{ $user->email }}' + ' ' + 'grand-totals-sending-hosts',
+                                '/opt/scripts/websocket/cmd13' + ' ' + '{{ $user->email }}' + ' ' + 'grand-totals-recipients',
+                                '/opt/scripts/websocket/cmd13' + ' ' + '{{ $user->email }}' + ' ' + 'grand-totals-recipient-hosts',
+                                '/opt/scripts/websocket/cmd13' + ' ' + '{{ $user->email }}' + ' ' + 'host-domain-messages-received',
+                                '/opt/scripts/websocket/cmd13' + ' ' + '{{ $user->email }}' + ' ' + 'per-hour-traffic-summary',
                             ];
 
                             const outputs = [];
@@ -114,184 +160,154 @@
                             socket.addEventListener('message', (event) => {
 
                                 const response = event.data;
-                                getHostDomSum(response)
-                                const output = extractOutput(response);
-                                if (output !== null) {
+                                //console.log("outputs"+outputs);
+                                outputs.push(response);
 
-                                    outputs.push(output);
+                                $('#server-status').text(outputs[0]);
+                                $('#service-status').text(outputs[1]);
+                                $('#sasl').text(outputs[2]);
+                                $('#smtpd-lost').text(outputs[3]);
+                                $('#smtpd-timeout').text(outputs[4]);
+                                $('#bounced').text(outputs[5]);
 
-                                    if (outputs.length > commands.length) {
-                                        $('#server-status').text(outputs[1]);
-                                        $('#service-status').text(outputs[3]);
-                                        $('#sasl').text(outputs[5]);
-                                        $('#smtpd-lost').text(outputs[7]);
-                                        $('#smtpd-timeout').text(outputs[9]);
-                                        $('#bounced').text(outputs[11]);
-                                    }
-                                }
+                                getDomain(outputs);
+                                getGrandTotals(outputs);
+                                trafficSumTableData(outputs);
                             });
                         }
-
-                        function extractOutput(response) {
-                            const cleanResponse = response.replace(/\[\d;?\d*m/g, '').trim();
-                            getGrandTotals(cleanResponse);
-                            getHostDomSum(response);
-                            const outputMatch = cleanResponse.match(/\[.*?\]#\S (.*)/);
-                            const outputs = [];
-                            if (outputMatch && outputMatch.length > 1) {
-                                outputs.push(outputMatch[1]);
-                                return outputs;
-                            } else {
-                                return null;
-                            }
-                        }
+            }
 
 
-                        var labels = ['received', 'deferred', 'delivered', 'bounced', 'recipients', 'sending hosts/domains'];
-                        var datasetValues = [];
+            function getGrandTotals(outputs){
 
-                        // Update Messages Overview table
-                        function getGrandTotals(cleanResponse) {
-                            if (cleanResponse) {
-                                const outputMatch = cleanResponse.match(/\[.*?\]#\S (.*)/);
-                                const numericLines = outputMatch.filter(line => /^\d/.test(line));
-                                const filteredLines = numericLines.filter(line => !line.includes(','));
-                                if (filteredLines.length > 0 && filteredLines[0] !== undefined) {
-                                    datasetValues.push(filteredLines[0]);
-                                }
+            // Append grand totals to another table
+            var grandTotalTableBody = document.getElementById('grandTotalTable');
 
-                            } else {
-                                //console.error("cleanResponse is undefined");
-                            }
+            // Clear existing rows in grand total table
+            grandTotalTableBody.innerHTML = '';
 
-                            updateTableData();
-                            function updateTableData() {
-                                // Get the tbody element by its ID
-                                var tableBody = document.getElementById('tableBody');
+            var labels = ['received', 'delivered','deferred',  'bounced','rejected' ,'senders','sending hosts/domains','recipients', 'recipient hosts/domains'];
+            var grandTotals = [outputs[7], outputs[8], outputs[9],outputs[10], outputs[11], outputs[12], outputs[13], outputs[14], outputs[15]];
 
-                                // Clear existing rows
-                                tableBody.innerHTML = '';
-
-                                // Create a row for each label-value pair
-                                for (var i = 0; i < labels.length && i < datasetValues.length; i++) {
-                                    var row = document.createElement('tr');
-                                    var labelCell = document.createElement('td');
-                                    var valueCell = document.createElement('td');
-                                    labelCell.textContent = labels[i];
-                                    valueCell.textContent = datasetValues[i];
-                                    row.appendChild(labelCell);
-                                    row.appendChild(valueCell);
-                                    tableBody.appendChild(row);
-                                }
-
-                            }
-                        }
-
-                        function getHostDomSum(response) {
-                            if (response) {
-                                // Remove ANSI escape sequences
-                                const cleanResponse = response.replace(/\[\d;?\d*m/g, '').trim();
-
-                                // Remove additional unwanted characters
-                                const cleanRes = cleanResponse.replace(/(\\.||\[.*?#\d+ )/g, '').trim();
-
-                                // Split the response into lines
-                                const lines = cleanRes.split('\n');
-
-                                // Define the regular expression pattern to match the prefix
-                                const regex = /\[root@postmaster[a-z]\S*\/opt\/cluster\/postfix\]#/g;
-
-                                // Extract the value after removing the prefix
-                                const filteredLines = lines.map(line => {
-                                    // Replace the prefix with an empty string
-                                    const lineWithoutPrefix = line.replace(regex, '');
-
-                                    // Trim any leading or trailing whitespace
-                                    return lineWithoutPrefix.trim();
-                                });
-                                const numericLines = filteredLines.filter(line => /^\d/.test(line));
-                                numericLines.forEach((line, index) => {
-                                    const valOutput = line.split(',');
-                                    dataHostDom.push(valOutput);
-                                });
-
-                            } else {
-                                //console.error("response is undefined");
-                            }
-
-                            // Update Top 10 Host/Domain table
-                            hostDomTableData();
-                            function hostDomTableData() {
-                                // Get the tbody element by its ID
-                                var tableBody = document.getElementById('tableHostDomSum');
-
-                                // Clear existing rows
-                                tableBody.innerHTML = '';
-
-                                // Filter out arrays containing any element with a dash '-'
-                                const filteredOutput = dataHostDom.filter(arr => !arr.some(elem => elem.includes('-')));
-
-                                // Create a row for each label-value pair
-                                for (var i = 0; i < filteredOutput.length; i++) {
-                                    var row = document.createElement('tr');
-                                    var valueCell = document.createElement('td');
-                                    var valueCell1 = document.createElement('td');
-                                    var valueCell2 = document.createElement('td');
-                                    valueCell.textContent = filteredOutput[i][0];
-                                    valueCell1.textContent = filteredOutput[i][1];
-                                    valueCell2.textContent = filteredOutput[i][2];
-                                    row.appendChild(valueCell);
-                                    row.appendChild(valueCell1);
-                                    row.appendChild(valueCell2);
-                                    tableBody.appendChild(row);
-                                }
-                            }
-
-
-                            // Update Traffic Summary table
-                            trafficSumTableData();
-                            function trafficSumTableData() {
-                                // Get the tbody element by its ID
-                                var tableBody = document.getElementById('tableTrafficSum');
-
-                                // Clear existing rows
-                                tableBody.innerHTML = '';
-
-                                // Filter out arrays containing any element contain dash '-'
-                                const filteredTrafficSum = dataHostDom.filter(arr => arr.some(elem => elem.includes('-')));
-
-                                // Create a row for each label-value pair
-                                for (var i = 0; i < filteredTrafficSum.length; i++) {
-                                    var row = document.createElement('tr');
-                                    var valueCell = document.createElement('td');
-                                    var valueCell1 = document.createElement('td');
-                                    var valueCell2 = document.createElement('td');
-                                    var valueCell3 = document.createElement('td');
-                                    var valueCell4 = document.createElement('td');
-                                    var valueCell5 = document.createElement('td');
-                                    valueCell.textContent = filteredTrafficSum[i][0];
-                                    valueCell1.textContent = filteredTrafficSum[i][1];
-                                    valueCell2.textContent = filteredTrafficSum[i][2];
-                                    valueCell3.textContent = filteredTrafficSum[i][3];
-                                    valueCell4.textContent = filteredTrafficSum[i][4];
-                                    valueCell5.textContent = filteredTrafficSum[i][5];
-                                    row.appendChild(valueCell);
-                                    row.appendChild(valueCell1);
-                                    row.appendChild(valueCell2);
-                                    row.appendChild(valueCell3);
-                                    row.appendChild(valueCell4);
-                                    row.appendChild(valueCell5);
-                                    tableBody.appendChild(row);
-                                }
-                            }
-                        }
-                    },
-                    error: function(xhr, status, error) {
-                        // Handle errors
-                        //console.error(xhr.responseText);
-                    }
+            // Format numbers in grandTotals array
+            var formattedGrandTotals = grandTotals.map(function(total) {
+                    return numberWithCommas(total);
                 });
-            });
+
+                // Create rows for grand totals
+                for (var i = 0; i < labels.length; i++) {
+                    var grandTotalRow = document.createElement('tr');
+
+                    var labelCell = document.createElement('td');
+                    var grandTotalCell = document.createElement('td');
+
+                    labelCell.textContent = labels[i];
+                    grandTotalCell.textContent = formattedGrandTotals[i];
+
+                    grandTotalRow.appendChild(labelCell);
+                    grandTotalRow.appendChild(grandTotalCell);
+
+                    grandTotalTableBody.appendChild(grandTotalRow);
+                }
+                if (!$.fn.DataTable.isDataTable('#grandTotalsDatatable')) {
+                    $('#grandTotalsDatatable').DataTable({
+                        "order": [[1, "desc"]] // Initial sorting on the second column (Counts) in descending order
+                    });
+}
+            }
+
+            function getDomain(outputs) {
+                var regexFormat = /^\d+,[^,]+,.+$/; // Regular expression to match format "number,number,string"
+
+                    // Filter outputs to get elements matching the format
+                    var filteredOutputs = outputs.filter(function(output) {
+                        return regexFormat.test(output);
+                    });
+                    if ($.fn.DataTable.isDataTable('#spmrDatatable')) {
+                        $('#spmrDatatable').DataTable().destroy();
+                    }
+                    // Get the tbody element by its ID
+                    var tableBody = document.getElementById('tableHostDomSum');
+
+                    // Clear existing rows
+                    tableBody.innerHTML = '';
+
+                    // Create a row for each filtered output
+                    for (var i = 0; i < filteredOutputs.length; i++) {
+                        var row = document.createElement('tr');
+                        var columns = filteredOutputs[i].split(',');
+
+                        for (var j = 0; j < columns.length; j++) {
+                            var cell = document.createElement('td');
+                            // if (j != 0) { // Format the first column (assumed to be a number)
+                                // cell.textContent = numberWithCommas(columns[j]);
+                            // } else {
+                                cell.textContent = numberWithCommas(columns[j]);
+                            // }
+                            row.appendChild(cell);
+                        }
+
+                        tableBody.appendChild(row);
+                    }
+
+                    // Re-initialize DataTables
+                    $('#spmrDatatable').DataTable({
+                        "order": [], // Initial sorting on the first column (Message Count) in descending order
+                        "language": {
+                            "emptyTable": "No data available in table" // Custom message when table is empty
+                        }
+                    });
+
+
+            }
+
+            function trafficSumTableData(outputs) {
+                if ($.fn.DataTable.isDataTable('#spmrTrafficDatatable')) {
+                        $('#spmrTrafficDatatable').DataTable().destroy();
+                    }
+                // Get the tbody element by its ID
+                var tableBody = document.getElementById('tableTrafficSum');
+
+                // Clear existing rows
+                tableBody.innerHTML = '';
+
+                var regex = /^\d{4}-\d{4}/; // Regular expression to match format "0000-0000"
+                var filteredTrafficSum = outputs.filter(function(output) {
+                    return regex.test(output);
+                });
+
+                // Create a row for each filtered output
+                for (var i = 0; i < filteredTrafficSum.length; i++) {
+                    var outputParts = filteredTrafficSum[i].split(','); // Split the string into parts
+                    var row = document.createElement('tr');
+
+                    for (var j = 0; j < outputParts.length; j++) {
+                            var cell = document.createElement('td');
+                            if (j != 0) { // Format the first column (assumed to be a number)
+                                cell.textContent = numberWithCommas(outputParts[j]);
+                            } else {
+                                cell.textContent = outputParts[j];
+                            }
+                            row.appendChild(cell);
+                        }
+
+                    // Append the row to the table body
+                    tableBody.appendChild(row);
+                }
+
+                // Re-initialize DataTables
+                $('#spmrTrafficDatatable').DataTable({
+                        "order": [], // Initial sorting on the first column (Message Count) in descending order
+                        "language": {
+                            "emptyTable": "No data available in table" // Custom message when table is empty
+                        }
+                    });
+            }
+
+            function numberWithCommas(x) {
+                return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+            }
+
         });
     </script>
 

@@ -9,9 +9,10 @@ use \Illuminate\Support\Facades\Hash;
 use Spatie\Permission\Models\Role;
 use App\Models\Department;
 use App\Models\Position;
-use App\Http\Controllers\Log;
+use Illuminate\Support\Facades\Log;
 use App\Mail\WelcomeNewUser;
 use Illuminate\Support\Facades\Mail;
+use App\Models\ActivityLog;
 
 
 class UsersController extends Controller
@@ -19,10 +20,29 @@ class UsersController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        $users = User::with('role')->orderBy('id', 'DESC')->get();
+        // $users = User::with('role')->orderBy('id', 'DESC')->get();
+        $users = User::with('role')
+        ->whereNotIn('email', ['spmr-superadmin@digital.gov.my', 'spmr-dev@digital.gov.my','spmr-admin@digital.gov.my'])
+        ->orderBy('id', 'DESC')
+        ->get();
+
         $user = Auth::user();
+
+        ActivityLog::create([
+            'user_id' => Auth::id(),
+            'activity_type' => 'View Users',
+            'action' => $request->path(),
+            'url' => url()->full(),
+            'method' => $request->method(),
+            'ip_address' => $request->ip(),
+            'input' => json_encode([
+                'user' => $users->take(5)->toArray(),
+                'request' => $request->except(['password']),
+            ]),
+            'user_agent' => $request->userAgent(),
+        ]);
 
         return view('users.usermanagements.index', compact('user','users'));
     }
@@ -35,10 +55,10 @@ class UsersController extends Controller
         $user =  User::whereHas('roles', function($q){
 			$q->whereNotIn('name', ['Developer','Superadmin']);
 		})->orderBy('username','ASC')->get();
-        $roles = Role::whereNotIn('name', ['Developer', 'Superadmin'])->pluck('name', 'id')->toArray();
-        $departments = Department::where('status',1)->get();
-        $positions = Position::where('status',1)->get();
-        return view('users.usermanagements.create', compact('user','roles','departments','positions'));
+        $roles = Role::whereNotIn('name', ['Developer','Superadmin'])->pluck('name', 'id')->toArray();
+        // $departments = Department::where('status',1)->get();
+        // $positions = Position::where('status',1)->get();
+        return view('users.usermanagements.create', compact('user','roles'));
     }
 
     /**
@@ -50,6 +70,10 @@ class UsersController extends Controller
             $existingEmail = User::where('email', $request->input('email'))->where('deleted_at',null)->first();
             if ($existingEmail) {
                 return redirect()->route('usermanagements.index')->with('error', 'Email User already registered!');
+            }
+            $existingUsername = User::where('username', $request->input('username'))->where('deleted_at',null)->first();
+            if ($existingUsername) {
+                return redirect()->route('usermanagements.index')->with('error', 'Username User already registered!');
             }
 
             $validatedData = $request->validate([
@@ -65,20 +89,20 @@ class UsersController extends Controller
                 'enabled' => 'required',
             ]);
 
-            $existingPosition = Position::where('name', $validatedData['position'])->first();
-            if (!$existingPosition) {
-                Position::create([
-                    'name' => $validatedData['position'],
-                    'status'=> 1,
-                ]);
-            }
-            $existingDepartment = Department::where('name', $validatedData['department'])->first();
-            if (!$existingDepartment) {
-                Department::create([
-                    'name' => $validatedData['department'],
-                    'status'=> 1,
-                ]);
-            }
+            // $existingPosition = Position::where('name', $validatedData['position'])->first();
+            // if (!$existingPosition) {
+            //     Position::create([
+            //         'name' => $validatedData['position'],
+            //         'status'=> 1,
+            //     ]);
+            // }
+            // $existingDepartment = Department::where('name', $validatedData['department'])->first();
+            // if (!$existingDepartment) {
+            //     Department::create([
+            //         'name' => $validatedData['department'],
+            //         'status'=> 1,
+            //     ]);
+            // }
             $plaintextPassword = $request->input('password');
             // Hash the password
             $hashedPassword = Hash::make($validatedData['password']);
@@ -100,18 +124,33 @@ class UsersController extends Controller
             $this->syncPermissions($request, $user);
 
             // Check if user was created successfully
+
+            ActivityLog::create([
+                'user_id' => Auth::id(),
+                'activity_type' => 'New User',
+                'action' => $request->path(),
+                'url' => url()->full(),
+                'method' => $request->method(),
+                'ip_address' => $request->ip(),
+                'input' => json_encode([
+                    'user' => $user,
+                    'request' => $request->except(['password']),
+                ]),
+                'user_agent' => $request->userAgent(),
+            ]);
+
             if ($user) {
                 Mail::to($user->email)->send(new WelcomeNewUser($user,$plaintextPassword));
                 // Redirect back or to another page
                 return redirect()->route('usermanagements.index')->with('success', 'User added successfully');
             } else {
                 // Log error or return error response
-                Log::error('Failed to create user');
+                //Log::error('Failed to create user');
                 return redirect()->back()->with('error', 'Failed to create user.');
             }
         } catch (\Exception $e) {
             // Log the exception for debugging
-            Log::error('Error creating user: ' . $e->getMessage());
+            //Log::error('Error creating user: ' . $e->getMessage());
 
             // Return error response
             return redirect()->back()->with('error', 'An error occurred while creating user.');
@@ -123,7 +162,8 @@ class UsersController extends Controller
      */
     public function show(string $id)
     {
-        $user = User::find($id);
+        $user = User::where('id',$id)
+        ->first();
 
        return view('users.usermanagements.show', ['user' => $user]);
     }
@@ -135,10 +175,10 @@ class UsersController extends Controller
     {
         $user = User::findOrFail($id);
         $roles = Role::whereNotIn('name', ['Developer', 'Superadmin'])->get();
-        $departments = Department::where('status',1)->get();
-        $positions = Position::where('status',1)->get();
+        // $departments = Department::where('status',1)->get();
+        // $positions = Position::where('status',1)->get();
 
-        return view('users.usermanagements.edit', compact('user','roles','departments','positions'));
+        return view('users.usermanagements.edit', compact('user','roles'));
     }
 
     /**
@@ -150,7 +190,6 @@ class UsersController extends Controller
         $validatedData = $request->validate([
             'username' => 'required|string',
             'email' => 'required|email',
-            // 'acct_types' => 'required',
             'role_id' => 'required',
             'enabled' => 'required',
             'fname' => 'required',
@@ -160,6 +199,19 @@ class UsersController extends Controller
             'position_id' => 'nullable', // Add validation rule for position_id
             'department_id' => 'nullable', // Add validation rule for department_id
         ]);
+
+        $existingEmail = User::where('id','!=',$id)
+        ->where('email', $request->input('email'))
+        ->where('deleted_at',null)
+        ->first();
+        if ($existingEmail) {
+            return redirect()->route('usermanagements.index')->with('error', 'Email User already registered!');
+        }
+        $existingUsername = User::where('id','!=',$id)->where('username', $request->input('username'))->where('deleted_at',null)->first();
+        if ($existingUsername) {
+            return redirect()->route('usermanagements.index')->with('error', 'Username User already registered!');
+        }
+
         // Find the user by ID
         $user = User::findOrFail($id);
 
@@ -181,6 +233,20 @@ class UsersController extends Controller
 
         $this->syncPermissions($request, $user);
 
+        ActivityLog::create([
+            'user_id' => Auth::id(),
+            'activity_type' => 'Update User',
+            'action' => $request->path(),
+            'url' => url()->full(),
+            'method' => $request->method(),
+            'ip_address' => $request->ip(),
+            'input' => json_encode([
+                'user' => $user,
+                'request' => $request->except(['password']),
+            ]),
+            'user_agent' => $request->userAgent(),
+        ]);
+
         // Redirect back to the user management index page with a success message
         return redirect()->route('usermanagements.index')->with('success', 'User updated successfully');
     }
@@ -189,8 +255,22 @@ class UsersController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy($id)
+    public function destroy(Request $request,$id)
     {
+        ActivityLog::create([
+            'user_id' => Auth::id(),
+            'activity_type' => 'Delete User',
+            'action' => $request->path(),
+            'url' => url()->full(),
+            'method' => $request->method(),
+            'ip_address' => $request->ip(),
+            'input' => json_encode([
+                'user' => User::withTrashed()->find($id),
+                'request' => $request->except(['password']),
+            ]),
+            'user_agent' => $request->userAgent(),
+        ]);
+
         // Find the user by ID
         $user = User::withTrashed()->find($id);
 

@@ -46,7 +46,7 @@
                             <th>Ticket No</th>
                             <th>Mail Relay Server</th>
                             <th>Type Application</th>
-                            <th>Requestor</th>
+                            <th>Applicant Name</th>
                             <th>Status</th>
                             <th>Date</th>
                             <th>Actions</th>
@@ -73,10 +73,10 @@
                                     <span class="badge bg-red text-white rounded-pill">Pending</span>
                                 @endif
                             </td>
-                            <td> {{ \Carbon\Carbon::parse($smtpMailServer->created_at)->format('d-m-Y') }}</td>
+                            <td> {{ \Carbon\Carbon::parse($smtpMailServer->created_at)->format('d-m-Y h:i:s') }}</td>
                             <td>
                             @can('manage_mail_relay_view')
-                                <a class="btn btn-datatable btn-icon me-2 text-blue" title="View Detail" href="{{ route('smtp_relay.view', ['id' => $smtpMailServer->id]) }}"><i data-feather="eye"></i></a>
+                                <a class="btn btn-datatable btn-icon me-2 text-blue" title="View Detail" href="{{ route('smtp_relay.view', ['id' => $smtpMailServer->id]) }}"><i data-feather="plus"></i></a>
                             @endcan
                             @can('manage_mail_relay_edit')
                                 <a hidden class="btn btn-datatable btn-icon me-2 text-blue" title="Edit Detail" href="{{ route('smtp_relay.edit',['id' => $smtpMailServer->id]) }}"><i data-feather="edit"></i></a>
@@ -118,35 +118,65 @@
                 extend: 'copy',
                 text: 'Copy',
                 exportOptions: {
-                    columns: ':visible'
+                    columns: ':visible',
+                    format: {
+                        body: function (data, row, column, node) {
+                            // Add row number for the first column
+                            return column === 0 ? row + 1 : data;
+                        }
+                    }
                 }
             },
             {
                 extend: 'csv',
                 text: 'CSV',
                 exportOptions: {
-                    columns: ':visible'
+                    columns: ':visible',
+                    format: {
+                        body: function (data, row, column, node) {
+                            // Add row number for the first column
+                            return column === 0 ? row + 1 : data;
+                        }
+                    }
                 }
             },
             {
                 extend: 'excel',
                 text: 'Excel',
                 exportOptions: {
-                    columns: ':visible'
+                    columns: ':visible',
+                    format: {
+                        body: function (data, row, column, node) {
+                            // Add row number for the first column
+                            return column === 0 ? row + 1 : data;
+                        }
+                    }
                 }
             },
             {
                 extend: 'pdf',
                 text: 'PDF',
                 exportOptions: {
-                    columns: ':visible'
+                    columns: ':visible',
+                    format: {
+                        body: function (data, row, column, node) {
+                            // Add row number for the first column
+                            return column === 0 ? row + 1 : data;
+                        }
+                    }
                 }
             },
             {
                 extend: 'print',
                 text: 'Print',
                 exportOptions: {
-                    columns: ':visible'
+                    columns: ':visible',
+                    format: {
+                        body: function (data, row, column, node) {
+                            // Add row number for the first column
+                            return column === 0 ? row + 1 : data;
+                        }
+                    }
                 }
             }
         ],

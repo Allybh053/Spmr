@@ -7,21 +7,19 @@
     <!-- CSRF Token -->
     <meta name="csrf-token" content="{{ csrf_token() }}" />
     <meta name="description" content="" />
-        <meta name="author" content="" />
-        <title>SPMR</title>
-        <link href="https://cdn.jsdelivr.net/npm/simple-datatables@latest/dist/style.css" rel="stylesheet" />
-        <link href="{{asset('css/styles.css')}}" rel="stylesheet" />
-        <link href="{{asset('assets/styles.css')}}" rel="stylesheet" />
-        <link rel="icon" type="image/x-icon" href="{{asset('assets/img/favicon.png')}}" />
-        <link href="{{asset('css/select2.css')}}" rel="stylesheet" />
-        <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
-        <link rel="stylesheet" href="{{asset('css/sweetalert2.min.css')}}">
-        <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.24/css/jquery.dataTables.min.css">
-        <link rel="stylesheet" href="https://cdn.datatables.net/buttons/2.2.2/css/buttons.dataTables.min.css">
-        <link href="{{asset('css/custom.css')}}" rel="stylesheet" />
-        <script data-search-pseudo-elements defer src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/js/all.min.js" crossorigin="anonymous"></script>
-
-
+    <meta name="author" content="" />
+    <title>SPMR</title>
+    <link href="{{asset('css/simple-datatables.css')}}" rel="stylesheet" />
+    <link href="{{asset('css/styles.css')}}" rel="stylesheet" />
+    <link href="{{asset('assets/styles.css')}}" rel="stylesheet" />
+    <link rel="icon" type="image/x-icon" href="{{asset('assets/img/favicon.png')}}" />
+    <link href="{{asset('css/select2.css')}}" rel="stylesheet" />
+    <link rel="stylesheet" href="{{asset('css/jquery-ui.css')}}">
+    <link rel="stylesheet" href="{{asset('css/sweetalert2.min.css')}}">
+    <link rel="stylesheet" href="{{asset('css/jquery.dataTables.min.css')}}">
+    <link rel="stylesheet" href="{{asset('css/buttons.dataTables.min.css')}}">
+    <link href="{{asset('css/custom.css')}}" rel="stylesheet" />
+    <script src="{{asset('js/all.min.js')}}"></script>
 
 <style>
     .select2-selection__clear {
@@ -53,6 +51,40 @@
     text-align: right; /* Align buttons to the right */
 }
 
+.btn-circle-lang {
+    display: inline-block;
+    width: 40px;
+    height: 40px;
+    text-align: center;
+    padding: 6px 0;
+    font-size: 18px;
+    line-height: 1.428571429;
+    border-radius: 50%;
+    border: 1px solid #ccc;
+    margin: 0 5px;
+    color: #fff;
+    background-color: #aeb0b3;
+    text-decoration: none;
+}
+
+.btn-circle-lang:hover {
+    background-color: #6796c4;
+    text-decoration: none;
+}
+
+.lang-switch {
+    font-weight: bold;
+}
+
+.active-lang {
+    background-color: #3b28a7; /* Different background for active language */
+    border-color: #3b28a7; /* Matching border color for active language */
+}
+
+.active-lang:hover {
+    background-color: #3b28a7; /* Different hover color for active language */
+}
+
 </style>
     @stack('meta')
     @stack('css')
@@ -73,54 +105,51 @@
     </div>
 
     <script src="{{ asset('js/jquery-3.6.4.min.js') }}"></script>
-    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
-    <script src="{{asset('js/select2.min.js')}}"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js" crossorigin="anonymous"></script>
-    <script src="{{asset('js/scripts.js')}}" type="text/javascript"></script>
-    <script src="{{asset('js/sweetalert2.min.js')}}"></script>
-    <script src="{{asset('js/feather.min.js')}}" type="text/javascript"></script>
-
-    <script src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.min.js"></script>
-    <script src="https://cdn.datatables.net/buttons/2.2.2/js/dataTables.buttons.min.js"></script>
-    <script src="https://cdn.datatables.net/buttons/2.2.2/js/buttons.html5.min.js"></script>
-    <script src="https://cdn.datatables.net/buttons/2.2.2/js/buttons.print.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js"></script>
-
-
-    <script src="https://cdn.jsdelivr.net/npm/simple-datatables@latest" crossorigin="anonymous"></script>
-    <script src="{{asset('js/datatables/datatables-simple-demo.js')}}"></script>
-    <script src="{{asset('js/custom.js')}}" type="text/javascript"></script>
-    <script src="{{asset('js/ajaxSubmit.js')}}" type="text/javascript"></script>
+    <script src="{{ asset('js/jquery-ui.js') }}"></script>
+    <script src="{{ asset('js/select2.min.js')}}"></script>
+    <script src="{{ asset('js/bootstrap.bundle.min.js')}}"></script>
+    <script src="{{ asset('js/scripts.js')}}" type="text/javascript"></script>
+    <script src="{{ asset('js/sweetalert2.min.js')}}"></script>
+    <script src="{{ asset('js/feather.min.js')}}"></script>
+    <script src="{{ asset('js/datatables/jquery.dataTables.min.js')}}"></script>
+    <script src="{{ asset('js/datatables/dataTables.buttons.min.js')}}"></script>
+    <script src="{{ asset('js/datatables/buttons.html5.min.js')}}"></script>
+    <script src="{{ asset('js/datatables/buttons.print.min.js')}}"></script>
+    <script src="{{ asset('js/moment.min.js')}}"></script>
+    <script src="{{ asset('js/simple-datatables.js')}}"></script>
+    <script src="{{ asset('js/datatables/datatables-simple-demo.js')}}"></script>
+    <script src="{{ asset('js/custom.js')}}" type="text/javascript"></script>
+    <script src="{{ asset('js/ajaxSubmit.js')}}" type="text/javascript"></script>
 
     <script>
-$(document).ready(function() {
-    // Custom DataTables sorting plugin for date in dd/mm/yyyy format
-jQuery.extend(jQuery.fn.dataTableExt.oSort, {
-    "date-uk-pre": function (a) {
-        var ukDate = a.split('/');
-        return Date.parse(ukDate[1] + '/' + ukDate[0] + '/' + ukDate[2]);
-    },
+        $(document).ready(function() {
+            // Custom DataTables sorting plugin for date in dd/mm/yyyy format
+        jQuery.extend(jQuery.fn.dataTableExt.oSort, {
+            "date-uk-pre": function (a) {
+                var ukDate = a.split('/');
+                return Date.parse(ukDate[1] + '/' + ukDate[0] + '/' + ukDate[2]);
+            },
 
-    "date-uk-asc": function (a, b) {
-        return ((a < b) ? -1 : ((a > b) ? 1 : 0));
-    },
+            "date-uk-asc": function (a, b) {
+                return ((a < b) ? -1 : ((a > b) ? 1 : 0));
+            },
 
-    "date-uk-desc": function (a, b) {
-        return ((a < b) ? 1 : ((a > b) ? -1 : 0));
-    }
-});
+            "date-uk-desc": function (a, b) {
+                return ((a < b) ? 1 : ((a > b) ? -1 : 0));
+            }
+        });
 
-    var currentUrl = window.location.href;
-    $('.nav-link').each(function() {
-        var href = $(this).attr('href');
-        if (currentUrl.indexOf(href) !== -1) {
-            $(this).addClass('active');
-            $(this).parents('.collapse').addClass('show');
-            $(this).parents('.nav-link').addClass('active');
-        }
-    });
-});
-</script>
+            var currentUrl = window.location.href;
+            $('.nav-link').each(function() {
+                var href = $(this).attr('href');
+                if (currentUrl.indexOf(href) !== -1) {
+                    $(this).addClass('active');
+                    $(this).parents('.collapse').addClass('show');
+                    $(this).parents('.nav-link').addClass('active');
+                }
+            });
+        });
+    </script>
     <script type="text/javascript">
         $(document).ready(function() {
             $('.select2').select2({

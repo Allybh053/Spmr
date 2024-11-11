@@ -23,7 +23,7 @@
                                 <div class="card shadow-lg border-0 rounded-lg mt-5">
                                     {{--<div class="card-header justify-content-center text-center"><h3 class="fw-light my-4">SPMR</h3></div>--}}
                                     <div class="card-header justify-content-center text-center">
-                                        <img class="img-fluid" src="{{ asset('assets/img/mygovuc3.0.png') }}" alt="MyGovUC 3.0">
+                                        <img class="img-fluid" src="{{ asset('assets/img/mygovuc-logo.png') }}" alt="MyGovUC" style="width: 431px; height: auto;">
                                         <h3 class="my-4"><b>SISTEM PENGURUSAN MAIL RELAY <span>(SPMR)</span></b></h3>
                                     </div>
                                     <div class="card-body">
@@ -44,7 +44,15 @@
                                             <!-- Form Group (password)-->
                                             <div class="mb-3 form-group{{ $errors->has('password') ? ' has-error' : '' }}">
                                                 <label class="small mb-1" for="inputPassword">Password</label>
-                                                <input class="form-control" id="password" name="password" type="password" placeholder="Enter password" required/>
+                                                <div class="input-group mb-3">
+                                                    <input class="form-control" id="password" name="password" type="password" placeholder="Enter password" required/>
+                                                    <div class="input-group-append">
+                                                        <button class="btn btn-outline-primary" type="button" id="togglePassword" style="border-top-left-radius: 0; border-bottom-left-radius: 0;">
+                                                            <i class="fas fa-eye" id="toggleIcon"></i>
+                                                        </button>
+                                                    </div>
+                                                </div>
+
                                             </div>
                                            <!-- Form Group (remember password checkbox) -->
                                             <div class="mb-3">
@@ -80,5 +88,51 @@
         </div>
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js" crossorigin="anonymous"></script>
         <script src="js/scripts.js"></script>
+        <script>
+            document.addEventListener("DOMContentLoaded", function() {
+                // Get the form elements
+                const emailInput = document.getElementById('email');
+                const passwordInput = document.getElementById('password');
+                const rememberPasswordCheck = document.getElementById('rememberPasswordCheck');
+
+                // Check if localStorage has saved email and password
+                if (localStorage.getItem('rememberPassword') === 'true') {
+                    emailInput.value = localStorage.getItem('email');
+                    passwordInput.value = localStorage.getItem('password');
+                    rememberPasswordCheck.checked = true;
+                }
+
+                // Add event listener to the form submission
+                document.querySelector('form').addEventListener('submit', function(event) {
+                    if (rememberPasswordCheck.checked) {
+                        // Save email and password to localStorage
+                        localStorage.setItem('email', emailInput.value);
+                        localStorage.setItem('password', passwordInput.value);
+                        localStorage.setItem('rememberPassword', 'true');
+                    } else {
+                        // Clear saved email and password from localStorage
+                        localStorage.removeItem('email');
+                        localStorage.removeItem('password');
+                        localStorage.removeItem('rememberPassword');
+                    }
+                });
+
+                // Toggle password visibility
+                const togglePassword = document.getElementById('togglePassword');
+                const toggleIcon = document.getElementById('toggleIcon');
+                togglePassword.addEventListener('click', function() {
+                    if (passwordInput.type === 'password') {
+                        passwordInput.type = 'text';
+                        toggleIcon.classList.remove('fa-eye');
+                        toggleIcon.classList.add('fa-eye-slash');
+                    } else {
+                        passwordInput.type = 'password';
+                        toggleIcon.classList.remove('fa-eye-slash');
+                        toggleIcon.classList.add('fa-eye');
+                    }
+                });
+            });
+            </script>
+
     </body>
 </html>

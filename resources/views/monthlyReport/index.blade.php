@@ -16,7 +16,7 @@
                                         <div class="page-header-icon">
                                             <i data-feather="trello"></i>
                                         </div>
-                                        <li class="breadcrumb-item">Monthly Report</li>
+                                        <li class="breadcrumb-item">Usage Report</li>
                                     </ol>
                                 </nav>
                             </h1>
@@ -63,27 +63,32 @@
                         <div class="serverBox col-md-6">
                             <div class="mb-3">
                                 <label class="small mb-1" for="inputAgencies">Choose Server:</label>
-                                {!! Form::select('server', $serverconfig,  null,  ['id'=>'server', 'name'=>'server', 'class'=>'form-control select2', 'placeholder'=>config('params.dropdown_default')]) !!}
+                                {!! Form::select('server', $serverconfig,  $defaultServerId ?? 1,  ['id'=>'server', 'name'=>'server', 'class'=>'form-control select2', 'placeholder'=>config('params.dropdown_default')]) !!}
                                 <p class="card-text mt-1 mb-1" id="ipAddress"></p>
                                 <div class="small text-muted"></div>
                             </div>
                         </div>
 
                         <div  id="searchBox">
-                            <div class="row gx-3 mb-3">
+                            {{--<div class="row gx-3 mb-3">
                                 <div class="col-md-6">
                                     <div class="mb-3" id="calendarSelect">
                                         <label class="small mb-1" for="calendarType">Filter Type:</label>
                                         <select class="form-control select2" id="calendarType" name="calendarType">
                                             <option selected disabled></option>
+                                            --}}{{-- <option value="range">Date Range</option> --}}{{--
                                             <option value="month">Month</option>
                                             <option value="year">Year</option>
                                         </select>
                                     </div>
                                 </div>
-                            </div>
+                            </div>--}}
                             <div class="mb-3" id="calendarInputs">
                                 <!-- Inputs for date, month, year, and date range will be dynamically appended here -->
+                                <div class="col-md-6">
+                                    <label for="input2_month">Month:</label>
+                                    <input type="month" class="form-control" name="input2_month" id="month">
+                                </div>
                             </div>
                             <div class="text-end"> <!-- Align the button to the right -->
                                 <button type="button" class="btn btn-secondary" id="reset">Reset</button>
@@ -245,6 +250,11 @@
 @push('script')
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.4/Chart.min.js" crossorigin="anonymous"></script>
 <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels"></script>
+<!-- Moment.js -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js" crossorigin="anonymous"></script>
+
+<!-- Chart.js Adapter for Moment.js from jsDelivr CDN -->
+<script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-moment"></script>
 <script>
 
     $(document).ready(function () {
@@ -253,31 +263,26 @@
         $('#downloadButtonJadual10').fadeOut();
         $('#downloadButtonJadual14').fadeOut();
 
-        $('#calendarType').change(function () {
-            var selectedType = $(this).val();
-            $('#calendarInputs').empty(); // Clear previous inputs
+/*        $('#calendarType').change(function () {
+        var selectedType = $(this).val();
+        $('#calendarInputs').empty(); // Clear previous inputs
 
-            if (selectedType === 'month') {
-                var currentYear = new Date().getFullYear();
-                var selectMonthHtml = '<div class="col-md-6"><label for="input2_month">Month:</label><select class="form-control" name="input2_month" id="month">';
-                var monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
-                for (var month = 0; month < 12; month++) {
-                    selectMonthHtml += '<option value="' + (month + 1) + '">' + monthNames[month] + ' ' + currentYear + '</option>';
-                }
-                selectMonthHtml += '</select></div>';
-                $('#calendarInputs').append(selectMonthHtml);
-            } else if (selectedType === 'year') {
-                var currentYear = new Date().getFullYear();
-                var selectYearHtml = '<div class="col-md-6"><label for="input2_year">Year:</label><select class="form-control" name="input2_year" id="year">';
-                for (var year = currentYear; year >= currentYear - 10; year--) {
-                    selectYearHtml += '<option value="' + year + '">' + year + '</option>';
-                }
-                selectYearHtml += '</select></div>';
-                $('#calendarInputs').append(selectYearHtml);
-            }  else {
-                // to do
+        if (selectedType === 'month') {
+            $('#calendarInputs').append('<div class="col-md-6"><label for="input2_month">Month:</label><input type="month" class="form-control" name="input2_month" id="month"></div>');
+        } else if (selectedType === 'year') {
+            var currentYear = new Date().getFullYear();
+            var selectYearHtml = '<div class="col-md-6"><label for="input2_year">Year:</label><select class="form-control" name="input2_year" id="year">';
+            for (var year = currentYear; year >= currentYear - 10; year--) {
+                selectYearHtml += '<option value="' + year + '">' + year + '</option>';
             }
-        });
+            selectYearHtml += '</select></div>';
+            $('#calendarInputs').append(selectYearHtml);
+        }  else if (selectedType === 'dateRange') {
+            $('#calendarInputs').append('<div class="row"><div class="col-md-6"><label for="input2_from">Date From:</label><input type="date" class="form-control" name="input2_from" id="input2_from" placeholder="From"></div><div class="col-md-6"><label for="input2_to">Date To:</label><input type="date" class="form-control" name="input2_to" id="input2_to" placeholder="To"></div></div>');
+        } else {
+            $('#calendarInputs').append('<div class="col-md-6"><label for="input2">Calendar:</label><input type="date" class="form-control" name="input2" placeholder="Calendar"></div>');
+        }
+    });*/
 
         var tableJad2 = $('#listJad2').DataTable({
             ordering: true,
@@ -293,11 +298,26 @@
                     }
                 },
                 { data: 'date', name: 'date', class: 'text-center' },
-                { data: 'received', name: 'received', class: 'text-center' },
-                { data: 'delivered', name: 'delivered', class: 'text-center' },
-                { data: 'deferred', name: 'deferred', class: 'text-center' },
-                { data: 'bounced', name: 'bounced', class: 'text-center' },
-                { data: 'rejected', name: 'rejected', class: 'text-center' },
+                { data: 'received', name: 'received', class: 'text-center',
+                render: function (data, type, row) {
+                    return data.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+                } },
+                { data: 'delivered', name: 'delivered', class: 'text-center',
+                render: function (data, type, row) {
+                    return data.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+                } },
+                { data: 'deferred', name: 'deferred', class: 'text-center',
+                render: function (data, type, row) {
+                    return data.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+                } },
+                { data: 'bounced', name: 'bounced', class: 'text-center',
+                render: function (data, type, row) {
+                    return data.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+                } },
+                { data: 'rejected', name: 'rejected', class: 'text-center',
+                render: function (data, type, row) {
+                    return data.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+                } },
             ],
             dom: '<"top"fBl>rt<"bottom"ip>',
             buttons: [
@@ -682,14 +702,24 @@
                                             title: {
                                                 display: true,
                                                 text: 'Date'
-                                            }
+                                            },
+                                            labels: dates,  // Ensure labels are explicitly set
+                                            autoSkip: false,
+                                            maxRotation: 0,  // Set rotation to 0 degrees to prevent any rotation
+                                            minRotation: 0
                                         },
                                         y: {
                                             title: {
                                                 display: true,
                                                 text: 'Count'
                                             },
-                                            beginAtZero: true
+                                            beginAtZero: true,
+                                            ticks: {
+                                                // Include a dollar sign in the ticks
+                                                callback: function(value, index, values) {
+                                                    return value.toLocaleString(); // Format number with commas
+                                                }
+                                            }
                                         }
                                     },
                                     plugins: {
@@ -753,15 +783,15 @@
                                 //     const date = new Date(`1970-01-01T${d.time.split('+')[0]}`);
                                 //     return date.toTimeString().slice(0, 8); // H:M:S format
                                 // });
-
+                                const labels = data.map(d => d.time);
                                 // time format H:m-H:m
-                                const labels = data.map((d, index) => {
-                                    const startDate = new Date(`1970-01-01T${d.time.split('+')[0]}`);
-                                    const endDate = new Date(`1970-01-01T${data[index + 1] ? data[index + 1].time.split('+')[0] : d.time.split('+')[0]}`);
-                                    const startTime = startDate.getHours() + ':' + ('0' + startDate.getMinutes()).slice(-2);
-                                    const endTime = endDate.getHours() + ':' + ('0' + endDate.getMinutes()).slice(-2);
-                                    return `${startTime}-${endTime}`;
-                                }).slice(0, -1); // Remove last interval, assuming it's incomplete or unwanted
+                                // const labels = data.map((d, index) => {
+                                    // const startDate = new Date(`1970-01-01T${d.time.split('+')[0]}`);
+                                    // const endDate = new Date(`1970-01-01T${data[index + 1] ? data[index + 1].time.split('+')[0] : d.time.split('+')[0]}`);
+                                    // const startTime = startDate.getHours() + ':' + ('0' + startDate.getMinutes()).slice(-2);
+                                    // const endTime = endDate.getHours() + ':' + ('0' + endDate.getMinutes()).slice(-2);
+                                    // return `${startTime}-${endTime}`;
+                                // }).slice(0, -1); // Remove last interval, assuming it's incomplete or unwanted
 
                                 const receivedData = data.map(d => d.received);
                                 const deliveredData = data.map(d => d.delivered);
@@ -821,16 +851,37 @@
                                         responsive: true,
                                         scales: {
                                             x: {
-                                                type: 'category',
-                                                title: {
-                                                    display: true,
-                                                    text: 'Time'
-                                                }
-                                            },
+                                                    type: 'category',
+                                                    title: {
+                                                        display: true,
+                                                        text: 'Time'
+                                                    },
+                                                    labels: labels,  // Ensure labels are explicitly set
+                                                    autoSkip: false,
+                                                    maxRotation: 0,  // Set rotation to 0 degrees to prevent any rotation
+                                                    minRotation: 0
+                                                },
                                             y: {
+                                                type: 'linear',
                                                 title: {
                                                     display: true,
                                                     text: 'Count'
+                                                },
+                                                beginAtZero: true,
+                                                ticks: {
+                                                    callback: function(value, index, values) {
+                                                        console.log(value);
+                                                        // Number formatting logic
+                                                        if (value >= 1e9) {
+                                                            return (value / 1e9).toFixed(1).replace(/\.0$/, '') + 'B'; // Billion
+                                                        } else if (value >= 1e6) {
+                                                            return (value / 1e6).toFixed(1).replace(/\.0$/, '') + 'M'; // Million
+                                                        } else if (value >= 1e3) {
+                                                            return (value / 1e3).toFixed(1).replace(/\.0$/, '') + 'K'; // Thousand
+                                                        } else {
+                                                            return value.toLocaleString(); // Standard formatting for values less than 1000
+                                                        }
+                                                    }
                                                 }
                                             }
                                         }
@@ -891,7 +942,21 @@
                                 options: {
                                     scales: {
                                         y: {
-                                            beginAtZero: true
+                                            beginAtZero: true,
+                                            ticks: {
+                                                callback: function(value, index, values) {
+                                                    // Check for value ranges and format accordingly
+                                                    if (value >= 1e9) {
+                                                        return (value / 1e9).toFixed(1).replace(/\.0$/, '') + 'B'; // Billion
+                                                    } else if (value >= 1e6) {
+                                                        return (value / 1e6).toFixed(1).replace(/\.0$/, '') + 'M'; // Million
+                                                    } else if (value >= 1e3) {
+                                                        return (value / 1e3).toFixed(1).replace(/\.0$/, '') + 'K'; // Thousand
+                                                    } else {
+                                                        return value.toLocaleString(); // Standard formatting for values less than 1000
+                                                    }
+                                                }
+                                            }
                                         }
                                     }
                                 }
@@ -951,7 +1016,21 @@
                                 options: {
                                     scales: {
                                         y: {
-                                            beginAtZero: true
+                                            beginAtZero: true,
+                                            ticks: {
+                                                callback: function(value, index, values) {
+                                                    // Check for value ranges and format accordingly
+                                                    if (value >= 1e9) {
+                                                        return (value / 1e9).toFixed(1).replace(/\.0$/, '') + 'B'; // Billion
+                                                    } else if (value >= 1e6) {
+                                                        return (value / 1e6).toFixed(1).replace(/\.0$/, '') + 'M'; // Million
+                                                    } else if (value >= 1e3) {
+                                                        return (value / 1e3).toFixed(1).replace(/\.0$/, '') + 'K'; // Thousand
+                                                    } else {
+                                                        return value.toLocaleString(); // Standard formatting for values less than 1000
+                                                    }
+                                                }
+                                            }
                                         }
                                     }
                                 }

@@ -38,7 +38,7 @@
                             <th>Ticket No</th>
                             <th>Mail Relay Server</th>
                             <th>Type Application</th>
-                            <th>Requestor</th>
+                            <th>Applicant Name</th>
                             <th>Status</th>
                             <th>Date Request</th>
                             <th>Actions</th>
@@ -55,8 +55,8 @@
                                 <span class="badge bg-success text-white rounded-pill">New Application</span>
                             @elseif($smtpMailServer -> types_req == 2)
                                 <span class="badge bg-danger text-white rounded-pill">Terminate of Service</span>
-                            @else
-                                <span class="badge bg-primary text-white rounded-pill">Onboarding Agency</span>
+                            {{-- @else
+                                <span class="badge bg-primary text-white rounded-pill">Onboarding Agency</span> --}}
                             @endif</td>
                             <td>{{ $smtpMailServer -> applicant_name }}</td>
                             <td>
@@ -66,7 +66,7 @@
                                 <span class="badge bg-red text-white rounded-pill">Inactive</span>
                             @endif
                             </td>
-                            <td> {{ \Carbon\Carbon::parse($smtpMailServer->created_at)->format('d-m-Y') }}</td>
+                            <td> {{ \Carbon\Carbon::parse($smtpMailServer->created_at)->format('d/m/Y H:i:s') }}</td>
                             <td style="text-align: center;">
                                 <a class="btn btn-datatable btn-icon me-2 text-blue" title="View Detail" href="{{ route('mailrelay.edit',['id' => $smtpMailServer->id,'type' => $smtpMailServer->types_req])}}"><i data-feather="eye"></i></a>
                                 <form class="btn btn-datatable btn-icon me-2 text-blue" action="" method="POST" onsubmit="return confirm('Are you sure you want to delete this user?')">
@@ -105,35 +105,73 @@
                 extend: 'copy',
                 text: 'Copy',
                 exportOptions: {
-                    columns: ':visible'
+                    columns: ':not(:last-child)', // Exclude the last column
+                    format: {
+                        body: function (data, row, column, node) {
+                            // Add row number for the first column
+                            if (column === 0) {
+                            return row + 1;
+                            } else {
+                                return data.replace(/<\/?[^>]+(>|$)/g, "");
+                            }
+                        }
+                    }
                 }
             },
             {
                 extend: 'csv',
                 text: 'CSV',
                 exportOptions: {
-                    columns: ':visible'
+                    columns: ':not(:last-child)', // Exclude the last column
+                    format: {
+                        body: function (data, row, column, node) {
+                            // Add row number for the first column
+                            if (column === 0) {
+                            return row + 1;
+                            } else {
+                                return data.replace(/<\/?[^>]+(>|$)/g, "");
+                            }
+                        }
+                    }
                 }
             },
             {
                 extend: 'excel',
                 text: 'Excel',
                 exportOptions: {
-                    columns: ':visible'
+                    columns: ':not(:last-child)', // Exclude the last column
+                    format: {
+                        body: function (data, row, column, node) {
+                            // Add row number for the first column
+                            return column === 0 ? row + 1 : data;
+                        }
+                    }
                 }
             },
             {
                 extend: 'pdf',
                 text: 'PDF',
                 exportOptions: {
-                    columns: ':visible'
+                    columns: ':not(:last-child)', // Exclude the last column
+                    format: {
+                        body: function (data, row, column, node) {
+                            // Add row number for the first column
+                            return column === 0 ? row + 1 : data;
+                        }
+                    }
                 }
             },
             {
                 extend: 'print',
                 text: 'Print',
                 exportOptions: {
-                    columns: ':visible'
+                    columns: ':not(:last-child)', // Exclude the last column
+                    format: {
+                        body: function (data, row, column, node) {
+                            // Add row number for the first column
+                            return column === 0 ? row + 1 : data;
+                        }
+                    }
                 }
             }
         ],

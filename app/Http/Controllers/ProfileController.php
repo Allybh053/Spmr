@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Models\User;
 use Illuminate\Support\Facades\Hash;
+use App\Models\ActivityLog;
 
 class ProfileController extends Controller
 {
@@ -14,10 +15,25 @@ class ProfileController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
         // Get the currently authenticated user
-        $profile = Auth::user();
+        $profile = User::find(Auth::user()->id);
+
+        ActivityLog::create([
+            'user_id' => Auth::id(),
+            'activity_type' => 'View Profile',
+            'action' => $request->path(),
+            'url' => url()->full(),
+            'method' => $request->method(),
+            'ip_address' => $request->ip(),
+            'input' => json_encode([
+                'profile' =>  $profile ,
+                'request' => $request->except(['password']),
+            ]),
+            'user_agent' => $request->userAgent(),
+        ]);
+
 
         return view('users.profile.index', compact('profile'));
     }
@@ -34,6 +50,20 @@ class ProfileController extends Controller
         // Update the user's password
         $user->password = Hash::make($request->password);
         $user->save();
+
+        ActivityLog::create([
+            'user_id' => Auth::id(),
+            'activity_type' => 'Update Profile',
+            'action' => $request->path(),
+            'url' => url()->full(),
+            'method' => $request->method(),
+            'ip_address' => $request->ip(),
+            'input' => json_encode([
+                'profile' =>  $user ,
+                'request' => $request->except(['password']),
+            ]),
+            'user_agent' => $request->userAgent(),
+        ]);
 
         return redirect()->route('profile.index')->with('success', 'Password updated successfully');
 
@@ -55,6 +85,19 @@ class ProfileController extends Controller
         // Update the user details using the validated data
         User::where('id', $id)->update($validatedData);
 
+        ActivityLog::create([
+            'user_id' => Auth::id(),
+            'activity_type' => 'Update Profile Detail',
+            'action' => $request->path(),
+            'url' => url()->full(),
+            'method' => $request->method(),
+            'ip_address' => $request->ip(),
+            'input' => json_encode([
+                'profile' =>  $request->input() ,
+                'request' => $request->except(['password']),
+            ]),
+            'user_agent' => $request->userAgent(),
+        ]);
         // Redirect back or to another page
         return redirect()->route('profile.index', $id)->with('success', 'User details updated successfully');
     }

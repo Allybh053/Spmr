@@ -46,14 +46,7 @@
                     <div class="row gx-3 mb-3">
                         <div class="col-md-6">
                             <label class="small mb-1" for="serverconfig">Server Name:</label>
-                            {{--<select id="serverconfig" name="serverconfig" class="form-control select2">
-                                <option value="">Select an option</option>
-                                @foreach ($serverconfig as $server)
-                                    <option value="{{ $server->id }}">{{ $server->hostname }}</option>
-                                @endforeach
-                            </select>--}}
-
-                            {!! Form::select('server', $serverconfig,  null,  ['id'=>'server', 'name'=>'server', 'class'=>'form-control select2', 'placeholder'=>config('params.dropdown_default')]) !!}
+                            {!! Form::select('server', $serverconfig,  $defaultServerId ?? 1,  ['id'=>'server', 'name'=>'server', 'class'=>'form-control select2', 'placeholder'=>config('params.dropdown_default')]) !!}
                             <p class="card-text mt-1 mb-1" id="ipAddress"></p>
                             <div class="small text-muted"></div>
                         </div>
@@ -67,44 +60,6 @@
             </div>
         </div>
             <hr>
-        {{--<div class="card">
-            <div class="card-body">
-                <table id="datatablesSimple1" class="table">
-                    <thead>
-                        <tr>
-                            <th>No</th>
-                            <th>Domain Name</th>
-                            <th>SMTP</th>
-                            <th>Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @isset($serverdetail)
-                            @foreach ($serverdetail as $data)
-                            <tr>
-                                <td>{{ $loop->iteration }}</td>
-                                <td>{{ $data->name }}</td>
-                                <td>{{ $data->smtp }}</td>
-                                <td>
-                                    <button type="submit" class="btn btn-datatable btn-icon text-danger btn-transparent" title="Delete User"><i data-feather="trash-2"></i></button>
-                                </td>
-                            </tr>
-                            @endforeach
-                        @else
-                            <tr>
-                                <td colspan="3">No data available</td>
-                            </tr>
-                        @endisset
-
-                    </tbody>
-                </table>
-            </div>
-            <hr>
-            <div class="card-body">
-                <label class="small mb-1" for="serverconfig">Terminal</label>
-                <div id="shell-in-a-box"></div>
-            </div>
-        </div>--}}
 
         {{--ROMIE CODE--}}
             <div class="row mb-4 mt-4">
@@ -113,11 +68,12 @@
                         <div class="card-body">
                             <div class="row">
                                 <div class="col-xl-4 mb-4">
-                                    <a class="card lift h-100" href="#!">
+                                    <div class="card h-100">
                                         <div class="card-body d-flex justify-content-center flex-column">
                                             <div class="d-flex align-items-center justify-content-between">
                                                 <div class="me-3">
                                                     <h5>Total Domain Activated</h5>
+                                                    <div  class="small text-muted">Updated every 30 minutes</div>
                                                     <div class="inline">
                                                         <i class="feather-l text-primary" data-feather="corner-down-right"></i>
                                                         <h2 id="totalIP" style="display: inline-block; margin-left: 5px;">--</h2>
@@ -125,14 +81,15 @@
                                                 </div>
                                             </div>
                                         </div>
-                                    </a>
+                                    </div>
                                 </div>
                                 <div class="col-xl-4 mb-4">
-                                    <a class="card lift h-100" href="#!">
+                                    <div class="card h-100">
                                         <div class="card-body d-flex justify-content-center flex-column">
                                             <div class="d-flex align-items-center justify-content-between">
                                                 <div class="me-3">
                                                     <h5>Total Domain Deactivated</h5>
+                                                    <div  class="small text-muted">Updated every 30 minutes</div>
                                                     <div class="inline">
                                                         <i class="feather-l text-primary" data-feather="corner-down-right"></i>
                                                         <h2 id="totalDeactivated" style="display: inline-block; margin-left: 5px;">--</h2>
@@ -140,14 +97,15 @@
                                                 </div>
                                             </div>
                                         </div>
-                                    </a>
+                                    </div>
                                 </div>
                                 <div class="col-xl-4 mb-4">
-                                    <a class="card lift h-100" href="#!">
+                                    <div class="card h-100">
                                         <div class="card-body d-flex justify-content-center flex-column">
                                             <div class="d-flex align-items-center justify-content-between">
                                                 <div class="me-3">
                                                     <h5>Total Domain Registered</h5>
+                                                    <div  class="small text-muted">Updated every 30 minutes</div>
                                                     <div class="inline">
                                                         <i class="feather-l text-primary" data-feather="corner-down-right"></i>
                                                         <h2 id="totalDomain" style="display: inline-block; margin-left: 5px;">--</h2>
@@ -155,7 +113,7 @@
                                                 </div>
                                             </div>
                                         </div>
-                                    </a>
+                                    </div>
                                 </div>
                             </div>
 
@@ -201,95 +159,20 @@
 @push('script')
 <script>
 
-/*SIDI CODE*/
-/*
-        // Make AJAX request to fetch Shell In A Box session
-        fetch('{{ route('shell-in-a-box') }}')
-        .then(response => response.text())
-        .then(data => {
-            // console.log(data);
-            // Update the content on your page
-            document.getElementById('shell-in-a-box').innerHTML = data;
-        })
-        .catch(error => {
-            console.error('Error fetching Shell In A Box session:', error);
-        });
-
-    (function ($) {
-        var table = $('#datatablesSimple1').DataTable({
-            processing: true,
-            serverSide: false,
-            ordering: true,
-            lengthMenu: [ [10, 25, 50, -1], [10, 25, 50, "All"] ],
-            dom: '<"top"fBl>rt<"bottom"ip>',
-            buttons: [
-                {
-                    extend: 'copy',
-                    text: 'Copy',
-                    exportOptions: {
-                        columns: ':visible'
-                    }
-                },
-                {
-                    extend: 'csv',
-                    text: 'CSV',
-                    exportOptions: {
-                        columns: ':visible'
-                    }
-                },
-                {
-                    extend: 'excel',
-                    text: 'Excel',
-                    exportOptions: {
-                        columns: ':visible'
-                    }
-                },
-                {
-                    extend: 'pdf',
-                    text: 'PDF',
-                    exportOptions: {
-                        columns: ':visible'
-                    }
-                },
-                {
-                    extend: 'print',
-                    text: 'Print',
-                    exportOptions: {
-                        columns: ':visible'
-                    }
-                }
-            ]
-        });
-
-        // Adjust positioning of search input and export buttons
-        $('.dataTables_filter').addClass('d-inline-block mr-2'); // Make search input inline
-        $('.dt-buttons').appendTo('.dataTables_filter'); // Append export buttons to search container
-    })(jQuery);
-
-*/
-
-
-/*ROMIE CODE*/
 $(document).ready(function () {
-
     // Event listener for select change
     $('#server').on('change', function() {
         var selectedServerId = $(this).val();
-
         // AJAX request to fetch data based on the selected server ID
         $.ajax({
             url: "{!! route('mailrelay.api') !!}",
             method: 'GET',
-            data: {
-                serverId: selectedServerId
-            },
+            data: { serverId: selectedServerId },
             success: function(response) {
                 // Handle success response and update UI
-                //console.log(response);
             },
             error: function(xhr, status, error) {
                 // Handle error
-                //console.error(xhr.responseText);
             }
         });
     });
@@ -308,7 +191,6 @@ $(document).ready(function () {
                 }
             },
             { data: 'source', name: 'source', class: 'text-center' },
-            /*{ data: 'destination', name: 'destination', class: 'text-center' },*/
             { data: 'status', name: 'status', class: 'text-center' },
         ],
         dom: '<"top"fBl>rt<"bottom"ip>',
@@ -318,7 +200,12 @@ $(document).ready(function () {
                 text: 'Copy',
                 title: 'List of Domain Registered',
                 exportOptions: {
-                    columns: ':visible'
+                    columns: ':visible',
+                    format: {
+                        body: function (data, row, column, node) {
+                            return column === 0 ? row + 1 : data;
+                        }
+                    }
                 }
             },
             {
@@ -326,7 +213,12 @@ $(document).ready(function () {
                 text: 'CSV',
                 title: 'List of Domain Registered',
                 exportOptions: {
-                    columns: ':visible'
+                    columns: ':visible',
+                    format: {
+                        body: function (data, row, column, node) {
+                            return column === 0 ? row + 1 : data;
+                        }
+                    }
                 }
             },
             {
@@ -334,7 +226,12 @@ $(document).ready(function () {
                 text: 'Excel',
                 title: 'List of Domain Registered',
                 exportOptions: {
-                    columns: ':visible'
+                    columns: ':visible',
+                    format: {
+                        body: function (data, row, column, node) {
+                            return column === 0 ? row + 1 : data;
+                        }
+                    }
                 }
             },
             {
@@ -342,7 +239,12 @@ $(document).ready(function () {
                 text: 'PDF',
                 title: 'List of Domain Registered',
                 exportOptions: {
-                    columns: ':visible'
+                    columns: ':visible',
+                    format: {
+                        body: function (data, row, column, node) {
+                            return column === 0 ? row + 1 : data;
+                        }
+                    }
                 }
             },
             {
@@ -350,11 +252,16 @@ $(document).ready(function () {
                 text: 'Print',
                 title: 'List of Domain Registered',
                 exportOptions: {
-                    columns: ':visible'
+                    columns: ':visible',
+                    format: {
+                        body: function (data, row, column, node) {
+                            return column === 0 ? row + 1 : data;
+                        }
+                    }
                 }
             }
         ],
-        data: [], // Initialize with empty data
+        data: [],
         drawCallback: function(settings) {
             var api = this.api();
             api.column(0, {search:'applied', order:'applied'}).nodes().each(function(cell, i) {
@@ -362,21 +269,18 @@ $(document).ready(function () {
             });
         }
     });
+
     $('.dataTables_filter', tableMailRoute.table().container()).addClass('d-inline-block mr-2').append($('.dt-buttons', tableMailRoute.table().container()));
 
-
-    $('#searchForm').submit(function (e) {
-        e.preventDefault();
-
-        var formData = $(this).serialize();
+    function submitSearchForm() {
+        var formData = $('#searchForm').serialize();
+        console.log(formData);
         if (formData === 'server=') {
             alert("Please Choose Server in options field.");
         } else {
             let timerInterval;
-
             Swal.fire({
                 title: "Please wait...",
-                //html: "Please wait...",
                 timerProgressBar: true,
                 didOpen: () => {
                     Swal.showLoading();
@@ -385,7 +289,7 @@ $(document).ready(function () {
                         if (timer) {
                             timer.textContent = `${Swal.getTimerLeft()}`;
                         }
-                    }, 100)
+                    }, 500);
                 },
                 willClose: () => {
                     clearInterval(timerInterval);
@@ -397,41 +301,32 @@ $(document).ready(function () {
                 url: "{{ route('mailrelay.index.search') }}",
                 data: formData,
                 success: function (response) {
-                    // Hide the SweetAlert timer
                     Swal.close();
+                    $('#totalIP').text(response.totalDomainActivated || "0");
+                    $('#totalDeactivated').text(response.totalDomainDeactivated || "0");
+                    $('#totalDomain').text(response.totalDomainRegistered || "0");
 
-                    // Update UI with the response data
-                    $('#totalIP').text(response.totalDomainActivated || "Not Found");
-                    $('#totalDeactivated').text(response.totalDomainDeactivated || "Not Found");
-                    $('#totalDomain').text(response.totalDomainRegistered || "Not Found");
-
-                    // Add index to each row for jadual2
                     $.each(response.dataMailRoute, function (index, row) {
                         row['DT_RowIndex'] = index + 1;
-                        row['status'] = row['status'] ===  true? 'Activated' : 'Deactivated';
+                        row['status'] = row['status'] === true ? 'Activated' : 'Deactivated';
                     });
-                    // Clear existing data and add new data to the DataTable
                     tableMailRoute.clear().rows.add(response.dataMailRoute).draw();
-
                 },
                 error: function (error) {
-                    // Hide the SweetAlert timer
                     Swal.close();
-
-                    // Handle the error
                     console.log(error);
                 }
             });
         }
+    }
+
+    $('#searchForm').submit(function (e) {
+        e.preventDefault();
+        submitSearchForm();
     });
 
-
-
-
-
-
+    // Call the function on page load
+    submitSearchForm();
 });
-
-
 </script>
 @endpush

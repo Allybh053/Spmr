@@ -2,7 +2,7 @@
 @section('content')
     <main>
         <header class="page-header page-header-compact page-header-light border-bottom bg-white mb-4">
-            <div class="container-xl px-4">
+            <div class="container-fluid px-4">
                 <div class="page-header-content">
                     <div class="row align-items-center justify-content-between pt-3">
                         <div class="col-auto mb-3">
@@ -15,7 +15,7 @@
                 </div>
             </div>
         </header>
-        <div class="container-xl px-4">
+        <div class="container-fluid px-4">
             <div class="card mb-4">
                 <div class="card-header">
                     <div class="row align-items-center">
@@ -30,6 +30,19 @@
                 @csrf
 
                 <div class="mb-3">
+                    <label for="name">Ministry Name</label>
+                    <select class="form-control select2" name="ministry" id="ministry" required>
+                        <option disabled selected>Select Ministry</option>
+                        @foreach ($ministry as $ministry)
+                        <option value="{{ $ministry['id'] }}">{{ $ministry['name'] }}</option>
+                        @endforeach
+                    </select>
+                </div>
+                <div class="mb-3">
+                    <label for="name">Agency Code Name</label>
+                    <input class="form-control" id="code_name" name="code_name" type="text" placeholder="" value="" required>
+                </div>
+                <div class="mb-3">
                     <label for="name">Agency Name</label>
                     <input class="form-control" id="name" name="name" type="text" placeholder="" value="" required>
                 </div>
@@ -40,9 +53,8 @@
                 <div class="mb-3">
                     <label for="status">Status</label>
                     <select class="form-control select2" name="status" id="status" required>
-                        <option selected disabled>Select Status</option>
-                        <option value="1">Active</option>
-                        <option value="2">In Active</option>
+                        <option value="1" selected>Active</option>
+                        <option value="0">In Active</option>
                     </select>
                 </div>
                 <div class="mb-3 text-center">
@@ -56,4 +68,17 @@
             </div>
         </div>
     </main>
+
+    <style>
+        label {
+            font-weight: bold;
+        }
+    </style>
 @endsection
+@push('script')
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+<link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+<script src="https://ajax.aspnetcdn.com/ajax/jquery.validate/1.19.2/jquery.validate.min.js"></script>
+@endpush

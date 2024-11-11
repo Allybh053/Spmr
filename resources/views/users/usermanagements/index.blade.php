@@ -82,7 +82,7 @@
                             @if($user->enabled == 1)
                                 <span class="badge bg-green-soft text-green">Active</span>
                             @else
-                                <span class="badge bg-red-soft text-red">Inactive</span>
+                                <span class="badge bg-red-soft text-red">In-Active</span>
                             @endif
                             </td>
                             <td>{{ $user->created_at->format('d/m/Y') }}</td>
@@ -125,35 +125,90 @@
                 extend: 'copy',
                 text: 'Copy',
                 exportOptions: {
-                    columns: ':visible'
+                    columns: ':not(:last-child)',
+                    format: {
+                        body: function (data, row, column, node) {
+                        var textContent = $('<div>').html(data).text(); // Use jQuery to strip HTML tags
+                        // Handle date formatting if necessary
+                        if (/\d{2}\/\d{2}\/\d{4}/.test(textContent)) {
+                            var dateParts = textContent.split('/');
+                            textContent = new Date(dateParts[2], dateParts[1] - 1, dateParts[0]).toLocaleDateString();
+                        }
+                        return column === 0 ? row + 1 : textContent;
+                    }
+                    }
                 }
             },
             {
                 extend: 'csv',
                 text: 'CSV',
                 exportOptions: {
-                    columns: ':visible'
+                    columns: ':not(:last-child)',
+                    format: {
+                        body: function (data, row, column, node) {
+                        var textContent = $('<div>').html(data).text(); // Use jQuery to strip HTML tags
+                        // Handle date formatting if necessary
+                        if (/\d{2}\/\d{2}\/\d{4}/.test(textContent)) {
+                            var dateParts = textContent.split('/');
+                            textContent = new Date(dateParts[2], dateParts[1] - 1, dateParts[0]).toLocaleDateString();
+                        }
+                        return column === 0 ? row + 1 : textContent;
+                    }
+                    }
                 }
             },
             {
                 extend: 'excel',
                 text: 'Excel',
                 exportOptions: {
-                    columns: ':visible'
+                    columns:  ':not(:last-child)',
+                    format: {
+                        body: function (data, row, column, node) {
+                        var textContent = $('<div>').html(data).text(); // Use jQuery to strip HTML tags
+                        // Handle date formatting if necessary
+                        if (/\d{2}\/\d{2}\/\d{4}/.test(textContent)) {
+                            var dateParts = textContent.split('/');
+                            textContent = new Date(dateParts[2], dateParts[1] - 1, dateParts[0]).toLocaleDateString();
+                        }
+                        return column === 0 ? row + 1 : textContent;
+                    }
+                    }
                 }
             },
             {
                 extend: 'pdf',
                 text: 'PDF',
                 exportOptions: {
-                    columns: ':visible'
+                    columns:  ':not(:last-child)',
+                    format: {
+                        body: function (data, row, column, node) {
+                        var textContent = $('<div>').html(data).text(); // Use jQuery to strip HTML tags
+                        // Handle date formatting if necessary
+                        if (/\d{2}\/\d{2}\/\d{4}/.test(textContent)) {
+                            var dateParts = textContent.split('/');
+                            textContent = new Date(dateParts[2], dateParts[1] - 1, dateParts[0]).toLocaleDateString();
+                        }
+                        return column === 0 ? row + 1 : textContent;
+                    }
+                    }
                 }
             },
             {
                 extend: 'print',
                 text: 'Print',
                 exportOptions: {
-                    columns: ':visible'
+                    columns: ':not(:last-child)',
+                    format: {
+                        body: function (data, row, column, node) {
+                        var textContent = $('<div>').html(data).text(); // Use jQuery to strip HTML tags
+                        // Handle date formatting if necessary
+                        if (/\d{2}\/\d{2}\/\d{4}/.test(textContent)) {
+                            var dateParts = textContent.split('/');
+                            textContent = new Date(dateParts[2], dateParts[1] - 1, dateParts[0]).toLocaleDateString();
+                        }
+                        return column === 0 ? row + 1 : textContent;
+                    }
+                    }
                 }
             }
         ],

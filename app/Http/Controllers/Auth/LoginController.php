@@ -17,6 +17,10 @@ class LoginController extends Controller
 
     public function handle($request, Closure $next)
     {
+        if (!Auth::check()) {
+            return redirect()->route('login');
+        }
+
         $authenticator = app(Authenticator::class)->boot($request);
 
         if (!$authenticator->isAuthenticated()) {
@@ -31,14 +35,22 @@ class LoginController extends Controller
         ActivityLog::create([
             'user_id' => $user->id,
             'activity_type' => 'login',
+            'action' => 'user_login',
+            'url' => $request->fullUrl(),
+            'method' => $request->method(),
             'ip_address' => $request->ip(),
-            'user_agent' => $request->header('User-Agent'), // Optionally, you can log user agent
+            'input' => json_encode([]),
+            'user_agent' => $request->userAgent(),
         ]);
 
         $user->update([
             'last_login_at' => now(),
             'last_login_ip' => $request->ip(),
         ]);
+
+
+
+
        // Check if TOTP is enabled for the user
        if ($user->totp_enabled) {// Debugging statement
 
@@ -48,10 +60,15 @@ class LoginController extends Controller
         if ($user->enabled == 0) {
             Auth::logout();
 
-            throw ValidationException::withMessages([
-                $this->username() => [trans('auth.failed')],
+            // throw ValidationException::withMessages([
+            //     $this->username() => [trans('auth.failed')],
+            // ]);
+            return back()->withErrors([
+                'email' => 'This account is inactive.',
             ]);
         }
+
+
 
         return redirect()->intended($this->redirectPath());
     }
@@ -96,18 +113,58 @@ class LoginController extends Controller
 
     public function logout(Request $request)
     {
-        if (Auth::check()) {
+        try {
+            if (Auth::check()) {
+                ActivityLog::create([
+                    'user_id' => Auth::id(),
+                    'activity_type' => 'logout',
+                    'action' => 'user_logout',
+                    'url' => $request->fullUrl(),
+                    'method' => $request->method(),
+                    'ip_address' => $request->ip(),
+                    'input' => json_encode([]),
+                    'user_agent' => $request->userAgent(),
+                ]);
+            }
+
+            $this->guard()->logout();
+            $request->session()->flush();
+            $request->session()->regenerate();
+
+            return redirect('/login');
+        } catch (Throwable $e) {
+            // Log the exception details to the activity_logs table
             ActivityLog::create([
-                'user_id' => Auth::user()->id,
-                'activity_type' => 'logout',
+                'user_id' => Auth::id(),
+                'activity_type' => 'exception',
+                'action' => 'logout_exception',
+                'url' => $request->fullUrl(),
+                'method' => $request->method(),
                 'ip_address' => $request->ip(),
+                'input' => json_encode([]),
+                'user_agent' => $request->userAgent(),
+                'input' => json_encode([
+                    'message' => $e->getMessage(),
+                    'stack' => $e->getTraceAsString(),
+                ]),
             ]);
+
+            // Optionally, you can rethrow the exception or handle it differently
+            throw $e;
+        }
+    }
+
+    public function login(Request $request)
+    {
+        $credentials = $request->only('email', 'password');
+        $remember = $request->has('remember'); // Check if the remember checkbox is checked
+
+        if (Auth::attempt($credentials, $remember)) {
+            // Authentication passed, handle post-login logic
+            return $this->authenticated($request, Auth::user());
         }
 
-        $this->guard()->logout();
-        $request->session()->flush();
-        $request->session()->regenerate();
-
-        return redirect('/login');
+        // Authentication failed, redirect back with input
+        return redirect()->back()->withInput($request->only('email', 'remember'))->withErrors(['email' => 'Invalid credentials']);
     }
 }

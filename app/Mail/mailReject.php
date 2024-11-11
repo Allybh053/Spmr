@@ -13,13 +13,14 @@ class mailReject extends Mailable
 {
     use Queueable, SerializesModels;
     public $request;
-
+    public $user;
     /**
      * Create a new message instance.
      */
-    public function __construct($request)
+    public function __construct($request, $user)
     {
         $this->data = $request;
+        $this->user = $user;
     }
 
     /**
@@ -39,7 +40,7 @@ class mailReject extends Mailable
     {
         $content = new Content(
             view: 'emails.emailreject',
-            with: ['data' => $this->data]
+            with: ['data' => $this->data, 'user' => $this->user]
         );
 
         return $content;

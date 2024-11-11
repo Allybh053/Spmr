@@ -10,7 +10,7 @@
                                 <div class="page-header-icon"></div>
                                 <nav aria-label="breadcrumb">
                                     <ol class="breadcrumb">
-                                        <li class="breadcrumb-item">SMTP Relay MyGovUC3.0</li>
+                                        <li class="breadcrumb-item">SMTP Relay MyGovUC</li>
                                     </ol>
                                 </nav>
 
@@ -27,9 +27,9 @@
                     <!-- Account details card-->
                     <div class="card mb-4">
                     @isset($applicantInfo)
-                        <div class="card-header">Update SMTP Relay MyGovUC3.0</div>
+                        <div class="card-header">Update SMTP Relay MyGovUC</div>
                     @else
-                        <div class="card-header">Register SMTP Relay MyGovUC3.0</div>
+                        <div class="card-header">Register SMTP Relay MyGovUC</div>
                     @endisset
 
                         <div class="card-body  mt-1 mb-4">

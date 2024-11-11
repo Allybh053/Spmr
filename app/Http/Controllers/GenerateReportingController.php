@@ -15,6 +15,9 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\File;
 use function Laravel\Prompts\search;
+use Carbon\Carbon;
+use Illuminate\Support\Facades\DB;
+use App\Models\ActivityLog;
 
 class GenerateReportingController extends Controller
 {
@@ -22,10 +25,12 @@ class GenerateReportingController extends Controller
     {
         $user = Auth::user();
         $role = $user->roles->isNotEmpty() ? $user->roles->pluck('name')->first() : null;
-        $serverIds = RoleServer::whereIn('role_id', $user->roles->pluck('id')->all())
+        $serverIds = RoleServer::whereIn('role_servers.role_id', $user->roles->pluck('id')->all())
+        ->leftJoin('servers','servers.id','role_servers.server_id')
+        ->where('servers.status',1)
         ->pluck('server_id');
 
-        $defaultServerId = 1;
+        $defaultServerId = $serverIds->min();
 
         // Filter servers based on the fetched IDs
         $serverconfig = Server::whereIn('id', $serverIds)
@@ -33,22 +38,37 @@ class GenerateReportingController extends Controller
         ->pluck('hostname', 'id');
 
 
-        $ministries = Ministry::where('status', 1)->pluck('name')->toArray();
-        $agencies = Agency::where('status', 1)->pluck('name')->toArray();
-        $allMinistryAgency = array_merge($ministries, $agencies);
+        $ministries = Ministry::where('status', 1)->pluck('name','id');
+        // $agencies = Agency::where('status', 1)->whereNotIn('name',['-'])->pluck('name')->toArray();
+        // $allMinistryAgency = array_merge($ministries, $agencies);
 
 
         $domainsArray = DomainMinistryAgencies::where('enabled', 1)->get()->toArray();
 
-        return view('generateReporting.index',compact('defaultServerId','serverconfig','domainsArray', 'allMinistryAgency'));
+        ActivityLog::create([
+            'user_id' => Auth::id(),
+            'activity_type' => 'View Agencies Reporting',
+            'action' => $request->path(),
+            'url' => url()->full(),
+            'method' => $request->method(),
+            'ip_address' => $request->ip(),
+            'input' => json_encode([
+                'agency report' => 'Retrieve Default Data For Filter in Agency Reporting',
+                'request' => $request->except(['password']),
+            ]),
+            'user_agent' => $request->userAgent(),
+        ]);
+
+        return view('generateReporting.index',compact('defaultServerId','serverconfig','domainsArray','ministries'));
     }
 
     public function search(Request $request)
     {
         // Retrieve other inputs from the request
         $serverIds = $request->input('server');
-        $input1 = $request->input('ministry');
-        $input2Type = $request->input('calendarType');
+        $ministry = $request->input('ministry');
+        $agency = $request->input('agency');
+        $calendarType = $request->input('calendarType');
         $dateType = $request->input('input2');
         $monthType = $request->input('input2_month');
         $yearType = $request->input('input2_year');
@@ -58,6 +78,170 @@ class GenerateReportingController extends Controller
         // You can adjust the search logic based on the selected calendar type and agency here
         $serverMailRelay = Server::find($serverIds);
         $serverName = $serverMailRelay->hostname;
+
+        $dataSmtpFormIpActive = SmtpRelayReqForm::select('smtp_relay_req_form.*', 'smr.*','agencies.name as agenciesName')
+                                ->leftJoin('smtp_relay_server as smr','smr.form_id','smtp_relay_req_form.form_id')
+                                ->leftJoin('agencies','agencies.id',DB::raw('CAST(smtp_relay_req_form.agencies AS bigint)'))
+                                ->when(isset($calendarType) && $calendarType == 'date', function ($query) use ($dateType) {
+                                    $timestamp = strtotime($dateType);
+                                    $formattedDate = date("Y-m-d H:i:s", $timestamp);
+                                    $query->whereDate('smtp_relay_req_form.date_verification_3', $formattedDate);
+                                })
+                                ->when(isset($calendarType) && $calendarType == 'month', function ($query) use ($monthType) {
+                                    $startDate = date("Y-m-01 00:00:00", strtotime($monthType));
+                                    $endDate = date("Y-m-t 23:59:59", strtotime($monthType));
+                                    $query->whereBetween('smtp_relay_req_form.date_verification_3', [$startDate, $endDate]);
+                                })
+                                ->when(isset($calendarType) && $calendarType == 'year', function ($query) use ($yearType) {
+                                    $startDate = date("Y-01-01 00:00:00", strtotime($yearType));
+                                    $endDate = date("Y-12-31 23:59:59", strtotime($yearType));
+                                    $query->whereBetween('smtp_relay_req_form.date_verification_3', [$startDate, $endDate]);
+                                })
+                                ->when($dateFromType != null && $dateToType != null, function ($query) use ($dateFromType,$dateToType) {
+                                    $query->where('smtp_relay_req_form.date_verification_3', '>=', Carbon::parse($dateFromType)->startOfDay())
+                                        ->where('smtp_relay_req_form.date_verification_3', '<=', Carbon::parse($dateToType)->endOfDay());
+                                })
+                                ->when($dateFromType != null && $dateToType == null, function ($query) use ($dateFromType) {
+                                    $query->where('smtp_relay_req_form.date_verification_3', '>=', Carbon::parse($dateFromType)->startOfDay());
+                                })
+                                ->when($dateToType != null && $dateFromType == null, function ($query) use ($dateToType) {
+                                    $query->where('smtp_relay_req_form.date_verification_3', '<=', Carbon::parse($dateToType)->endOfDay());
+                                })
+                                ->when(isset($ministry) && $ministry != null, function ($query) use ($ministry) {
+                                    $query->where('smtp_relay_req_form.ministry', $ministry);
+                                })
+                                ->when(isset($agency) && $agency != null, function ($query) use ($agency) {
+                                    $query->where('smtp_relay_req_form.agencies', $agency);
+                                })
+                                ->where('smtp_relay_req_form.status', 1)
+                                ->where('smtp_relay_req_form.smtp_relay_server', $serverName)
+                                ->where('smr.types_req', 1)
+                                ->get();
+
+        $dataSmtpFormIpActiveCount = $dataSmtpFormIpActive->count();
+
+        $dataSmtpFormIpDeactive = SmtpRelayReqForm::select('smtp_relay_req_form.*', 'smr.*','agencies.name as agenciesName')
+                                    ->leftJoin('smtp_relay_server as smr','smr.form_id','smtp_relay_req_form.form_id')
+                                    ->leftJoin('agencies','agencies.id',DB::raw('CAST(smtp_relay_req_form.agencies AS bigint)'))
+                                    ->when(isset($calendarType) && $calendarType == 'date', function ($query) use ($dateType) {
+                                        $timestamp = strtotime($dateType);
+                                        $formattedDate = date("Y-m-d H:i:s", $timestamp);
+                                        $query->whereDate('smtp_relay_req_form.date_verification_3', $formattedDate);
+                                    })
+                                    ->when(isset($calendarType) && $calendarType == 'month', function ($query) use ($monthType) {
+                                        $startDate = date("Y-m-01 00:00:00", strtotime($monthType));
+                                        $endDate = date("Y-m-t 23:59:59", strtotime($monthType));
+                                        $query->whereBetween('smtp_relay_req_form.date_verification_3', [$startDate, $endDate]);
+                                    })
+                                    ->when(isset($calendarType) && $calendarType == 'year', function ($query) use ($yearType) {
+                                        $startDate = date("Y-01-01 00:00:00", strtotime($yearType));
+                                        $endDate = date("Y-12-31 23:59:59", strtotime($yearType));
+                                        $query->whereBetween('smtp_relay_req_form.date_verification_3', [$startDate, $endDate]);
+                                    })
+                                    ->when($dateFromType != null && $dateToType != null, function ($query) use ($dateFromType,$dateToType) {
+                                        $query->where('smtp_relay_req_form.date_verification_3', '>=', Carbon::parse($dateFromType)->startOfDay())
+                                            ->where('smtp_relay_req_form.date_verification_3', '<=', Carbon::parse($dateToType)->endOfDay());
+                                    })
+                                    ->when($dateFromType != null && $dateToType == null, function ($query) use ($dateFromType) {
+                                        $query->where('smtp_relay_req_form.date_verification_3', '>=', Carbon::parse($dateFromType)->startOfDay());
+                                    })
+                                    ->when($dateToType != null && $dateFromType == null, function ($query) use ($dateToType) {
+                                        $query->where('smtp_relay_req_form.date_verification_3', '<=', Carbon::parse($dateToType)->endOfDay());
+                                    })
+                                    ->when(isset($ministry) && $ministry != null, function ($query) use ($ministry) {
+                                        $query->where('smtp_relay_req_form.ministry', $ministry);
+                                    })
+                                    ->when(isset($agency) && $agency != null, function ($query) use ($agency) {
+                                        $query->where('smtp_relay_req_form.agencies', $agency);
+                                    })
+                                    ->where('smtp_relay_req_form.status', 1)
+                                    ->where('smtp_relay_req_form.smtp_relay_server', $serverName)
+                                    ->where('smr.types_req', 2)
+                                    ->get();
+
+        $dataSmtpFormIpDeactiveCount = $dataSmtpFormIpDeactive->count();
+
+
+        $dataSmtpFormSasl = SmtpRelayReqForm::select('smtp_relay_req_form.*', 'smr.*','agencies.name as agenciesName')
+                            ->leftJoin('smtp_relay_server as smr','smr.form_id','smtp_relay_req_form.form_id')
+                            ->leftJoin('agencies','agencies.id',DB::raw('CAST(smtp_relay_req_form.agencies AS bigint)'))
+                            ->when(isset($calendarType) && $calendarType == 'date', function ($query) use ($dateType) {
+                                $timestamp = strtotime($dateType);
+                                $formattedDate = date("Y-m-d H:i:s", $timestamp);
+                                $query->whereDate('smtp_relay_req_form.date_verification_3', $formattedDate);
+                            })
+                            ->when(isset($calendarType) && $calendarType == 'month', function ($query) use ($monthType) {
+                                $startDate = date("Y-m-01 00:00:00", strtotime($monthType));
+                                $endDate = date("Y-m-t 23:59:59", strtotime($monthType));
+                                $query->whereBetween('smtp_relay_req_form.date_verification_3', [$startDate, $endDate]);
+                            })
+                            ->when(isset($calendarType) && $calendarType == 'year', function ($query) use ($yearType) {
+                                $startDate = date("Y-01-01 00:00:00", strtotime($yearType));
+                                $endDate = date("Y-12-31 23:59:59", strtotime($yearType));
+                                $query->whereBetween('smtp_relay_req_form.date_verification_3', [$startDate, $endDate]);
+                            })
+                            ->when($dateFromType != null && $dateToType != null, function ($query) use ($dateFromType,$dateToType) {
+                                $query->where('smtp_relay_req_form.date_verification_3', '>=', Carbon::parse($dateFromType)->startOfDay())
+                                    ->where('smtp_relay_req_form.date_verification_3', '<=', Carbon::parse($dateToType)->endOfDay());
+                            })
+                            ->when($dateFromType != null && $dateToType == null, function ($query) use ($dateFromType) {
+                                $query->where('smtp_relay_req_form.date_verification_3', '>=', Carbon::parse($dateFromType)->startOfDay());
+                            })
+                            ->when($dateToType != null && $dateFromType == null, function ($query) use ($dateToType) {
+                                $query->where('smtp_relay_req_form.date_verification_3', '<=', Carbon::parse($dateToType)->endOfDay());
+                            })
+                            ->when(isset($ministry) && $ministry != null, function ($query) use ($ministry) {
+                                $query->where('smtp_relay_req_form.ministry', $ministry);
+                            })
+                            ->when(isset($agency) && $agency != null, function ($query) use ($agency) {
+                                $query->where('smtp_relay_req_form.agencies', $agency);
+                            })
+                            ->where('smtp_relay_req_form.status', 1)
+                            ->where('smtp_relay_req_form.smtp_relay_server', $serverName)
+                            ->where('smtp_relay_req_form.smtp_relay_auth_method', 2)
+                            ->get();
+
+        $dataSmtpFormIpBased = SmtpRelayReqForm::select('smtp_relay_req_form.*', 'smr.*','agencies.name as agenciesName')
+                            ->leftJoin('smtp_relay_server as smr','smr.form_id','smtp_relay_req_form.form_id')
+                            ->leftJoin('agencies','agencies.id',DB::raw('CAST(smtp_relay_req_form.agencies AS bigint)'))
+                            ->when(isset($calendarType) && $calendarType == 'date', function ($query) use ($dateType) {
+                                $timestamp = strtotime($dateType);
+                                $formattedDate = date("Y-m-d H:i:s", $timestamp);
+                                $query->whereDate('smtp_relay_req_form.date_verification_3', $formattedDate);
+                            })
+                            ->when(isset($calendarType) && $calendarType == 'month', function ($query) use ($monthType) {
+                                $startDate = date("Y-m-01 00:00:00", strtotime($monthType));
+                                $endDate = date("Y-m-t 23:59:59", strtotime($monthType));
+                                $query->whereBetween('smtp_relay_req_form.date_verification_3', [$startDate, $endDate]);
+                            })
+                            ->when(isset($calendarType) && $calendarType == 'year', function ($query) use ($yearType) {
+                                $startDate = date("Y-01-01 00:00:00", strtotime($yearType));
+                                $endDate = date("Y-12-31 23:59:59", strtotime($yearType));
+                                $query->whereBetween('smtp_relay_req_form.date_verification_3', [$startDate, $endDate]);
+                            })
+                            ->when($dateFromType != null && $dateToType != null, function ($query) use ($dateFromType,$dateToType) {
+                                $query->where('smtp_relay_req_form.date_verification_3', '>=', Carbon::parse($dateFromType)->startOfDay())
+                                    ->where('smtp_relay_req_form.date_verification_3', '<=', Carbon::parse($dateToType)->endOfDay());
+                            })
+                            ->when($dateFromType != null && $dateToType == null, function ($query) use ($dateFromType) {
+                                $query->where('smtp_relay_req_form.date_verification_3', '>=', Carbon::parse($dateFromType)->startOfDay());
+                            })
+                            ->when($dateToType != null && $dateFromType == null, function ($query) use ($dateToType) {
+                                $query->where('smtp_relay_req_form.date_verification_3', '<=', Carbon::parse($dateToType)->endOfDay());
+                            })
+                            ->when(isset($ministry) && $ministry != null, function ($query) use ($ministry) {
+                                $query->where('smtp_relay_req_form.ministry', $ministry);
+                            })
+                            ->when(isset($agency) && $agency != null, function ($query) use ($agency) {
+                                $query->where('smtp_relay_req_form.agencies', $agency);
+                            })
+                            ->where('smtp_relay_req_form.status', 1)
+                            ->where('smtp_relay_req_form.smtp_relay_server', $serverName)
+                            ->where('smtp_relay_req_form.smtp_relay_auth_method', 1)
+                            ->get();
+
+
+
         $dataSmtpForm = SmtpRelayReqForm::where('status', 1)->where('smtp_relay_server', $serverName)->get()->toArray();
         $ids = [];
         foreach ($dataSmtpForm as $item) {
@@ -69,86 +253,15 @@ class GenerateReportingController extends Controller
         $totalIpAddr = '';
         $totalDeactivated = '';
         $totalDomain = '';
-        $valDataTables = '';
-        $valDataTables1 = '';
-        $valDataTables2 = '';
-        $valDataTablesJoin = '';
-        $valDataTablesJoin2 ='';
 
         // Searching and filtering
         foreach ($arraySmtpForm as $val) {
             $query = SmtpRelayReqForm::where('smtp_relay_server', $val['smtp_relay_server']);
-            $query2 = SmtpRelayReqForm::where('smtp_relay_server', $val['smtp_relay_server']);
-            $queryJoin = SmtpRelayReqForm::where('smtp_relay_server', $val['smtp_relay_server'])
-                ->select('smtp_relay_req_form.*', 'smtp_relay_server.*')
-                ->leftJoin('smtp_relay_server', 'smtp_relay_req_form.form_id', '=', 'smtp_relay_server.form_id');
-            $queryJoin2 = SmtpRelayReqForm::where('smtp_relay_server', $val['smtp_relay_server'])
-                ->select('smtp_relay_req_form.*', 'smtp_relay_server.*')
-                ->leftJoin('smtp_relay_server', 'smtp_relay_req_form.form_id', '=', 'smtp_relay_server.form_id');
-
-            // Apply filter based on $input1
-            if ($input1 !== null) {
-                $query->where(function($query) use ($input1) {
-                    $query->where('agencies', $input1)
-                        ->orWhere('ministry', $input1);
-                });
-
-                $query2->where(function($query2) use ($input1) {
-                    $query2->where('agencies', $input1)
-                        ->orWhere('ministry', $input1);
-                });
-
-                $queryJoin->where(function($query) use ($input1) {
-                    $query->where('agencies', $input1)
-                        ->orWhere('ministry', $input1);
-                });
-
-                $queryJoin2->where(function($query) use ($input1) {
-                    $query->where('agencies', $input1)
-                        ->orWhere('ministry', $input1);
-                });
-            }
 
 
-            // Apply filter based on $input2Type
-            if ($input2Type !== null) {
-                if ($input2Type === "date") {
-                    $timestamp = strtotime($dateType);
-                    $formattedDate = date("Y-m-d H:i:s", $timestamp);
-                    $query->whereDate('date_verification_3', $formattedDate);
-                    $query2->whereDate('date_verification_3', $formattedDate);
-                    $queryJoin->whereDate('date_verification_3', $formattedDate);
-                    $queryJoin2->whereDate('date_verification_3', $formattedDate);
-                } elseif ($input2Type === "month") {
-                    $startDate = date("Y-m-01 00:00:00", strtotime($monthType));
-                    $endDate = date("Y-m-t 23:59:59", strtotime($monthType));
-                    $query->whereBetween('date_verification_3', [$startDate, $endDate]);
-                    $query2->whereBetween('date_verification_3', [$startDate, $endDate]);
-                    $queryJoin->whereBetween('date_verification_3', [$startDate, $endDate]);
-                    $queryJoin2->whereBetween('date_verification_3', [$startDate, $endDate]);
-                } elseif ($input2Type === "year") {
-                    $startDate = date("Y-01-01 00:00:00", strtotime($yearType));
-                    $endDate = date("Y-12-t 23:59:59", strtotime($yearType));
-                    $query->whereBetween('date_verification_3', [$startDate, $endDate]);
-                    $query2->whereBetween('date_verification_3', [$startDate, $endDate]);
-                    $queryJoin->whereBetween('date_verification_3', [$startDate, $endDate]);
-                    $queryJoin2->whereBetween('date_verification_3', [$startDate, $endDate]);
-                } elseif ($input2Type === "dateRange") {
-                    $startDate = date("Y-m-d 00:00:00", strtotime($dateFromType));
-                    $endDate = date("Y-m-t 23:59:59", strtotime($dateToType));
-                    $query->whereBetween('date_verification_3', [$startDate, $endDate]);
-                    $query2->whereBetween('date_verification_3', [$startDate, $endDate]);
-                    $queryJoin->whereBetween('date_verification_3', [$startDate, $endDate]);
-                    $queryJoin2->whereBetween('date_verification_3', [$startDate, $endDate]);
-                }
-            }
 
             // Execute the query
             $totalDataForm = $query->where('status', 1)->get();
-            /*$totalDataJoin = $queryJoin->where('deactivated', 0)->get();
-            $totalDataJoin2 = $queryJoin2->where('deactivated', 1)->get();*/
-            $totalDataJoin = $queryJoin->where('smtp_relay_server.types_req', 1)->get();
-            $totalDataJoin2 = $queryJoin2->where('smtp_relay_server.types_req', 2)->get();
 
             // Count the number of elements in $totalDataForm
             $totalDataFormCount = count($totalDataForm);
@@ -184,27 +297,35 @@ class GenerateReportingController extends Controller
 
             } else {
                 //$totalApplications = "Not Found";
-                $totalIpAddr = "Not Found";
-                $totalDeactivated = "Not Found";
-                $totalDomain = "Not Found";
+                $totalIpAddr = "0";
+                $totalDeactivated = "0";
+                $totalDomain = "0";
             }
-
-            $valDataTables = $totalDataForm;
-            $valDataTables1 = $query->where('smtp_relay_auth_method', 2)->get();
-            $valDataTables2 = $query2->where('status', 1)->where('smtp_relay_auth_method', 1)->get();
-            $valDataTablesJoin = $totalDataJoin;
-            $valDataTablesJoin2 = $totalDataJoin2;
         }
+
+        ActivityLog::create([
+            'user_id' => Auth::id(),
+            'activity_type' => 'Searching Agencies Reporting',
+            'action' => $request->path(),
+            'url' => url()->full(),
+            'method' => $request->method(),
+            'ip_address' => $request->ip(),
+            'input' => json_encode([
+                'agency report' => 'Retrieve Data Searching',
+                'request' => $request->except(['password']),
+            ]),
+            'user_agent' => $request->userAgent(),
+        ]);
 
         return response()->json([
             //'data' => $valDataTables,
-            'dataTbl1' => $valDataTables1,
-            'dataTbl2' => $valDataTables2,
-            'data2' => $valDataTablesJoin,
-            'data3' => $valDataTablesJoin2,
+            'dataTbl1' => $dataSmtpFormSasl,
+            'dataTbl2' => $dataSmtpFormIpBased,
+            'data2' => $dataSmtpFormIpActive,
+            'data3' => $dataSmtpFormIpDeactive,
             //'totalApplications' => $totalApplications,
-            'totalIP' => $totalIpAddr,
-            'totalDeactivated' => $totalDeactivated,
+            'totalIP' => $dataSmtpFormIpActiveCount,
+            'totalDeactivated' => $dataSmtpFormIpDeactiveCount,
             'totalDomain' => $totalDomain,
         ]);
     }
@@ -218,6 +339,11 @@ class GenerateReportingController extends Controller
     }
 
 
+    public function getAgencies(Request $request) {
+        $ministry = $request->input('ministry');
+        $agencies = Agency::where('ministry', $ministry)->where('status', 1)->where('name', '!=', '-')->get();
+        return response()->json($agencies);
+    }
 
 
 

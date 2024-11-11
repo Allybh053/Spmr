@@ -13,7 +13,7 @@
                 <div class="card-body mt-1 mb-4">
                     <div class="row">
                         <div class="col-xl-4 mb-4">
-                            <a class="card lift h-100" href="#!">
+                            <div class="card h-100">
                                 <div class="card-body d-flex justify-content-center flex-column">
                                     <div class="d-flex align-items-center justify-content-between">
                                         <div class="me-3">
@@ -27,10 +27,10 @@
                                         <img src="{{asset ('assets/img/illustrations/dash_app.svg')}}" alt="..." style="width: 8rem" />
                                     </div>
                                 </div>
-                            </a>
+                            </div>
                         </div>
                         <div class="col-xl-4 mb-4">
-                            <a class="card lift h-100" href="#!">
+                            <div class="card h-100">
                                 <div class="card-body d-flex justify-content-center flex-column">
                                     <div class="d-flex align-items-center justify-content-between">
                                         <div class="me-3">
@@ -44,16 +44,16 @@
                                         <img src="{{asset ('assets/img/illustrations/dash_app.svg')}}" alt="..." style="width: 8rem" />
                                     </div>
                                 </div>
-                            </a>
+                            </div>
                         </div>
                         <div class="col-xl-4 mb-4">
-                            <a class="card lift h-100" href="#!">
+                            <div class="card h-100">
                                 <div class="card-body d-flex justify-content-center flex-column">
                                     <div class="d-flex align-items-center justify-content-between">
                                         <div class="me-3">
                                             <i class="feather-xl text-green mb-3" data-feather="shield"></i>
                                             <h5>SASL Authentication Failed</h5>
-                                            <span>Updated every 2 hours</span>
+                                            <div  class="small text-muted">Updated every 2 hours</div>
                                             <div class="inline">
                                                 <i class="feather-l text-primary" data-feather="corner-down-right"></i>
                                                 <p style="display: inline-block; margin-left: 5px;" id="sasl">{{ $serverData['sasl'] }}</p>
@@ -62,16 +62,16 @@
                                         <img src="{{asset ('assets/img/illustrations/dash_sasl.svg')}}" alt="..." style="width: 8rem" />
                                     </div>
                                 </div>
-                            </a>
+                            </div>
                         </div>
                         <div class="col-xl-4 mb-4">
-                            <a class="card lift h-100" href="#!">
+                            <div class="card h-100">
                                 <div class="card-body d-flex justify-content-center flex-column">
                                     <div class="d-flex align-items-center justify-content-between">
                                         <div class="me-3">
                                             <i class="feather-xl text-primary mb-3" data-feather="activity"></i>
                                             <h5>(%) SMTPD Connection Lost</h5>
-                                            <span>Updated every 2 hours</span>
+                                            <div  class="small text-muted">Updated every 2 hours</div>
                                             <div class="inline">
                                                 <i class="feather-l text-primary" data-feather="corner-down-right"></i>
                                                 <p style="display: inline-block; margin-left: 5px;" id="smtpd-lost">{{ $serverData['smtpdLost'] }}</p>
@@ -80,16 +80,16 @@
                                         <img src="{{asset ('assets/img/illustrations/dash_domain.svg')}}" alt="..." style="width: 8rem" />
                                     </div>
                                 </div>
-                            </a>
+                            </div>
                         </div>
                         <div class="col-xl-4 mb-4">
-                            <a class="card lift h-100" href="#!">
+                            <div class="card h-100">
                                 <div class="card-body d-flex justify-content-center flex-column">
                                     <div class="d-flex align-items-center justify-content-between">
                                         <div class="me-3">
                                             <i class="feather-xl text-secondary mb-3" data-feather="zap"></i>
                                             <h5>(%) SMTPD Connection Timeout</h5>
-                                            <span>Updated every 2 hours</span>
+                                            <div  class="small text-muted">Updated every 2 hours</div>
                                             <div class="inline">
                                                 <i class="feather-l text-primary" data-feather="corner-down-right"></i>
                                                 <p style="display: inline-block; margin-left: 5px;" id="smtpd-timeout">{{ $serverData['smtpdTimeOut'] }}</p>
@@ -98,16 +98,16 @@
                                         <img src="{{asset ('assets/img/illustrations/dash_domain.svg')}}" alt="..." style="width: 8rem" />
                                     </div>
                                 </div>
-                            </a>
+                            </div>
                         </div>
                         <div class="col-xl-4 mb-4">
-                            <a class="card lift h-100" href="#!">
+                            <div class="card h-100">
                                 <div class="card-body d-flex justify-content-center flex-column">
                                     <div class="d-flex align-items-center justify-content-between">
                                         <div class="me-3">
                                             <i class="feather-xl text-green mb-3" data-feather="shield"></i>
                                             <h5>Bounced Non-Delivery Notifications</h5>
-                                            <span>Updated every 2 hours</span>
+                                            <div  class="small text-muted">Updated every 2 hours</div>
                                             <div class="inline">
                                                 <i class="feather-l text-primary" data-feather="corner-down-right"></i>
                                                 <p style="display: inline-block; margin-left: 5px;" id="bounced">{{ $serverData['bounced'] }}</p>
@@ -116,11 +116,16 @@
                                         <img src="{{asset ('assets/img/illustrations/processing.svg')}}" alt="..." style="width: 8rem" />
                                     </div>
                                 </div>
-                            </a>
+                            </div>
                         </div>
 
 
                     </div>
+                    @php
+                    use Carbon\Carbon;
+
+                        $currentDate = Carbon::now()->subDay()->format('d/m/Y');
+                    @endphp
                     <div class="row">
                         <div class="col-lg-6">
                             <!-- Pie chart example-->
@@ -131,30 +136,30 @@
                                         <table id="grandTotalsDatatable" class="display table table-striped table-bordered" cellspacing="0" width="100%">
                                             <thead>
                                             <tr>
-                                                <th>Messages</th>
-                                                <th>Grand Totals</th>
+                                                <th>Messages Type</th>
+                                                <th>Counts</th>
                                             </tr>
                                             </thead>
-                                            <tbody id="tableBody">
+                                            <tbody id="grandTotalTable">
                                             <!-- Rows will be dynamically added here -->
                                             </tbody>
                                         </table>
                                     </div>
                                 </div>
-                                <div class="card-footer small text-muted">Updated yesterday at 11:59 PM</div>
+                                <div class="card-footer small text-muted">Latest Updated {{ $currentDate }}</div>
                             </div>
                         </div>
 
                         <div class="col-lg-6">
                             <div class="card mb-4">
-                                <div class="card-header">Top 10 Host/Domain Summary: Messages Received</div>
+                                <div class="card-header">Top 10 Host/Domain Summary: Senders</div>
                                 <div class="card-body">
                                     <div class="table-responsive">
                                         <table id="spmrDatatable"  class="display table table-striped table-bordered" cellspacing="0" width="100%">
                                             <thead>
                                             <tr>
                                                 <th>Message Count</th>
-                                                <th>Bytes</th>
+                                                <th>Message Size</th>
                                                 <th>Host/Domain</th>
                                             </tr>
                                             </thead>
@@ -164,7 +169,7 @@
                                         </table>
                                     </div>
                                 </div>
-                                <div class="card-footer small text-muted">Updated yesterday at 11:59 PM</div>
+                                <div class="card-footer small text-muted">Latest Updated {{ $currentDate }}</div>
                             </div>
                         </div>
                     </div>
@@ -191,7 +196,7 @@
                                         </table>
                                     </div>
                                 </div>
-                                <div class="card-footer small text-muted">Updated yesterday at 11:59 PM</div>
+                                <div class="card-footer small text-muted">Latest Updated {{ $currentDate }}</div>
                             </div>
                         </div>
                     </div>
