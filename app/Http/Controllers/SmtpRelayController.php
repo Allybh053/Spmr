@@ -710,7 +710,7 @@ class SmtpRelayController extends Controller
         ->where('sm.id',$id)
         ->get()
         ->toArray();
-        return view('smtp_relay.update',compact('formsmtp','details','serversArray','domainsArray','departmentsArray','positionsArray','ministriesArray','agenciesArray','attachment'));
+        return view('smtp_relay.update',compact('user','formsmtp','details','serversArray','domainsArray','departmentsArray','positionsArray','ministriesArray','agenciesArray','attachment'));
     }
 
     public function kemaskinidata(Request $request,$id){
