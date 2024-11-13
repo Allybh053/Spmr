@@ -21,12 +21,12 @@ class SecureHeadersMiddleware
         $xFrameOptions = env('SECURE_X_FRAME_OPTIONS', 'DENY');
         $contentSecurityPolicy = env('SECURE_CONTENT_SECURITY_POLICY', "frame-ancestors 'self'");
         $permissionsPolicy = env('SECURE_PERMISSIONS_POLICY', 'geolocation=(self), camera=(), microphone=()');
-        $hsts = env('SECURE_HSTS', 'max-age=31536000; includeSubDomains');
+        $hsts = env('SECURE_HSTS', 'max-age=31536000; includeSubDomains; preload');
         $referrerPolicy = env('SECURE_REFERRER_POLICY', 'no-referrer-when-downgrade');
         $xContentTypeOptions = env('SECURE_X_CONTENT_TYPE_OPTIONS', 'nosniff');
         $coep = env('SECURE_COEP', 'require-corp');
         $coop = env('SECURE_COOP', 'same-origin');
-        $corsOrigin = env('SECURE_CORS_ORIGIN', '*');
+        $corsOrigin = env('SECURE_CORS_ORIGIN', 'same-site');
         $xXssProtection = env('SECURE_X_XSS_PROTECTION', '0; mode=block');
         $contentType = env('SECURE_CONTENT_TYPE', 'text/html; charset=UTF-8');
         $xDnsPrefetchControl = env('SECURE_X_DNS_PREFETCH_CONTROL', 'off');
