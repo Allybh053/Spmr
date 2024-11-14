@@ -215,7 +215,7 @@ class AclSeeder extends Seeder
 		$user = new User;
     	$user->username  = 'spmr_dev';
     	$user->email    = 'spmr-dev@digital.gov.my';
-    	$user->password = Hash::make('spmr1234');
+        $user->password = Hash::make(env('DEV_PASSWORD'));
         $user->enabled = 1;
     	$user->save();
 
@@ -227,7 +227,7 @@ class AclSeeder extends Seeder
 		$user           = new User;
 		$user->username  = 'spmr_superadmin';
     	$user->email    = 'spmr-superadmin@digital.gov.my';
-    	$user->password = Hash::make('spmr1234');
+        $user->password = Hash::make(env('SUPERADMIN_PASSWORD'));
         $user->enabled = 1;
     	$user->save();
 
@@ -237,7 +237,7 @@ class AclSeeder extends Seeder
 		$user           = new User;
 		$user->username  = 'spmr_admin';
     	$user->email    = 'spmr-admin@digital.gov.my';
-    	$user->password = Hash::make('spmr1234');
+        $user->password = Hash::make(env('ADMIN_PASSWORD'));
         $user->enabled = 1;
     	$user->save();
 
