@@ -26,7 +26,7 @@ class SecureHeadersMiddleware
         $xContentTypeOptions = env('SECURE_X_CONTENT_TYPE_OPTIONS', 'nosniff');
         $coep = env('SECURE_COEP', 'require-corp');
         $coop = env('SECURE_COOP', 'same-origin');
-        $corsOrigin = env('SECURE_CORS_ORIGIN', 'https://stg-postmaster.mygovuc.gov.my');
+        $corsOrigin = env('SECURE_CORS_ORIGIN', 'https://spmr.mygovuc.gov.my');
         $xXssProtection = env('SECURE_X_XSS_PROTECTION', '0; mode=block');
         $contentType = env('SECURE_CONTENT_TYPE', 'text/html; charset=UTF-8');
         $xDnsPrefetchControl = env('SECURE_X_DNS_PREFETCH_CONTROL', 'off');
