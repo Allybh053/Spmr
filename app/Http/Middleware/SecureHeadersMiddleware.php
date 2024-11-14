@@ -26,10 +26,11 @@ class SecureHeadersMiddleware
         $xContentTypeOptions = env('SECURE_X_CONTENT_TYPE_OPTIONS', 'nosniff');
         $coep = env('SECURE_COEP', 'require-corp');
         $coop = env('SECURE_COOP', 'same-origin');
-        $corsOrigin = env('SECURE_CORS_ORIGIN', 'same-site');
+        $corsOrigin = env('SECURE_CORS_ORIGIN', 'https://spmr.mygovuc.gov.my');
         $xXssProtection = env('SECURE_X_XSS_PROTECTION', '0; mode=block');
         $contentType = env('SECURE_CONTENT_TYPE', 'text/html; charset=UTF-8');
         $xDnsPrefetchControl = env('SECURE_X_DNS_PREFETCH_CONTROL', 'off');
+        $crossOriginResourcePolicy = env('SECURE_CORP', 'same-site');
 
 
         // Set headers using values from .env
@@ -46,6 +47,7 @@ class SecureHeadersMiddleware
         $response->headers->set('X-XSS-Protection', $xXssProtection);
         $response->headers->set('Content-Type', $contentType);
         $response->headers->set('X-DNS-Prefetch-Control', $xDnsPrefetchControl);
+        $response->headers->set('Cross-Origin-Resource-Policy', $crossOriginResourcePolicy);
 
         return $response;
     }
