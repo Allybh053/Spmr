@@ -31,13 +31,13 @@
                     <div class="col-md-6">
                         <label>Status</label>
                         <p>
-                        @if ($datasmtp->status == 0)
-                            Pending
-                        @elseif ($datasmtp->status == 1)
-                            Approved
-                        @elseif (($datasmtp->status == 2))
-                            Rejected
-                        @endif</p>
+                        @switch($datasmtp->status == 0)
+                            @case(0)Pending@break
+                        @case($datasmtp->status == 1)
+                            Approved@break
+                        @case($datasmtp->status == 2))
+                            Rejected@break
+                            @endswitch</p>
                     </div>
                 </div>
                 <div class="row gx-3 mb-3">
@@ -48,13 +48,13 @@
                     <div class="col-md-6">
                         <label>Type Of Request</label>
                         <p>
-                        @if ($datasmtp->types_req == 1)
-                            New Application
-                        @elseif ($datasmtp->types_req == 2)
-                            Terminate of Service
-                        @else
+                        @switch ($datasmtp->types_req == 1)
+                            @case(1)New Application@break
+                        @case($datasmtp->types_req == 2)
+                            Terminate of Service@break
+                        @default
                             Onboarding Agency
-                        @endif</p>
+                            @endswitch</p>
                     </div>
                 </div>
                 <div class="mb-3" hidden @disabled(true)>
