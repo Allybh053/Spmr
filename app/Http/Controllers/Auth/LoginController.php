@@ -129,7 +129,8 @@ class LoginController extends Controller
 
             $this->guard()->logout();
             $request->session()->flush();
-            $request->session()->regenerate();
+            //$request->session()->regenerate();
+            $request->session()->regenerateToken();
 
             return redirect('/login');
         } catch (Throwable $e) {
@@ -160,11 +161,60 @@ class LoginController extends Controller
         $remember = $request->has('remember'); // Check if the remember checkbox is checked
 
         if (Auth::attempt($credentials, $remember)) {
+            //$this->showAlert($request);
+            $notification = $this->handleConcurrentUser($request);
+            if ($notification) {
+                //session()->flash('alert', $notification);
+                //\Log::info('Alert set:', ['message' => $notification]); // add log the alert message in laravel.log for debug
+
+                $this->handleConcurrentUser($request);
+
+                //return redirect()->route('login')->with('alert', $notification);
+            }
+
             // Authentication passed, handle post-login logic
             return $this->authenticated($request, Auth::user());
         }
 
         // Authentication failed, redirect back with input
         return redirect()->back()->withInput($request->only('email', 'remember'))->withErrors(['email' => 'Invalid credentials']);
+    }
+
+    /*public function showAlert(Request $request) {
+        $activeSession = $request->session()->getId();
+        if (file_exists($activeSession)) {
+            session()->flash('alert', 'This is a simple alert from controller!');
+            return redirect('/alert');
+        }
+        //return redirect('/alert');
+        return redirect('/login');
+    }*/
+
+
+    private function handleConcurrentUser(Request $request): ?string
+    {
+        $activeSessionId = $request->session()->getId();
+        $user = Auth::user();
+
+        $existingSession = $user->session_id;
+
+        if ($existingSession && $existingSession !== $activeSessionId) {
+            session()->getHandler()->destroy($existingSession);
+
+            // update session id and save in db
+            $user->session_id = $activeSessionId;
+            $user->save();
+
+            // return notification message
+            //return 'Your previous session has been logged out.';
+
+            session()->flash('alert', 'Your previous session has been logged out.');
+        }
+
+        // save the new session id if not stored
+        $user->session_id = $activeSessionId; //for use this code, need to add column session_id in users table
+        $user->save();
+
+        return null;
     }
 }
