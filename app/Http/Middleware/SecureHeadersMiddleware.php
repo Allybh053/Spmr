@@ -17,28 +17,32 @@ class SecureHeadersMiddleware
     {
         $response = $next($request);
 
-        // Get header values from .env configuration
-        $xFrameOptions = env('SECURE_X_FRAME_OPTIONS', 'SAMEORIGIN');
-        $contentSecurityPolicy = env('SECURE_CONTENT_SECURITY_POLICY', "frame-ancestors 'self'");
-        $permissionsPolicy = env('SECURE_PERMISSIONS_POLICY', 'geolocation=(self), camera=(), microphone=()');
-        $hsts = env('SECURE_HSTS', 'max-age=31536000; includeSubDomains; preload');
+        // Set X-Frame-Options header to prevent clickjacking
+        $response->headers->set('X-Frame-Options', 'SAMEORIGIN');
+
+        // Set Content-Security-Policy header to control resources loading
+        $response->headers->set('Content-Security-Policy', "frame-ancestors 'self'");
+        $response->headers->set('Permissions-Policy', 'geolocation=(self), microphone=()');
+
+        // Additional Headers
         $referrerPolicy = env('SECURE_REFERRER_POLICY', 'no-referrer-when-downgrade');
-        $xContentTypeOptions = env('SECURE_X_CONTENT_TYPE_OPTIONS', 'nosniff');
-        $coep = env('SECURE_COEP', 'require-corp');
-        $corsOrigin = env('SECURE_CORS_ORIGIN', 'https://spmr.mygovuc.gov.my');
-        $coop = env('SECURE_COOP', 'same-origin');
-
-
-        // Set headers using values from .env
-        $response->headers->set('X-Frame-Options', $xFrameOptions);
-        $response->headers->set('Content-Security-Policy', $contentSecurityPolicy);
-        $response->headers->set('Permissions-Policy', $permissionsPolicy);
-        $response->headers->set('Strict-Transport-Security', $hsts);
         $response->headers->set('Referrer-Policy', $referrerPolicy);
+
+        $xContentTypeOptions = env('SECURE_X_CONTENT_TYPE_OPTIONS', 'nosniff');
         $response->headers->set('X-Content-Type-Options', $xContentTypeOptions);
+
+        $coep = env('SECURE_COEP', 'require-corp');
         $response->headers->set('Cross-Origin-Embedder-Policy', $coep);
+
+        $corsOrigin = env('SECURE_CORS_ORIGIN', 'https://spmr.mygovuc.gov.my');
         $response->headers->set('Access-Control-Allow-Origin', $corsOrigin);
+
+        $coop = env('SECURE_COOP', 'same-origin');
         $response->headers->set('Cross-Origin-Opener-Policy', $coop);
+
+
+        $hsts = env('SECURE_HSTS', 'max-age=31536000; includeSubDomains; preload');
+        $response->headers->set('Strict-Transport-Security', $hsts);
 
         return $response;
     }
