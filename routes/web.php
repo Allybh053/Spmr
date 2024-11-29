@@ -54,6 +54,7 @@ Route::get('/', function () {
 Auth::routes();
 //Login
 Route::get('/login',[LoginController::class, 'index'])->name('login' );
+//Route::get('/login/alert', [LoginController::class, 'showAlert'])->name('alert');
 // SAML2 login routes
 Route::get('/saml/login', [Saml2Controller::class, 'samlLogin'])->name('saml.login');
 Route::post('/saml/acs', [Saml2Controller::class, 'samlAcs'])->name('saml.acs');

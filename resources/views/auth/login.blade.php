@@ -9,8 +9,11 @@
         <title>SPMR</title>
         <link href="css/styles.css" rel="stylesheet" />
         <link rel="icon" type="image/x-icon" href="assets/img/favicon.png" />
+        {{--<link rel="stylesheet" href="css/sweetalert2.min.css">--}}
         <script data-search-pseudo-elements defer src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/js/all.min.js" crossorigin="anonymous"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/feather-icons/4.28.0/feather.min.js" crossorigin="anonymous"></script>
+        {{--<script src="js/sweetalert2.min.js"></script>--}}
+
     </head>
     <body style="background-image: url('{{ asset('assets/img/backgrounds/wallpaper_bg.jpeg') }}'); background-repeat: no-repeat;  background-size: cover;">
         <div id="layoutAuthentication">
@@ -55,12 +58,12 @@
 
                                             </div>
                                            <!-- Form Group (remember password checkbox) -->
-                                            <div class="mb-3">
+                                            {{--<div class="mb-3">
                                                 <div class="form-check">
                                                     <input class="form-check-input" id="rememberPasswordCheck" name="remember" type="checkbox" value="{{ old('remember') ? 'checked' : '' }}" />
                                                     <label class="form-check-label" for="rememberPasswordCheck">Remember password</label>
                                                 </div>
-                                            </div>
+                                            </div>--}}
 
                                             <!-- Form Group (login box)-->
                                             <div class="d-flex flex-column align-items-center justify-content-between mt-4 mb-0">
@@ -133,6 +136,10 @@
                 });
             });
             </script>
-
+        @if (session('alert'))
+            <script>
+                alert("{{ session('alert') }}");
+            </script>
+        @endif
     </body>
 </html>

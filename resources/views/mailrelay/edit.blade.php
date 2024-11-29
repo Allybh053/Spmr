@@ -94,6 +94,7 @@
                         <input class="form-control" type="hidden" id="smtp_password" name="smtp_password" value=""/>
                         <span class="badge bg-danger text-white rounded-pill">None</span>
                         @endif --}}
+                        <button class="btn btn-success me-2 my-1" type="button" onclick="generatePassword()">Generate Password</button>
                     </div>
                     <div class="col-md-4">
                         <label>SMTP Port</label>
@@ -206,6 +207,17 @@
         // console.log('Page is fully loaded, including all frames and resources');
         document.getElementById('registerpage').style.display = 'block';
     });
+
+    function generatePassword() {
+        const length = 22;
+        const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*()-=_+[]{}|;:,.<>?';
+        let password = '';
+        for (let i = 0; i < length; i++) {
+            const randomIndex = Math.floor(Math.random() * chars.length);
+            password += chars[randomIndex];
+        }
+        document.getElementById('smtp_password').value = password;
+    }
 
     $(document).ready(function() {
 
@@ -330,7 +342,7 @@
                 // Add saslpasswd2 commands to finalCommandQueue
                 if (smtp_username !== "") {
                     if (smtpMailServers.some(smtpMailServer => smtpMailServer.types_req == 1)) {
-                        finalCommandQueue.push(`/opt/scripts/websocket/cmd7` + ` ` + "{{ $user->email }}" + ` ` + `${smtp_username}` + ` ` + `"${smtp_password}"`);
+                        finalCommandQueue.push(`/opt/scripts/websocket/cmd7` + ` ` + "{{ $user->email }}" + ` ` + `${smtp_username}` + ` ` + `'${smtp_password}'`);
                     }
 
                     if (smtpMailServers.some(smtpMailServer => smtpMailServer.types_req == 2)) {

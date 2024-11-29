@@ -204,6 +204,9 @@ function ajaxSubmitForm(form, callback) {
             url: urlAction,
             type: 'POST',
             contentType: false,
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            },
             data: formData,
             processData: false,
             cache: false,
@@ -354,6 +357,9 @@ function ajaxSubmitFormConfirm(form, callback) {
                     url: urlAction,
                     type: 'POST',
                     contentType: false,
+                    headers: {
+                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                    },
                     data: formData,
                     processData: false,
                     cache: false,
