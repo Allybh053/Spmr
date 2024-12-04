@@ -933,7 +933,7 @@
                                             row['types_req'] = 'Onboarding Agency';
                                             break;
                                         default:
-                                            console.log("Unknown types_req:", row['types_req']);
+                                            //console.log("Unknown types_req:", row['types_req']);
                                             row['types_req'] = 'Unknown';
                                     }
 
@@ -946,7 +946,7 @@
                                             row['smtp_relay_auth_method'] = 'Username/Password Authentication Relay';
                                             break;
                                         default:
-                                            console.log("Unknown smtp_relay_auth_method:", row['smtp_relay_auth_method']);
+                                            //console.log("Unknown smtp_relay_auth_method:", row['smtp_relay_auth_method']);
                                             row['smtp_relay_auth_method'] = '';
                                     }
 
@@ -977,11 +977,11 @@
                                             row['smtp_port'] = 'All';
                                             break;
                                         default:
-                                            console.log("Unknown smtp_port:", row['smtp_port']);
+                                            //console.log("Unknown smtp_port:", row['smtp_port']);
                                             row['smtp_port'] = '';
                                     }
 
-                                    console.log('After switch:', row);
+                                    //console.log('After switch:', row);
                                 });
                             });
 
@@ -1010,7 +1010,7 @@
                         Swal.close();
 
                         // Handle the error
-                        console.log(error);
+                        //console.log(error);
                     }
                 });
             }
