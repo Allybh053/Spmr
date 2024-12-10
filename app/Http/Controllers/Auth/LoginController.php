@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
+use App\Models\Sessions;
 use Auth;
 use Closure;
 use Illuminate\Foundation\Auth\AuthenticatesUsers;
@@ -32,6 +33,10 @@ class LoginController extends Controller
 
     protected function authenticated(Request $request, $user)
     {
+        $request->session()->put('user', $user->username);
+        $request->session()->put('client_ip', $request->ip());
+        $request->session()->put('access_time', date('Y-m-d H:i:s'));
+
         ActivityLog::create([
             'user_id' => $user->id,
             'activity_type' => 'login',

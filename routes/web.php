@@ -33,6 +33,7 @@ use App\Http\Controllers\AgencyController;
 use App\Http\Controllers\MinistryController;
 use App\Http\Controllers\MonthlyReportingController;
 use App\Http\Controllers\LanguageController;
+use App\Http\Controllers\SessionsController;
 
 /*
 |--------------------------------------------------------------------------
@@ -357,6 +358,12 @@ Route::group(['middleware' => ['auth', 'nocache','log.user.activity']], function
             'ipv4' => $ipv4,
             'ipv6' => $ipv6,
         ]);
+    });
+
+    Route::group(['prefix' => 'sessions'], function () {
+        Route::get('/', [SessionsController::class, 'index'])->name('sessions.index')->middleware('auth.resource:session_view');
+        //Route::get('/', [SessionsController::class, 'index'])->name('sessions.index');
+        Route::delete('/sessions/{id}/sessionsdelete', [SessionsController::class, 'sessionsdelete'])->name('sessions.sessionsdelete');
     });
 
 });
