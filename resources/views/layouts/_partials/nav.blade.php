@@ -210,18 +210,35 @@
                 @endcan
                 @endif
 
-                @if (Gate::check('server_view'))
+                @php
+                    $canViewSysMgmt = Gate::check('server_view') || Gate::check('session_view');
+                @endphp
+                @if ($canViewSysMgmt)
                 <!-- Sidenav Heading (Config)-->
                 <div class="sidenav-menu-heading">System Management</div>
                 <!-- Sidenav Accordion (UC log file)-->
-                @endif
                 @can('server_view')
-                <a class="nav-link" href="{{ route('server.index')}}">
-                    <div class="nav-link-icon"><i data-feather="server"></i></div>
-                    Server Configuration
-                    <div class="sidenav-collapse-arrow"></div>
-                </a>
+                    <a class="nav-link" href="{{ route('server.index')}}">
+                        <div class="nav-link-icon"><i data-feather="server"></i></div>
+                        Server Configuration
+                        <div class="sidenav-collapse-arrow"></div>
+                    </a>
                 @endcan
+                @can('session_view')
+                    <a class="nav-link" href="{{ route('sessions.index')}}">
+                        <div class="nav-link-icon"><i data-feather="list"></i></div>
+                        Session List
+                        <div class="sidenav-collapse-arrow"></div>
+                    </a>
+                @endcan
+                @endif
+
+
+                {{--<a class="nav-link" href="{{ route('sessions.index')}}">
+                    <div class="nav-link-icon"><i data-feather="list"></i></div>
+                    Session List
+                    <div class="sidenav-collapse-arrow"></div>
+                </a>--}}
 
                 @php
                 $canViewSetting = Gate::check('user_view') || Gate::check('role_permission_view') || Gate::check('domain_name_view') || Gate::check('position_department_view') || Gate::check('version_view')  || Gate::check('spmr_activity_log_view') ;
