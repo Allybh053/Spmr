@@ -78,7 +78,8 @@ class CentralLogController extends Controller
             //$command = "fgrep -w $escapedSearch $logFile";
             //$command = "fgrep -wm 10 $escapedSearch $logFile"; // Stops after 10 matches
             //$command = "head -n 1000 $logFile | fgrep -w $escapedSearch"; // Search in the first 1000 lines
-            $command = "fgrep -w $escapedSearch $logFile | slow";
+            $command = "/usr/bin/tail -f -n 1000 $logFile | fgrep -w $escapedSearch"; // Search in the last 1000 lines
+            //$command = "fgrep -w $escapedSearch $logFile | slow";
             \Log::info("Executing command: $command");
 
             /*$process = Process::fromShellCommandline($command);
