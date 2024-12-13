@@ -108,7 +108,7 @@
                 </a>
                 @endcan
 
-                @if (Gate::check('mail_log_view'))
+                @if (Gate::check('mail_log_view') || Gate::check('central_log_view'))
                 <div class="sidenav-menu-heading">Review Management</div>
                 @endif
                 <!-- Sidenav Accordion (Dashboard)-->
@@ -144,6 +144,14 @@
                         <div class="sidenav-collapse-arrow"></div>
                     </a>
                 @endcan
+                @can('central_log_view')
+                    <a class="nav-link" href="{{ route('centralLog.index') }}">
+                        <div class="nav-link-icon"><i data-feather="search"></i></div>
+                        Central Log Postmaster
+                        <div class="sidenav-collapse-arrow"></div>
+                    </a>
+                @endcan
+
 
                 @php
                     $canViewValidation = Gate::check('loopback_smtp_test_view') || Gate::check('replication_status_view') || Gate::check('print_list_ip_address_view');
@@ -232,7 +240,6 @@
                     </a>
                 @endcan
                 @endif
-
 
                 {{--<a class="nav-link" href="{{ route('sessions.index')}}">
                     <div class="nav-link-icon"><i data-feather="list"></i></div>

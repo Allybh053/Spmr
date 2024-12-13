@@ -4,6 +4,7 @@ use App\Http\Controllers\ActivityLogController;
 use App\Http\Controllers\Auth\LdapController;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\Saml2Controller;
+use App\Http\Controllers\CentralLogController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\DomainMinistryAgenciesListController;
 use App\Http\Controllers\HistoryController;
@@ -364,6 +365,13 @@ Route::group(['middleware' => ['auth', 'nocache','log.user.activity']], function
         Route::get('/', [SessionsController::class, 'index'])->name('sessions.index')->middleware('auth.resource:session_view');
         //Route::get('/', [SessionsController::class, 'index'])->name('sessions.index');
         Route::delete('/sessions/{id}/sessionsdelete', [SessionsController::class, 'sessionsdelete'])->name('sessions.sessionsdelete');
+    });
+
+    Route::group(['prefix' => 'central-log'], function () {
+        Route::get('/', [CentralLogController::class, 'index'])->name('centralLog.index')->middleware('auth.resource:central_log_view');
+        Route::post('/search', [CentralLogController::class, 'search'])->name('centralLog.index.search');
+        //Route::get('/', [SessionsController::class, 'index'])->name('sessions.index');
+        //Route::delete('/sessions/{id}/sessionsdelete', [SessionsController::class, 'sessionsdelete'])->name('sessions.sessionsdelete');
     });
 
 });
