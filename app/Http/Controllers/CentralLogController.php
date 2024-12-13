@@ -75,10 +75,24 @@ class CentralLogController extends Controller
             // build the command properly
             //$command = "grep -E $escapedSearch $logFile";
             //$command = "grep -i $escapedSearch $logFile";
-            $command = "fgrep -w $escapedSearch $logFile";
+            //$command = "fgrep -w $escapedSearch $logFile";
+            //$command = "fgrep -wm 10 $escapedSearch $logFile"; // Stops after 10 matches
+            //$command = "head -n 1000 $logFile | fgrep -w $escapedSearch"; // Search in the first 1000 lines
+            $command = "fgrep -w $escapedSearch $logFile | slow";
             \Log::info("Executing command: $command");
 
+            /*$process = Process::fromShellCommandline($command);
+            $process->setTimeout(300); // Optional if the file is large
+            $process->run(function ($type, $buffer) {
+                if (Process::OUT === $type) {
+                    echo $buffer; // Process each line of output
+                } else {
+                    echo "ERROR: $buffer";
+                }
+            });*/
+
             $process = Process::fromShellCommandline($command);
+            //$process->setTimeout(300); // Set timeout to 300 seconds (5 minutes)
 
             // run the process
             $process->run();
