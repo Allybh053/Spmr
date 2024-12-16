@@ -8,6 +8,7 @@ use App\Models\Server;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Symfony\Component\Process\Exception\ProcessFailedException;
+use Symfony\Component\Process\Exception\ProcessTimedOutException;
 use Symfony\Component\Process\Process;
 use Illuminate\Http\JsonResponse;
 
@@ -56,114 +57,95 @@ class CentralLogController extends Controller
         //return view('centralLog.index');
     }
 
+
+    // RUNNING - MEMORY UNLIMITED, SET OUTPUT TO NEW LINE
     public function search(Request $request)
     {
-        $logFile = '/opt/src/spmr/storage/cls/mail.log'; // ajust the path for UNIX
-        //$logFile = 'C:\\laragon\\www\\spmr\\storage\\cls\\mail.log'; // adjust the path for Windows Development
-        //$logFile = 'storage\\cls\\mail.log'; // adjust the path for Windows Development
+        $logFile = '/opt/src/spmr/storage/cls/mail.log'; // cls mail.log path
         $search = $request->input('search', '');
+        $searchLine = $request->input('searchLine', '');
+        $searchFilter = $request->input('searchFilter', 'latest');
 
-        // validate the input
+        // Validate input
         if (empty($search)) {
             return response()->json(['error' => 'Search term cannot be empty.'], 400);
         }
 
         try {
-            // escape the search term to prevent shell injection
             $escapedSearch = escapeshellarg($search);
+            //$command = "/usr/bin/tail -n 1000 $logFile | grep -i $escapedSearch"; // Search in the last 1000 lines
+            //$command = "/usr/bin/tail -n $searchLine $logFile | grep -i $escapedSearch"; // Search in the last 100 lines
 
-            // build the command properly
-            //$command = "grep -E $escapedSearch $logFile";
-            //$command = "grep -i $escapedSearch $logFile";
-            //$command = "fgrep -w $escapedSearch $logFile";
-            //$command = "fgrep -wm 10 $escapedSearch $logFile"; // Stops after 10 matches
-            //$command = "head -n 1000 $logFile | fgrep -w $escapedSearch"; // Search in the first 1000 lines
-            $command = "/usr/bin/tail -f -n 1000 $logFile | fgrep -w $escapedSearch"; // Search in the last 1000 lines
-            //$command = "fgrep -w $escapedSearch $logFile | slow";
+            // Map filters to commands
+            $commands = [
+                'latest' => "/usr/bin/tail -n $searchLine $logFile | grep -i $escapedSearch",
+                /*'realtime' => "/usr/bin/tail -f $logFile",
+                'current_boot' => "journalctl --since 'today'",
+                '7_days_ago' => "awk -v date=\"$(date -d '7 days ago' '+%Y-%m-%d')\" '\$0 >= date' $logFile | grep -i $escapedSearch",
+                '24_hours_ago' => "awk -v date=\"$(date -d '24 hours ago' '+%Y-%m-%d %H:%M:%S')\" '\$0 >= date' $logFile | grep -i $escapedSearch",
+                '8_hours_ago' => "awk -v date=\"$(date -d '8 hours ago' '+%Y-%m-%d %H:%M:%S')\" '\$0 >= date' $logFile | grep -i $escapedSearch",
+                '1_hour_ago' => "awk -v date=\"$(date -d '1 hour ago' '+%Y-%m-%d %H:%M:%S')\" '\$0 >= date' $logFile | grep -i $escapedSearch",
+                '30_minutes_ago' => "awk -v date=\"$(date -d '30 minutes ago' '+%Y-%m-%d %H:%M:%S')\" '\$0 >= date' $logFile | grep -i $escapedSearch",
+                '10_minutes_ago' => "awk -v date=\"$(date -d '10 minutes ago' '+%Y-%m-%d %H:%M:%S')\" '\$0 >= date' $logFile | grep -i $escapedSearch",
+                '3_minutes_ago' => "awk -v date=\"$(date -d '3 minutes ago' '+%Y-%m-%d %H:%M:%S')\" '\$0 >= date' $logFile | grep -i $escapedSearch",
+                '1_minute_ago' => "awk -v date=\"$(date -d '1 minute ago' '+%Y-%m-%d %H:%M:%S')\" '\$0 >= date' $logFile | grep -i $escapedSearch",*/
+            ];
+
+            // Choose the command based on the filter
+            $command = $commands[$searchFilter] ?? $commands['latest'];
+
+
+
             \Log::info("Executing command: $command");
 
-            /*$process = Process::fromShellCommandline($command);
-            $process->setTimeout(300); // Optional if the file is large
-            $process->run(function ($type, $buffer) {
-                if (Process::OUT === $type) {
-                    echo $buffer; // Process each line of output
-                } else {
-                    echo "ERROR: $buffer";
-                }
-            });*/
-
             $process = Process::fromShellCommandline($command);
-            //$process->setTimeout(300); // Set timeout to 300 seconds (5 minutes)
+            ini_set('memory_limit', '-1'); // Unlimited memory or 1024M
+            $process->setTimeout(600);    // Set timeout for the process 300 or 600
 
-            // run the process
-            $process->run();
-            \Log::info("Process Output: " . $process->getOutput());
+            $results = [];
+            $process->run(function ($type, $buffer) use (&$results, $search) {
+                if (Process::OUT === $type) {
+                    // Process each line and highlight the search term
+                    foreach (explode("\n", $buffer) as $line) {
+                        if (!empty($line)) {
+                            $highlightedLine = preg_replace(
+                                '/(' . preg_quote($search, '/') . ')/i',
+                                '<span style="color:yellow;background:black;">$1</span>',
+                                $line
+                            );
+                            $results[] = $highlightedLine; // Add the formatted line
+                        }
+                    }
+                }
+            });
 
-            // handle the result
             if ($process->isSuccessful()) {
-                $output = $process->getOutput();
+                if (empty($results)) {
+                    return response()->json(['output' => 'No matching results found.']);
+                }
 
-                // highlight the matched search term
-                $highlightedOutput = preg_replace(
-                    '/(' . preg_quote($search, '/') . ')/i',
-                    '<span style="color:yellow;background:black;">$1</span>',
-                    $output
-                );
+                // Limit results if necessary (e.g., show only the first 100 lines)
+                $maxResults = 100;
+                $displayedResults = array_slice($results, 0, $maxResults);
 
-                //return response()->json(['output' => nl2br(e($highlightedOutput))]);
-                return response()->json(['output' => nl2br($highlightedOutput)]);
+                // Prepare the output with a new line separator
+                $output = implode("\n", $displayedResults); // Join results with new lines
+
+                return response()->json([
+                    'output' => nl2br($output), // Convert newlines to <br> for browser display
+                    'total_results' => count($results),
+                    'shown_results' => count($displayedResults),
+                ]);
             } else {
                 \Log::error("Process Error Output: " . $process->getErrorOutput());
                 return response()->json(['output' => 'No matching results found.']);
             }
-        } catch (ProcessFailedException $e) {
-            return response()->json(['error' => $e->getMessage()], 500);
+        } catch (ProcessTimedOutException $e) {
+            return response()->json(['error' => 'The search operation timed out.'], 504); // Gateway Timeout
         } catch (\Exception $e) {
             \Log::error("Exception occurred: " . $e->getMessage());
             return response()->json(['error' => 'An unexpected error occurred.'], 500);
         }
     }
-
-    /*public function search(Request $request)
-    {
-        $logFile = 'C:\\opt\\src\\spmr\\storage\\cls\\mail.log'; // Adjust the path for Windows
-        $search = $request->input('search', '');
-
-        if (empty($search)) {
-            return response()->json(['error' => 'Search term cannot be empty.'], 400);
-        }
-
-        try {
-            if (!file_exists($logFile)) {
-                return response()->json(['error' => 'Log file not found.'], 404);
-            }
-
-            $lines = file($logFile, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
-            $matches = [];
-
-            foreach ($lines as $line) {
-                if (stripos($line, $search) !== false) {
-                    $matches[] = $line;
-                }
-            }
-
-            if (!empty($matches)) {
-                $highlightedMatches = array_map(function ($line) use ($search) {
-                    return preg_replace(
-                        '/(' . preg_quote($search, '/') . ')/i',
-                        '<span style="color:yellow;background:black;">$1</span>',
-                        $line
-                    );
-                }, $matches);
-
-                return response()->json(['output' => nl2br(implode("\n", $highlightedMatches))]);
-            } else {
-                return response()->json(['output' => 'No matching results found.']);
-            }
-        } catch (\Exception $e) {
-            \Log::error("Exception occurred: " . $e->getMessage());
-            return response()->json(['error' => 'An unexpected error occurred.'], 500);
-        }
-    }*/
 
 }

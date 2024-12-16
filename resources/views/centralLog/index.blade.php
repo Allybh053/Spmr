@@ -55,8 +55,55 @@
                     <input type="text" id="search-input" placeholder="Enter search term">
                     <button class="btn btn-success" id="search-button">Search</button>--}}
 
-                    <label class="form-label fw-bold" for="search-input">Filter lines with keyword:</label>
-                    <textarea id="search-input" class="form-control border-primary" rows="5" placeholder="Enter search term"></textarea>
+                    {{--<div>
+                        <label class="form-label fw-bold" for="line-input">Last <input type="text" id="line-input" placeholder="100 (default)" value="100"> lines of mail.log</label>
+                    </div>
+
+                    <div>
+                        <label class="form-label fw-bold" for="since-input">Since: </label>
+                        <select class="form-control select2" id="since-input">
+                            <option value="latest">Latest Available</option>
+                            <option value="realtime">Real-time follow</option>
+                            <option value="current_boot">Current boot</option>
+                            <option value="7_days_ago">7 days ago</option>
+                            <option value="24_hours_ago">24 hours ago</option>
+                            <option value="8_hours_ago">8 hours ago</option>
+                            <option value="1_hour_ago">1 hours ago</option>
+                            <option value="30_minutes_ago">30 minutes ago</option>
+                            <option value="10_minutes_ago">10 minutes ago</option>
+                            <option value="3_minutes_ago">3 minutes ago</option>
+                            <option value="1_minute_ago">1 minutes ago</option>
+                        </select>
+                    </div>--}}
+
+                    <div class="row gx-3 mb-3">
+                        <div class="col-md-6">
+                            <label class="fw-bold" for="line-input">Last lines of mail.log:</label>
+                            <input class="form-control" id="line-input" name="line-input" type="text" placeholder="100 (default)" value="100"/>
+                        </div>
+                        {{--<div class="col-md-6">
+                            <label class="fw-bold" for="filter-input">Since:</label>
+                            <select class="select2 form-control form-control-danger " name="filter-input" id="filter-input" required>
+                                <option value="latest">Latest Available</option>
+                                --}}{{--<option value="realtime">Real-time follow</option>
+                                <option value="current_boot">Current boot</option>--}}{{--
+                                <option value="7_days_ago">7 days ago</option>
+                                <option value="24_hours_ago">24 hours ago</option>
+                                <option value="8_hours_ago">8 hours ago</option>
+                                <option value="1_hour_ago">1 hours ago</option>
+                                <option value="30_minutes_ago">30 minutes ago</option>
+                                <option value="10_minutes_ago">10 minutes ago</option>
+                                <option value="3_minutes_ago">3 minutes ago</option>
+                                <option value="1_minute_ago">1 minutes ago</option>
+                            </select>
+                        </div>--}}
+                    </div>
+
+                    <div>
+                        <label class="form-label fw-bold" for="search-input">Filter lines with keyword:</label>
+                        <textarea id="search-input" class="form-control border-primary" rows="5" placeholder="Enter search term"></textarea>
+                    </div>
+
 
                 </div>
                 <div class="col-md-12">
@@ -145,6 +192,8 @@
      $(document).ready(function() {
          async function searchLogFile() {
              const query = document.getElementById('search-input').value;
+             const queryLines = document.getElementById('line-input').value;
+             //const queryFilter = document.getElementById('filter-input').value;
 
              try {
                  const response = await fetch('/central-log/search', {
@@ -153,10 +202,14 @@
                          'Content-Type': 'application/json',
                          'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
                      },
-                     body: JSON.stringify({ search: query })
+                     body: JSON.stringify({
+                         search: query,
+                         searchLine: queryLines,
+                         //searchFilter: queryFilter
+                     })
                  });
 
-                 //console.log(response)
+                 console.log(response);
 
                  if (response.ok) {
                      const data = await response.json();
