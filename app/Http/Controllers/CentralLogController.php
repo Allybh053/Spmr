@@ -108,12 +108,21 @@ class CentralLogController extends Controller
                     // Process each line and highlight the search term
                     foreach (explode("\n", $buffer) as $line) {
                         if (!empty($line)) {
-                            $highlightedLine = preg_replace(
+
+                            /*$highlightedLine = preg_replace(
                                 '/(' . preg_quote($search, '/') . ')/i',
                                 '<span style="color:yellow;background:black;">$1</span>',
                                 $line
+                            );*/
+
+                            $escapedLine = htmlspecialchars($line, ENT_QUOTES, 'UTF-8'); // escape special HTML characters
+                            $highlightedLine = preg_replace(
+                                '/(' . preg_quote($search, '/') . ')/i',
+                                '<span style="color:yellow;background:black;">$1</span>',
+                                $escapedLine
                             );
-                            $results[] = $highlightedLine; // Add the formatted line
+
+                            $results[] = $highlightedLine;
                         }
                     }
                 }
