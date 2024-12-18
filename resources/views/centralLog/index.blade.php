@@ -78,6 +78,17 @@
 
                     <div class="row gx-3 mb-3">
                         <div class="col-md-6">
+                            <label class="fw-bold" for="serverName">Server Mail Relay Name:</label>
+                            <select class="form-control select2" name="mailrelay" id="mailrelay" aria-label="Default select" required>
+                                <option selected disabled>Select Server</option>
+                                @foreach ($serversArray as $server)
+                                    {{--<option value="{{ $server['ipaddress'] }}" @if($server['ipaddress'] == $serverIp->ipaddress) selected @endif>{{ $server['subhostname'] }}</option>--}}
+                                    <option value="{{ $server['subhostname'] }}">{{ $server['subhostname'] }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+
+                        <div class="col-md-6">
                             <label class="fw-bold" for="line-input">Last lines of mail.log:</label>
                             <input class="form-control" id="line-input" name="line-input" type="text" placeholder="100 (default)" value="100"/>
                         </div>
@@ -125,67 +136,6 @@
 </div>
 
 
-
-
-
-{{--<div class="container-xl px-4 mt-4">
-    <div class="row">
-        <div class="col-xl-12">
-            <div class="card border-light shadow-sm">
-                <div class="card-header bg-primary text-white text-center fs-5">View Central Log</div>
-                <div class="card-body">
-                    <form id="search-ip-form">
-                        --}}{{--<div class="mb-3">
-                            <!-- Server Selection -->
-                            <label class="form-label fw-bold" for="serverName">Server Name:</label>
-                            <select class="form-control select2 border-primary" name="mailrelay" id="mailrelay" aria-label="Default select" required>
-                                <option selected disabled>Select Server</option>
-                                @foreach ($serversArray as $server)
-                                    <option value="{{ $server['ipaddress'] }}" @if($server['ipaddress'] == $serverIp->ipaddress) selected @endif>{{ $server['subhostname'] }}</option>
-                                @endforeach
-                            </select>
-                        </div>--}}{{--
-                        <div class="mb-3">
-                            <!-- IP Address List -->
-                            <label class="form-label fw-bold" for="search-input">Filter lines with keyword:</label>
-                            <textarea id="search-input" class="form-control border-primary" rows="5" placeholder="Enter search term"></textarea>
-                            <small class="text-muted">Example: 10.10.10.10</small>
-                        </div>
-                        <!-- Submit Button -->
-                        <div class="d-grid mt-4">
-                            <button type="button" id="submit-button" class="btn btn-success btn-4x4">
-                                <i class="me-2 fas fa-paper-plane"></i> Search
-                            </button>
-                        </div>
-                    </form>
-                </div>
-            </div>
-            --}}{{--<div class="card border-light shadow-sm mt-4 d-none" id="data-table-card">
-                <div class="card-header bg-primary text-white text-center fs-5">Submitted Data</div>
-                <div class="card-body">
-                    <table class="table table-bordered table-striped">
-                        <thead>
-                        <tr>
-                            <th>#</th>
-                            <th>Server Name</th>
-                            <th>IP Address</th>
-                        </tr>
-                        </thead>
-                        <tbody id="data-table-body">
-                        </tbody>
-                    </table>
-                </div>
-            </div>--}}{{--
-
-            <div id="terminal-output"></div>
-        </div>
-    </div>
-</div>--}}
-
-
-
-
-
  @endsection
  @push('script')
  <script>
@@ -193,6 +143,8 @@
          async function searchLogFile() {
              const query = document.getElementById('search-input').value;
              const queryLines = document.getElementById('line-input').value;
+             const selectServer = document.getElementById('mailrelay').value;
+             const trimSelectedServer = selectServer.replace(/\.mygovuc\.gov\.my$/, '').trim();
              //const queryFilter = document.getElementById('filter-input').value;
 
              try {
@@ -205,15 +157,16 @@
                      body: JSON.stringify({
                          search: query,
                          searchLine: queryLines,
+                         searchServer: trimSelectedServer,
                          //searchFilter: queryFilter
                      })
                  });
 
-                 console.log(response);
+                 //console.log(response);
 
                  if (response.ok) {
                      const data = await response.json();
-                     console.log(data);
+                     //console.log(data);
                      if (data.output) {
                          displayOutput(data.output);
                      } else {
