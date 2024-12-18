@@ -64,6 +64,7 @@ class CentralLogController extends Controller
         $logFile = '/opt/src/spmr/storage/cls/mail.log'; // cls mail.log path
         $search = $request->input('search', '');
         $searchLine = $request->input('searchLine', '');
+        $searchServer = $request->input('searchServer', '');
         $searchFilter = $request->input('searchFilter', 'latest');
 
         // Validate input
@@ -78,7 +79,8 @@ class CentralLogController extends Controller
 
             // Map filters to commands
             $commands = [
-                'latest' => "/usr/bin/tail -n $searchLine $logFile | grep -i $escapedSearch",
+                //'latest' => "/usr/bin/tail -n $searchLine $logFile | grep -i $escapedSearch",
+                'latest' => "/usr/bin/tail -n $searchLine $logFile | grep -i $searchServer | grep -i $escapedSearch",
                 /*'realtime' => "/usr/bin/tail -f $logFile",
                 'current_boot' => "journalctl --since 'today'",
                 '7_days_ago' => "awk -v date=\"$(date -d '7 days ago' '+%Y-%m-%d')\" '\$0 >= date' $logFile | grep -i $escapedSearch",
@@ -100,7 +102,8 @@ class CentralLogController extends Controller
 
             $process = Process::fromShellCommandline($command);
             ini_set('memory_limit', '-1'); // Unlimited memory or 1024M
-            $process->setTimeout(600);    // Set timeout for the process 300 or 600
+            //$process->setTimeout(600);    // Set timeout for the process 300 or 600
+            $process->setTimeout(3600);    // Set timeout for the process 300 sec (default), 600 sec, 3600 sec
 
             $results = [];
             $process->run(function ($type, $buffer) use (&$results, $search) {
@@ -134,7 +137,8 @@ class CentralLogController extends Controller
                 }
 
                 // Limit results if necessary (e.g., show only the first 100 lines)
-                $maxResults = 100;
+                //$maxResults = 100;
+                $maxResults = $searchLine;
                 $displayedResults = array_slice($results, 0, $maxResults);
 
                 // Prepare the output with a new line separator
