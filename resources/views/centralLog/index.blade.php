@@ -80,7 +80,8 @@
                         <div class="col-md-6">
                             <label class="fw-bold" for="serverName">Server Mail Relay Name:</label>
                             <select class="form-control select2" name="mailrelay" id="mailrelay" aria-label="Default select" required>
-                                <option selected disabled>Select Server</option>
+                                {{--<option selected disabled>Select Server</option>--}}
+                                {{--<option selected disabled>ALL (default)</option>--}}
                                 @foreach ($serversArray as $server)
                                     {{--<option value="{{ $server['ipaddress'] }}" @if($server['ipaddress'] == $serverIp->ipaddress) selected @endif>{{ $server['subhostname'] }}</option>--}}
                                     <option value="{{ $server['subhostname'] }}">{{ $server['subhostname'] }}</option>
@@ -145,6 +146,17 @@
              const queryLines = document.getElementById('line-input').value;
              const selectServer = document.getElementById('mailrelay').value;
              const trimSelectedServer = selectServer.replace(/\.mygovuc\.gov\.my$/, '').trim();
+
+
+             //2nd Method
+             /*let trimSelectedServer = [];
+             if (selectServer === 'ALL (default)') {
+                 trimSelectedServer.push(selectServer.replace(/ALL \(default\)$/, '').trim());
+             } else {
+                 trimSelectedServer.push(selectServer.replace(/\.mygovuc\.gov\.my$/, '').trim());
+             }*/
+             //console.log(trimSelectedServer[0]);
+
              //const queryFilter = document.getElementById('filter-input').value;
 
              try {
@@ -158,6 +170,7 @@
                          search: query,
                          searchLine: queryLines,
                          searchServer: trimSelectedServer,
+                         //searchServer: trimSelectedServer[0],
                          //searchFilter: queryFilter
                      })
                  });
