@@ -73,14 +73,14 @@ class CentralLogController extends Controller
         }
 
         try {
-            $escapedSearch = escapeshellarg($search);
+            //$escapedSearch = escapeshellarg($search);
             //$command = "/usr/bin/tail -n 1000 $logFile | grep -i $escapedSearch"; // Search in the last 1000 lines
             //$command = "/usr/bin/tail -n $searchLine $logFile | grep -i $escapedSearch"; // Search in the last 100 lines
 
             // Map filters to commands
             $commands = [
                 //'latest' => "/usr/bin/tail -n $searchLine $logFile | grep -i $escapedSearch",
-                'latest' => "/usr/bin/tail -n $searchLine $logFile | grep -i $searchServer | grep -i $escapedSearch",
+                'latest' => "/usr/bin/tail -n $searchLine $logFile | grep -i $searchServer | grep -i $search",
                 /*'realtime' => "/usr/bin/tail -f $logFile",
                 'current_boot' => "journalctl --since 'today'",
                 '7_days_ago' => "awk -v date=\"$(date -d '7 days ago' '+%Y-%m-%d')\" '\$0 >= date' $logFile | grep -i $escapedSearch",
