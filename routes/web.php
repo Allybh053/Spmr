@@ -19,6 +19,8 @@ use App\Http\Controllers\ReplicationController;
 use App\Http\Controllers\ReportDetailSenderController;
 use App\Http\Controllers\ReportQueryLogController;
 use App\Http\Controllers\ReportStatisticController;
+use App\Http\Controllers\SearchIpController;
+use App\Http\Controllers\SearchSaslController;
 use App\Http\Controllers\ServerController;
 use App\Http\Controllers\Setup\RoleController;
 use App\Http\Controllers\SmtpRelayController;
@@ -328,6 +330,33 @@ Route::group(['middleware' => ['auth', 'nocache','log.user.activity']], function
         Route::get('/getServer', [MonthlyReportingController::class, 'api'])->name('monthlyReport.api');
         Route::post('/index/searching', [MonthlyReportingController::class, 'search'])->name('monthlyReport.index.search');
     });
+
+
+
+
+    Route::group(['prefix' => 'search-registered-ip'], function () {
+        Route::get('/', [SearchIpController::class, 'index'])->name('searchIp.index')
+            ->middleware('auth.resource:search_ip_view');
+        Route::post('/api/getServerName', [SearchIpController::class, 'getNewServerData'])->name('searchIp.api.getServerName');
+
+    });
+
+
+
+
+
+
+
+
+    Route::group(['prefix' => 'search-registered-sasl'], function () {
+        Route::get('/', [SearchSaslController::class, 'index'])->name('searchSasl.index')
+            ->middleware('auth.resource:search_sasl_view');
+    });
+
+
+
+
+
 
     Route::post('/start-services', [ManageServiceController::class, 'start'])->name('start-postfix-services');
     Route::post('/stop-services', [ManageServiceController::class, 'stop'])->name('stop-postfix-services');

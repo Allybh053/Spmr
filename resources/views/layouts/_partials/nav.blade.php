@@ -173,9 +173,27 @@
                         @endcan--}}
                         {{--@can('print_list_ip_address_view')
                             <a class="nav-link" href="{{ route('printList.index') }}">Print List Ip Address</a>
-                        @endcan--}}
+                        @endcan--}}@endif
                     </nav>
                 </div>
+
+
+
+                @php
+                    $canViewSearchIpSasl = Gate::check('search_ip_view') || Gate::check('search_sasl_view');
+                @endphp
+                @if ($canViewSearchIpSasl)
+                    <a class="nav-link" href="{{ route('searchIp.index') }}">
+                        <div class="nav-link-icon"><i data-feather="info"></i></div>
+                        Search Registered IP
+                        <div class="sidenav-collapse-arrow"></div>
+                    </a>
+                    <a class="nav-link" href="{{ route('searchSasl.index') }}">
+                        <div class="nav-link-icon"><i data-feather="user"></i></div>
+                        Search Registered Sasl
+                        <div class="sidenav-collapse-arrow"></div>
+                    </a>
+
                 @endif
                 @php
                 $canViewReport = Gate::check('agencies_report_view') || Gate::check('usage_report_view');
@@ -201,6 +219,7 @@
                         @endcan
                     </nav>
                 </div>--}}
+                    @endcan
 
                 @can('agencies_report_view')
                 <a class="nav-link" href="{{ route('generateReport.index') }}">
@@ -216,7 +235,6 @@
                     <div class="sidenav-collapse-arrow"></div>
                 </a>
                 @endcan
-                @endif
 
                 @php
                     $canViewSysMgmt = Gate::check('server_view') || Gate::check('session_view');
