@@ -106,7 +106,6 @@
                                 <th>Server Name</th>
                                 <th>IP Address</th>
                                 <th>Status</th>
-                                <th>Timestamp</th>
                                 <th>Additional Info</th>
                             </tr>
                             </thead>
@@ -128,62 +127,61 @@
 
                 var formData = $('#searchForm').serialize();
 
+                $('#data-table-body').html('');
+
                 $.ajax({
                     type: 'POST',
                     url: $('#searchForm').attr('action'),
                     data: formData,
                     success: function (response) {
                         $('#data-table-card').removeClass('d-none');
-                        $('#data-table-body').html('');
-
+                        var processedIps = new Set();
                         if (Array.isArray(response)) {
                             response.forEach((item, index) => {
-                                let ipaddress = item.ipaddress.match(/\d+\.\d+\.\d+\.\d+/) ? item.ipaddress.match(/\d+\.\d+\.\d+\.\d+/)[0] : 'Not Found';
+                                let ipaddress = item.ipaddress.match(/\d+\.\d+\.\d+\.\d+/) ? item.ipaddress.match(/\d+\.\d+\.\d+\.\d+/)[0] : item.ipaddress;
                                 let serverName = item.subhostname.split(' ')[0];
                                 let additionalInfo = item.ipaddress.split(' ')[1] ? item.ipaddress.split(' ')[1] : 'No additional info available';
-                                let status = ipaddress !== 'Not Found' ? 'Found' : 'Not Found';
-                                let timestamp = item.timestamp ?? new Date().toLocaleString();
+                                let status = ipaddress.match(/\d+\.\d+\.\d+\.\d+/) ? 'Found' : 'Not Found';
 
-                                $('#data-table-body').append(`
-                                    <tr>
-                                        <td>${index + 1}</td>
-                                        <td>${serverName}</td>
-                                        <td>${ipaddress}</td>
-                                        <td>${status}</td>
-                                        <td>${timestamp}</td>
-                                        <td>${additionalInfo}</td>
-                                    </tr>
-                                `);
-                            });
-
-                            // If no IP found, display a message
-                            if (response.length === 0) {
-                                $('#data-table-body').append(`
-                                    <tr>
-                                        <td colspan="6" class="text-center text-danger">No IP addresses found for the selected server.</td>
-                                    </tr>
-                                `);
-                            }
-                        } else {
-                            // Handle non-array response (if needed)
-                            let ipaddress = response.ipaddress.match(/\d+\.\d+\.\d+\.\d+/) ? response.ipaddress.match(/\d+\.\d+\.\d+\.\d+/)[0] : 'Not Found';
-                            let serverName = response.subhostname.split(' ')[0];
-                            let additionalInfo = response.ipaddress.split(' ')[1] ? response.ipaddress.split(' ')[1] : 'No additional info available';
-                            let status = ipaddress !== 'Not Found' ? 'Found' : 'Not Found';
-                            let timestamp = response.timestamp ?? new Date().toLocaleString();
-
-                            $('#data-table-body').append(`
+                                if (!processedIps.has(ipaddress)) {
+                                    processedIps.add(ipaddress);
+                                    $('#data-table-body').append(`
                                 <tr>
-                                    <td>#</td>
+                                    <td>${index + 1}</td>
                                     <td>${serverName}</td>
                                     <td>${ipaddress}</td>
                                     <td>${status}</td>
-                                    <td>${timestamp}</td>
                                     <td>${additionalInfo}</td>
                                 </tr>
                             `);
-                        }
+                                }
+                            });
+                            if (response.length === 0) {
+                                $('#data-table-body').append(`
+                            <tr>
+                                <td colspan="5" class="text-center text-danger">No IP addresses found for the selected server.</td>
+                            </tr>
+                        `);
+                            }
+                        } else {
+                            let ipaddress = response.ipaddress.match(/\d+\.\d+\.\d+\.\d+/) ? response.ipaddress.match(/\d+\.\d+\.\d+\.\d+/)[0] : response.ipaddress;
+                            let serverName = response.subhostname.split(' ')[0];
+                            let additionalInfo = response.ipaddress.split(' ')[1] ? response.ipaddress.split(' ')[1] : 'No additional info available';
+                            let status = ipaddress.match(/\d+\.\d+\.\d+\.\d+/) ? 'Found' : 'Not Found';
 
+                            if (!processedIps.has(ipaddress)) {
+                                processedIps.add(ipaddress);
+                                $('#data-table-body').append(`
+                            <tr>
+                                <td>#</td>
+                                <td>${serverName}</td>
+                                <td>${ipaddress}</td>
+                                <td>${status}</td>
+                                <td>${additionalInfo}</td>
+                            </tr>
+                        `);
+                            }
+                        }
                         websocket(response.subhostname ?? '');
                     },
                     error: function (xhr) {
@@ -194,15 +192,21 @@
 
             function websocket(hostname) {
                 const ipList = $('#ip-address-list').val().replace(/\n/g, " ");
+                const ipAddresses = ipList.split(/\s+/);
+
+                $('#data-table-body').html('');
+
                 const serverAddress = 'wss://myspmr:Rb1NAPzM57Ycq9z8Uur65g1JaF2xVixKtTGStvPfh65P9HK29Abe0QcxiZC9yV9n@spmr.mygovuc.gov.my/' + hostname;
                 const socket = new WebSocket(serverAddress);
 
                 socket.addEventListener('open', () => {
+                    const userEmail = "{{ $user->email }}";
                     const command = '/opt/scripts/websocket/cmd16 -v {{ $user->email }} ' + ipList;
                     socket.send(command);
                 });
-
+                let processedIps = new Set();
                 let index = 1;
+
                 socket.addEventListener('message', (event) => {
                     const response = event.data;
                     const match = response.match(/^(?<ip>\d+\.\d+\.\d+\.\d+)\s+#(?<serial>[A-Za-z0-9]+):/);
@@ -212,29 +216,35 @@
                         const serialNumber = match.groups.serial;
                         const hyperlink = `https://spmr.mygovuc.gov.my/smtp_relay/view/${serialNumber}/1`;
 
-                        $('#data-table-body').append(`
+                        if (!processedIps.has(ip)) {
+                            processedIps.add(ip);
+                            $('#data-table-body').append(`
+                        <tr>
+                            <td>${index}</td>
+                            <td>${hostname}</td>
+                            <td>${ip}</td>
+                            <td>Found</td>
+                            <td><a href="${hyperlink}" target="_blank" class="text-primary">${serialNumber}</a></td>
+                        </tr>
+                    `);
+                            index++;
+                        }
+                    } else {
+                        ipAddresses.forEach((ip, idx) => {
+                            if (!processedIps.has(ip)) {
+                                processedIps.add(ip);
+                                $('#data-table-body').append(`
                             <tr>
-                                <td>${index}</td>
+                                <td>${index + idx}</td>
                                 <td>${hostname}</td>
                                 <td>${ip}</td>
-                                <td>Found</td>
-                                <td>${new Date().toLocaleString()}</td>
-                                <td><a href="${hyperlink}" target="_blank" class="text-primary"> #SR-${serialNumber} (click here to see the Form)</a></td>
-
-                            </tr>
-                        `);
-                        index++;
-                    } else {
-                        $('#data-table-body').append(`
-                            <tr>
-                                <td>${index}</td>
-                                <td>${hostname}</td>
                                 <td>Not Found</td>
-                                <td>Not Found</td>
-                                <td>${new Date().toLocaleString()}</td>
                                 <td>No serial data found</td>
                             </tr>
                         `);
+                            }
+                        });
+                        index += ipAddresses.length;
                     }
                 });
 
@@ -243,5 +253,6 @@
                 });
             }
         });
+
     </script>
 @endpush
