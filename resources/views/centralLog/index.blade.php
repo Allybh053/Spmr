@@ -78,6 +78,11 @@
 
                     <div class="row gx-3 mb-3">
                         <div class="col-md-6" style="padding: 10px;">
+                            <label class="fw-bold" for="line-input">Last lines of mail.log:</label>
+                            <input class="form-control" id="line-input" name="line-input" type="text" placeholder="100 (default)" value="100"/>
+                        </div>
+
+                        <div class="col-md-6" style="padding: 10px;">
                             <label class="fw-bold" for="timeStamp">Time Stamp:</label>
                             <input class="form-control" id="timeStamp" name="timeStamp" type="text" placeholder="e.g. 2024-01-01 or Any" value="Any"/>
                         </div>
@@ -123,17 +128,18 @@
                         </div>--}}
                     </div>
 
-                    <div>
+                    <div class="col-md-6">
                         <label class="form-label fw-bold" for="search-input">Filter lines with keyword:</label>
-                        <textarea id="search-input" class="form-control border-primary" rows="5" placeholder="Enter search term" required></textarea>
+                        {{--<textarea id="search-input" class="form-control border-primary" rows="5" placeholder="Enter search term" required></textarea>--}}
+                        <input id="search-input" class="form-control border-primary" placeholder="Enter search term" required />
                     </div>
 
-                    <div>
+                    {{--<div>
                         <div class="col-md-6" style="padding: 10px;">
                             <label class="fw-bold" for="line-input">Last lines of mail.log:</label>
                             <input class="form-control" id="line-input" name="line-input" type="text" placeholder="100 (default)" value="100"/>
                         </div>
-                    </div>
+                    </div>--}}
 
 
                 </div>
