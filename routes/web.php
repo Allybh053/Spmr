@@ -4,6 +4,7 @@ use App\Http\Controllers\ActivityLogController;
 use App\Http\Controllers\Auth\LdapController;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\Saml2Controller;
+use App\Http\Controllers\CentralLogController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\DomainMinistryAgenciesListController;
 use App\Http\Controllers\HistoryController;
@@ -18,6 +19,8 @@ use App\Http\Controllers\ReplicationController;
 use App\Http\Controllers\ReportDetailSenderController;
 use App\Http\Controllers\ReportQueryLogController;
 use App\Http\Controllers\ReportStatisticController;
+use App\Http\Controllers\SearchIpController;
+use App\Http\Controllers\SearchSaslController;
 use App\Http\Controllers\ServerController;
 use App\Http\Controllers\Setup\RoleController;
 use App\Http\Controllers\SmtpRelayController;
@@ -328,6 +331,33 @@ Route::group(['middleware' => ['auth', 'nocache','log.user.activity']], function
         Route::post('/index/searching', [MonthlyReportingController::class, 'search'])->name('monthlyReport.index.search');
     });
 
+
+
+
+    Route::group(['prefix' => 'search-registered-ip'], function () {
+        Route::get('/', [SearchIpController::class, 'index'])->name('searchIp.index')
+            ->middleware('auth.resource:search_ip_view');
+        Route::post('/api/getServerName', [SearchIpController::class, 'getNewServerData'])->name('searchIp.api.getServerName');
+
+    });
+
+
+
+
+
+
+
+
+    Route::group(['prefix' => 'search-registered-sasl'], function () {
+        Route::get('/', [SearchSaslController::class, 'index'])->name('searchSasl.index')
+            ->middleware('auth.resource:search_sasl_view');
+    });
+
+
+
+
+
+
     Route::post('/start-services', [ManageServiceController::class, 'start'])->name('start-postfix-services');
     Route::post('/stop-services', [ManageServiceController::class, 'stop'])->name('stop-postfix-services');
     Route::post('/restart-services', [ManageServiceController::class, 'restart'])->name('restart-postfix-services');
@@ -364,6 +394,13 @@ Route::group(['middleware' => ['auth', 'nocache','log.user.activity']], function
         Route::get('/', [SessionsController::class, 'index'])->name('sessions.index')->middleware('auth.resource:session_view');
         //Route::get('/', [SessionsController::class, 'index'])->name('sessions.index');
         Route::delete('/sessions/{id}/sessionsdelete', [SessionsController::class, 'sessionsdelete'])->name('sessions.sessionsdelete');
+    });
+
+    Route::group(['prefix' => 'central-log'], function () {
+        Route::get('/', [CentralLogController::class, 'index'])->name('centralLog.index')->middleware('auth.resource:central_log_view');
+        Route::post('/search', [CentralLogController::class, 'search'])->name('centralLog.index.search');
+        //Route::get('/', [SessionsController::class, 'index'])->name('sessions.index');
+        //Route::delete('/sessions/{id}/sessionsdelete', [SessionsController::class, 'sessionsdelete'])->name('sessions.sessionsdelete');
     });
 
 });
