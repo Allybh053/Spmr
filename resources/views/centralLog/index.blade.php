@@ -77,22 +77,34 @@
                     </div>--}}
 
                     <div class="row gx-3 mb-3">
-                        <div class="col-md-6">
-                            <label class="fw-bold" for="serverName">Server Mail Relay Name:</label>
-                            <select class="form-control select2" name="mailrelay" id="mailrelay" aria-label="Default select" required>
-                                {{--<option selected disabled>Select Server</option>--}}
-                                {{--<option selected disabled>ALL (default)</option>--}}
-                                @foreach ($serversArray as $server)
-                                    {{--<option value="{{ $server['ipaddress'] }}" @if($server['ipaddress'] == $serverIp->ipaddress) selected @endif>{{ $server['subhostname'] }}</option>--}}
-                                    <option value="{{ $server['subhostname'] }}">{{ $server['subhostname'] }}</option>
-                                @endforeach
-                            </select>
+                        <div class="col-md-6" style="padding: 10px;">
+                            <label class="fw-bold" for="timeStamp">Time Stamp:</label>
+                            <input class="form-control" id="timeStamp" name="timeStamp" type="text" placeholder="e.g. 2024-01-01 or Any" value="Any"/>
                         </div>
 
-                        <div class="col-md-6">
+                        <div class="col-md-6" style="padding: 10px;">
+                            <label class="fw-bold" for="serverName">Server Hostname:</label>
+                            {{--<select class="form-control select2" name="mailrelay" id="mailrelay" aria-label="Default select" required>
+                                --}}{{--<option selected disabled>Select Server</option>--}}{{--
+                                --}}{{--<option selected disabled>ALL (default)</option>--}}{{--
+                                @foreach ($serversArray as $server)
+                                    --}}{{--<option value="{{ $server['ipaddress'] }}" @if($server['ipaddress'] == $serverIp->ipaddress) selected @endif>{{ $server['subhostname'] }}</option>--}}{{--
+                                    <option value="{{ $server['subhostname'] }}">{{ $server['subhostname'] }}</option>
+                                @endforeach
+                            </select>--}}
+                            <input class="form-control" id="mailrelay" name="mailrelay" type="text" placeholder="e.g. postmaster1a or Any" value="Any"/>
+                        </div>
+
+                        <div class="col-md-6" style="padding: 10px;">
+                            <label class="fw-bold" for="processId">Process ID:</label>
+                            <input class="form-control" id="processId" name="processId" type="text" placeholder="e.g. postfix/smtpd or Any" value="Any"/>
+                        </div>
+
+                        {{--<div class="col-md-6">
                             <label class="fw-bold" for="line-input">Last lines of mail.log:</label>
                             <input class="form-control" id="line-input" name="line-input" type="text" placeholder="100 (default)" value="100"/>
-                        </div>
+                        </div>--}}
+
                         {{--<div class="col-md-6">
                             <label class="fw-bold" for="filter-input">Since:</label>
                             <select class="select2 form-control form-control-danger " name="filter-input" id="filter-input" required>
@@ -114,6 +126,13 @@
                     <div>
                         <label class="form-label fw-bold" for="search-input">Filter lines with keyword:</label>
                         <textarea id="search-input" class="form-control border-primary" rows="5" placeholder="Enter search term"></textarea>
+                    </div>
+
+                    <div>
+                        <div class="col-md-6" style="padding: 10px;">
+                            <label class="fw-bold" for="line-input">Last lines of mail.log:</label>
+                            <input class="form-control" id="line-input" name="line-input" type="text" placeholder="100 (default)" value="100"/>
+                        </div>
                     </div>
 
 
@@ -144,8 +163,13 @@
          async function searchLogFile() {
              const query = document.getElementById('search-input').value;
              const queryLines = document.getElementById('line-input').value;
+
              const selectServer = document.getElementById('mailrelay').value;
-             const trimSelectedServer = selectServer.replace(/\.mygovuc\.gov\.my$/, '').trim();
+             //const trimSelectedServer = selectServer.replace(/\.mygovuc\.gov\.my$/, '').trim();
+
+             const timeStamp = document.getElementById('timeStamp').value;
+             const processId = document.getElementById('processId').value;
+             const valProcId = processId.replace(/postfix\/$/g, processId);
 
 
              //2nd Method
@@ -169,7 +193,10 @@
                      body: JSON.stringify({
                          search: query,
                          searchLine: queryLines,
-                         searchServer: trimSelectedServer,
+                         searchServer: selectServer,
+                         searchTimeStamp: timeStamp,
+                         searchProcessId: valProcId,
+                         //searchServer: trimSelectedServer,
                          //searchServer: trimSelectedServer[0],
                          //searchFilter: queryFilter
                      })

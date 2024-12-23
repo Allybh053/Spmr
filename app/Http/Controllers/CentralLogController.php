@@ -65,7 +65,22 @@ class CentralLogController extends Controller
         $search = $request->input('search', '');
         $searchLine = $request->input('searchLine', '');
         $searchServer = $request->input('searchServer', '');
+        $searchTimeStamp = $request->input('searchTimeStamp', '');
+        $searchProcessId = $request->input('searchProcessId', '');
         $searchFilter = $request->input('searchFilter', 'latest');
+
+        if ($searchTimeStamp === 'Any') {
+            return response()->json(['regex' => '(.*|any)$']);
+        }
+
+        if ($searchServer === 'Any') {
+            return response()->json(['regex' => '(postmaster1a|postmaster2a|postmaster3a)$']);
+        }
+
+        if ($searchProcessId === 'Any') {
+            return response()->json(['regex' => '/postfix\/smtpd|\/postfix\/cleanup|\/postfix\/qgmr/']);
+        }
+
 
         // Validate input
         if (empty($search)) {
@@ -80,7 +95,8 @@ class CentralLogController extends Controller
             // Map filters to commands
             $commands = [
                 //'latest' => "/usr/bin/tail -n $searchLine $logFile | grep -i $escapedSearch",
-                'latest' => "/usr/bin/tail -n $searchLine $logFile | grep -i $searchServer | grep -i $search",
+                //'latest' => "/usr/bin/tail -n $searchLine $logFile | grep -i $searchServer | grep -i $search",
+                'latest' => "/usr/bin/tail -n $searchLine $logFile | awk '\$1 ~ /^$searchTimeStamp/ && \$2 ~ /^$searchServer/ && \$3 ~ $searchProcessId' | grep -i $search",
                 /*'realtime' => "/usr/bin/tail -f $logFile",
                 'current_boot' => "journalctl --since 'today'",
                 '7_days_ago' => "awk -v date=\"$(date -d '7 days ago' '+%Y-%m-%d')\" '\$0 >= date' $logFile | grep -i $escapedSearch",
