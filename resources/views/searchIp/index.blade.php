@@ -1,5 +1,4 @@
 @extends('layouts.app')
-
 @push('styles')
     <style>
         .btn-4x4 {
@@ -10,6 +9,48 @@
             display: inline-flex;
             align-items: center;
             justify-content: center;
+        }
+        /* General Button Styles */
+        .beautiful-btn {
+            background-color: #28a745; /* Green color for success buttons */
+            color: white;              /* White text */
+            font-size: 16px;           /* Font size */
+            padding: 12px 24px;        /* Padding for more comfortable click area */
+            border: none;              /* No borders */
+            border-radius: 8px;        /* Slightly rounded corners */
+            font-weight: 600;          /* Bold text */
+            display: flex;
+            align-items: center;      /* Vertically center icon and text */
+            justify-content: center;  /* Horizontally center icon and text */
+            cursor: pointer;          /* Pointer cursor on hover */
+            transition: all 0.3s ease; /* Smooth transition for hover effects */
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Light shadow for depth */
+            text-transform: uppercase; /* Uppercase text */
+        }
+
+        /* Hover effect */
+        .beautiful-btn:hover {
+            background-color: #218838; /* Darker green on hover */
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3); /* Darker shadow */
+            transform: translateY(-3px); /* Slight "lift" effect */
+        }
+
+        /* Active (clicked) effect */
+        .beautiful-btn:active {
+            transform: translateY(1px); /* Slight "press" effect */
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2); /* Subtle shadow */
+        }
+
+        /* Focus effect */
+        .beautiful-btn:focus {
+            outline: none;             /* Remove default focus outline */
+            border: 2px solid #FFD700; /* Gold border on focus */
+        }
+
+        /* Optional: Small adjustments for better icon placement */
+        .beautiful-btn i {
+            font-size: 18px; /* Icon size */
+            margin-right: 8px; /* Space between icon and text */
         }
         .centered {
             display: flex;
@@ -85,11 +126,15 @@
                                     <small class="text-muted">Example: 192.168.1.1</small>
                                 </div>
                                 <!-- Submit Button -->
-                                <div class="d-grid mt-4">
-                                    <button type="button" id="searchIp" class="btn btn-success btn-4x4" style="width: 10%; height: 50px; font-size: 16px;">
+                                <div style="padding: 10px;">
+                                    <button type="button" class="btn btn-success btn-4x4 beautiful-btn" style="width: 10%; height: 50px;" id="reset">
+                                        Reset <i class="me-2 fas fa-paper-plane"></i>
+                                    </button>
+                                    <button type="button" id="searchIp" class="btn btn-success btn-4x4 beautiful-btn" style="width: 10%; height: 50px;">
                                         <i class="me-2 fas fa-paper-plane"></i> Search
                                     </button>
                                 </div>
+
                             </form>
                         </div>
                     </div>
@@ -118,70 +163,62 @@
         </div>
     </div>
 @endsection
-
 @push('script')
     <script>
+
         $(document).ready(function () {
+            $('#reset').on('click', function() {
+                location.reload();
+            });
+            let ipStatusMap = new Map();
             $('#searchIp').click(function (e) {
                 e.preventDefault();
-
                 var formData = $('#searchForm').serialize();
-
                 $('#data-table-body').html('');
-
                 $.ajax({
                     type: 'POST',
                     url: $('#searchForm').attr('action'),
                     data: formData,
                     success: function (response) {
-                        $('#data-table-card').removeClass('d-none');
-                        var processedIps = new Set();
+                        //console.log("AJAX Response:", response);
                         if (Array.isArray(response)) {
                             response.forEach((item, index) => {
                                 let ipaddress = item.ipaddress.match(/\d+\.\d+\.\d+\.\d+/) ? item.ipaddress.match(/\d+\.\d+\.\d+\.\d+/)[0] : item.ipaddress;
                                 let serverName = item.subhostname.split(' ')[0];
                                 let additionalInfo = item.ipaddress.split(' ')[1] ? item.ipaddress.split(' ')[1] : 'No additional info available';
-                                let status = ipaddress.match(/\d+\.\d+\.\d+\.\d+/) ? 'Found' : 'Not Found';
+                                if (!ipStatusMap.has(ipaddress)) {
+                                    ipStatusMap.set(ipaddress, { status: 'Not Found', serial: null });
 
-                                if (!processedIps.has(ipaddress)) {
-                                    processedIps.add(ipaddress);
-                                    $('#data-table-body').append(`
-                                <tr>
-                                    <td>${index + 1}</td>
-                                    <td>${serverName}</td>
-                                    <td>${ipaddress}</td>
-                                    <td>${status}</td>
-                                    <td>${additionalInfo}</td>
-                                </tr>
-                            `);
+                                    $('#data-table-body').append(
+                                        `<tr>
+                                        <td>${index + 1}</td>
+                                        <td>${serverName}</td>
+                                        <td>${ipaddress}</td>
+                                        <td>Not Found</td>
+                                        <td>${additionalInfo}</td>
+                                    </tr>`
+                                    );
                                 }
                             });
-                            if (response.length === 0) {
-                                $('#data-table-body').append(`
-                            <tr>
-                                <td colspan="5" class="text-center text-danger">No IP addresses found for the selected server.</td>
-                            </tr>
-                        `);
-                            }
                         } else {
                             let ipaddress = response.ipaddress.match(/\d+\.\d+\.\d+\.\d+/) ? response.ipaddress.match(/\d+\.\d+\.\d+\.\d+/)[0] : response.ipaddress;
                             let serverName = response.subhostname.split(' ')[0];
                             let additionalInfo = response.ipaddress.split(' ')[1] ? response.ipaddress.split(' ')[1] : 'No additional info available';
-                            let status = ipaddress.match(/\d+\.\d+\.\d+\.\d+/) ? 'Found' : 'Not Found';
+                            if (!ipStatusMap.has(ipaddress)) {
+                                ipStatusMap.set(ipaddress, { status: 'Not Found', serial: null });
 
-                            if (!processedIps.has(ipaddress)) {
-                                processedIps.add(ipaddress);
-                                $('#data-table-body').append(`
-                            <tr>
-                                <td>#</td>
-                                <td>${serverName}</td>
-                                <td>${ipaddress}</td>
-                                <td>${status}</td>
-                                <td>${additionalInfo}</td>
-                            </tr>
-                        `);
+                                $('#data-table-body').append(
+                                    `<tr>
+                                    <td>#</td>
+                                    <td>${serverName}</td>
+                                    <td>${ipaddress}</td>
+                                    <td>Not Found</td>
+                                    <td>${additionalInfo}</td>
+                                </tr>`
+                                );
                             }
                         }
+                        $('#data-table-card').removeClass('d-none');
                         websocket(response.subhostname ?? '');
                     },
                     error: function (xhr) {
@@ -189,70 +226,92 @@
                     }
                 });
             });
-
             function websocket(hostname) {
                 const ipList = $('#ip-address-list').val().replace(/\n/g, " ");
                 const ipAddresses = ipList.split(/\s+/);
-
+                //console.log("IP List for WebSocket:", ipAddresses);
                 $('#data-table-body').html('');
 
                 const serverAddress = 'wss://myspmr:Rb1NAPzM57Ycq9z8Uur65g1JaF2xVixKtTGStvPfh65P9HK29Abe0QcxiZC9yV9n@spmr.mygovuc.gov.my/' + hostname;
+                //console.log("WebSocket Server Address:", serverAddress);
+
                 const socket = new WebSocket(serverAddress);
 
                 socket.addEventListener('open', () => {
                     const userEmail = "{{ $user->email }}";
-                    const command = '/opt/scripts/websocket/cmd16 -v {{ $user->email }} ' + ipList;
+                    const command = `/opt/scripts/websocket/cmd16 -v {{ $user->email }} ${ipList}`;
+                    //console.log("WebSocket Command Sent:", command);
                     socket.send(command);
                 });
-                let processedIps = new Set();
-                let index = 1;
 
                 socket.addEventListener('message', (event) => {
                     const response = event.data;
-                    const match = response.match(/^(?<ip>\d+\.\d+\.\d+\.\d+)\s+#(?<serial>[A-Za-z0-9]+):/);
+                   // console.log("WebSocket Response:", response);
 
-                    if (match) {
+                    const regex = /(?<ip>\d+\.\d+\.\d+\.\d+)\s+#(?<serial>[A-Za-z0-9-]+)/g;
+                    //const regex1 = /#([A-Z-]+)/g;
+                    let match;
+                    let processedIps = new Set();
+                    let index = 1;
+
+                    while ((match = regex.exec(response)) !== null) {
                         const ip = match.groups.ip;
                         const serialNumber = match.groups.serial;
-                        const hyperlink = `https://spmr.mygovuc.gov.my/smtp_relay/view/${serialNumber}/1`;
+                        let hyperlink = '';
 
-                        if (!processedIps.has(ip)) {
-                            processedIps.add(ip);
-                            $('#data-table-body').append(`
-                        <tr>
-                            <td>${index}</td>
-                            <td>${hostname}</td>
-                            <td>${ip}</td>
-                            <td>Found</td>
-                            <td><a href="${hyperlink}" target="_blank" class="text-primary">${serialNumber}</a></td>
-                        </tr>
-                    `);
+                        /*console.log(serialNumber.match(regex1));
+
+                        if (serialNumber.match(regex1) !== null) {
+                            hyperlink = `${serialNumber}`;
+                        } else {
+                            hyperlink = `https://spmr.mygovuc.gov.my/smtp_relay/view/${serialNumber}/1`;
+                        }*/
+                        //const hyperlink = `https://spmr.mygovuc.gov.my/smtp_relay/view/${serialNumber}/1`;
+                        if (!ipStatusMap.has(ip)) {
+                            ipStatusMap.set(ip, { status: 'Found', serial: serialNumber });
+
+                            $('#data-table-body').append(
+                                `<tr>
+                                <td>${index}</td>
+                                <td>${hostname}</td>
+                                <td>${ip}</td>
+                                <td>Found</td>
+                                <td><a href="${hyperlink}" target="_blank" class="text-primary">${serialNumber}</a></td>
+                            </tr>`);
                             index++;
+                        } else {
+                            let ipData = ipStatusMap.get(ip);
+                            if (ipData.status === 'Not Found') {
+                                ipData.status = 'Found';
+                                ipData.serial = serialNumber;
+
+                                // Update the row
+                                $('#data-table-body').find(`tr:contains(${ip})`).each(function () {
+                                    $(this).find('td').eq(3).text('Found');
+                                    $(this).find('td').eq(4).html(`<a href="https://spmr.mygovuc.gov.my/smtp_relay/view/${serialNumber}/1" target="_blank" class="text-primary">${serialNumber}</a>`);
+                                });
+                            }
                         }
-                    } else {
-                        ipAddresses.forEach((ip, idx) => {
-                            if (!processedIps.has(ip)) {
-                                processedIps.add(ip);
-                                $('#data-table-body').append(`
-                            <tr>
+                    }
+                    ipAddresses.forEach((ip, idx) => {
+                        if (!ipStatusMap.has(ip)) {
+                            ipStatusMap.set(ip, { status: 'Not Found', serial: null });
+
+                            $('#data-table-body').append(
+                                `<tr>
                                 <td>${index + idx}</td>
                                 <td>${hostname}</td>
                                 <td>${ip}</td>
                                 <td>Not Found</td>
                                 <td>No serial data found</td>
-                            </tr>
-                        `);
-                            }
-                        });
-                        index += ipAddresses.length;
-                    }
+                            </tr>`);
+                        }
+                    });
                 });
-
                 socket.addEventListener('error', (event) => {
                     console.error("WebSocket Error: ", event);
                 });
             }
         });
-
     </script>
 @endpush
