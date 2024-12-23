@@ -69,57 +69,43 @@ class CentralLogController extends Controller
         $searchProcessId = $request->input('searchProcessId', '');
         $searchFilter = $request->input('searchFilter', 'latest');
 
-        if ($searchTimeStamp === 'Any') {
-            return response()->json(['regex' => '(.*|any)$']);
-        }
-
-        if ($searchServer === 'Any') {
-            return response()->json(['regex' => '(postmaster1a|postmaster2a|postmaster3a)$']);
-        }
-
-        if ($searchProcessId === 'Any') {
-            return response()->json(['regex' => '/postfix\/smtpd|\/postfix\/cleanup|\/postfix\/qgmr/']);
-        }
-
-
         // Validate input
         if (empty($search)) {
             return response()->json(['error' => 'Search term cannot be empty.'], 400);
         }
 
-        try {
-            //$escapedSearch = escapeshellarg($search);
-            //$command = "/usr/bin/tail -n 1000 $logFile | grep -i $escapedSearch"; // Search in the last 1000 lines
-            //$command = "/usr/bin/tail -n $searchLine $logFile | grep -i $escapedSearch"; // Search in the last 100 lines
+        if ($searchTimeStamp === 'Any') {
+            $searchTimeStamp = '(.*|any)$'; // Regular expression for any timestamp
+        } /*else {
+            $searchTimeStamp = preg_quote($searchTimeStamp, '/'); // Escape if not 'Any'
+        }*/
 
+        if ($searchServer === 'Any') {
+            $searchServer = '(postmaster1a|postmaster2a|postmaster3a)$'; // Regex for any server
+        }/* else {
+            $searchServer = preg_quote($searchServer, '/'); // Escape if not 'Any'
+        }*/
+
+        if ($searchProcessId === 'Any') {
+            $searchProcessId = '/postfix\/smtpd|postfix\/cleanup|postfix\/qgmr/'; // Regex for any process
+        } /*else {
+            $searchProcessId = preg_quote($searchProcessId, '/'); // Escape if not 'Any'
+        }*/
+
+        try {
             // Map filters to commands
             $commands = [
-                //'latest' => "/usr/bin/tail -n $searchLine $logFile | grep -i $escapedSearch",
-                //'latest' => "/usr/bin/tail -n $searchLine $logFile | grep -i $searchServer | grep -i $search",
                 'latest' => "/usr/bin/tail -n $searchLine $logFile | awk '\$1 ~ /^$searchTimeStamp/ && \$2 ~ /^$searchServer/ && \$3 ~ $searchProcessId' | grep -i $search",
-                /*'realtime' => "/usr/bin/tail -f $logFile",
-                'current_boot' => "journalctl --since 'today'",
-                '7_days_ago' => "awk -v date=\"$(date -d '7 days ago' '+%Y-%m-%d')\" '\$0 >= date' $logFile | grep -i $escapedSearch",
-                '24_hours_ago' => "awk -v date=\"$(date -d '24 hours ago' '+%Y-%m-%d %H:%M:%S')\" '\$0 >= date' $logFile | grep -i $escapedSearch",
-                '8_hours_ago' => "awk -v date=\"$(date -d '8 hours ago' '+%Y-%m-%d %H:%M:%S')\" '\$0 >= date' $logFile | grep -i $escapedSearch",
-                '1_hour_ago' => "awk -v date=\"$(date -d '1 hour ago' '+%Y-%m-%d %H:%M:%S')\" '\$0 >= date' $logFile | grep -i $escapedSearch",
-                '30_minutes_ago' => "awk -v date=\"$(date -d '30 minutes ago' '+%Y-%m-%d %H:%M:%S')\" '\$0 >= date' $logFile | grep -i $escapedSearch",
-                '10_minutes_ago' => "awk -v date=\"$(date -d '10 minutes ago' '+%Y-%m-%d %H:%M:%S')\" '\$0 >= date' $logFile | grep -i $escapedSearch",
-                '3_minutes_ago' => "awk -v date=\"$(date -d '3 minutes ago' '+%Y-%m-%d %H:%M:%S')\" '\$0 >= date' $logFile | grep -i $escapedSearch",
-                '1_minute_ago' => "awk -v date=\"$(date -d '1 minute ago' '+%Y-%m-%d %H:%M:%S')\" '\$0 >= date' $logFile | grep -i $escapedSearch",*/
             ];
 
             // Choose the command based on the filter
             $command = $commands[$searchFilter] ?? $commands['latest'];
 
-
-
             \Log::info("Executing command: $command");
 
             $process = Process::fromShellCommandline($command);
             ini_set('memory_limit', '-1'); // Unlimited memory or 1024M
-            //$process->setTimeout(600);    // Set timeout for the process 300 or 600
-            $process->setTimeout(3600);    // Set timeout for the process 300 sec (default), 600 sec, 3600 sec
+            $process->setTimeout(3600);    // Set timeout for the process 3600 sec
 
             $results = [];
             $process->run(function ($type, $buffer) use (&$results, $search) {
@@ -127,13 +113,6 @@ class CentralLogController extends Controller
                     // Process each line and highlight the search term
                     foreach (explode("\n", $buffer) as $line) {
                         if (!empty($line)) {
-
-                            /*$highlightedLine = preg_replace(
-                                '/(' . preg_quote($search, '/') . ')/i',
-                                '<span style="color:yellow;background:black;">$1</span>',
-                                $line
-                            );*/
-
                             $escapedLine = htmlspecialchars($line, ENT_QUOTES, 'UTF-8'); // escape special HTML characters
                             $highlightedLine = preg_replace(
                                 '/(' . preg_quote($search, '/') . ')/i',
@@ -153,7 +132,6 @@ class CentralLogController extends Controller
                 }
 
                 // Limit results if necessary (e.g., show only the first 100 lines)
-                //$maxResults = 100;
                 $maxResults = $searchLine;
                 $displayedResults = array_slice($results, 0, $maxResults);
 
@@ -176,5 +154,6 @@ class CentralLogController extends Controller
             return response()->json(['error' => 'An unexpected error occurred.'], 500);
         }
     }
+
 
 }

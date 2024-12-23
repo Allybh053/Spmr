@@ -125,7 +125,7 @@
 
                     <div>
                         <label class="form-label fw-bold" for="search-input">Filter lines with keyword:</label>
-                        <textarea id="search-input" class="form-control border-primary" rows="5" placeholder="Enter search term"></textarea>
+                        <textarea id="search-input" class="form-control border-primary" rows="5" placeholder="Enter search term" required></textarea>
                     </div>
 
                     <div>
@@ -163,61 +163,67 @@
          async function searchLogFile() {
              const query = document.getElementById('search-input').value;
              const queryLines = document.getElementById('line-input').value;
-
              const selectServer = document.getElementById('mailrelay').value;
-             //const trimSelectedServer = selectServer.replace(/\.mygovuc\.gov\.my$/, '').trim();
-
              const timeStamp = document.getElementById('timeStamp').value;
              const processId = document.getElementById('processId').value;
-             const valProcId = processId.replace(/postfix\/$/g, processId);
 
+             let valSelectServer = '';
+             let valTimeStamp
+             let valProcId = '';
 
-             //2nd Method
-             /*let trimSelectedServer = [];
-             if (selectServer === 'ALL (default)') {
-                 trimSelectedServer.push(selectServer.replace(/ALL \(default\)$/, '').trim());
+             if (selectServer === 'Any') {
+                 valSelectServer = '(postmaster1a|postmaster2a|postmaster3a)$';
              } else {
-                 trimSelectedServer.push(selectServer.replace(/\.mygovuc\.gov\.my$/, '').trim());
-             }*/
-             //console.log(trimSelectedServer[0]);
-
-             //const queryFilter = document.getElementById('filter-input').value;
-
-             try {
-                 const response = await fetch('/central-log/search', {
-                     method: 'POST',
-                     headers: {
-                         'Content-Type': 'application/json',
-                         'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
-                     },
-                     body: JSON.stringify({
-                         search: query,
-                         searchLine: queryLines,
-                         searchServer: selectServer,
-                         searchTimeStamp: timeStamp,
-                         searchProcessId: valProcId,
-                         //searchServer: trimSelectedServer,
-                         //searchServer: trimSelectedServer[0],
-                         //searchFilter: queryFilter
-                     })
-                 });
-
-                 //console.log(response);
-
-                 if (response.ok) {
-                     const data = await response.json();
-                     //console.log(data);
-                     if (data.output) {
-                         displayOutput(data.output);
-                     } else {
-                         displayOutput('No results found.');
-                     }
-                 } else {
-                     displayOutput('Error: ' + response.statusText);
-                 }
-             } catch (error) {
-                 displayOutput('Error: ' + error.message);
+                 valSelectServer = selectServer;
              }
+
+             if (timeStamp === 'Any') {
+                 valTimeStamp = '(.*|any)$';
+             } else {
+                 valTimeStamp = timeStamp;
+             }
+
+             if (processId === 'Any') {
+                 valProcId = '/postfix\\/smtpd|postfix\\/cleanup|postfix\\/qgmr/';
+             } else {
+                 valProcId = '/postfix\\/' + processId + '/';
+             }
+
+             if (query === '') {
+                 alert("Please enter the keyword");
+             } else {
+                 try {
+                     const response = await fetch('/central-log/search', {
+                         method: 'POST',
+                         headers: {
+                             'Content-Type': 'application/json',
+                             'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
+                         },
+                         body: JSON.stringify({
+                             search: query,
+                             searchLine: queryLines,
+                             searchServer: valSelectServer,
+                             searchTimeStamp: valTimeStamp,
+                             searchProcessId: valProcId,
+                         })
+                     });
+
+                     if (response.ok) {
+                         const data = await response.json();
+                         //console.log(data);
+                         if (data.output) {
+                             displayOutput(data.output);
+                         } else {
+                             displayOutput('No results found.');
+                         }
+                     } else {
+                         displayOutput('Error: ' + response.statusText);
+                     }
+                 } catch (error) {
+                     displayOutput('Error: ' + error.message);
+                 }
+             }
+
          }
 
          function displayOutput(data) {
