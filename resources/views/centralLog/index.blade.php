@@ -77,22 +77,34 @@
                     </div>--}}
 
                     <div class="row gx-3 mb-3">
-                        <div class="col-md-6">
-                            <label class="fw-bold" for="serverName">Server Mail Relay Name:</label>
-                            <select class="form-control select2" name="mailrelay" id="mailrelay" aria-label="Default select" required>
-                                {{--<option selected disabled>Select Server</option>--}}
-                                {{--<option selected disabled>ALL (default)</option>--}}
-                                @foreach ($serversArray as $server)
-                                    {{--<option value="{{ $server['ipaddress'] }}" @if($server['ipaddress'] == $serverIp->ipaddress) selected @endif>{{ $server['subhostname'] }}</option>--}}
-                                    <option value="{{ $server['subhostname'] }}">{{ $server['subhostname'] }}</option>
-                                @endforeach
-                            </select>
+                        <div class="col-md-6" style="padding: 10px;">
+                            <label class="fw-bold" for="timeStamp">Time Stamp:</label>
+                            <input class="form-control" id="timeStamp" name="timeStamp" type="text" placeholder="e.g. 2024-01-01 or Any" value="Any"/>
                         </div>
 
-                        <div class="col-md-6">
+                        <div class="col-md-6" style="padding: 10px;">
+                            <label class="fw-bold" for="serverName">Server Hostname:</label>
+                            {{--<select class="form-control select2" name="mailrelay" id="mailrelay" aria-label="Default select" required>
+                                --}}{{--<option selected disabled>Select Server</option>--}}{{--
+                                --}}{{--<option selected disabled>ALL (default)</option>--}}{{--
+                                @foreach ($serversArray as $server)
+                                    --}}{{--<option value="{{ $server['ipaddress'] }}" @if($server['ipaddress'] == $serverIp->ipaddress) selected @endif>{{ $server['subhostname'] }}</option>--}}{{--
+                                    <option value="{{ $server['subhostname'] }}">{{ $server['subhostname'] }}</option>
+                                @endforeach
+                            </select>--}}
+                            <input class="form-control" id="mailrelay" name="mailrelay" type="text" placeholder="e.g. postmaster1a or Any" value="Any"/>
+                        </div>
+
+                        <div class="col-md-6" style="padding: 10px;">
+                            <label class="fw-bold" for="processId">Process ID:</label>
+                            <input class="form-control" id="processId" name="processId" type="text" placeholder="e.g. postfix/smtpd or Any" value="Any"/>
+                        </div>
+
+                        {{--<div class="col-md-6">
                             <label class="fw-bold" for="line-input">Last lines of mail.log:</label>
                             <input class="form-control" id="line-input" name="line-input" type="text" placeholder="100 (default)" value="100"/>
-                        </div>
+                        </div>--}}
+
                         {{--<div class="col-md-6">
                             <label class="fw-bold" for="filter-input">Since:</label>
                             <select class="select2 form-control form-control-danger " name="filter-input" id="filter-input" required>
@@ -113,7 +125,14 @@
 
                     <div>
                         <label class="form-label fw-bold" for="search-input">Filter lines with keyword:</label>
-                        <textarea id="search-input" class="form-control border-primary" rows="5" placeholder="Enter search term"></textarea>
+                        <textarea id="search-input" class="form-control border-primary" rows="5" placeholder="Enter search term" required></textarea>
+                    </div>
+
+                    <div>
+                        <div class="col-md-6" style="padding: 10px;">
+                            <label class="fw-bold" for="line-input">Last lines of mail.log:</label>
+                            <input class="form-control" id="line-input" name="line-input" type="text" placeholder="100 (default)" value="100"/>
+                        </div>
                     </div>
 
 
@@ -145,52 +164,66 @@
              const query = document.getElementById('search-input').value;
              const queryLines = document.getElementById('line-input').value;
              const selectServer = document.getElementById('mailrelay').value;
-             const trimSelectedServer = selectServer.replace(/\.mygovuc\.gov\.my$/, '').trim();
+             const timeStamp = document.getElementById('timeStamp').value;
+             const processId = document.getElementById('processId').value;
 
+             let valSelectServer = '';
+             let valTimeStamp
+             let valProcId = '';
 
-             //2nd Method
-             /*let trimSelectedServer = [];
-             if (selectServer === 'ALL (default)') {
-                 trimSelectedServer.push(selectServer.replace(/ALL \(default\)$/, '').trim());
+             if (selectServer === 'Any') {
+                 valSelectServer = '(postmaster1a|postmaster2a|postmaster3a)$';
              } else {
-                 trimSelectedServer.push(selectServer.replace(/\.mygovuc\.gov\.my$/, '').trim());
-             }*/
-             //console.log(trimSelectedServer[0]);
-
-             //const queryFilter = document.getElementById('filter-input').value;
-
-             try {
-                 const response = await fetch('/central-log/search', {
-                     method: 'POST',
-                     headers: {
-                         'Content-Type': 'application/json',
-                         'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
-                     },
-                     body: JSON.stringify({
-                         search: query,
-                         searchLine: queryLines,
-                         searchServer: trimSelectedServer,
-                         //searchServer: trimSelectedServer[0],
-                         //searchFilter: queryFilter
-                     })
-                 });
-
-                 //console.log(response);
-
-                 if (response.ok) {
-                     const data = await response.json();
-                     //console.log(data);
-                     if (data.output) {
-                         displayOutput(data.output);
-                     } else {
-                         displayOutput('No results found.');
-                     }
-                 } else {
-                     displayOutput('Error: ' + response.statusText);
-                 }
-             } catch (error) {
-                 displayOutput('Error: ' + error.message);
+                 valSelectServer = selectServer;
              }
+
+             if (timeStamp === 'Any') {
+                 valTimeStamp = '(.*|any)$';
+             } else {
+                 valTimeStamp = timeStamp;
+             }
+
+             if (processId === 'Any') {
+                 valProcId = '/postfix\\/smtpd|postfix\\/cleanup|postfix\\/qgmr/';
+             } else {
+                 valProcId = '/postfix\\/' + processId + '/';
+             }
+
+             if (query === '') {
+                 alert("Please enter the keyword");
+             } else {
+                 try {
+                     const response = await fetch('/central-log/search', {
+                         method: 'POST',
+                         headers: {
+                             'Content-Type': 'application/json',
+                             'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
+                         },
+                         body: JSON.stringify({
+                             search: query,
+                             searchLine: queryLines,
+                             searchServer: valSelectServer,
+                             searchTimeStamp: valTimeStamp,
+                             searchProcessId: valProcId,
+                         })
+                     });
+
+                     if (response.ok) {
+                         const data = await response.json();
+                         //console.log(data);
+                         if (data.output) {
+                             displayOutput(data.output);
+                         } else {
+                             displayOutput('No results found.');
+                         }
+                     } else {
+                         displayOutput('Error: ' + response.statusText);
+                     }
+                 } catch (error) {
+                     displayOutput('Error: ' + error.message);
+                 }
+             }
+
          }
 
          function displayOutput(data) {
