@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\ActivityLog;
 use App\Models\Sessions;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Crypt;
@@ -38,7 +39,8 @@ class SessionsController extends Controller
                 $username = $data['user'] ?? 'Anonymous';
                 $clientIp = $data['client_ip'] ?? 'Unknown IP';
                 $_token = $data['_token'] ?? '--';
-                $url = $data['url'] ?? '--';
+                //$url = $data['url'] ?? '--';
+                $url = is_array($data['url'] ?? null) ? json_encode($data['url']) : ($data['url'] ?? '--');
                 $_previous_url = $data['_previous']['url'] ?? '-';
                 $_flash_old = isset($data['_flash']['old']) ? implode(', ', $data['_flash']['old']) : '--';
                 $_flash_new = isset($data['_flash']['new']) ? implode(', ', $data['_flash']['new']) : '--';
@@ -72,8 +74,13 @@ class SessionsController extends Controller
         }
 
         // Retrieve all sessions for display
-        $sessions = Sessions::all();
+        //$sessions = Sessions::all();
+        $sessions = Sessions::query()
+            ->orderByRaw('created_at IS NULL, created_at DESC')
+            ->get();
         //$sessions = Sessions::get();
+
+        $users = User::find(Auth::user()->id);
 
         ActivityLog::create([
             'user_id' => Auth::id(),
@@ -89,7 +96,7 @@ class SessionsController extends Controller
             'user_agent' => $request->userAgent(),
         ]);
 
-        return view('sessions.index', compact('sessions'));
+        return view('sessions.index', compact('sessions', 'users'));
     }
 
     public function sessionsdelete(Request $request,$id)

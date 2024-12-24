@@ -96,7 +96,10 @@
                                         <form class="btn btn-datatable btn-icon me-2 text-blue" action="{{ route('sessions.sessionsdelete', [$session['id']]) }}" method="POST" onsubmit="return confirm('Are you sure you want to delete this session?')">
                                             @csrf
                                             @method('DELETE')
-                                            <button type="submit" class="btn btn-datatable btn-icon text-danger btn-transparent" title="Delete Data"><i data-feather="trash-2"></i></button>
+                                            {{--<button type="submit" class="btn btn-datatable btn-icon text-danger btn-transparent" title="Delete Data"><i data-feather="trash-2"></i></button>--}}
+                                            @if( $session->session_id !== $users->session_id)
+                                                <button type="submit" class="btn btn-datatable btn-icon text-danger btn-transparent" title="Delete Data"><i data-feather="trash-2"></i></button>
+                                            @endif
                                         </form>
                                     @endcan
                                     {{--<form class="btn btn-datatable btn-icon me-2 text-blue" action="{{ route('sessions.sessionsdelete', [$session['id']]) }}" method="POST" onsubmit="return confirm('Are you sure you want to delete this session?')">

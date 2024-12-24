@@ -176,9 +176,12 @@
                         <label>SMTP Username</label>
                         <input type="text" name="smtp_username" id="smtp_username" value="{{ old('smtp_username', $formsmtp->smtp_username) }}" class="form-control" required>
                     </div>
-                    <div class="col-md-6" id="authpassword">
+                    <div class="col-md-4">
                         <label for="smtp_password">SMTP Password</label>
                         <input type="text" name="smtp_password" id="smtp_password" value="{{ old('smtp_password', $formsmtp->smtp_password) }}" class="form-control" required>
+                    </div>
+                    <div class="col-md-2" style="padding-top: 24px">
+                        <button class="btn btn-success" type="button" onclick="generatePassword()">Generate Password</button>
                     </div>
                 </div>
                 <div class="row gx-3 mb-3">
@@ -400,6 +403,17 @@
             }
         });
     });
+
+    function generatePassword() {
+        const length = 22;
+        const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*()-=_+[]{}|;:,.<>?';
+        let password = '';
+        for (let i = 0; i < length; i++) {
+            const randomIndex = Math.floor(Math.random() * chars.length);
+            password += chars[randomIndex];
+        }
+        document.getElementById('smtp_password').value = password;
+    }
 
     $(document).ready(function() {
 
