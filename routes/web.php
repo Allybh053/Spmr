@@ -37,6 +37,8 @@ use App\Http\Controllers\MinistryController;
 use App\Http\Controllers\MonthlyReportingController;
 use App\Http\Controllers\LanguageController;
 use App\Http\Controllers\SessionsController;
+use Illuminate\Http\Request;
+
 
 /*
 |--------------------------------------------------------------------------
@@ -51,8 +53,17 @@ use App\Http\Controllers\SessionsController;
 
 
 
-Route::get('/', function () {
+/*Route::get('/', function () {
     return view('auth/login');
+});*/
+
+Route::get('/', function (Request $request) {
+    $clientIp = $request->ip();
+
+    $request->session()->put('client_ip', $clientIp);
+    //\Log::info('Client IP ' . $request->ip() . ' open the SPMR.');
+
+    return view('auth.login');
 });
 
 Auth::routes();
