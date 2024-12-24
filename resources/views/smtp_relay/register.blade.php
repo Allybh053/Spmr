@@ -168,9 +168,12 @@
                         <label for="authusername">SMTP Username<span style="color: red"> *</span></label>
                         <input type="text" name="authusername" id="authusername" value="" class="form-control" required>
                     </div>
-                    <div class="col-md-6" id="authpassword">
+                    <div class="col-md-4">
                         <label for="authpassword">SMTP Password<span style="color: red"> *</span></label>
-                        <input type="text" name="authpassword" id="authpassword" value="" class="form-control" required>
+                        <input type="text" name="authpassword" id="authpassword" value="" class="form-control" required onchange="generatePassword()">
+                    </div>
+                    <div class="col-md-2" style="padding-top: 24px">
+                        <button class="btn btn-success" type="button" onclick="generatePassword()">Generate Password</button>
                     </div>
                 </div>
                 <div class="row gx-3 mb-3">
@@ -335,6 +338,17 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     });
 });
+
+function generatePassword() {
+    const length = 22;
+    const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*()-=_+[]{}|;:,.<>?';
+    let password = '';
+    for (let i = 0; i < length; i++) {
+        const randomIndex = Math.floor(Math.random() * chars.length);
+        password += chars[randomIndex];
+    }
+    document.getElementById('authpassword').value = password;
+}
 
 
     $(document).ready(function() {
