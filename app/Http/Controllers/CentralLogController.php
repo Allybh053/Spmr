@@ -70,9 +70,9 @@ class CentralLogController extends Controller
         $searchFilter = $request->input('searchFilter', 'latest');
 
         // Validate input
-        if (empty($search)) {
+        /*if (empty($search)) {
             return response()->json(['error' => 'Search term cannot be empty.'], 400);
-        }
+        }*/
 
         if ($searchTimeStamp === 'Any') {
             $searchTimeStamp = '(.*|any)$'; // Regular expression for any timestamp
@@ -95,11 +95,17 @@ class CentralLogController extends Controller
         try {
             // Map filters to commands
             $commands = [
+                'default' => "/usr/bin/tail -n $searchLine $logFile | awk '\$1 ~ /^$searchTimeStamp/ && \$2 ~ /^$searchServer/ && \$3 ~ $searchProcessId'",
                 'latest' => "/usr/bin/tail -n $searchLine $logFile | awk '\$1 ~ /^$searchTimeStamp/ && \$2 ~ /^$searchServer/ && \$3 ~ $searchProcessId' | grep -i $search",
             ];
 
             // Choose the command based on the filter
-            $command = $commands[$searchFilter] ?? $commands['latest'];
+            //$command = $commands[$searchFilter] ?? $commands['latest'];
+            if (empty($search)) {
+                $command = $commands['default'];
+            } else {
+                $command = $commands[$searchFilter] ?? $commands['latest'];
+            }
 
             \Log::info("Executing command: $command");
 
@@ -113,7 +119,7 @@ class CentralLogController extends Controller
                     // Process each line and highlight the search term
                     foreach (explode("\n", $buffer) as $line) {
                         if (!empty($line)) {
-                            $escapedLine = htmlspecialchars($line, ENT_QUOTES, 'UTF-8'); // escape special HTML characters
+                            $escapedLine = htmlspecialchars($line, ENT_QUOTES, 'UTF-8'); // for escape special HTML characters
                             $highlightedLine = preg_replace(
                                 '/(' . preg_quote($search, '/') . ')/i',
                                 '<span style="color:yellow;background:black;">$1</span>',
