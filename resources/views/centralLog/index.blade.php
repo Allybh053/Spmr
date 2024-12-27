@@ -131,7 +131,8 @@
                     <div class="col-md-6">
                         <label class="form-label fw-bold" for="search-input">Filter lines with keyword:</label>
                         {{--<textarea id="search-input" class="form-control border-primary" rows="5" placeholder="Enter search term" required></textarea>--}}
-                        <input id="search-input" class="form-control border-primary" placeholder="Enter search term" required />
+                        {{--<input id="search-input" class="form-control border-primary" placeholder="Enter search term" required />--}}
+                        <input id="search-input" class="form-control border-primary" placeholder="Enter search term or blank" />
                     </div>
 
                     {{--<div>
@@ -195,7 +196,7 @@
                  valProcId = '/postfix\\/' + processId + '/';
              }
 
-             if (query === '') {
+             /*if (query === '') {
                  alert("Please enter the keyword");
              } else {
                  try {
@@ -228,6 +229,37 @@
                  } catch (error) {
                      displayOutput('Error: ' + error.message);
                  }
+             }*/
+
+             try {
+                 const response = await fetch('/central-log/search', {
+                     method: 'POST',
+                     headers: {
+                         'Content-Type': 'application/json',
+                         'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
+                     },
+                     body: JSON.stringify({
+                         search: query,
+                         searchLine: queryLines,
+                         searchServer: valSelectServer,
+                         searchTimeStamp: valTimeStamp,
+                         searchProcessId: valProcId,
+                     })
+                 });
+
+                 if (response.ok) {
+                     const data = await response.json();
+                     //console.log(data);
+                     if (data.output) {
+                         displayOutput(data.output);
+                     } else {
+                         displayOutput('No results found.');
+                     }
+                 } else {
+                     displayOutput('Error: ' + response.statusText);
+                 }
+             } catch (error) {
+                 displayOutput('Error: ' + error.message);
              }
 
          }
