@@ -18,24 +18,35 @@ class SearchIpController extends Controller
      *
      * @return \Illuminate\Contracts\Support\Renderable
      */
-//    public function index(Request $request)
     public function index(Request $request, $server_id = null, $server_type = null)
     {
         $user = Auth::user();
         $role = $user->roles->isNotEmpty() ? $user->roles->pluck('name')->first() : null;
-        $serverIds = RoleServer::whereIn('role_servers.role_id', $user->roles->pluck('id')->all())
-            ->leftJoin('servers','servers.id','role_servers.server_id')
-            ->whereNotNull('servers.status_cluster')
-            ->whereIn('servers.status_cluster',[1,0])
+
+        // Get server IDs based on user's roles
+//        $serverIds = RoleServer::whereIn('role_servers.role_id', $user->roles->pluck('id')->all())
+//            ->leftJoin('servers', 'servers.id', 'role_servers.server_id')
+//            ->whereNotNull('servers.status_cluster')
+//            ->whereIn('servers.status_cluster', [1, 0])
+//            ->pluck('server_id');
+
+        //new one//
+        $serverIds = RoleServer::whereIn('role_id', $user->roles->pluck('id')->all())
             ->pluck('server_id');
 
+        //new one//
+        $serverconfig = Server::whereIn('master_id', $serverIds)
+            ->where('status_cluster', 1)->orderBy('id', 'asc')
+            ->select('id', 'hostname', 'ipaddress', 'subhostname')
+            ->get();
         $defaultServerId = $serverIds->min();
-
-        // Filter servers based on the fetched IDs
-        $serverName = Server::whereIn('status_cluster', [1,0])
+        $serverQuery = Server::whereIn('status_cluster', [1]);
+        if ($server_id && $server_id !== 'all') {
+            $serverQuery->where('id', $server_id);
+        }
+        $serverName = $serverQuery
             ->orderBy('id', 'asc')
-            ->pluck('subhostname', 'id');
-
+            ->pluck('hostname', 'id');
         $serverData = [
             "serverName" => "--",
             "ipAddress" => "--",
@@ -46,7 +57,6 @@ class SearchIpController extends Controller
             "smtpdTimeOut" => "--",
             "bounced" => "--",
         ];
-
         ActivityLog::create([
             'user_id' => Auth::id(),
             'activity_type' => 'View Server Overview',
@@ -66,26 +76,33 @@ class SearchIpController extends Controller
             'role',
             'serverName',
             'defaultServerId',
-            'serverData'
+            'serverData',
+            'serverconfig'
         ));
     }
-
     public function getNewServerData(Request $request)
     {
-        $serverName = Server::find($request->serverName);
-        return response()->json($serverName);
+        $serverName = $request->serverName;
+
+        if ($serverName === 'all') {
+            $servers = Server::all();
+        } else {
+            $servers = Server::find($serverName);
+        }
+
+        return response()->json($servers);
     }
 
-    /*public function showServerConfig()
-    {
-        // Example server configuration array
-        $serverconfig = [
-            ['subhostname' => 'postmstr1'],
-            ['subhostname' => 'postmstr2'],
-            ['subhostname' => 'postmstr3'],
-        ];
-        return view('server-config', compact('serverconfig'));
-    }*/
+/*public function showServerConfig()
+{
+    // Example server configuration array
+    $serverconfig = [
+        ['subhostname' => 'postmstr1'],
+        ['subhostname' => 'postmstr2'],
+        ['subhostname' => 'postmstr3'],
+    ];
+    return view('server-config', compact('serverconfig'));
+}*/
 
     /* public function api(Request $request)
      {
