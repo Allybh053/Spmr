@@ -94,7 +94,7 @@ Route::group(['middleware' => ['auth', 'nocache','log.user.activity']], function
     Route::get('/getServer', [DashboardController::class, 'api'])->name('dashboard.api');
     Route::get('/home/{limit}',[DashboardController::class, 'limit'])->name('dashboard.limit');
 
-	//Dashboard
+    //Dashboard
     Route::group(['prefix' => 'users'], function () {
         Route::get('/usermanagements/create', [UsersController::class, 'create'])->name('usermanagements.create');
         Route::get('/usermanagements/index', [UsersController::class, 'index'])->name('usermanagements.index');
@@ -205,7 +205,7 @@ Route::group(['middleware' => ['auth', 'nocache','log.user.activity']], function
 
     Route::group(['prefix' => 'mail_log_overview'], function () {
         Route::get('/', [MailLogController::class, 'index'])->name('mailLog.index')->middleware('auth.resource:mail_log_view');
-            Route::post('/validation', [MailLogController::class, 'validation'])->name('mailLog.validation');
+        Route::post('/validation', [MailLogController::class, 'validation'])->name('mailLog.validation');
     });
 
     Route::group(['prefix' => 'report'], function () {
@@ -221,8 +221,8 @@ Route::group(['middleware' => ['auth', 'nocache','log.user.activity']], function
 
         Route::group(['prefix' => 'query-log'], function () {
             Route::get('/', [ReportQueryLogController::class, 'index'])
-            ->name('report.queryLog.index')
-            ->middleware('auth.resource:query_log_view');
+                ->name('report.queryLog.index')
+                ->middleware('auth.resource:query_log_view');
             Route::post('/validation', [ReportQueryLogController::class, 'validation'])->name('report.queryLog.validation');
         });
     });
@@ -230,8 +230,8 @@ Route::group(['middleware' => ['auth', 'nocache','log.user.activity']], function
     //role
     Route::group(['prefix' => 'role'], function () {
         Route::get('/',[RoleController::class,'index'])
-        ->name('setup.role.index')
-        ->middleware('auth.resource:role_permission_view');
+            ->name('setup.role.index')
+            ->middleware('auth.resource:role_permission_view');
         Route::post('/add',[RoleController::class,'create'])->name('setup.role.create');
         Route::post('/delete',[RoleController::class,'delete'])->name('setup.role.delete');
         Route::post('/storePermission',[RoleController::class,'storePermission'])->name('setup.role.storePermission');
@@ -239,8 +239,8 @@ Route::group(['middleware' => ['auth', 'nocache','log.user.activity']], function
 
     Route::group(['prefix' => 'domain'], function () {
         Route::get('/', [DomainMinistryAgenciesListController::class, 'index'])
-        ->name('domain.index')
-        ->middleware('auth.resource:domain_name_view');
+            ->name('domain.index')
+            ->middleware('auth.resource:domain_name_view');
         Route::get('/register', [DomainMinistryAgenciesListController::class, 'create'])->name('domain.register');
         Route::post('/register', [DomainMinistryAgenciesListController::class, 'store'])->name('domain.store');
         Route::get('/{id}', [DomainMinistryAgenciesListController::class, 'edit'])->name('domain.edit');
@@ -254,8 +254,8 @@ Route::group(['middleware' => ['auth', 'nocache','log.user.activity']], function
 
     Route::group(['prefix' => 'positiondepartment'], function () {
         Route::get('/', [PositionDepartmentController::class, 'index'])
-        ->name('positiondepartment.index')
-        ->middleware('auth.resource:position_department_view');
+            ->name('positiondepartment.index')
+            ->middleware('auth.resource:position_department_view');
         Route::get('/addposition', [PositionDepartmentController::class, 'addposition'])->name('positiondepartment.addposition');
         Route::get('/adddepartment', [PositionDepartmentController::class, 'adddepartment'])->name('positiondepartment.adddepartment');
         Route::get('/updateposition/{id}', [PositionDepartmentController::class, 'updateposition'])->name('positiondepartment.updateposition');
@@ -271,36 +271,36 @@ Route::group(['middleware' => ['auth', 'nocache','log.user.activity']], function
 
     Route::group(['prefix' => 'validation-verification'], function () {
         Route::get('/loopback', [LoopBackController::class, 'index'])
-                ->name('loopback.index')
-                ->middleware('auth.resource:loopback_smtp_test_view');
+            ->name('loopback.index')
+            ->middleware('auth.resource:loopback_smtp_test_view');
         Route::get('/getServer', [LoopBackController::class, 'api'])->name('loopback.api');
         Route::get('/smtpTest', [LoopBackController::class, 'smtpTest'])->name('loopback.smtpTest');
         Route::get('/replication', [ReplicationController::class, 'index'])
-                ->name('replication.index')
-                ->middleware('auth.resource:replication_status_view');
+            ->name('replication.index')
+            ->middleware('auth.resource:replication_status_view');
         Route::get('/printList', [PrintListController::class, 'index'])
-                ->name('printList.index')
-                ->middleware('auth.resource:print_list_ip_address_view');
+            ->name('printList.index')
+            ->middleware('auth.resource:print_list_ip_address_view');
         Route::post('/printList/validation', [PrintListController::class, 'validation'])->name('printList.validation');
     });
 
 
     Route::group(['prefix' => 'manage-service'], function () {
         Route::get('/{server_id?}/{server_type?}', [ManageServiceController::class, 'index'])->name('manageService.index')
-        ->middleware('auth.resource:manage_service_view');
+            ->middleware('auth.resource:manage_service_view');
     });
 
     Route::group(['prefix' => 'generate-report'], function () {
         Route::get('/', [GenerateReportingController::class, 'index'])->name('generateReport.index')
-        ->middleware('auth.resource:agencies_report_view');
+            ->middleware('auth.resource:agencies_report_view');
         Route::get('/getServer', [GenerateReportingController::class, 'api'])->name('generateReport.api');
         Route::get('/index/searching', [GenerateReportingController::class, 'search'])->name('generateReport.index.search');
     });
 
     Route::group(['prefix' => 'ministry'], function () {
         Route::get('/', [MinistryController::class, 'index'])
-        ->name('ministry.index')
-        ->middleware('auth.resource:ministry_view');
+            ->name('ministry.index')
+            ->middleware('auth.resource:ministry_view');
         Route::get('/addministry', [MinistryController::class, 'addministry'])->name('ministry.addministry');
         Route::get('/updateministry/{id}', [MinistryController::class, 'updateministry'])->name('ministry.updateministry');
         Route::put('/saveupdateministry/{id}', [MinistryController::class, 'saveupdateministry'])->name('ministry.saveupdateministry');
@@ -311,8 +311,8 @@ Route::group(['middleware' => ['auth', 'nocache','log.user.activity']], function
 
     Route::group(['prefix' => 'agency'], function () {
         Route::get('/', [AgencyController::class, 'index'])
-        ->name('agency.index')
-        ->middleware('auth.resource:agencies_view');
+            ->name('agency.index')
+            ->middleware('auth.resource:agencies_view');
         Route::get('/addagency', [AgencyController::class, 'addagency'])->name('agency.addagency');
         Route::get('/updateagency/{id}', [AgencyController::class, 'updateagency'])->name('agency.updateagency');
         Route::put('/saveupdateagency/{id}', [AgencyController::class, 'saveupdateagency'])->name('agency.saveupdateagency');
@@ -331,37 +331,33 @@ Route::group(['middleware' => ['auth', 'nocache','log.user.activity']], function
     });
 
     Route::get('/activity-logs', [ActivityLogController::class,'showActivityLogs'])->name('activityLog.index')
-      ->middleware('auth.resource:spmr_activity_log_view');
-      Route::post('/activity-logs/filter', [ActivityLogController::class,'filter'])->name('activityLog.filter');
+        ->middleware('auth.resource:spmr_activity_log_view');
+    Route::post('/activity-logs/filter', [ActivityLogController::class,'filter'])->name('activityLog.filter');
 
 
     Route::group(['prefix' => 'monthly-report'], function () {
         Route::get('/', [MonthlyReportingController::class, 'index'])->name('monthlyReport.index')
-        ->middleware('auth.resource:usage_report_view');
+            ->middleware('auth.resource:usage_report_view');
         Route::get('/getServer', [MonthlyReportingController::class, 'api'])->name('monthlyReport.api');
         Route::post('/index/searching', [MonthlyReportingController::class, 'search'])->name('monthlyReport.index.search');
     });
 
 
-
+    //searchIP
 
     Route::group(['prefix' => 'search-registered-ip'], function () {
         Route::get('/', [SearchIpController::class, 'index'])->name('searchIp.index')
             ->middleware('auth.resource:search_ip_view');
         Route::post('/api/getServerName', [SearchIpController::class, 'getNewServerData'])->name('searchIp.api.getServerName');
+        Route::get('/api/searchIp', [SearchIpController::class, 'searchIp'])->name('searchIp.api.searchIp');
+        Route::post('/api/searchIp', [SearchIpController::class, 'searchIp'])->name('searchIp.api.searchIp');
 
     });
-
-
-
-
-
-
-
-
     Route::group(['prefix' => 'search-registered-sasl'], function () {
         Route::get('/', [SearchSaslController::class, 'index'])->name('searchSasl.index')
             ->middleware('auth.resource:search_sasl_view');
+        Route::post('/search-registered-sasl/api/getServerName', [SearchSaslController::class, 'getSaslData'])->name('searchSasl.api.getServerName');
+
     });
 
 
@@ -415,8 +411,3 @@ Route::group(['middleware' => ['auth', 'nocache','log.user.activity']], function
     });
 
 });
-
-
-
-
-

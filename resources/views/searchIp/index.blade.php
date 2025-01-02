@@ -117,7 +117,8 @@
                                 <!-- Form Group -->
                                 <div class="form-group">
                                     <label class="small mb-1" for="serverName" style=" font-weight: bold">SELECT SERVER:</label>
-                                    {!! Form::select('serverName', $serverName, $defaultServerId ?? 1, ['id'=>'serverName', 'name'=>'serverName', 'class'=>'form-control select2', 'placeholder'=>config('params.dropdown_default')]) !!}
+                                    {{--                                    {!! Form::select('serverName', $serverName, $defaultServerId ?? 1, ['id'=>'serverName', 'name'=>'serverName', 'class'=>'form-control select2', 'placeholder'=>config('params.dropdown_default')]) !!}--}}
+                                    {!! Form::select('serverName', ['all' => 'All'] + $serverName->toArray(), $defaultServerId ?? 'all', ['id' => 'serverName', 'class' => 'form-control select2', 'placeholder' => config('params.dropdown_default')]) !!}
                                     <small class="text-muted">Select At Least One Server</small>
                                 </div>
                                 <div class="form-group">
@@ -162,10 +163,14 @@
             </div>
         </div>
     </div>
+
 @endsection
 @push('script')
     <script>
 
+        // var sockets = [];
+        // var serverIpaddresses = [];
+        //console.log("Code Execution Starts");
         $(document).ready(function () {
             $('#reset').on('click', function() {
                 location.reload();
@@ -173,6 +178,9 @@
             let ipStatusMap = new Map();
             $('#searchIp').click(function (e) {
                 e.preventDefault();
+
+                const selectedServer = $('#serverName').val();
+                //console.log(selectedServer);
                 var formData = $('#searchForm').serialize();
                 $('#data-table-body').html('');
                 $.ajax({
@@ -181,137 +189,197 @@
                     data: formData,
                     success: function (response) {
                         //console.log("AJAX Response:", response);
-                        if (Array.isArray(response)) {
-                            response.forEach((item, index) => {
-                                let ipaddress = item.ipaddress.match(/\d+\.\d+\.\d+\.\d+/) ? item.ipaddress.match(/\d+\.\d+\.\d+\.\d+/)[0] : item.ipaddress;
-                                let serverName = item.subhostname.split(' ')[0];
-                                let additionalInfo = item.ipaddress.split(' ')[1] ? item.ipaddress.split(' ')[1] : 'No additional info available';
-                                if (!ipStatusMap.has(ipaddress)) {
-                                    ipStatusMap.set(ipaddress, { status: 'Not Found', serial: null });
-
-                                    $('#data-table-body').append(
-                                        `<tr>
-                                        <td>${index + 1}</td>
-                                        <td>${serverName}</td>
-                                        <td>${ipaddress}</td>
-                                        <td>Not Found</td>
-                                        <td>${additionalInfo}</td>
-                                    </tr>`
-                                    );
-                                }
-                            });
+                        // console.log("TEST: " + Array.isArray(response));
+                        // if (Array.isArray(response)) {
+                        //     websocket(response);
+                        // } else {
+                        //     websocket([response]);
+                        // }
+                        if (selectedServer === 'all') {
+                            initializeMultipleWebSockets();
                         } else {
-                            let ipaddress = response.ipaddress.match(/\d+\.\d+\.\d+\.\d+/) ? response.ipaddress.match(/\d+\.\d+\.\d+\.\d+/)[0] : response.ipaddress;
-                            let serverName = response.subhostname.split(' ')[0];
-                            let additionalInfo = response.ipaddress.split(' ')[1] ? response.ipaddress.split(' ')[1] : 'No additional info available';
-                            if (!ipStatusMap.has(ipaddress)) {
-                                ipStatusMap.set(ipaddress, { status: 'Not Found', serial: null });
-
-                                $('#data-table-body').append(
-                                    `<tr>
-                                    <td>#</td>
-                                    <td>${serverName}</td>
-                                    <td>${ipaddress}</td>
-                                    <td>Not Found</td>
-                                    <td>${additionalInfo}</td>
-                                </tr>`
-                                );
-                            }
+                            // websocket([response]);
+                            websocket(response.subhostname ?? '');
+                            // console.log("cuba lagi");
                         }
                         $('#data-table-card').removeClass('d-none');
-                        websocket(response.subhostname ?? '');
                     },
                     error: function (xhr) {
                         console.error("AJAX Error: ", xhr.responseText);
                     }
                 });
             });
+
+            //1 server//
             function websocket(hostname) {
                 const ipList = $('#ip-address-list').val().replace(/\n/g, " ");
                 const ipAddresses = ipList.split(/\s+/);
+                // for (let i = 0; i < 1; i++) {
+                //     console.log("IP List for WebSocket:", ipList);
+                // }
                 //console.log("IP List for WebSocket:", ipAddresses);
                 $('#data-table-body').html('');
+                $('#data-table-card').removeClass('d-none');
 
                 const serverAddress = 'wss://myspmr:Rb1NAPzM57Ycq9z8Uur65g1JaF2xVixKtTGStvPfh65P9HK29Abe0QcxiZC9yV9n@spmr.mygovuc.gov.my/' + hostname;
                 //console.log("WebSocket Server Address:", serverAddress);
-
                 const socket = new WebSocket(serverAddress);
 
                 socket.addEventListener('open', () => {
                     const userEmail = "{{ $user->email }}";
                     const command = `/opt/scripts/websocket/cmd16 -v {{ $user->email }} ${ipList}`;
                     //console.log("WebSocket Command Sent:", command);
+                    //console.log(`WebSocket connection established with ${hostname}`);
                     socket.send(command);
                 });
 
                 socket.addEventListener('message', (event) => {
                     const response = event.data;
-                   // console.log("WebSocket Response:", response);
+                    //console.log("WebSocket Response:", response);
+                    processResponse(response, hostname, ipAddresses);
 
-                    const regex = /(?<ip>\d+\.\d+\.\d+\.\d+)\s+#(?<serial>[A-Za-z0-9-]+)/g;
-                    //const regex1 = /#([A-Z-]+)/g;
-                    let match;
-                    let processedIps = new Set();
-                    let index = 1;
-
-                    while ((match = regex.exec(response)) !== null) {
-                        const ip = match.groups.ip;
-                        const serialNumber = match.groups.serial;
-                        let hyperlink = '';
-
-                        /*console.log(serialNumber.match(regex1));
-
-                        if (serialNumber.match(regex1) !== null) {
-                            hyperlink = `${serialNumber}`;
-                        } else {
-                            hyperlink = `https://spmr.mygovuc.gov.my/smtp_relay/view/${serialNumber}/1`;
-                        }*/
-                        //const hyperlink = `https://spmr.mygovuc.gov.my/smtp_relay/view/${serialNumber}/1`;
-                        if (!ipStatusMap.has(ip)) {
-                            ipStatusMap.set(ip, { status: 'Found', serial: serialNumber });
-
-                            $('#data-table-body').append(
-                                `<tr>
-                                <td>${index}</td>
-                                <td>${hostname}</td>
-                                <td>${ip}</td>
-                                <td>Found</td>
-                                <td><a href="${hyperlink}" target="_blank" class="text-primary">${serialNumber}</a></td>
-                            </tr>`);
-                            index++;
-                        } else {
-                            let ipData = ipStatusMap.get(ip);
-                            if (ipData.status === 'Not Found') {
-                                ipData.status = 'Found';
-                                ipData.serial = serialNumber;
-
-                                // Update the row
-                                $('#data-table-body').find(`tr:contains(${ip})`).each(function () {
-                                    $(this).find('td').eq(3).text('Found');
-                                    $(this).find('td').eq(4).html(`<a href="https://spmr.mygovuc.gov.my/smtp_relay/view/${serialNumber}/1" target="_blank" class="text-primary">${serialNumber}</a>`);
-                                });
-                            }
-                        }
-                    }
-                    ipAddresses.forEach((ip, idx) => {
-                        if (!ipStatusMap.has(ip)) {
-                            ipStatusMap.set(ip, { status: 'Not Found', serial: null });
-
-                            $('#data-table-body').append(
-                                `<tr>
-                                <td>${index + idx}</td>
-                                <td>${hostname}</td>
-                                <td>${ip}</td>
-                                <td>Not Found</td>
-                                <td>No serial data found</td>
-                            </tr>`);
-                        }
-                    });
-                });
-                socket.addEventListener('error', (event) => {
-                    console.error("WebSocket Error: ", event);
+                    // socket.addEventListener('error', (event) => {
+                    //     //console.error("WebSocket Error: ", event);
+                    // });
                 });
             }
         });
+        //1 server//
+
+
+        //ALL Server
+        function initializeMultipleWebSockets() {
+
+            const ipList = $('#ip-address-list').val().replace(/\n/g, " ");
+            const ipAddresses = ipList ? ipList.split(/\s+/) : [];
+            const serverIpAddresses = [];
+
+            $('#data-table-body').html('');
+            $('#data-table-card').removeClass('d-none');
+
+            // Collect all server IDs
+            @foreach ($serverconfig as $server)
+            let serverMailRelay{{$loop->iteration}} = "{{ $server->subhostname }}";
+            serverIpAddresses.push(serverMailRelay{{$loop->iteration}});
+            @endforeach
+
+            if (serverIpAddresses.length === 0) {
+                //console.warn("No server configurations found.");
+                return;
+            }
+
+            serverIpAddresses.forEach((hostname, index) => {
+                const serverAddress = 'wss://myspmr:Rb1NAPzM57Ycq9z8Uur65g1JaF2xVixKtTGStvPfh65P9HK29Abe0QcxiZC9yV9n@spmr.mygovuc.gov.my/' + hostname;
+                const socket = new WebSocket(serverAddress);
+
+                socket.addEventListener('open', () => {
+                    const userEmail = "{{ $user->email }}";
+                    const command = `/opt/scripts/websocket/cmd16 -v ${userEmail} ${ipList}`;
+                    //console.log(`Sending command to ${hostname}:`, command);
+                    //console.log(`WebSocket connection established with ${hostname}`);
+                    socket.send(command);
+                });
+
+                socket.addEventListener('message', (event) => {
+                    const response = event.data;
+                    //console.log(`Response from ${hostname}:`, response);
+                    processResponse(response, hostname, ipAddresses);
+                });
+
+                socket.addEventListener('error', (event) => {
+                    //console.error(`WebSocket Error for ${hostname}:`, event);
+                });
+
+                // socket.addEventListener('close', () => {
+                //     console.log(`WebSocket connection to ${hostname} closed.`);
+                // });
+            });
+        }
+        let currentIndex = 1;
+
+        function processResponse(response, hostname, ipAddresses, startIndex = currentIndex) {
+            const regex = /(?<ip>\d+\.\d+\.\d+\.\d+)\s+#(?<serial>[A-Za-z0-9-]+)/g;
+            let ipStatusMap = new Map();
+            let match;
+            let index = startIndex;
+            while ((match = regex.exec(response)) !== null) {
+                const ip = match.groups.ip;
+                const serialNumber = match.groups.serial;
+                let hyperlink = `https://spmr.mygovuc.gov.my/smtp_relay/view/${serialNumber}/1`;
+                if (!ipStatusMap.has(ip)) {
+                    ipStatusMap.set(ip, []);
+                    //console.log("IP Status Map:", Array.from(ipStatusMap.entries()));
+                }
+                if (!ipStatusMap.get(ip).includes(serialNumber)) {
+                    ipStatusMap.get(ip).push(serialNumber);
+                    //console.log("Processed IPs:", Array.from(ipStatusMap));
+                }
+            }
+            ipStatusMap.forEach((serials, ip) => {
+                serials.forEach(serialNumber => {
+                    let hyperlink = `https://spmr.mygovuc.gov.my/smtp_relay/view/${serialNumber}/1`;
+
+                    $('#data-table-body').append(
+                        `<tr>
+                    <td>${index}</td>
+                    <td>${hostname}</td>
+                    <td>${ip}</td>
+                    <td>Found</td>
+                    <td><a href="${hyperlink}" target="_blank" class="text-primary">${serialNumber}</a></td>
+                </tr>`
+                    );
+                    index++;
+                });
+            });
+
+            // ipAddresses.forEach(ip => {
+            //     if (!ipStatusMap.has(ip)) {
+            //         $('#data-table-body').append(
+            //             `<tr>
+            //         <td>${index}</td>
+            //         <td>${hostname}</td>
+            //         <td>${ip}</td>
+            //         <td>Not Found</td>
+            //         <td>No serial data found</td>
+            //     </tr>`
+            //         );
+            //         index++;
+            //     }
+            // });
+
+            // ipAddresses.forEach(ip => {
+            //     if (ipStatusMap.has(ip)) {
+            //         // If IP exists in the response, iterate over its serial numbers
+            //         const serials = ipStatusMap.get(ip);
+            //         serials.forEach(serialNumber => {
+            //             const hyperlink = `https://spmr.mygovuc.gov.my/smtp_relay/view/${serialNumber}/1`;
+            //             $('#data-table-body').append(
+            //                 `<tr>
+            //         <td>${index}</td>
+            //         <td>${hostname}</td>
+            //         <td>${ip}</td>
+            //         <td>Found</td>
+            //         <td><a href="${hyperlink}" target="_blank" class="text-primary">${serialNumber}</a></td>
+            //     </tr>`
+            //             );
+            //             index++;
+            //         });
+            //     } else {
+            //         // If IP is not found, add a single "Not Found" row
+            //         $('#data-table-body').append(
+            //             `<tr>
+            //     <td>${index}</td>
+            //     <td>${hostname}</td>
+            //     <td>${ip}</td>
+            //     <td>Not Found</td>
+            //     <td>No serial data found</td>
+            // </tr>`
+            //         );
+            //         index++;
+            //     }
+            // });
+
+            currentIndex = index;
+        }
     </script>
 @endpush
