@@ -296,90 +296,145 @@
             });
         }
         let currentIndex = 1;
+        // all yang found je tapi based on collect function
+        // function processResponse(response, hostname, ipAddresses, startIndex = currentIndex) {
+        //     const regex = /(?<ip>\d+\.\d+\.\d+\.\d+)\s+#(?<serial>[A-Za-z0-9-]+)/g;
+        //     let ipStatusMap = new Map();
+        //     let match;
+        //     let index = startIndex;
+        //     while ((match = regex.exec(response)) !== null) {
+        //         const ip = match.groups.ip;
+        //         const serialNumber = match.groups.serial;
+        //         let hyperlink = `https://spmr.mygovuc.gov.my/smtp_relay/view/${serialNumber}/1`;
+        //         if (!ipStatusMap.has(ip)) {
+        //             ipStatusMap.set(ip, []);
+        //             console.log("IP Status Map:", Array.from(ipStatusMap.entries()));
+        //         }
+        //         if (!ipStatusMap.get(ip).includes(serialNumber)) {
+        //             ipStatusMap.get(ip).push(serialNumber);
+        //             console.log("Processed IPs:", Array.from(ipStatusMap));
+        //         }
+        //     }
+        //     ipStatusMap.forEach((serials, ip) => {
+        //         serials.forEach(serialNumber => {
+        //             let hyperlink = `https://spmr.mygovuc.gov.my/smtp_relay/view/${serialNumber}/1`;
+        //
+        //             $('#data-table-body').append(
+        //                 `<tr>
+        //             <td>${index}</td>
+        //             <td>${hostname}</td>
+        //             <td>${ip}</td>
+        //             <td>Found</td>
+        //             <td><a href="${hyperlink}" target="_blank" class="text-primary">${serialNumber}</a></td>
+        //         </tr>`
+        //             );
+        //             index++;
+        //         });
+        //     });
+        //
+        //
+        //     currentIndex = index;
+        // }
+        // all yang found je tapi based on collect function
 
         function processResponse(response, hostname, ipAddresses, startIndex = currentIndex) {
-            const regex = /(?<ip>\d+\.\d+\.\d+\.\d+)\s+#(?<serial>[A-Za-z0-9-]+)/g;
-            let ipStatusMap = new Map();
-            let match;
+            const lines = response.trim().split("\n");
             let index = startIndex;
-            while ((match = regex.exec(response)) !== null) {
-                const ip = match.groups.ip;
-                const serialNumber = match.groups.serial;
-                let hyperlink = `https://spmr.mygovuc.gov.my/smtp_relay/view/${serialNumber}/1`;
-                if (!ipStatusMap.has(ip)) {
-                    ipStatusMap.set(ip, []);
-                    //console.log("IP Status Map:", Array.from(ipStatusMap.entries()));
-                }
-                if (!ipStatusMap.get(ip).includes(serialNumber)) {
-                    ipStatusMap.get(ip).push(serialNumber);
-                    //console.log("Processed IPs:", Array.from(ipStatusMap));
-                }
-            }
-            ipStatusMap.forEach((serials, ip) => {
-                serials.forEach(serialNumber => {
-                    let hyperlink = `https://spmr.mygovuc.gov.my/smtp_relay/view/${serialNumber}/1`;
 
-                    $('#data-table-body').append(
-                        `<tr>
-                    <td>${index}</td>
-                    <td>${hostname}</td>
-                    <td>${ip}</td>
-                    <td>Found</td>
-                    <td><a href="${hyperlink}" target="_blank" class="text-primary">${serialNumber}</a></td>
-                </tr>`
-                    );
-                    index++;
-                });
+            lines.forEach(line => {
+                const foundMatch = line.match(/(?<ip>\d+\.\d+\.\d+\.\d+)\s*#(?<serial>[A-Za-z0-9\-]+)[;:]?/);
+
+                if (foundMatch) {
+                    const ip = foundMatch.groups.ip || "";
+                    const serialNumber = foundMatch.groups.serial;
+
+                    if (ip && ipAddresses.includes(ip)) {
+                        const hyperlink = `https://spmr.mygovuc.gov.my/smtp_relay/view/${serialNumber}/1`;
+
+                        $('#data-table-body').append(
+                            `<tr>
+                        <td>${index}</td>
+                        <td>${hostname}</td>
+                        <td>${ip}</td>
+                        <td>Found</td>
+                        <td><a href="${hyperlink}" target="_blank" class="text-primary">${serialNumber}</a></td>
+                    </tr>`
+                        );
+                        index++;
+                    }
+                } else {
+                    const specialCaseMatch = line.match(/(?<ip>127\.0\.0\.1)\s*#\s*(?<serial>.*)/);
+                    if (specialCaseMatch) {
+                        const ip = specialCaseMatch.groups.ip;
+                        const serialNumber = specialCaseMatch.groups.serial || "No serial number available";
+
+                        $('#data-table-body').append(
+                            `<tr>
+                        <td>${index}</td>
+                        <td>${hostname}</td>
+                        <td>${ip}</td>
+                        <td>Found</td>
+                        <td>${serialNumber}</td>
+                    </tr>`
+                        );
+                        index++;
+                    } else {
+                        const ipv6Match = line.match(/(?<ip>::1)\s*#\s*(?<serial>.*)/);
+                        if (ipv6Match) {
+                            const ip = ipv6Match.groups.ip;
+                            const serialNumber = ipv6Match.groups.serial || "No serial number available";
+
+                            $('#data-table-body').append(
+                                `<tr>
+                            <td>${index}</td>
+                            <td>${hostname}</td>
+                            <td>${ip}</td>
+                            <td>Found</td>
+                            <td>${serialNumber}</td>
+                        </tr>`
+                            );
+                            index++;
+                        } else {
+                            const errorMatch = line.match(/Invalid IPv4 format for IP address:\s*(?<ip>.*)/);
+                            if (errorMatch) {
+                                const ip = errorMatch.groups.ip;
+                                const errorMessage = `Invalid IPv4 format: ${ip}`;
+
+                                $('#data-table-body').append(
+                                    `<tr>
+                                <td>${index}</td>
+                                <td>${hostname}</td>
+                                <td>${ip}</td>
+                                <td>Error</td>
+                                <td>${errorMessage}</td>
+                            </tr>`
+                                );
+                                index++;
+                            }
+                        }
+                    }
+                }
+                const notFoundMatch = line.match(/(?<ip>\d+\.\d+\.\d+\.\d+)\s+not found/);
+                if (notFoundMatch) {
+                    const ip = notFoundMatch.groups.ip;
+
+                    if (ipAddresses.includes(ip)) {
+                        $('#data-table-body').append(
+                            `<tr>
+                        <td>${index}</td>
+                        <td>${hostname}</td>
+                        <td>${ip}</td>
+                        <td>Not Found</td>
+                        <td>-</td>
+                    </tr>`
+                        );
+                        index++;
+                    }
+                }
             });
-
-            // ipAddresses.forEach(ip => {
-            //     if (!ipStatusMap.has(ip)) {
-            //         $('#data-table-body').append(
-            //             `<tr>
-            //         <td>${index}</td>
-            //         <td>${hostname}</td>
-            //         <td>${ip}</td>
-            //         <td>Not Found</td>
-            //         <td>No serial data found</td>
-            //     </tr>`
-            //         );
-            //         index++;
-            //     }
-            // });
-
-            // ipAddresses.forEach(ip => {
-            //     if (ipStatusMap.has(ip)) {
-            //         // If IP exists in the response, iterate over its serial numbers
-            //         const serials = ipStatusMap.get(ip);
-            //         serials.forEach(serialNumber => {
-            //             const hyperlink = `https://spmr.mygovuc.gov.my/smtp_relay/view/${serialNumber}/1`;
-            //             $('#data-table-body').append(
-            //                 `<tr>
-            //         <td>${index}</td>
-            //         <td>${hostname}</td>
-            //         <td>${ip}</td>
-            //         <td>Found</td>
-            //         <td><a href="${hyperlink}" target="_blank" class="text-primary">${serialNumber}</a></td>
-            //     </tr>`
-            //             );
-            //             index++;
-            //         });
-            //     } else {
-            //         // If IP is not found, add a single "Not Found" row
-            //         $('#data-table-body').append(
-            //             `<tr>
-            //     <td>${index}</td>
-            //     <td>${hostname}</td>
-            //     <td>${ip}</td>
-            //     <td>Not Found</td>
-            //     <td>No serial data found</td>
-            // </tr>`
-            //         );
-            //         index++;
-            //     }
-            // });
 
             currentIndex = index;
         }
+
     </script>
 @endpush
