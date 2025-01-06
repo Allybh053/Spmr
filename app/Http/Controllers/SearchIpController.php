@@ -34,6 +34,10 @@ class SearchIpController extends Controller
         $serverIds = RoleServer::whereIn('role_id', $user->roles->pluck('id')->all())
             ->pluck('server_id');
 
+        $servers = Server::whereIn('id', $serverIds)
+            ->where('status_cluster', 1)
+            ->orderBy('id', 'asc')
+            ->pluck('hostname', 'id');
         //new one//
         $serverconfig = Server::whereIn('master_id', $serverIds)
             ->where('status_cluster', 1)->orderBy('id', 'asc')
