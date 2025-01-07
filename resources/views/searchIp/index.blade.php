@@ -414,6 +414,7 @@
                         }
                     }
                 }
+
                 const notFoundMatch = line.match(/(?<ip>\d+\.\d+\.\d+\.\d+)\s+not found/);
                 if (notFoundMatch) {
                     const ip = notFoundMatch.groups.ip;
@@ -431,10 +432,45 @@
                         index++;
                     }
                 }
+
+                const pkaMatch = line.match(/(?<ip>\d+\.\d+\.\d+\.\d+)\s+#\s*PKA/);
+                if (pkaMatch) {
+                    const ip = pkaMatch.groups.ip;
+
+                    if (ipAddresses.includes(ip)) {
+                        $('#data-table-body').append(
+                            `<tr>
+                        <td>${index}</td>
+                        <td>${hostname}</td>
+                        <td>${ip}</td>
+                        <td>Found</td>
+                        <td>PKA</td>
+                    </tr>`
+                        );
+                        index++;
+                    }
+                }
+                const IYRESMatch = line.match(/(?<ip>\d+\.\d+\.\d+\.\d+)\s*#\s*IYRES\s*(?<label>.*)/);
+                if (IYRESMatch) {
+                    const ip = IYRESMatch.groups.ip;
+                    const label = IYRESMatch.groups.label;
+
+                    if (ipAddresses.includes(ip)) {
+                        $('#data-table-body').append(
+                            `<tr>
+                        <td>${index}</td>
+                        <td>${hostname}</td>
+                        <td>${ip}</td>
+                        <td>Found</td>
+                        <td>IYRES - ${label}</td>
+                    </tr>`
+                        );
+                        index++;
+                    }
+                }
             });
 
             currentIndex = index;
         }
-
     </script>
 @endpush
