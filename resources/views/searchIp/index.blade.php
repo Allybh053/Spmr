@@ -349,7 +349,8 @@
                     const serialNumber = foundMatch.groups.serial;
 
                     if (ip && ipAddresses.includes(ip)) {
-                        const hyperlink = `https://spmr.mygovuc.gov.my/smtp_relay/view/${serialNumber}/1`;
+                        const isTermination = line.includes("(Termination)");
+                        const hyperlink = `https://spmr.mygovuc.gov.my/smtp_relay/view/${serialNumber}/${isTermination ? "1" : "2"}`;
 
                         $('#data-table-body').append(
                             `<tr>
