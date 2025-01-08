@@ -179,23 +179,44 @@
 
 
 
-                @php
-                    $canViewSearchIpSasl = Gate::check('search_ip_view') || Gate::check('search_sasl_view');
-                @endphp
-                @if ($canViewSearchIpSasl)
-                    <a class="nav-link" href="{{ route('searchIp.index') }}">
-                        <div class="nav-link-icon"><i data-feather="info"></i></div>
-                        Search Registered IP
-                        <div class="sidenav-collapse-arrow"></div>
-                    </a>
-                    <a class="nav-link" href="{{ route('searchSasl.index') }}">
-                        <div class="nav-link-icon"><i data-feather="user"></i></div>
-                        Search Registered Sasl
-                        <div class="sidenav-collapse-arrow"></div>
-                    </a>
+{{--                @php--}}
+{{--                    $canViewSearchIpSasl = Gate::check('search_ip_view') || Gate::check('search_sasl_view');--}}
+{{--                @endphp--}}
+{{--                @if ($canViewSearchIpSasl)--}}
+{{--                    <a class="nav-link" href="{{ route('searchIp.index') }}">--}}
+{{--                        <div class="nav-link-icon"><i data-feather="info"></i></div>--}}
+{{--                        Search Registered IP--}}
+{{--                        <div class="sidenav-collapse-arrow"></div>--}}
+{{--                    </a>--}}
+{{--                    <a class="nav-link" href="{{ route('searchSasl.index') }}">--}}
+{{--                        <div class="nav-link-icon"><i data-feather="user"></i></div>--}}
+{{--                        Search Registered Sasl--}}
+{{--                        <div class="sidenav-collapse-arrow"></div>--}}
+{{--                    </a>--}}
 
-                @endif
-                @php
+{{--                @endif--}}
+                    @php
+                        $canViewSearchIp = Gate::check('search_ip_view');
+                        $canViewSearchSasl = Gate::check('search_sasl_view');
+                    @endphp
+
+                    @if ($canViewSearchIp)
+                        <a class="nav-link" href="{{ route('searchIp.index') }}">
+                            <div class="nav-link-icon"><i data-feather="info"></i></div>
+                            Search Registered IP
+                            <div class="sidenav-collapse-arrow"></div>
+                        </a>
+                    @endif
+
+                    @if ($canViewSearchSasl)
+                        <a class="nav-link" href="{{ route('searchSasl.index') }}">
+                            <div class="nav-link-icon"><i data-feather="user"></i></div>
+                            Search Registered Sasl
+                            <div class="sidenav-collapse-arrow"></div>
+                        </a>
+                    @endif
+
+                    @php
                 $canViewReport = Gate::check('agencies_report_view') || Gate::check('usage_report_view');
                 @endphp
                 @if ($canViewReport)
