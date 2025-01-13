@@ -357,7 +357,7 @@
 
                         @foreach($smtpRequest as $smtpReq)
                         if (serialNumber.includes("{{ $smtpReq->form_id }}")) {
-                            hyperlink = `https://stg-spmr.mygovuc.gov.my/smtp_relay/view/${serialNumber}/{{ $smtpReq->types_req }}`;
+                            hyperlink = `https://spmr.mygovuc.gov.my/smtp_relay/view/${serialNumber}/{{ $smtpReq->types_req }}`;
                             {{--console.log("Match found!");--}}
                             {{--console.log("Form ID:", "{{ $smtpReq->form_id }}");--}}
                             {{--console.log("Types Req:", "{{ $smtpReq->types_req }}");--}}
