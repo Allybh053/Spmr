@@ -208,6 +208,7 @@
                         console.error("AJAX Error: ", xhr.responseText);
                     }
                 });
+                console.log("AJAX Request Sent");
             });
 
             //1 server//
@@ -343,26 +344,52 @@
 
             lines.forEach(line => {
                 const foundMatch = line.match(/(?<ip>\d+\.\d+\.\d+\.\d+)\s*#(?<serial>[A-Za-z0-9\-]+)[;:]?/);
-
+                //console.log(foundMatch.groups.serial);
                 if (foundMatch) {
                     const ip = foundMatch.groups.ip || "";
                     const serialNumber = foundMatch.groups.serial;
 
                     if (ip && ipAddresses.includes(ip)) {
-                        const isTermination = line.includes("(Termination)");
-                        const hyperlink = `https://spmr.mygovuc.gov.my/smtp_relay/view/${serialNumber}/${isTermination ? "1" : "2"}`;
+                        let hyperlink = ''; // Initialize hyperlink
+
+                        console.log("Processing IP:", ip);
+                        console.log("Serial number:", serialNumber);
+
+                        @foreach($smtpRequest as $smtpReq)
+                        if (serialNumber.includes("{{ $smtpReq->form_id }}")) {
+                            // Assign the hyperlink based on the matched form_id and types_req.
+                            hyperlink = `https://stg-spmr.mygovuc.gov.my/smtp_relay/view/${serialNumber}/{{ $smtpReq->types_req }}`;
+                            console.log("Match found!");
+                            console.log("Form ID:", "{{ $smtpReq->form_id }}");
+                            console.log("Types Req:", "{{ $smtpReq->types_req }}");
+                            console.log("Generated hyperlink:", hyperlink);
+                        }
+                        @endforeach
+
+                        if (!hyperlink) {
+                            console.log("No matching form_id found for serial number:", serialNumber);
+                            hyperlink = "#"; // Default fallback if no match is found.
+                        }
+
+                        console.log("Appending data to table:");
+                        console.log("Index:", index);
+                        console.log("Hostname:", hostname);
+                        console.log("IP:", ip);
+                        console.log("Hyperlink:", hyperlink);
 
                         $('#data-table-body').append(
                             `<tr>
-                        <td>${index}</td>
-                        <td>${hostname}</td>
-                        <td>${ip}</td>
-                        <td>Found</td>
-                        <td><a href="${hyperlink}" target="_blank" class="text-primary">${serialNumber}</a></td>
-                    </tr>`
+                            <td>${index}</td>
+                            <td>${hostname}</td>
+                            <td>${ip}</td>
+                            <td>Found</td>
+                            <td><a href="${hyperlink}" target="_blank" class="text-primary">${serialNumber}</a></td>
+                        </tr>`
                         );
+
                         index++;
                     }
+
                 } else {
                     const specialCaseMatch = line.match(/(?<ip>127\.0\.0\.1)\s*#\s*(?<serial>.*)/);
                     if (specialCaseMatch) {
