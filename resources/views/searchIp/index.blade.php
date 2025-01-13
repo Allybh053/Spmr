@@ -208,7 +208,7 @@
                         console.error("AJAX Error: ", xhr.responseText);
                     }
                 });
-                console.log("AJAX Request Sent");
+               // console.log("AJAX Request Sent");
             });
 
             //1 server//
@@ -350,32 +350,31 @@
                     const serialNumber = foundMatch.groups.serial;
 
                     if (ip && ipAddresses.includes(ip)) {
-                        let hyperlink = ''; // Initialize hyperlink
+                        let hyperlink = '';
 
-                        console.log("Processing IP:", ip);
-                        console.log("Serial number:", serialNumber);
+                        // console.log("Processing IP:", ip);
+                        // console.log("Serial number:", serialNumber);
 
                         @foreach($smtpRequest as $smtpReq)
                         if (serialNumber.includes("{{ $smtpReq->form_id }}")) {
-                            // Assign the hyperlink based on the matched form_id and types_req.
                             hyperlink = `https://stg-spmr.mygovuc.gov.my/smtp_relay/view/${serialNumber}/{{ $smtpReq->types_req }}`;
-                            console.log("Match found!");
-                            console.log("Form ID:", "{{ $smtpReq->form_id }}");
-                            console.log("Types Req:", "{{ $smtpReq->types_req }}");
-                            console.log("Generated hyperlink:", hyperlink);
+                            {{--console.log("Match found!");--}}
+                            {{--console.log("Form ID:", "{{ $smtpReq->form_id }}");--}}
+                            {{--console.log("Types Req:", "{{ $smtpReq->types_req }}");--}}
+                            {{--console.log("Generated hyperlink:", hyperlink);--}}
                         }
                         @endforeach
 
                         if (!hyperlink) {
-                            console.log("No matching form_id found for serial number:", serialNumber);
-                            hyperlink = "#"; // Default fallback if no match is found.
+                            // console.log("No matching form_id found for serial number:", serialNumber);
+                            hyperlink = "#";
                         }
 
-                        console.log("Appending data to table:");
-                        console.log("Index:", index);
-                        console.log("Hostname:", hostname);
-                        console.log("IP:", ip);
-                        console.log("Hyperlink:", hyperlink);
+                        // console.log("Appending data to table:");
+                        // console.log("Index:", index);
+                        // console.log("Hostname:", hostname);
+                        // console.log("IP:", ip);
+                        // console.log("Hyperlink:", hyperlink);
 
                         $('#data-table-body').append(
                             `<tr>
