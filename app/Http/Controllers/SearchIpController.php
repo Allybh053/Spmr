@@ -4,12 +4,12 @@ namespace App\Http\Controllers;
 
 use App\Models\RoleServer;
 use App\Models\Server;
+use App\Models\SmtpRelayReqForm;
 use Illuminate\Http\Request;
-use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Auth;
-use Maatwebsite\Excel\Facades\Excel;
 use App\Models\ActivityLog;
 use Illuminate\Support\Facades\DB;
+
 
 class SearchIpController extends Controller
 {
@@ -22,15 +22,11 @@ class SearchIpController extends Controller
     {
         $user = Auth::user();
         $role = $user->roles->isNotEmpty() ? $user->roles->pluck('name')->first() : null;
+//        $smtpRequests = SmtpRelayReqForm::all(); // Replace with your actual model and query logic
+//        $serverName = Server::pluck('name', 'id'); // Replace with actual logic for server names
+//        $defaultServerId = config('app.default_server_id', null); // Example config for default server
 
         // Get server IDs based on user's roles
-//        $serverIds = RoleServer::whereIn('role_servers.role_id', $user->roles->pluck('id')->all())
-//            ->leftJoin('servers', 'servers.id', 'role_servers.server_id')
-//            ->whereNotNull('servers.status_cluster')
-//            ->whereIn('servers.status_cluster', [1, 0])
-//            ->pluck('server_id');
-
-        //new one//
         $serverIds = RoleServer::whereIn('role_id', $user->roles->pluck('id')->all())
             ->pluck('server_id');
 
@@ -38,19 +34,24 @@ class SearchIpController extends Controller
             ->where('status_cluster', 1)
             ->orderBy('id', 'asc')
             ->pluck('hostname', 'id');
-        //new one//
+
         $serverconfig = Server::whereIn('master_id', $serverIds)
-            ->where('status_cluster', 1)->orderBy('id', 'asc')
+            ->where('status_cluster', 1)
+            ->orderBy('id', 'asc')
             ->select('id', 'hostname', 'ipaddress', 'subhostname')
             ->get();
+
         $defaultServerId = $serverIds->min();
+
         $serverQuery = Server::whereIn('status_cluster', [1]);
         if ($server_id && $server_id !== 'all') {
             $serverQuery->where('id', $server_id);
         }
+
         $serverName = $serverQuery
             ->orderBy('id', 'asc')
             ->pluck('hostname', 'id');
+
         $serverData = [
             "serverName" => "--",
             "ipAddress" => "--",
@@ -61,6 +62,26 @@ class SearchIpController extends Controller
             "smtpdTimeOut" => "--",
             "bounced" => "--",
         ];
+
+        $smtpRequest = SmtpRelayReqForm::all();
+        $form_id = $request->input('id');
+        $types_req = $request->input('type');
+
+        // Get SMTP request form data
+        $datasmtp = SmtpRelayReqForm::where('form_id', $form_id)
+            ->where('types_req', $types_req)
+            ->first();
+
+        $details = collect(); // Initialize empty collection
+        if ($datasmtp) {
+            // Retrieve details from the database
+            $details = DB::table('smtp_relay_server') // Adjust table name if incorrect
+            ->where('form_id', $datasmtp->form_id)
+                ->where('types_req', $datasmtp->types_req)
+                ->get();
+        }
+
+        // Log the activity
         ActivityLog::create([
             'user_id' => Auth::id(),
             'activity_type' => 'View Server Overview',
@@ -81,9 +102,15 @@ class SearchIpController extends Controller
             'serverName',
             'defaultServerId',
             'serverData',
-            'serverconfig'
+            'serverconfig',
+            'datasmtp',
+            'details', // Pass details to the view
+            'smtpRequest',
+            'serverName',
+            'defaultServerId'
         ));
     }
+
     public function getNewServerData(Request $request)
     {
         $serverName = $request->serverName;
@@ -96,52 +123,28 @@ class SearchIpController extends Controller
 
         return response()->json($servers);
     }
-
-/*public function showServerConfig()
-{
-    // Example server configuration array
-    $serverconfig = [
-        ['subhostname' => 'postmstr1'],
-        ['subhostname' => 'postmstr2'],
-        ['subhostname' => 'postmstr3'],
-    ];
-    return view('server-config', compact('serverconfig'));
-}*/
-
-    /* public function api(Request $request)
-     {
-         $serverId = $request->serverName;
-
-         return new JsonResponse($serverId);
-     }*/
-
-    /*public function checkIP(Request $request)
+    public function getSmtpRelayData(Request $request)
     {
-        $ips = $request->input('ips');
-        $serverId = $request->input('server');
+        // Get the form_id and types_req from the request
+        $form_id = $request->input('form_id');
+        $types_req = $request->input('types_req');
 
-        if (!$ips || !is_array($ips)) {
-            return response()->json(['error' => 'Invalid IP list provided.'], 400);
+        // Query to get data from smtp_relay_req_form or smtp_relay_server
+        $datasmtp = SmtpRelayReqForm::where('form_id', $form_id)
+            ->where('types_req', $types_req)
+            ->first();
+
+        $details = collect(); // Initialize empty collection
+        if ($datasmtp) {
+            // Retrieve details from smtp_relay_server
+            $details = DB::table('smtp_relay_server')
+                ->where('form_id', $datasmtp->form_id)
+                ->where('types_req', $datasmtp->types_req)
+                ->get();
         }
 
-        // Query database to check IPs
-        $results = DB::table('ip_addresses') // Replace with your table name
-        ->select('ip', 'server_id')     // Adjust columns as needed
-        ->whereIn('ip', $ips)
-            ->when($serverId !== 'All', function ($query) use ($serverId) {
-                $query->where('server_id', $serverId);
-            })
-            ->get();
+        // Return the details as JSON
+        return response()->json($details);
+    }
 
-        // Map results
-        $output = [];
-        foreach ($ips as $ip) {
-            $output[] = [
-                'ip' => $ip,
-                'exists' => $results->contains('ip', $ip),
-                'server' => $results->firstWhere('ip', $ip)->server_id ?? null
-            ];
-        }
-        return response()->json($results);
-    }*/
 }
