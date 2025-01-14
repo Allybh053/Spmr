@@ -788,6 +788,8 @@ class SmtpRelayController extends Controller
         if ($formdata['smtp_relay_auth_method'] == 1) {
             $formdata['smtp_username'] = null;
             $formdata['smtp_password'] = null;
+        }else{
+            $formdata['smtp_password'] = Str::random(15);
         }
 
         // Conditionally update the upload_copy_attachment field
