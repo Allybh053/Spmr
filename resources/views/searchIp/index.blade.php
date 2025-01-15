@@ -118,7 +118,11 @@
                                 <div class="form-group">
                                     <label class="small mb-1" for="serverName" style=" font-weight: bold">SELECT SERVER:</label>
                                     {{--                                    {!! Form::select('serverName', $serverName, $defaultServerId ?? 1, ['id'=>'serverName', 'name'=>'serverName', 'class'=>'form-control select2', 'placeholder'=>config('params.dropdown_default')]) !!}--}}
-                                    {!! Form::select('serverName', ['all' => 'All'] + $serverName->toArray(), $defaultServerId ?? 'all', ['id' => 'serverName', 'class' => 'form-control select2', 'placeholder' => config('params.dropdown_default')]) !!}
+{{--                                    {!! Form::select('serverName', ['all' => 'All'] + $serverName->toArray(), $defaultServerId ?? 'all', ['id' => 'serverName', 'class' => 'form-control select2', 'placeholder' => config('params.dropdown_default')]) !!}--}}
+{{--                                    {!! Form::select('serverName', ['all' => 'All'] + $serverName->toArray(), 'all', ['id' => 'serverName', 'class' => 'form-control select2']) !!}--}}
+                                    {!! Form::select('serverName', ['all' => 'All'] + collect($serverName->toArray())
+                                                ->mapWithKeys(fn($value, $key) => [$key => ucwords(strtolower($value))])
+                                                ->toArray(), 'all', ['id' => 'serverName', 'class' => 'form-control select2']) !!}
                                     <small class="text-muted">Select At Least One Server</small>
                                 </div>
                                 <div class="form-group">
@@ -168,9 +172,6 @@
 @push('script')
     <script>
 
-        // var sockets = [];
-        // var serverIpaddresses = [];
-        //console.log("Code Execution Starts");
         $(document).ready(function () {
             $('#reset').on('click', function() {
                 location.reload();
@@ -180,7 +181,6 @@
                 e.preventDefault();
 
                 const selectedServer = $('#serverName').val();
-                //console.log(selectedServer);
                 var formData = $('#searchForm').serialize();
                 $('#data-table-body').html('');
                 $.ajax({
@@ -188,8 +188,6 @@
                     url: $('#searchForm').attr('action'),
                     data: formData,
                     success: function (response) {
-                        //console.log("AJAX Response:", response);
-                        // console.log("TEST: " + Array.isArray(response));
                         // if (Array.isArray(response)) {
                         //     websocket(response);
                         // } else {
@@ -208,7 +206,6 @@
                         console.error("AJAX Error: ", xhr.responseText);
                     }
                 });
-                // console.log("AJAX Request Sent");
             });
 
             //1 server//
@@ -216,27 +213,21 @@
                 const ipList = $('#ip-address-list').val().replace(/\n/g, " ");
                 const ipAddresses = ipList.split(/\s+/);
                 // for (let i = 0; i < 1; i++) {
-                //     console.log("IP List for WebSocket:", ipList);
                 // }
-                //console.log("IP List for WebSocket:", ipAddresses);
                 $('#data-table-body').html('');
                 $('#data-table-card').removeClass('d-none');
 
                 const serverAddress = 'wss://myspmr:Rb1NAPzM57Ycq9z8Uur65g1JaF2xVixKtTGStvPfh65P9HK29Abe0QcxiZC9yV9n@spmr.mygovuc.gov.my/' + hostname;
-                //console.log("WebSocket Server Address:", serverAddress);
                 const socket = new WebSocket(serverAddress);
 
                 socket.addEventListener('open', () => {
                     const userEmail = "{{ $user->email }}";
                     const command = `/opt/scripts/websocket/cmd16 -v {{ $user->email }} ${ipList}`;
-                    //console.log("WebSocket Command Sent:", command);
-                    //console.log(`WebSocket connection established with ${hostname}`);
                     socket.send(command);
                 });
 
                 socket.addEventListener('message', (event) => {
                     const response = event.data;
-                    console.log("WebSocket Response:", response);
                     processResponse(response, hostname, ipAddresses);
 
                     // socket.addEventListener('error', (event) => {
@@ -247,259 +238,7 @@
         });
         //1 server//
 
-
-        //ALL Server
-        {{--function initializeMultipleWebSockets() {--}}
-
-        {{--    const ipList = $('#ip-address-list').val().replace(/\n/g, " ");--}}
-        {{--    const ipAddresses = ipList ? ipList.split(/\s+/) : [];--}}
-        {{--    const serverIpAddresses = [];--}}
-
-        {{--    $('#data-table-body').html('');--}}
-        {{--    $('#data-table-card').removeClass('d-none');--}}
-
-        {{--    // Collect all server IDs--}}
-        {{--    @foreach ($serverconfig as $server)--}}
-        {{--    let serverMailRelay{{$loop->iteration}} = "{{ $server->subhostname }}";--}}
-        {{--    serverIpAddresses.push(serverMailRelay{{$loop->iteration}});--}}
-        {{--    @endforeach--}}
-
-        {{--    if (serverIpAddresses.length === 0) {--}}
-        {{--        //console.warn("No server configurations found.");--}}
-        {{--        return;--}}
-        {{--    }--}}
-
-        {{--    serverIpAddresses.forEach((hostname, index) => {--}}
-        {{--        const serverAddress = 'wss://myspmr:Rb1NAPzM57Ycq9z8Uur65g1JaF2xVixKtTGStvPfh65P9HK29Abe0QcxiZC9yV9n@spmr.mygovuc.gov.my/' + hostname;--}}
-        {{--        const socket = new WebSocket(serverAddress);--}}
-
-        {{--        socket.addEventListener('open', () => {--}}
-        {{--            const userEmail = "{{ $user->email }}";--}}
-        {{--            const command = `/opt/scripts/websocket/cmd16 -v ${userEmail} ${ipList}`;--}}
-        {{--            //console.log(`Sending command to ${hostname}:`, command);--}}
-        {{--            //console.log(`WebSocket connection established with ${hostname}`);--}}
-        {{--            socket.send(command);--}}
-        {{--        });--}}
-
-        {{--        socket.addEventListener('message', (event) => {--}}
-        {{--            const response = event.data;--}}
-        {{--            console.log(`Response from ${hostname}:`, response);--}}
-        {{--            processResponse(response, hostname, ipAddresses);--}}
-        {{--        });--}}
-
-        {{--        socket.addEventListener('error', (event) => {--}}
-        {{--            //console.error(`WebSocket Error for ${hostname}:`, event);--}}
-        {{--        });--}}
-
-        {{--        // socket.addEventListener('close', () => {--}}
-        {{--        //     console.log(`WebSocket connection to ${hostname} closed.`);--}}
-        {{--        // });--}}
-        {{--    });--}}
-        {{--}--}}
-        {{--let currentIndex = 1;--}}
-        {{--// all yang found je tapi based on collect function--}}
-        {{--// function processResponse(response, hostname, ipAddresses, startIndex = currentIndex) {--}}
-        {{--//     const regex = /(?<ip>\d+\.\d+\.\d+\.\d+)\s+#(?<serial>[A-Za-z0-9-]+)/g;--}}
-        {{--//     let ipStatusMap = new Map();--}}
-        {{--//     let match;--}}
-        {{--//     let index = startIndex;--}}
-        {{--//     while ((match = regex.exec(response)) !== null) {--}}
-        {{--//         const ip = match.groups.ip;--}}
-        {{--//         const serialNumber = match.groups.serial;--}}
-        {{--//         let hyperlink = `https://spmr.mygovuc.gov.my/smtp_relay/view/${serialNumber}/1`;--}}
-        {{--//         if (!ipStatusMap.has(ip)) {--}}
-        {{--//             ipStatusMap.set(ip, []);--}}
-        {{--//             console.log("IP Status Map:", Array.from(ipStatusMap.entries()));--}}
-        {{--//         }--}}
-        {{--//         if (!ipStatusMap.get(ip).includes(serialNumber)) {--}}
-        {{--//             ipStatusMap.get(ip).push(serialNumber);--}}
-        {{--//             console.log("Processed IPs:", Array.from(ipStatusMap));--}}
-        {{--//         }--}}
-        {{--//     }--}}
-        {{--//     ipStatusMap.forEach((serials, ip) => {--}}
-        {{--//         serials.forEach(serialNumber => {--}}
-        {{--//             let hyperlink = `https://spmr.mygovuc.gov.my/smtp_relay/view/${serialNumber}/1`;--}}
-        {{--//--}}
-        {{--//             $('#data-table-body').append(--}}
-        {{--//                 `<tr>--}}
-        {{--//             <td>${index}</td>--}}
-        {{--//             <td>${hostname}</td>--}}
-        {{--//             <td>${ip}</td>--}}
-        {{--//             <td>Found</td>--}}
-        {{--//             <td><a href="${hyperlink}" target="_blank" class="text-primary">${serialNumber}</a></td>--}}
-        {{--//         </tr>`--}}
-        {{--//             );--}}
-        {{--//             index++;--}}
-        {{--//         });--}}
-        {{--//     });--}}
-        {{--//--}}
-        {{--//--}}
-        {{--//     currentIndex = index;--}}
-        {{--// }--}}
-        {{--// all yang found je tapi based on collect function--}}
-
-        {{--function processResponse(response, hostname, ipAddresses, startIndex = currentIndex) {--}}
-        {{--    const lines = response.trim().split("\n");--}}
-        {{--    let index = startIndex;--}}
-
-        {{--    lines.forEach(line => {--}}
-        {{--        const foundMatch = line.match(/(?<ip>\d+\.\d+\.\d+\.\d+)\s*#(?<serial>[A-Za-z0-9\-]+)[;:]?/);--}}
-        {{--        //console.log(foundMatch.groups.serial);--}}
-        {{--        if (foundMatch) {--}}
-        {{--            const ip = foundMatch.groups.ip || "";--}}
-        {{--            const serialNumber = foundMatch.groups.serial;--}}
-
-        {{--            if (ip && ipAddresses.includes(ip)) {--}}
-        {{--                let hyperlink = '';--}}
-
-        {{--                // console.log("Processing IP:", ip);--}}
-        {{--                // console.log("Serial number:", serialNumber);--}}
-
-        {{--                @foreach($smtpRequest as $smtpReq)--}}
-        {{--                if (serialNumber.includes("{{ $smtpReq->form_id }}")) {--}}
-        {{--                    hyperlink = `https://spmr.mygovuc.gov.my/smtp_relay/view/${serialNumber}/{{ $smtpReq->types_req }}`;--}}
-        {{--                    console.log("Match found!");--}}
-        {{--                    console.log("Form ID:", "{{ $smtpReq->form_id }}");--}}
-        {{--                    console.log("Types Req:", "{{ $smtpReq->types_req }}");--}}
-        {{--                    console.log("Generated hyperlink:", hyperlink);--}}
-        {{--                }--}}
-        {{--                @endforeach--}}
-
-        {{--                if (!hyperlink) {--}}
-        {{--                    // console.log("No matching form_id found for serial number:", serialNumber);--}}
-        {{--                    hyperlink = "#";--}}
-        {{--                }--}}
-
-        {{--                // console.log("Appending data to table:");--}}
-        {{--                // console.log("Index:", index);--}}
-        {{--                // console.log("Hostname:", hostname);--}}
-        {{--                // console.log("IP:", ip);--}}
-        {{--                // console.log("Hyperlink:", hyperlink);--}}
-
-        {{--                $('#data-table-body').append(--}}
-        {{--                    `<tr>--}}
-        {{--                    <td>${index}</td>--}}
-        {{--                    <td>${hostname}</td>--}}
-        {{--                    <td>${ip}</td>--}}
-        {{--                    <td>Found</td>--}}
-        {{--                    <td><a href="${hyperlink}" target="_blank" class="text-primary">${serialNumber}</a></td>--}}
-        {{--                </tr>`--}}
-        {{--                );--}}
-
-        {{--                index++;--}}
-        {{--            }--}}
-
-        {{--        } else {--}}
-        {{--            const specialCaseMatch = line.match(/(?<ip>127\.0\.0\.1)\s*#\s*(?<serial>.*)/);--}}
-        {{--            if (specialCaseMatch) {--}}
-        {{--                const ip = specialCaseMatch.groups.ip;--}}
-        {{--                const serialNumber = specialCaseMatch.groups.serial || "No serial number available";--}}
-
-        {{--                $('#data-table-body').append(--}}
-        {{--                    `<tr>--}}
-        {{--                <td>${index}</td>--}}
-        {{--                <td>${hostname}</td>--}}
-        {{--                <td>${ip}</td>--}}
-        {{--                <td>Found</td>--}}
-        {{--                <td>${serialNumber}</td>--}}
-        {{--            </tr>`--}}
-        {{--                );--}}
-        {{--                index++;--}}
-        {{--            } else {--}}
-        {{--                const ipv6Match = line.match(/(?<ip>::1)\s*#\s*(?<serial>.*)/);--}}
-        {{--                if (ipv6Match) {--}}
-        {{--                    const ip = ipv6Match.groups.ip;--}}
-        {{--                    const serialNumber = ipv6Match.groups.serial || "No serial number available";--}}
-
-        {{--                    $('#data-table-body').append(--}}
-        {{--                        `<tr>--}}
-        {{--                    <td>${index}</td>--}}
-        {{--                    <td>${hostname}</td>--}}
-        {{--                    <td>${ip}</td>--}}
-        {{--                    <td>Found</td>--}}
-        {{--                    <td>${serialNumber}</td>--}}
-        {{--                </tr>`--}}
-        {{--                    );--}}
-        {{--                    index++;--}}
-        {{--                } else {--}}
-        {{--                    const errorMatch = line.match(/Invalid IPv4 format for IP address:\s*(?<ip>.*)/);--}}
-        {{--                    if (errorMatch) {--}}
-        {{--                        const ip = errorMatch.groups.ip;--}}
-        {{--                        const errorMessage = `Invalid IPv4 format: ${ip}`;--}}
-
-        {{--                        $('#data-table-body').append(--}}
-        {{--                            `<tr>--}}
-        {{--                        <td>${index}</td>--}}
-        {{--                        <td>${hostname}</td>--}}
-        {{--                        <td>${ip}</td>--}}
-        {{--                        <td>Error</td>--}}
-        {{--                        <td>${errorMessage}</td>--}}
-        {{--                    </tr>`--}}
-        {{--                        );--}}
-        {{--                        index++;--}}
-        {{--                    }--}}
-        {{--                }--}}
-        {{--            }--}}
-        {{--        }--}}
-
-        {{--        const notFoundMatch = line.match(/(?<ip>\d+\.\d+\.\d+\.\d+)\s+not found/);--}}
-        {{--        if (notFoundMatch) {--}}
-        {{--            const ip = notFoundMatch.groups.ip;--}}
-
-        {{--            if (ipAddresses.includes(ip)) {--}}
-        {{--                $('#data-table-body').append(--}}
-        {{--                    `<tr>--}}
-        {{--                <td>${index}</td>--}}
-        {{--                <td>${hostname}</td>--}}
-        {{--                <td>${ip}</td>--}}
-        {{--                <td>Not Found</td>--}}
-        {{--                <td>-</td>--}}
-        {{--            </tr>`--}}
-        {{--                );--}}
-        {{--                index++;--}}
-        {{--            }--}}
-        {{--        }--}}
-
-        {{--        const pkaMatch = line.match(/(?<ip>\d+\.\d+\.\d+\.\d+)\s+#\s*PKA/);--}}
-        {{--        if (pkaMatch) {--}}
-        {{--            const ip = pkaMatch.groups.ip;--}}
-
-        {{--            if (ipAddresses.includes(ip)) {--}}
-        {{--                $('#data-table-body').append(--}}
-        {{--                    `<tr>--}}
-        {{--                <td>${index}</td>--}}
-        {{--                <td>${hostname}</td>--}}
-        {{--                <td>${ip}</td>--}}
-        {{--                <td>Found</td>--}}
-        {{--                <td>PKA</td>--}}
-        {{--            </tr>`--}}
-        {{--                );--}}
-        {{--                index++;--}}
-        {{--            }--}}
-        {{--        }--}}
-        {{--        const IYRESMatch = line.match(/(?<ip>\d+\.\d+\.\d+\.\d+)\s*#\s*IYRES\s*(?<label>.*)/);--}}
-        {{--        if (IYRESMatch) {--}}
-        {{--            const ip = IYRESMatch.groups.ip;--}}
-        {{--            const label = IYRESMatch.groups.label;--}}
-
-        {{--            if (ipAddresses.includes(ip)) {--}}
-        {{--                $('#data-table-body').append(--}}
-        {{--                    `<tr>--}}
-        {{--                <td>${index}</td>--}}
-        {{--                <td>${hostname}</td>--}}
-        {{--                <td>${ip}</td>--}}
-        {{--                <td>Found</td>--}}
-        {{--                <td>IYRES - ${label}</td>--}}
-        {{--            </tr>`--}}
-        {{--                );--}}
-        {{--                index++;--}}
-        {{--            }--}}
-        {{--        }--}}
-        {{--    });--}}
-
-        {{--    currentIndex = index;--}}
-        {{--}--}}
-
+        //All server
         function initializeMultipleWebSockets() {
             const ipList = $('#ip-address-list').val().replace(/\n/g, " ");
             const ipAddresses = ipList ? ipList.split(/\s+/) : [];
@@ -538,7 +277,6 @@
         function processResponse(response, hostname, ipAddresses) {
             const lines = response.trim().split("\n");
             lines.forEach(line => {
-                //console.log("Processing line:", line);
                 //hardcoded ::1?
                 const invalidIpMatch = line.match(/Invalid IPv4 format for IP address:\s*(?<ip>.*)/);
                 if (invalidIpMatch) {
@@ -574,7 +312,6 @@
                             @foreach($smtpRequest as $smtpReq)
                             if (serialNumber.includes("{{ $smtpReq->form_id }}")) {
                                 hyperlink = `https://spmr.mygovuc.gov.my/smtp_relay/view/${serialNumber}/{{ $smtpReq->types_req }}`;
-                                //console.log("Match found! Form ID:", "{{ $smtpReq->form_id }}", "Generated hyperlink:", hyperlink);
                             }
                             @endforeach
                         }
