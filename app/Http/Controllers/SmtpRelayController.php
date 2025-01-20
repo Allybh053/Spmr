@@ -451,7 +451,7 @@ class SmtpRelayController extends Controller
 
             // Retrieve admin emails
             //$adminEmails = User::where('role_id', 11)->pluck('email')->toArray();
-            $adminEmails = User::where('role_id', [11, 9, 17])->where('enabled', 1)->pluck('email')->toArray();
+            $adminEmails = User::whereIn('role_id', [11, 9, 17])->where('enabled', 1)->pluck('email')->toArray();
 
             // Check if there are admin emails before sending the email
             if (!empty($adminEmails)) {
@@ -463,6 +463,7 @@ class SmtpRelayController extends Controller
                 Mail::to($request->input('emailadd'))
                     ->send(new MailForm($request));
             }*/
+            //dd($adminEmails);
 
             return redirect()->route('smtp_relay.smtp_relay_req')->with('success', 'Form added successfully');
             // return redirect()->route('smtp_relay.smtp_relay_req')->with('message', 'Form added successfully');
@@ -635,7 +636,9 @@ class SmtpRelayController extends Controller
                 Mail::to($adminEmails)
                     //->cc($request->input('emailadd'))
                     ->send(new MailForm($request, $user));
-            } /*else {
+            }
+            dd($user);
+            /*else {
                 // If no admin emails, send to emailadd from the request
                 Mail::to($request->input('emailadd'))
                     ->send(new MailForm($request));
