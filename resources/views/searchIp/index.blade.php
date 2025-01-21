@@ -87,7 +87,7 @@
 @endpush
 
 @section('content')
-    <header class="page-header page-header-compact page-header-light border-bottom bg-light mb-4 shadow-sm">
+<header class="page-header page-header-compact border-bottom shadow-sm" style="background-color: #e3f2fd; color: #0d47a1; border-bottom: 3px solid #2196f3;">
         <div class="container-fluid px-4">
             <div class="page-header-content">
                 <div class="row align-items-center justify-content-between pt-3">
@@ -96,7 +96,7 @@
                             <div class="page-header-icon bg-primary text-white rounded-circle d-inline-flex align-items-center justify-content-center">
                                 <i class="fas fa-search"></i>
                             </div>
-                            Search Registered IP
+                            Search IP
                         </h1>
                     </div>
                 </div>
@@ -109,7 +109,7 @@
             <div class="col-xl-12">
                 <!-- REGISTERED IP -->
                 <div class="card mb-4">
-                    <div class="card-header" style=" font-weight: bold">Search Registered IP</div>
+                    <div class="card-header" style=" font-weight: bold">Search IP</div>
                     <div class="card-body mt-1 mb-4">
                         <div class="p-4 rounded" style="background-color: #e3f2fd;">
                             <form id="searchForm" class="ajax-form-search vertical-form" novalidate action="{{ route('searchIp.api.getServerName') }}" method="POST">
@@ -126,17 +126,17 @@
                                     <small class="text-muted">Select At Least One Server</small>
                                 </div>
                                 <div class="form-group">
-                                    <label class="card-body mt-1 mb-4" for="ip-address-list" style=" font-weight: bold">IP Address List:</label>
+                                    <label class="small mb-1" for="ip-address-list" style=" font-weight: bold">IP ADDRESS LIST:</label>
                                     <textarea id="ip-address-list" class="form-control border-primary" rows="5" placeholder="Enter one IP address per line (maximum 10)."></textarea>
                                     <small class="text-muted">Example: 192.168.1.1</small>
                                 </div>
                                 <!-- Submit Button -->
-                                <div style="padding: 10px;">
-                                    <button type="button" class="btn btn-success btn-4x4 beautiful-btn" style="width: 10%; height: 50px;" id="reset">
-                                        Reset <i class="me-2 fas fa-paper-plane"></i>
+                                <div style="display: flex; justify-content: space-between; padding: 10px; text-align: center;">
+                                    <button type="button" class="btn btn-4x4 beautiful-btn" style="background: linear-gradient(90deg, #1e90ff, #00bfff); color: white; width: 10%; height: 50px;" id="reset">
+                                        Reset <i class="me-2 feather-sm fa-refresh"></i>
                                     </button>
-                                    <button type="button" id="searchIp" class="btn btn-success btn-4x4 beautiful-btn" style="width: 10%; height: 50px;">
-                                        <i class="me-2 fas fa-paper-plane"></i> Search
+                                    <button type="button" id="searchIp" class="btn btn-4x4 beautiful-btn" style="background: linear-gradient(90deg, #1e90ff, #00bfff); color: white; width: 10%; height: 50px;">
+                                        <i class="me-2 fas fa-search"></i> Search
                                     </button>
                                 </div>
 
