@@ -463,8 +463,6 @@ class SmtpRelayController extends Controller
                 Mail::to($request->input('emailadd'))
                     ->send(new MailForm($request));
             }*/
-            //dd($adminEmails);
-
             return redirect()->route('smtp_relay.smtp_relay_req')->with('success', 'Form added successfully');
             // return redirect()->route('smtp_relay.smtp_relay_req')->with('message', 'Form added successfully');
 
@@ -637,7 +635,6 @@ class SmtpRelayController extends Controller
                     //->cc($request->input('emailadd'))
                     ->send(new MailForm($request, $user));
             }
-            dd($user);
             /*else {
                 // If no admin emails, send to emailadd from the request
                 Mail::to($request->input('emailadd'))
