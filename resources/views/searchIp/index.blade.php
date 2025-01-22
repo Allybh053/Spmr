@@ -87,7 +87,7 @@
 @endpush
 
 @section('content')
-<header class="page-header page-header-compact border-bottom shadow-sm" style="background-color: #e3f2fd; color: #0d47a1; border-bottom: 3px solid #2196f3;">
+    <header class="page-header page-header-compact border-bottom shadow-sm" style="background-color: #e3f2fd; color: #0d47a1; border-bottom: 3px solid #2196f3;">
         <div class="container-fluid px-4">
             <div class="page-header-content">
                 <div class="row align-items-center justify-content-between pt-3">
@@ -117,9 +117,6 @@
                                 <!-- Form Group -->
                                 <div class="form-group">
                                     <label class="small mb-1" for="serverName" style=" font-weight: bold">SELECT SERVER:</label>
-                                    {{--                                    {!! Form::select('serverName', $serverName, $defaultServerId ?? 1, ['id'=>'serverName', 'name'=>'serverName', 'class'=>'form-control select2', 'placeholder'=>config('params.dropdown_default')]) !!}--}}
-{{--                                    {!! Form::select('serverName', ['all' => 'All'] + $serverName->toArray(), $defaultServerId ?? 'all', ['id' => 'serverName', 'class' => 'form-control select2', 'placeholder' => config('params.dropdown_default')]) !!}--}}
-{{--                                    {!! Form::select('serverName', ['all' => 'All'] + $serverName->toArray(), 'all', ['id' => 'serverName', 'class' => 'form-control select2']) !!}--}}
                                     {!! Form::select('serverName', ['all' => 'All'] + collect($serverName->toArray())
                                                 ->mapWithKeys(fn($value, $key) => [$key => ucwords(strtolower($value))])
                                                 ->toArray(), 'all', ['id' => 'serverName', 'class' => 'form-control select2']) !!}
@@ -133,7 +130,7 @@
                                 <!-- Submit Button -->
                                 <div style="display: flex; justify-content: space-between; padding: 10px; text-align: center;">
                                     <button type="button" class="btn btn-4x4 beautiful-btn" style="background: linear-gradient(90deg, #1e90ff, #00bfff); color: white; width: 10%; height: 50px;" id="reset">
-                                        Reset <i class="me-2 feather-sm fa-refresh"></i>
+                                        Reset <i class="fa fa-sync fa-spin"></i>
                                     </button>
                                     <button type="button" id="searchIp" class="btn btn-4x4 beautiful-btn" style="background: linear-gradient(90deg, #1e90ff, #00bfff); color: white; width: 10%; height: 50px;">
                                         <i class="me-2 fas fa-search"></i> Search
@@ -277,10 +274,27 @@
         function processResponse(response, hostname, ipAddresses) {
             const lines = response.trim().split("\n");
             lines.forEach(line => {
-                //hardcoded ::1?
-                const invalidIpMatch = line.match(/Invalid IPv4 format for IP address:\s*(?<ip>.*)/);
+                const invalidIpMatch = line.match(/Invalid IPv4 address, out of range value:\s*(?<ip>.*)/);
                 if (invalidIpMatch) {
                     const ip = invalidIpMatch.groups.ip;
+                    const errorMessage = `Invalid IPv4 address, out of range value: ${ip}`;
+                    if (ipAddresses.includes(ip)) {
+                        $('#data-table-body').append(
+                            `<tr>
+                        <td>${currentIndex}</td>
+                        <td>${hostname}</td>
+                        <td>${ip}</td>
+                        <td>Invalid</td>
+                        <td>${errorMessage}</td>
+                    </tr>`
+                        );
+                        currentIndex++;
+                    }
+                    return;
+                }
+                const invalidIpFormatMatch = line.match(/Invalid IPv4 format for IP address:\s*(?<ip>.*)/);
+                if (invalidIpFormatMatch) {
+                    const ip = invalidIpFormatMatch.groups.ip;
                     const errorMessage = `Invalid IPv4 format: ${ip}`;
                     if (ipAddresses.includes(ip)) {
                         $('#data-table-body').append(
@@ -350,6 +364,5 @@
                 }
             });
         }
-
     </script>
 @endpush
