@@ -332,6 +332,9 @@
                         if (serialNumber) {
                             additionalInfo = additionalInfo.replace(serialNumber, `<a href="${hyperlink}" target="_blank" class="text-primary">${serialNumber}</a>`);
                         }
+                        if (!additionalInfo) {
+                            additionalInfo = `Registered in ${hostname} only`;
+                        }
                         $('#data-table-body').append(
                             `<tr>
                         <td>${currentIndex}</td>
