@@ -185,13 +185,14 @@ class MainRelayController extends Controller
         if ($update) {
              // Retrieve admin emails
              //$adminEmails = User::where('role_id', 11)->pluck('email')->toArray();
-             $adminEmails = User::where('role_id', [11, 9, 17])->where('enabled', 1)->pluck('email')->toArray();
+             $adminEmails = User::whereIn('role_id', [11, 9, 17])->where('enabled', 1)->pluck('email')->toArray();
 
             // Check if there are admin emails before sending the email
              if (!empty($adminEmails)) {
                  Mail::to($adminEmails)
                      //->cc($request->input('owner_email_addr'))
                      ->send(new mailReject($request, $user));
+                 //dd($adminEmails);
              }
 //             else {
                  // If no admin emails, send to emailadd from the request
@@ -261,7 +262,7 @@ class MainRelayController extends Controller
 
         if ($update) {
             //$adminEmails = User::where('role_id', 11)->pluck('email')->toArray();
-            $adminEmails = User::where('role_id', [11, 9, 17])->where('enabled', 1)->pluck('email')->toArray();
+            $adminEmails = User::whereIn('role_id', [11, 9, 17])->where('enabled', 1)->pluck('email')->toArray();
 
              // Check if there are admin emails before sending the email
              if (!empty($adminEmails)) {
@@ -269,6 +270,7 @@ class MainRelayController extends Controller
                      //->cc($request->input('owner_email_addr'))
                      ->send(new mailApproved($request, $user));
              }
+            //dd($adminEmails);
 //             else {
                  // If no admin emails, send to emailadd from the request
                  /*Mail::to($request->input('owner_email_addr'))
