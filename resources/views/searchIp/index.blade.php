@@ -10,60 +10,49 @@
             align-items: center;
             justify-content: center;
         }
-        /* General Button Styles */
         .beautiful-btn {
-            background-color: #28a745; /* Green color for success buttons */
-            color: white;              /* White text */
-            font-size: 16px;           /* Font size */
-            padding: 12px 24px;        /* Padding for more comfortable click area */
-            border: none;              /* No borders */
-            border-radius: 8px;        /* Slightly rounded corners */
-            font-weight: 600;          /* Bold text */
+            background-color: #28a745;
+            color: white;
+            font-size: 16px;
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
             display: flex;
-            align-items: center;      /* Vertically center icon and text */
-            justify-content: center;  /* Horizontally center icon and text */
-            cursor: pointer;          /* Pointer cursor on hover */
-            transition: all 0.3s ease; /* Smooth transition for hover effects */
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Light shadow for depth */
-            text-transform: uppercase; /* Uppercase text */
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            text-transform: uppercase;
         }
-
-        /* Hover effect */
         .beautiful-btn:hover {
-            background-color: #218838; /* Darker green on hover */
-            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3); /* Darker shadow */
-            transform: translateY(-3px); /* Slight "lift" effect */
+            background-color: #218838;
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
+            transform: translateY(-3px);
         }
-
-        /* Active (clicked) effect */
         .beautiful-btn:active {
-            transform: translateY(1px); /* Slight "press" effect */
-            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2); /* Subtle shadow */
+            transform: translateY(1px);
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
         }
-
-        /* Focus effect */
         .beautiful-btn:focus {
-            outline: none;             /* Remove default focus outline */
-            border: 2px solid #FFD700; /* Gold border on focus */
+            outline: none;
+            border: 2px solid #FFD700;
         }
-
-        /* Optional: Small adjustments for better icon placement */
         .beautiful-btn i {
-            font-size: 18px; /* Icon size */
-            margin-right: 8px; /* Space between icon and text */
+            font-size: 18px;
+            margin-right: 8px;
         }
         .centered {
             display: flex;
             justify-content: center;
             align-items: center;
         }
-
         .custom-form-background {
             background-color: #e3f2fd;
             padding: 16px;
             border-radius: 8px;
         }
-
         @media (max-width: 768px) {
             .btn-4x4 {
                 height: 50px;
@@ -71,7 +60,6 @@
                 padding: 10px;
             }
         }
-
         @media (max-width: 576px) {
             .btn-4x4 {
                 height: 40px;
@@ -79,9 +67,20 @@
                 padding: 8px;
             }
         }
-
         .vertical-form .form-group {
             margin-bottom: 1rem;
+        }
+        #reset {
+            background: linear-gradient(90deg, #dc3545, #ff4d4d);
+        }
+        #reset:hover {
+            background: linear-gradient(90deg, #c82333, #e60000);
+        }
+        #searchIp {
+            background: linear-gradient(90deg, #007bff, #00bfff);
+        }
+        #searchIp:hover {
+            background: linear-gradient(90deg, #0056b3, #0096e6);
         }
     </style>
 @endpush
@@ -115,24 +114,24 @@
                             <form id="searchForm" class="ajax-form-search vertical-form" novalidate action="{{ route('searchIp.api.getServerName') }}" method="POST">
                                 @csrf
                                 <!-- Form Group -->
-                                <div class="form-group">
+                                <div class="form-group mb-5">
                                     <label class="small mb-1" for="serverName" style=" font-weight: bold">SELECT SERVER:</label>
                                     {!! Form::select('serverName', ['all' => 'All'] + collect($serverName->toArray())
                                                 ->mapWithKeys(fn($value, $key) => [$key => ucwords(strtolower($value))])
                                                 ->toArray(), 'all', ['id' => 'serverName', 'class' => 'form-control select2']) !!}
                                     <small class="text-muted">Select At Least One Server</small>
                                 </div>
-                                <div class="form-group">
+                                <div class="form-group mb-5">
                                     <label class="small mb-1" for="ip-address-list" style=" font-weight: bold">IP ADDRESS LIST:</label>
                                     <textarea id="ip-address-list" class="form-control border-primary" rows="5" placeholder="Enter one IP address per line (maximum 10)."></textarea>
                                     <small class="text-muted">Example: 192.168.1.1</small>
                                 </div>
                                 <!-- Submit Button -->
-                                <div style="display: flex; justify-content: space-between; padding: 10px; text-align: center;">
-                                    <button type="button" class="btn btn-4x4 beautiful-btn" style="background: linear-gradient(90deg, #1e90ff, #00bfff); color: white; width: 10%; height: 50px;" id="reset">
-                                        Reset <i class="fa fa-sync fa-spin"></i>
+                                <div class="d-flex justify-content-center gap-3 p-2">
+                                    <button type="button" id="reset" class="btn beautiful-btn" style="background: linear-gradient(90deg, #dc3545, #ff4d4d); color: white; width: 150px; height: 50px;">
+                                        <i class="fa fa-sync fa-spin"></i> Reset
                                     </button>
-                                    <button type="button" id="searchIp" class="btn btn-4x4 beautiful-btn" style="background: linear-gradient(90deg, #1e90ff, #00bfff); color: white; width: 10%; height: 50px;">
+                                    <button type="button" id="searchIp" class="btn beautiful-btn" style="background: linear-gradient(90deg, #007bff, #00bfff); color: white; width: 150px; height: 50px;">
                                         <i class="me-2 fas fa-search"></i> Search
                                     </button>
                                 </div>
