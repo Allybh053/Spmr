@@ -84,7 +84,6 @@
         }
     </style>
 @endpush
-
 @section('content')
     <header class="page-header page-header-compact border-bottom shadow-sm" style="background-color: #e3f2fd; color: #0d47a1; border-bottom: 3px solid #2196f3;">
         <div class="container-fluid px-4">
@@ -95,20 +94,19 @@
                             <div class="page-header-icon bg-primary text-white rounded-circle d-inline-flex align-items-center justify-content-center">
                                 <i class="fas fa-search"></i>
                             </div>
-                            Search IP
+                            SEARCH IP & STATUS
                         </h1>
                     </div>
                 </div>
             </div>
         </div>
     </header>
-
     <div class="container-xl px-4 mt-4">
         <div class="row">
             <div class="col-xl-12">
-                <!-- REGISTERED IP -->
+                <!-- REGISTERED IP $ STATUS -->
                 <div class="card mb-4">
-                    <div class="card-header" style=" font-weight: bold">Search IP</div>
+                    <div class="card-header" style=" font-weight: bold">SEARCH IP & STATUS</div>
                     <div class="card-body mt-1 mb-4">
                         <div class="p-4 rounded" style="background-color: #e3f2fd;">
                             <form id="searchForm" class="ajax-form-search vertical-form" novalidate action="{{ route('searchIp.api.getServerName') }}" method="POST">
@@ -127,23 +125,22 @@
                                     <small class="text-muted">Example: 192.168.1.1</small>
                                 </div>
                                 <!-- Submit Button -->
-                                <div class="d-flex justify-content-center gap-3 p-2">
+                                <div class="d-flex justify-content-start gap-3 p-2">
                                     <button type="button" id="reset" class="btn beautiful-btn" style="background: linear-gradient(90deg, #dc3545, #ff4d4d); color: white; width: 150px; height: 50px;">
-                                        <i class="fa fa-sync fa-spin"></i> Reset
+                                        <i class="me-2 fa fa-sync fa-spin"></i> Reset
                                     </button>
                                     <button type="button" id="searchIp" class="btn beautiful-btn" style="background: linear-gradient(90deg, #007bff, #00bfff); color: white; width: 150px; height: 50px;">
                                         <i class="me-2 fas fa-search"></i> Search
                                     </button>
                                 </div>
-
                             </form>
                         </div>
                     </div>
                 </div>
 
-                <!-- Submitted Data Table -->
-                <div class="card border-light shadow-sm mt-4 d-none" id="data-table-card">
-                    <div class="card-header bg-primary text-white text-center fs-5">Result</div>
+                <!-- New Table for Server Response Details -->
+                <div class="card border-light shadow-sm mt-4 d-none" id="response-details-card">
+                    <div class="card-header bg-secondary text-white text-center fs-5">RESULTS</div>
                     <div class="card-body">
                         <table class="table table-bordered table-striped">
                             <thead>
@@ -151,11 +148,13 @@
                                 <th>No.</th>
                                 <th>Server Name</th>
                                 <th>IP Address</th>
-                                <th>Status</th>
-                                <th>Additional Info</th>
+                                <th>Registration Status</th>
+                                <th>Internal IPS Status</th>
+                                <th>Control List</th>
+                                <th>Remarks</th>
                             </tr>
                             </thead>
-                            <tbody id="data-table-body">
+                            <tbody id="response-details-body">
                             </tbody>
                         </table>
                     </div>
@@ -163,11 +162,9 @@
             </div>
         </div>
     </div>
-
 @endsection
 @push('script')
     <script>
-
         $(document).ready(function () {
             $('#reset').on('click', function() {
                 location.reload();
@@ -179,6 +176,7 @@
                 const selectedServer = $('#serverName').val();
                 var formData = $('#searchForm').serialize();
                 $('#data-table-body').html('');
+                $('#response-details-body').html('');
                 $.ajax({
                     type: 'POST',
                     url: $('#searchForm').attr('action'),
@@ -190,74 +188,65 @@
                         //     websocket([response]);
                         // }
                         if (selectedServer === 'all') {
-                            initializeMultipleWebSockets();
+                            initializeMultipleWebSockets('cmd16a');
                         } else {
-                            // websocket([response]);
-                            websocket(response.subhostname ?? '');
-                            // console.log("cuba lagi");
+                            websocket(response.subhostname ?? '', 'cmd16a');
                         }
                         $('#data-table-card').removeClass('d-none');
                     },
                     error: function (xhr) {
                         console.error("AJAX Error: ", xhr.responseText);
+                        // handleSessionExpiry(xhr);
                     }
                 });
             });
-
             //1 server//
-            function websocket(hostname) {
+            function websocket(hostname, commandType) {
                 const ipList = $('#ip-address-list').val().replace(/\n/g, " ");
                 const ipAddresses = ipList.split(/\s+/);
-                // for (let i = 0; i < 1; i++) {
-                // }
                 $('#data-table-body').html('');
                 $('#data-table-card').removeClass('d-none');
-
                 const serverAddress = 'wss://myspmr:Rb1NAPzM57Ycq9z8Uur65g1JaF2xVixKtTGStvPfh65P9HK29Abe0QcxiZC9yV9n@spmr.mygovuc.gov.my/' + hostname;
                 const socket = new WebSocket(serverAddress);
-
                 socket.addEventListener('open', () => {
                     const userEmail = "{{ $user->email }}";
-                    const command = `/opt/scripts/websocket/cmd16 -v {{ $user->email }} ${ipList}`;
+                    const command = `/opt/scripts/websocket/${commandType} -v ${userEmail} ${ipList}`;
                     socket.send(command);
                 });
-
                 socket.addEventListener('message', (event) => {
                     const response = event.data;
-                    processResponse(response, hostname, ipAddresses);
-
-                    // socket.addEventListener('error', (event) => {
-                    //     //console.error("WebSocket Error: ", event);
-                    // });
+                    //processResponse(response, hostname, ipAddresses);
+                    processResponse(event.data, hostname, ipList.split(/\s+/));
                 });
             }
         });
         //1 server//
-
-        //All server
-        function initializeMultipleWebSockets() {
-            const ipList = $('#ip-address-list').val().replace(/\n/g, " ");
+        {{--//All server--}}
+        function initializeMultipleWebSockets(commandType) {
+            //const ipList = $('#ip-address-list').val().replace(/\n/g, " ");
+            const ipList = $('#ip-address-list').val().replace(/\n/g, " ").trim();
             const ipAddresses = ipList ? ipList.split(/\s+/) : [];
             const serverIpAddresses = [];
-
             $('#data-table-body').html('');
             $('#data-table-card').removeClass('d-none');
-
             @foreach ($serverconfig as $server)
             let serverMailRelay{{$loop->iteration}} = "{{ $server->subhostname }}";
             serverIpAddresses.push(serverMailRelay{{$loop->iteration}});
+            //console.log("Added server hostname:", serverMailRelay{{$loop->iteration}});
             @endforeach
-
             if (serverIpAddresses.length === 0) {
                 return;
             }
+            {{--serverIpAddresses.forEach((hostname) => {--}}
+            {{--    websocket("{{ $server->subhostname }}", 'cmd16a');--}}
+            {{--});--}}
             serverIpAddresses.forEach((hostname, index) => {
                 const serverAddress = 'wss://myspmr:Rb1NAPzM57Ycq9z8Uur65g1JaF2xVixKtTGStvPfh65P9HK29Abe0QcxiZC9yV9n@spmr.mygovuc.gov.my/' + hostname;
                 const socket = new WebSocket(serverAddress);
 
                 socket.addEventListener('open', () => {
                     const userEmail = "{{ $user->email }}";
-                    const command = `/opt/scripts/websocket/cmd16 -v ${userEmail} ${ipList}`;
+                    const command = `/opt/scripts/websocket/${commandType} -v ${userEmail} ${ipList}`;
                     socket.send(command);
                 });
                 socket.addEventListener('message', (event) => {
@@ -268,103 +257,52 @@
                 });
             });
         }
-        let currentIndex = 1;
-
         function processResponse(response, hostname, ipAddresses) {
-            const lines = response.trim().split("\n");
-            lines.forEach(line => {
-                const invalidIpMatch = line.match(/Invalid IPv4 address, out of range value:\s*(?<ip>.*)/);
-                if (invalidIpMatch) {
-                    const ip = invalidIpMatch.groups.ip;
-                    const errorMessage = `Invalid IPv4 address, out of range value: ${ip}`;
-                    if (ipAddresses.includes(ip)) {
-                        $('#data-table-body').append(
-                            `<tr>
-                        <td>${currentIndex}</td>
-                        <td>${hostname}</td>
-                        <td>${ip}</td>
-                        <td>Invalid</td>
-                        <td>${errorMessage}</td>
-                    </tr>`
-                        );
-                        currentIndex++;
-                    }
-                    return;
-                }
-                const invalidIpFormatMatch = line.match(/Invalid IPv4 format for IP address:\s*(?<ip>.*)/);
-                if (invalidIpFormatMatch) {
-                    const ip = invalidIpFormatMatch.groups.ip;
-                    const errorMessage = `Invalid IPv4 format: ${ip}`;
-                    if (ipAddresses.includes(ip)) {
-                        $('#data-table-body').append(
-                            `<tr>
-                        <td>${currentIndex}</td>
-                        <td>${hostname}</td>
-                        <td>${ip}</td>
-                        <td>Not Found</td>
-                        <td>${errorMessage}</td>
-                    </tr>`
-                        );
-                        currentIndex++;
-                    }
-                    return;
-                }
-                const ipMatch = line.match(/(?<ip>\d+\.\d+\.\d+\.\d+)\s*#\s*(?<info>.*)/);
-                if (ipMatch) {
-                    const ip = ipMatch.groups.ip;
-                    let additionalInfo = ipMatch.groups.info;
+            response = response.trim().replace(/^"|"$/g, '');
+            let parts = response.split('" "').map(p => p.trim());
+            if (parts.length === 4) {
+                let ip = parts[0];
+                let registrationStatus = parts[1];
+                let internalIpsStatus = parts[2];
+                let controlList = parts[3];
+                let isIPv6 = /^[0-9a-fA-F:]+$/.test(ip);
+                let registrationParts = registrationStatus.split('#');
+                let serialNumber = registrationParts.length > 1 ? registrationParts[1].trim() : registrationStatus;
 
-                    if (ipAddresses.includes(ip)) {
-                        let serialNumber = null;
-                        const serialMatch = additionalInfo.match(/([A-Za-z0-9\-]+)/);
-                        if (serialMatch) {
-                            serialNumber = serialMatch[0];
-                        }
-                        let hyperlink = additionalInfo;
-                        if (serialNumber) {
-                            @foreach($smtpRequest as $smtpReq)
-                            if (serialNumber.includes("{{ $smtpReq->form_id }}")) {
-                                hyperlink = `https://spmr.mygovuc.gov.my/smtp_relay/view/${serialNumber}/{{ $smtpReq->types_req }}`;
-                            }
-                            @endforeach
-                        }
-                        if (serialNumber) {
-                            additionalInfo = additionalInfo.replace(serialNumber, `<a href="${hyperlink}" target="_blank" class="text-primary">${serialNumber}</a>`);
-                        }
-                        if (!additionalInfo) {
-                            additionalInfo = `Registered in ${hostname} only`;
-                        }
-                        $('#data-table-body').append(
-                            `<tr>
-                        <td>${currentIndex}</td>
-                        <td>${hostname}</td>
-                        <td>${ip}</td>
-                        <td>Found</td>
-                        <td>${additionalInfo}</td>
-                    </tr>`
-                        );
-                        currentIndex++;
-                    }
-                } else {
-                    const notFoundMatch = line.match(/(?<ip>\d+\.\d+\.\d+\.\d+)\s*not\s*found/);
-                    if (notFoundMatch) {
-                        const ip = notFoundMatch.groups.ip;
+                let serialNumberMatch = serialNumber.match(/^([^:]+)(:.*)?$/);
+                let serialNumberPart = serialNumberMatch ? serialNumberMatch[1] : serialNumber;
+                let colonPart = serialNumberMatch && serialNumberMatch[2] ? serialNumberMatch[2] : '';
 
-                        if (ipAddresses.includes(ip)) {
-                            $('#data-table-body').append(
-                                `<tr>
-                            <td>${currentIndex}</td>
-                            <td>${hostname}</td>
-                            <td>${ip}</td>
-                            <td>Not Found</td>
-                            <td>No additional info available</td>
-                        </tr>`
-                            );
-                            currentIndex++;
-                        }
-                    }
+                let hyperlink = `https://spmr.mygovuc.gov.my/smtp_relay/view/${serialNumberPart}/default_type`;
+
+                @foreach($smtpRequest as $smtpReq)
+                if (serialNumberPart.includes("{{ $smtpReq->form_id }}")) {
+                    hyperlink = `https://spmr.mygovuc.gov.my/smtp_relay/view/${serialNumberPart}/{{ $smtpReq->types_req }}`;
                 }
-            });
+                @endforeach
+
+                if (serialNumber !== "NOT-FOUND") {
+                    registrationStatus = `<a href="${hyperlink}" target="_blank">${serialNumberPart}</a>${colonPart}`;
+                }
+                let remarks = ip.startsWith("#") ? "Terminated" : "Active";
+
+                let tableBody = $('#response-details-body');
+                let rowCount = tableBody.children().length + 1;
+                let newRow = `<tr>
+                    <td>${rowCount}</td>
+                    <td>${hostname}</td>
+                    <td>${ip}</td>
+                    <td>${registrationStatus}</td>
+                    <td>${internalIpsStatus}</td>
+                    <td>${controlList}</td>
+                    <td>${remarks}</td>
+                </tr>`;
+
+                tableBody.append(newRow);
+                $('#response-details-card').removeClass('d-none');
+            } else {
+                console.warn("Invalid response format.");
+            }
         }
     </script>
 @endpush

@@ -203,7 +203,7 @@
                     @if ($canViewSearchIp)
                         <a class="nav-link" href="{{ route('searchIp.index') }}">
                             <div class="nav-link-icon"><i data-feather="info"></i></div>
-                            Search Registered IP
+                            Search IP & Status
                             <div class="sidenav-collapse-arrow"></div>
                         </a>
                     @endif

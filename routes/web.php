@@ -345,20 +345,38 @@ Route::group(['middleware' => ['auth', 'nocache','log.user.activity']], function
 
     //searchIP
 
-    Route::group(['prefix' => 'search-registered-ip'], function () {
+
+    //searchIP
+
+    Route::group(['prefix' => 'search-ip-and-status'], function () {
         Route::get('/', [SearchIpController::class, 'index'])->name('searchIp.index')
             ->middleware('auth.resource:search_ip_view');
         Route::post('/api/getServerName', [SearchIpController::class, 'getNewServerData'])->name('searchIp.api.getServerName');
         Route::get('/api/searchIp', [SearchIpController::class, 'searchIp'])->name('searchIp.api.searchIp');
         Route::post('/api/searchIp', [SearchIpController::class, 'searchIp'])->name('searchIp.api.searchIp');
+        // In routes/web.php or routes/api.php
+        Route::get('/api/getSmtpRelayData', [SearchIpController::class, 'getSmtpRelayData']);
+
 
     });
     Route::group(['prefix' => 'search-registered-sasl'], function () {
         Route::get('/', [SearchSaslController::class, 'index'])->name('searchSasl.index')
             ->middleware('auth.resource:search_sasl_view');
-        Route::post('/search-registered-sasl/api/getServerName', [SearchSaslController::class, 'getSaslData'])->name('searchSasl.api.getServerName');
+        Route::post('/api/getServerName', [SearchSaslController::class, 'getSaslData'])->name('searchSasl.api.getServerName');
+        Route::post('/searchSasl/api/getServerName', [SearchSaslController::class, 'searchServerName'])->name('searchSasl.api.getServerName');
+        Route::get('/api/getSmtpRelayDataSasl', [SearchSaslController::class, 'getSmtpRelayDataSasl']);
 
+//        Route::get('/searchSasl/api/getServerName', [SearchSaslController::class, 'testDatabaseConnection'])->name('searchSasl.api.getServerName');
+        Route::post('/debug-sasl', function (Request $request) {return response()->json(['status' => 'success', 'input' => $request->all(),]);
+            Route::post('/lookupEmails', function (Request $request) {$emails = $request->input('emails');
+                $results = DB::table('smtp_relay_server')->whereIn('email', $emails)->get(['email', 'serial_number']);
+                return response()->json($results);
+            });
+        });
     });
+
+
+
 
 
 
