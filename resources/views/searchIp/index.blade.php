@@ -260,20 +260,25 @@
         function processResponse(response, hostname, ipAddresses) {
             response = response.trim().replace(/^"|"$/g, '');
             let parts = response.split('" "').map(p => p.trim());
-            if (parts.length === 4) {
-                let ip = parts[0];
-                let registrationStatus = parts[1];
-                let internalIpsStatus = parts[2];
-                let controlList = parts[3];
-                let isIPv6 = /^[0-9a-fA-F:]+$/.test(ip);
+            let tableBody = $('#response-details-body');
+            let rowCount = tableBody.children().length;
+            if (parts.length % 4 !== 0) {
+                //console.warn("Invalid response format.");
+                return;
+            }
+            for (let i = 0; i < parts.length; i += 4) {
+                let ip = parts[i];
+                let registrationStatus = parts[i + 1];
+                let internalIpsStatus = parts[i + 2];
+                let controlList = parts[i + 3];
+                let isTerminated = registrationStatus.startsWith("#");
                 let registrationParts = registrationStatus.split('#');
-                let serialNumber = registrationParts.length > 1 ? registrationParts[1].trim() : registrationStatus;
+                let serialNumber = registrationParts.length > 2 ? registrationParts[2].trim() : registrationParts[1]?.trim() || registrationStatus;
 
                 let serialNumberMatch = serialNumber.match(/^([^:]+)(:.*)?$/);
                 let serialNumberPart = serialNumberMatch ? serialNumberMatch[1] : serialNumber;
                 let colonPart = serialNumberMatch && serialNumberMatch[2] ? serialNumberMatch[2] : '';
-
-                let hyperlink = `https://spmr.mygovuc.gov.my/smtp_relay/view/${serialNumberPart}/default_type`;
+                let hyperlink = '';
 
                 @foreach($smtpRequest as $smtpReq)
                 if (serialNumberPart.includes("{{ $smtpReq->form_id }}")) {
@@ -283,26 +288,22 @@
 
                 if (serialNumber !== "NOT-FOUND") {
                     registrationStatus = `<a href="${hyperlink}" target="_blank">${serialNumberPart}</a>${colonPart}`;
+                } else {
+                    registrationStatus = serialNumberPart;
                 }
-                let remarks = ip.startsWith("#") ? "Terminated" : "Active";
-
-                let tableBody = $('#response-details-body');
-                let rowCount = tableBody.children().length + 1;
+                let remarks = isTerminated ? "Terminated" : "Active";
                 let newRow = `<tr>
-                    <td>${rowCount}</td>
-                    <td>${hostname}</td>
-                    <td>${ip}</td>
-                    <td>${registrationStatus}</td>
-                    <td>${internalIpsStatus}</td>
-                    <td>${controlList}</td>
-                    <td>${remarks}</td>
-                </tr>`;
-
+                        <td>${++rowCount}</td>
+                        <td>${hostname}</td>
+                        <td>${ip.replace(/^#/, '')}</td>
+                        <td>${registrationStatus}</td>
+                        <td>${internalIpsStatus}</td>
+                        <td>${controlList}</td>
+                        <td>${remarks}</td>
+                    </tr>`;
                 tableBody.append(newRow);
-                $('#response-details-card').removeClass('d-none');
-            } else {
-                console.warn("Invalid response format.");
             }
+            $('#response-details-card').removeClass('d-none');
         }
     </script>
 @endpush
