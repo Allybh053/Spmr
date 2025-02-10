@@ -469,7 +469,7 @@ class SmtpRelayController extends Controller
 
         } else if ( $type_reqs == 2 || $type_reqs == 3 ){
 
-            $randomId = Str::random(9);
+            //$randomId = Str::random(9);
 
             $tableSpmrDatas = $request->input('tableSpmr');
             $formIds = null;
@@ -486,7 +486,8 @@ class SmtpRelayController extends Controller
             }
 
             if(!$formIds){
-                $formIds = $randomId;
+                //$formIds = $randomId;
+                $formIds = $request->input('form_id');
             }
 
             //$existingServermail = SmtpRelayReqForm::where('form_id',$formIds)->first();
