@@ -125,33 +125,40 @@
                     alert('Please enter at least one SMTP username/email.');
                     return;
                 }
-
                 $.ajax({
                     url: $('#searchForm').attr('action'),
                     method: 'POST',
                     data: formData,
                     success: function (response) {
                         try {
-                            if (response && response.subhostname) {
-                                if (selectedServer === 'all') {
-                                    initializeMultipleWebSockets(smtpUsernames);
+                            //console.log("Server Response:", response);
+                            let servers = Array.isArray(response) ? response : [response];
+
+                            //console.log("Processing servers:", servers);
+                            servers.forEach(server => {
+                                //console.log("Processing server:", server);
+                                if (server.subhostname) {
+                                    //console.log("Found subhostname:", server.subhostname);
+
+                                    if (selectedServer === 'all') {
+                                        //console.log("Initializing WebSocket for all servers with usernames:", smtpUsernames);
+                                        initializeMultipleWebSockets(smtpUsernames);
+                                    } else {
+                                        websocket(server.subhostname ?? '', smtpUsernames);
+                                    }
                                 } else {
-                                    websocket(response.subhostname ?? '', smtpUsernames);
+                                    //console.warn("Server does not have a subhostname:", server);
                                 }
-                                $('#data-table-card').removeClass('d-none');
-                            } else {
-                                alert("Something went wrong, please try again later.");
-                            }
+                            });
+
+                            $('#data-table-card').removeClass('d-none');
                         } catch (error) {
+                            //console.error("Error in processing server response:", error);
                             alert("There was an issue with the server response.");
                         }
-                    },
-                    error: function (xhr) {
-                        alert("Error fetching data. Please try again later.");
                     }
-                });
-
-                function websocket(hostname, smtpUsernames) {
+                })
+                    function websocket(hostname, smtpUsernames) {
                     const serverAddress = 'wss://myspmr:Rb1NAPzM57Ycq9z8Uur65g1JaF2xVixKtTGStvPfh65P9HK29Abe0QcxiZC9yV9n@spmr.mygovuc.gov.my/' + hostname;
                     const socket = new WebSocket(serverAddress);
 
@@ -189,45 +196,53 @@
                         });
                     });
                 }
+
                 function processResponse(response, hostname, smtpUsernames) {
-                    if (!response || response.trim() === '') {
+                    // Bersihkan respons dan pecahkan menjadi bagian-bagian
+                    response = response.trim().replace(/^"|"$/g, '');
+                    let parts = response.split('" "').map(p => p.trim());
+                    let tableBody = $('#data-table-body');
+
+                    // Jika jumlah bagian tidak sesuai dengan kelipatan 3, hentikan proses
+                    if (parts.length % 3 !== 0) {
+                        console.error("Data response tidak lengkap.");
                         return;
                     }
-                    const responseLines = response.trim().split('\n').filter(line => line.trim() !== '');
-                    $('#data-table-body').empty();
-                    let index = 1;
-                    let serverResponse = {};
-                    for (let line of responseLines) {
-                        const parts = line.split('"').map(part => part.trim()).filter(part => part !== '');
-                        if (parts.length === 3) {
-                            const servername = parts[0];
-                            const username = parts[1];
-                            const status = parts[2];
-                            serverResponse[username] = { servername, status };
+
+                    // Variabel untuk menghitung jumlah baris
+                    let rowCount = tableBody.children().length; // Hitung baris yang sudah ada
+
+                    // Loop melalui bagian-bagian dan tambahkan baris baru ke tabel
+                    for (let i = 0; i < parts.length; i += 3) {
+                        let servername = parts[i];
+                        let username = parts[i + 1];
+                        let status = parts[i + 2];
+
+                        // Cek apakah data sudah ada di tabel
+                        let isDuplicate = false;
+                        tableBody.find('tr').each(function() {
+                            let existingServer = $(this).find('td:nth-child(2)').text();
+                            let existingUsername = $(this).find('td:nth-child(3)').text();
+                            if (existingServer === servername && existingUsername === username) {
+                                isDuplicate = true;
+                                return false; // Keluar dari loop jika ditemukan duplikat
+                            }
+                        });
+
+                        // Jika bukan duplikat, tambahkan baris baru
+                        if (!isDuplicate) {
+                            let newRow = `<tr>
+                <td>${++rowCount}</td>
+                <td>${servername}</td>
+                <td>${username}</td>
+                <td>${status}</td>
+            </tr>`;
+                            tableBody.append(newRow);
                         }
                     }
-                    for (let i = 0; i < smtpUsernames.length; i++) {
-                        const username = smtpUsernames[i];
-                        let servername = hostname.split('.')[0];
-                        //let status = 'Not Found'
-                        //let status = 'Found';
-                        if (serverResponse[username]) {
-                            servername = serverResponse[username].servername;
-                            status = serverResponse[username].status;
-                        }
-                        //else {
-                        //     status = "Not Found";
-                        // }
-                        $('#data-table-body').append(
-                            `<tr>
-                            <td>${index}</td>
-                            <td>${servername}</td>
-                            <td>${username}</td>
-                            <td>${status}</td>
-                        </tr>`
-                        );
-                        index++;
-                    }
+
+                    // Tampilkan card yang berisi tabel
+                    $('#response-details-card').removeClass('d-none');
                 }
             });
         });
