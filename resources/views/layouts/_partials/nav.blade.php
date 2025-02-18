@@ -211,7 +211,7 @@
                     @if ($canViewSearchSasl)
                         <a class="nav-link" href="{{ route('searchSasl.index') }}">
                             <div class="nav-link-icon"><i data-feather="user"></i></div>
-                            Search Registered Sasl
+                            Search Sasl & Status
                             <div class="sidenav-collapse-arrow"></div>
                         </a>
                     @endif

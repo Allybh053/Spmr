@@ -359,12 +359,25 @@ Route::group(['middleware' => ['auth', 'nocache','log.user.activity']], function
 
 
     });
+
     Route::group(['prefix' => 'search-registered-sasl'], function () {
-        Route::get('/', [SearchSaslController::class, 'index'])->name('searchSasl.index')
+        Route::get('/', [SearchSaslController::class, 'index'])
+            ->name('searchSasl.index')
             ->middleware('auth.resource:search_sasl_view');
-        Route::post('/api/getServerName', [SearchSaslController::class, 'getSaslData'])->name('searchSasl.api.getServerName');
-        Route::post('/searchSasl/api/getServerName', [SearchSaslController::class, 'searchServerName'])->name('searchSasl.api.getServerName');
-        Route::get('/api/getSmtpRelayDataSasl', [SearchSaslController::class, 'getSmtpRelayDataSasl']);
+
+        Route::prefix('searchSasl/api')->group(function() {
+            Route::post('/getSaslData', [SearchSaslController::class, 'getsasldata'])
+                ->name('searchSasl.api.getSaslData');
+
+            Route::post('/getServerName', [SearchSaslController::class, 'searchServerName'])
+                ->name('searchSasl.api.getServerName');
+        });
+
+
+
+
+
+
 
 //        Route::get('/searchSasl/api/getServerName', [SearchSaslController::class, 'testDatabaseConnection'])->name('searchSasl.api.getServerName');
         Route::post('/debug-sasl', function (Request $request) {return response()->json(['status' => 'success', 'input' => $request->all(),]);
