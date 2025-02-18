@@ -198,50 +198,37 @@
                 }
 
                 function processResponse(response, hostname, smtpUsernames) {
-                    // Bersihkan respons dan pecahkan menjadi bagian-bagian
                     response = response.trim().replace(/^"|"$/g, '');
                     let parts = response.split('" "').map(p => p.trim());
                     let tableBody = $('#data-table-body');
-
-                    // Jika jumlah bagian tidak sesuai dengan kelipatan 3, hentikan proses
                     if (parts.length % 3 !== 0) {
-                        console.error("Data response tidak lengkap.");
+                        //console.error("Data response tidak lengkap.");
                         return;
                     }
-
-                    // Variabel untuk menghitung jumlah baris
-                    let rowCount = tableBody.children().length; // Hitung baris yang sudah ada
-
-                    // Loop melalui bagian-bagian dan tambahkan baris baru ke tabel
+                    let rowCount = tableBody.children().length;
                     for (let i = 0; i < parts.length; i += 3) {
                         let servername = parts[i];
                         let username = parts[i + 1];
                         let status = parts[i + 2];
-
-                        // Cek apakah data sudah ada di tabel
                         let isDuplicate = false;
                         tableBody.find('tr').each(function() {
                             let existingServer = $(this).find('td:nth-child(2)').text();
                             let existingUsername = $(this).find('td:nth-child(3)').text();
                             if (existingServer === servername && existingUsername === username) {
                                 isDuplicate = true;
-                                return false; // Keluar dari loop jika ditemukan duplikat
+                                return false;
                             }
                         });
-
-                        // Jika bukan duplikat, tambahkan baris baru
                         if (!isDuplicate) {
                             let newRow = `<tr>
-                <td>${++rowCount}</td>
-                <td>${servername}</td>
-                <td>${username}</td>
-                <td>${status}</td>
-            </tr>`;
+                            <td>${++rowCount}</td>
+                            <td>${servername}</td>
+                            <td>${username}</td>
+                            <td>${status}</td>
+                        </tr>`;
                             tableBody.append(newRow);
                         }
                     }
-
-                    // Tampilkan card yang berisi tabel
                     $('#response-details-card').removeClass('d-none');
                 }
             });
