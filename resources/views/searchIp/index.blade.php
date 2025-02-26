@@ -257,6 +257,54 @@
                 });
             });
         }
+        {{--function processResponse(response, hostname, ipAddresses) {--}}
+        {{--    response = response.trim().replace(/^"|"$/g, '');--}}
+        {{--    let parts = response.split('" "').map(p => p.trim());--}}
+        {{--    let tableBody = $('#response-details-body');--}}
+        {{--    let rowCount = tableBody.children().length;--}}
+        {{--    if (parts.length % 4 !== 0) {--}}
+        {{--        //console.warn("Invalid response format.");--}}
+        {{--        return;--}}
+        {{--    }--}}
+        {{--    for (let i = 0; i < parts.length; i += 4) {--}}
+        {{--        let ip = parts[i];--}}
+        {{--        let registrationStatus = parts[i + 1];--}}
+        {{--        let internalIpsStatus = parts[i + 2];--}}
+        {{--        let controlList = parts[i + 3];--}}
+        {{--        let isTerminated = registrationStatus.startsWith("#");--}}
+        {{--        let registrationParts = registrationStatus.split('#');--}}
+        {{--        let serialNumber = registrationParts.length > 2 ? registrationParts[2].trim() : registrationParts[1]?.trim() || registrationStatus;--}}
+
+        {{--        let serialNumberMatch = serialNumber.match(/^([^:]+)(:.*)?$/);--}}
+        {{--        let serialNumberPart = serialNumberMatch ? serialNumberMatch[1] : serialNumber;--}}
+        {{--        let colonPart = serialNumberMatch && serialNumberMatch[2] ? serialNumberMatch[2] : '';--}}
+        {{--        let hyperlink = '';--}}
+
+        {{--        @foreach($smtpRequest as $smtpReq)--}}
+        {{--        if (serialNumberPart.includes("{{ $smtpReq->form_id }}")) {--}}
+        {{--            hyperlink = `https://spmr.mygovuc.gov.my/smtp_relay/view/${serialNumberPart}/{{ $smtpReq->types_req }}`;--}}
+        {{--        }--}}
+        {{--        @endforeach--}}
+
+        {{--        if (serialNumber !== "NOT-FOUND") {--}}
+        {{--            registrationStatus = `<a href="${hyperlink}" target="_blank">${serialNumberPart}</a>${colonPart}`;--}}
+        {{--        } else {--}}
+        {{--            registrationStatus = serialNumberPart;--}}
+        {{--        }--}}
+        {{--        let remarks = isTerminated ? "Terminated" : "Active";--}}
+        {{--        let newRow = `<tr>--}}
+        {{--                <td>${++rowCount}</td>--}}
+        {{--                <td>${hostname}</td>--}}
+        {{--                <td>${ip.replace(/^#/, '')}</td>--}}
+        {{--                <td>${registrationStatus}</td>--}}
+        {{--                <td>${internalIpsStatus}</td>--}}
+        {{--                <td>${controlList}</td>--}}
+        {{--                <td>${remarks}</td>--}}
+        {{--            </tr>`;--}}
+        {{--        tableBody.append(newRow);--}}
+        {{--    }--}}
+        {{--    $('#response-details-card').removeClass('d-none');--}}
+        {{--}--}}
         function processResponse(response, hostname, ipAddresses) {
             response = response.trim().replace(/^"|"$/g, '');
             let parts = response.split('" "').map(p => p.trim());
@@ -291,16 +339,23 @@
                 } else {
                     registrationStatus = serialNumberPart;
                 }
-                let remarks = isTerminated ? "Terminated" : "Active";
+                let remarks;
+                if (registrationStatus === "NOT-FOUND" && internalIpsStatus === "NOT-BANNED" && controlList === "Graylisted") {
+                    remarks = "Not-Applicable";
+                } else if (isTerminated) {
+                    remarks = "Terminated";
+                } else {
+                    remarks = "Active";
+                }
                 let newRow = `<tr>
-                        <td>${++rowCount}</td>
-                        <td>${hostname}</td>
-                        <td>${ip.replace(/^#/, '')}</td>
-                        <td>${registrationStatus}</td>
-                        <td>${internalIpsStatus}</td>
-                        <td>${controlList}</td>
-                        <td>${remarks}</td>
-                    </tr>`;
+                <td>${++rowCount}</td>
+                <td>${hostname}</td>
+                <td>${ip.replace(/^#/, '')}</td>
+                <td>${registrationStatus}</td>
+                <td>${internalIpsStatus}</td>
+                <td>${controlList}</td>
+                <td>${remarks}</td>
+            </tr>`;
                 tableBody.append(newRow);
             }
             $('#response-details-card').removeClass('d-none');

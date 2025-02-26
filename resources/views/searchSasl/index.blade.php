@@ -13,7 +13,7 @@
             justify-content: center;
         }
         .beautiful-btn {
-            background-color: #007bff; /* Blue for SASL search */
+            background-color: #007bff;
             color: white;
             font-size: 16px;
             padding: 12px 24px;
@@ -33,8 +33,8 @@
 @endpush
 
 @section('content')
-    <header class="page-header page-header-compact page-header-light border-bottom bg-light mb-4 shadow-sm">
-        <div class="container-fluid px-4">
+    <header class="page-header page-header-compact border-bottom shadow-sm" style="background-color: #e3f2fd; color: #0d47a1; border-bottom: 3px solid #2196f3;">
+    <div class="container-fluid px-4">
             <div class="page-header-content">
                 <div class="row align-items-center justify-content-between pt-3">
                     <div class="col-auto mb-3">
@@ -55,8 +55,8 @@
             <div class="col-xl-12">
                 <div class="card mb-4">
                     <div class="card-header" style="font-weight: bold">SEARCH SASL & STATUS</div>
-                    <div class="card-body mt-1 mb-4">
-                        <form id="searchForm" class="ajax-form-search" action="{{ route('searchSasl.api.getServerName') }}" method="POST" novalidate>
+                    <div class="card-body mt-1 mb-4 p-4 rounded" style="background-color: #e3f2fd;">
+                    <form id="searchForm" class="ajax-form-search" action="{{ route('searchSasl.api.getServerName') }}" method="POST" novalidate>
                             @csrf
                             <!-- Form Group -->
                             <div class="form-group">
@@ -66,7 +66,7 @@
                                             ->toArray(),'all', ['id' => 'serverName', 'class' => 'form-control select2']) !!}
                                 <small class="text-muted">Select At Least One Server</small>
                             </div>
-                            <div class="form-group">
+                            <div class="form-group mb-5">
                                 <label class="small mb-1" for="ip-address-list" style=" font-weight: bold">SMTP Username/Email:</label>
                                 <textarea id="smtp-username" class="form-control border-primary" rows="3" placeholder="Enter one email or username per line."></textarea>
                                 <small class="text-muted">Example: user@example.com</small>
