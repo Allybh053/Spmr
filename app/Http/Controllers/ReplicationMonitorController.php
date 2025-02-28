@@ -78,7 +78,7 @@ class ReplicationMonitorController extends Controller
         // Query the Server table to get the hostname based on the selected value
         $allServer = Server::whereNull('deleted_at')->get();
 
-        return view('replicationMonitoring.index', compact('user', 'role', 'serverName', 'defaultServerId', 'replicationData', 'serverconfig', 'dataservers', 'allServer'));
+        return view('replicationmonitoring.index', compact('user', 'role', 'serverName', 'defaultServerId', 'replicationData', 'serverconfig', 'dataservers', 'allServer'));
     }
 
     /**
