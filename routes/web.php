@@ -38,6 +38,7 @@ use App\Http\Controllers\MonthlyReportingController;
 use App\Http\Controllers\LanguageController;
 use App\Http\Controllers\SessionsController;
 use Illuminate\Http\Request;
+use App\Http\Controllers\ReplicationMonitorController;
 
 
 /*
@@ -372,23 +373,28 @@ Route::group(['middleware' => ['auth', 'nocache','log.user.activity']], function
             Route::post('/getServerName', [SearchSaslController::class, 'searchServerName'])
                 ->name('searchSasl.api.getServerName');
         });
-
-
-
-
-
-
-
-//        Route::get('/searchSasl/api/getServerName', [SearchSaslController::class, 'testDatabaseConnection'])->name('searchSasl.api.getServerName');
-        Route::post('/debug-sasl', function (Request $request) {return response()->json(['status' => 'success', 'input' => $request->all(),]);
-            Route::post('/lookupEmails', function (Request $request) {$emails = $request->input('emails');
-                $results = DB::table('smtp_relay_server')->whereIn('email', $emails)->get(['email', 'serial_number']);
-                return response()->json($results);
-            });
-        });
     });
 
 
+    //ReplicationMonitoring
+
+    Route::group(['prefix' => 'Monitor-Replicate'], function () {
+        Route::get('/replication', [ReplicationMonitorController::class, 'index'])
+            ->name('replicationMonitoring.index');
+
+
+
+        Route::post('/replication/search', [ReplicationMonitorController::class, 'searchServerName'])
+            ->name('replication.search');
+
+
+        //Route::get('/replication-monitor', [ReplicationMonitorController::class, 'index'])->name('replication.monitor');
+//        Route::post('/replication-monitor/status', [ReplicationMonitorController::class, 'getStatus'])
+//            ->name('replication.status');
+
+
+
+    });
 
 
 

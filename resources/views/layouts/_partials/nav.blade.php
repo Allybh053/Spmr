@@ -258,7 +258,7 @@
                 @endcan
 
                 @php
-                    $canViewSysMgmt = Gate::check('server_view') || Gate::check('session_view');
+                    $canViewSysMgmt = Gate::check('server_view') || Gate::check('session_view') || Gate::check('replication_monitoring_view');
                 @endphp
                 @if ($canViewSysMgmt)
                 <!-- Sidenav Heading (Config)-->
@@ -278,6 +278,13 @@
                         <div class="sidenav-collapse-arrow"></div>
                     </a>
                 @endcan
+                        @can('replication_monitoring_view')
+                            <a class="nav-link" href="{{ route('replicationMonitoring.index')}}">
+                                <div class="nav-link-icon"><i data-feather="database"></i></div>
+                                Replication Monitoring
+                                <div class="sidenav-collapse-arrow"></div>
+                            </a>
+                        @endcan
                 @endif
 
                 {{--<a class="nav-link" href="{{ route('sessions.index')}}">
@@ -285,8 +292,7 @@
                     Session List
                     <div class="sidenav-collapse-arrow"></div>
                 </a>--}}
-
-                @php
+                    @php
                 $canViewSetting = Gate::check('user_view') || Gate::check('role_permission_view') || Gate::check('domain_name_view') || Gate::check('position_department_view') || Gate::check('version_view')  || Gate::check('spmr_activity_log_view') ;
                 @endphp
                 @if($canViewSetting)
