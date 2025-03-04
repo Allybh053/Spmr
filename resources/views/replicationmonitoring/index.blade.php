@@ -159,11 +159,11 @@
                     'ha_nodes' => ['postmaster3a.mygovuc.gov.my', 'postmaster3b.mygovuc.gov.my'],
                     'dr_nodes' => ['postmaster3a.mygovuc.gov.my', 'postmaster3c.mygovuc.gov.my'],
                 ],
-                [
-                    'main' => 'stg-postmaster.mygovuc.gov.my',
-                    'ha_nodes' => ['stga-postmaster.mygovuc.gov.my', 'stgb-postmaster.mygovuc.gov.my'],
-                    'dr_nodes' => ['stga-postmaster.mygovuc.gov.my', 'stgc-postmaster.mygovuc.gov.my'],
-                ],
+//                [
+//                    'main' => 'stg-postmaster.mygovuc.gov.my',
+//                    'ha_nodes' => ['stga-postmaster.mygovuc.gov.my', 'stgb-postmaster.mygovuc.gov.my'],
+//                    'dr_nodes' => ['stga-postmaster.mygovuc.gov.my', 'stgc-postmaster.mygovuc.gov.my'],
+//                ],
             ];
         @endphp
 
