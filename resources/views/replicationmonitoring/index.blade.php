@@ -71,7 +71,7 @@
         .server-data-row {
             padding: 0.5rem;
             font-weight: bold;
-            font-size: 0.9rem;
+            font-size: 0.7rem;
             color: #000000;
         }
         .icon {
