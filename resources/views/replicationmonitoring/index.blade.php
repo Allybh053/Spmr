@@ -1,6 +1,8 @@
 @extends('layouts.app')
 @push('styles')
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons"
+          rel="stylesheet">
     <style>
         body {
             background-color: #121212;
@@ -173,8 +175,9 @@
             <!-- HA Replication Section -->
             <div class="replication-section">
                 <div class="server-title" style="font-size: 18px; font-weight: bold;">
-                    <i class="fas fa-network-wired icon" style="margin-right: 5px;"></i> Cluster Replication
+                    <i class="fas fa-network-wired" style="font-size: 24px; margin-right: 8px;"></i>Cluster Replication
                 </div>
+
                 <div class="row">
                     @foreach($serverGroup['ha_nodes'] as $node)
                         @php
@@ -197,16 +200,18 @@
 
             <!-- DR Replication Section -->
             <div class="replication-section">
-                <div class="server-title" style="font-size: 18px; font-weight: bold;">
-                    <i class="fas fa-file-code" style="margin-right: 5px;"></i> DR Replication
+                <div class="server-title" style="font-size: 18px; font-weight: bold; display: flex; align-items: center;">
+                    <i class="fas fa-fire" style="margin-right: 8px;"></i>
+                    Disaster Recovery Replication
                 </div>
                 <div class="row">
                     @foreach($serverGroup['dr_nodes'] as $node)
                         @php
                             $nodeId = strtolower(str_replace(['.', '-'], '', $node));
                         @endphp
-                        <div class="col-md-6 mb-3">
-                            <div class="card">
+                        <div class="col-md-6 mb-6">
+
+                        <div class="card">
                                 <div class="card-header">
                                     <strong><i class="fas fa-desktop icon" style="margin-right: 5px;"></i> {{ $node }}</strong>
                                 </div>
