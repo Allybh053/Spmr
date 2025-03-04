@@ -201,7 +201,9 @@
             <!-- DR Replication Section -->
             <div class="replication-section">
                 <div class="server-title" style="font-size: 18px; font-weight: bold; display: flex; align-items: center;">
+{{--                    <i class="fas fa-network-wired" style="font-size: 24px; margin-right: 8px;"></i>--}}
                     <i class="fas fa-fire" style="margin-right: 8px;"></i>
+{{--                    <i class="material-icons">device_hub</i>--}}
                     Disaster Recovery Replication
                 </div>
                 <div class="row">
@@ -209,9 +211,8 @@
                         @php
                             $nodeId = strtolower(str_replace(['.', '-'], '', $node));
                         @endphp
-                        <div class="col-md-6 mb-6">
-
-                        <div class="card">
+                        <div class="col-md-6 mb-lg-3">
+                            <div class="card">
                                 <div class="card-header">
                                     <strong><i class="fas fa-desktop icon" style="margin-right: 5px;"></i> {{ $node }}</strong>
                                 </div>
