@@ -55,11 +55,12 @@
             <div class="col-xl-12">
                 <div class="card mb-4">
                     <div class="card-header" style="font-weight: bold">SEARCH SASL & STATUS</div>
-                    <div class="card-body mt-1 mb-4 p-4 rounded" style="background-color: #e3f2fd;">
+                    <div class="card-body mt-1 mb-4">
+                        <div class ="p-4 rounded" style="background-color: #e3f2fd;">
                     <form id="searchForm" class="ajax-form-search" action="{{ route('searchSasl.api.getServerName') }}" method="POST" novalidate>
                             @csrf
                             <!-- Form Group -->
-                            <div class="form-group">
+                            <div class="form-group mb-5">
                                 <label class="small mb-1" for="serverName" style=" font-weight: bold">SELECT SERVER:</label>
                                 {!! Form::select('serverName', ['all' => 'All'] + collect($serverName->toArray())
                                             ->mapWithKeys(fn($value, $key) =>[$key => ucwords(strtolower($value))])
@@ -82,7 +83,7 @@
                         </form>
                     </div>
                 </div>
-
+            </div>
                 <div class="card border-light shadow-sm mt-4 d-none" id="data-table-card">
                     <div class="card-header bg-primary text-white text-center fs-5">Results</div>
                     <div class="card-body">

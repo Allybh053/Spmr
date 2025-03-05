@@ -135,7 +135,8 @@ class SmtpRelayController extends Controller
             })
             ->addColumn('created_at', function ($row) {
                 $date = $row['created_at'];
-                return $date->format('d/m/Y H:i:s');
+//                return $date->format('d/m/Y H:i:s');
+                return $date->format('Y/m/d H:i:s');
             })
             // ->addColumn('updated_at', function ($row) {
             //     // Parse the date string using DateTime class

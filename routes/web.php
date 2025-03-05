@@ -361,7 +361,7 @@ Route::group(['middleware' => ['auth', 'nocache','log.user.activity']], function
 
     });
 
-    Route::group(['prefix' => 'search-registered-sasl'], function () {
+    Route::group(['prefix' => 'search-sasl-and-status'], function () {
         Route::get('/', [SearchSaslController::class, 'index'])
             ->name('searchSasl.index')
             ->middleware('auth.resource:search_sasl_view');
