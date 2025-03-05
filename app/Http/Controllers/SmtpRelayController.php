@@ -131,7 +131,8 @@ class SmtpRelayController extends Controller
             })
             ->addColumn('date_verification_3', function ($row) {
                 $date = Carbon::parse($row['date_verification_3']);
-                return $date->format('d/m/Y');
+//                return $date->format('d/m/Y');
+                return $date->format('Y/m/d H:i:s');
             })
             ->addColumn('created_at', function ($row) {
                 $date = $row['created_at'];

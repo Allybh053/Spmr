@@ -69,7 +69,7 @@
                             </div>
                             <div class="form-group mb-5">
                                 <label class="small mb-1" for="ip-address-list" style=" font-weight: bold">SMTP Username/Email:</label>
-                                <textarea id="smtp-username" class="form-control border-primary" rows="3" placeholder="Enter one email or username per line."></textarea>
+                                <textarea id="smtp-username" class="form-control border-primary" rows="5" placeholder="Enter one email or username per line."></textarea>
                                 <small class="text-muted">Example: user@example.com</small>
                             </div>
                             <div class="d-flex justify-content-start gap-3 p-2">
