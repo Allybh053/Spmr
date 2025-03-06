@@ -323,7 +323,7 @@
 
                     trySend(1);
                 }
-
+                //New
                 // Populate command queue
                 smtpMailServers.forEach(smtpMailServer => {
                     if (smtpMailServer.types_req == 1) {
@@ -341,13 +341,17 @@
 
                 // Add saslpasswd2 commands to finalCommandQueue
                 if (smtp_username !== "") {
-                    if (smtpMailServers.some(smtpMailServer => smtpMailServer.types_req == 1)) {
-                        finalCommandQueue.push(`/opt/scripts/websocket/cmd7` + ` ` + "{{ $user->email }}" + ` ` + `${smtp_username}` + ` ` + `'${smtp_password}'`);
-                    }
-
-                    if (smtpMailServers.some(smtpMailServer => smtpMailServer.types_req == 2)) {
-                        finalCommandQueue.push(`/opt/scripts/websocket/cmd8` + ` ` + "{{ $user->email }}" + ` ` + `${smtp_username}`);
-                    }
+                    smtpMailServers.forEach(smtpMailServer => {
+                        if (smtpMailServer.types_req == 1) {
+                            const formIds = smtpMailServer.form_id;
+                            finalCommandQueue.push(`/opt/scripts/websocket/cmd7` + ` ` + "{{ $user->email }}" + ` ` + `${smtp_username}` + ` ` + `'${smtp_password}'` + ` ` + `${formIds}`);
+                        }
+                    });
+                    smtpMailServers.forEach(smtpMailServer => {
+                        if (smtpMailServer.types_req == 2) {
+                            finalCommandQueue.push(`/opt/scripts/websocket/cmd8` + ` ` + "{{ $user->email }}" + ` ` + `${smtp_username}`);
+                        }
+                    });
                 }
 
                 // Start processing commands

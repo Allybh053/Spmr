@@ -194,8 +194,8 @@
                                 <td width="35%"><h6 id="statusApache2{{ $loop->index }}">--</h6></td>
                             </tr>
                             <tr>
-                                <th width="25%"><a class="mService" href="{{ route('manageService.index', ['server_id' => $server->id, 'server_type' => 'webmin']) }}">
-                                    <h6><b>Webmin</b></h6>
+                                <th width="25%"><a class="mService" href="{{ route('manageService.index', ['server_id' => $server->id, 'server_type' => 'keepalived']) }}">
+                                    <h6><b>Keepalived</b></h6>
                                 </a></th>
                                 <td width="35%"><h6 id="statusWebmin{{ $loop->index }}">--</h6></td>
                             </tr>
@@ -556,8 +556,8 @@ var commands = [
         id: 'statusFail2ban'
     },
     {
-        command: '/opt/scripts/websocket/cmd2' + ' ' + '{{ $user->email }}' + ' ' + 'webmin',
-        id: 'statusWebmin'
+        command: '/opt/scripts/websocket/cmd2' + ' ' + '{{ $user->email }}' + ' ' + 'keepalived',
+        id: 'statusKeepalived'
     },
     {
         command: '/opt/scripts/websocket/cmd2' + ' ' + '{{ $user->email }}' + ' ' + 'apache2',

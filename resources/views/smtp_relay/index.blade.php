@@ -68,7 +68,7 @@
                         <thead>
                             <tr>
                                 <th>No.</th>
-                                <th>Date Created</th>
+                                <th>Form Timestamp</th>
                                 <th>Serial No.</th>
                                 <th>Ticket No.</th>
                                 <th>Types Application</th>
