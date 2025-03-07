@@ -148,7 +148,7 @@
                                 <th>No.</th>
                                 <th>Server Name</th>
                                 <th>IP Address</th>
-                                <th>Registration Status</th>
+                                <th>SPMR Registration Status</th>
                                 <th>Internal IPS Status</th>
                                 <th>Control List</th>
                                 <th>Remarks</th>
@@ -188,9 +188,9 @@
                         //     websocket([response]);
                         // }
                         if (selectedServer === 'all') {
-                            initializeMultipleWebSockets('cmd16a');
+                            initializeMultipleWebSockets('cmd16');
                         } else {
-                            websocket(response.subhostname ?? '', 'cmd16a');
+                            websocket(response.subhostname ?? '', 'cmd16');
                         }
                         $('#data-table-card').removeClass('d-none');
                     },

@@ -76,7 +76,7 @@
                                 <th>Project Name</th>
                                 <th>Server Mail Relay</th>
                                 <th>Ip Address</th>
-                                <th>Date Approval</th>
+                                <th>Approval Date</th>
                                 <th>Status</th>
                                 <th>Action</th>
                             </tr>

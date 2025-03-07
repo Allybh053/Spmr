@@ -91,9 +91,9 @@
                             <thead>
                             <tr>
                                 <th>No.</th>
-                                <th>Server Name</th>
-                                <th>Username</th>
+                                <th>Matching Username</th>
                                 <th>Status</th>
+                                <th>SPMR Registration Status</th>
                             </tr>
                             </thead>
                             <tbody id="data-table-body"></tbody>
@@ -165,7 +165,7 @@
 
                     socket.addEventListener('open', () => {
                         const userEmail = "{{ $user->email }}";
-                        const command = `/opt/scripts/websocket/cmd17a -v {{ $user->email }} ${smtpUsernames.join(" ")}`;
+                        const command = `/opt/scripts/websocket/cmd17 -v {{ $user->email }} ${smtpUsernames.join(" ")}`;
                         socket.send(command);
                     });
 
@@ -187,7 +187,7 @@
 
                         socket.addEventListener('open', () => {
                             const userEmail = "{{ $user->email }}";
-                            const command = `/opt/scripts/websocket/cmd17a -v {{ $user->email }} ${smtpUsernames.join(" ")}`;
+                            const command = `/opt/scripts/websocket/cmd17 -v {{ $user->email }} ${smtpUsernames.join(" ")}`;
                             socket.send(command);
                         });
 
