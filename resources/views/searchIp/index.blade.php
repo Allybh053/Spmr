@@ -320,6 +320,9 @@
                 let internalIpsStatus = parts[i + 2];
                 let controlList = parts[i + 3];
                 let isTerminated = registrationStatus.startsWith("#");
+                if (registrationStatus.endsWith(":")) {
+                    registrationStatus = registrationStatus.slice(0, -1);
+                }
                 let registrationParts = registrationStatus.split('#');
                 let serialNumber = registrationParts.length > 2 ? registrationParts[2].trim() : registrationParts[1]?.trim() || registrationStatus;
 
