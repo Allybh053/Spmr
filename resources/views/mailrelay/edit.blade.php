@@ -341,13 +341,13 @@
 
                 // Add saslpasswd2 commands to finalCommandQueue
                 if (smtp_username !== "") {
-                    smtpMailServers.forEach(smtpMailServer => {
+                    smtpMailServers.some(smtpMailServer => {
                         if (smtpMailServer.types_req == 1) {
                             const formIds = smtpMailServer.form_id;
                             finalCommandQueue.push(`/opt/scripts/websocket/cmd7` + ` ` + "{{ $user->email }}" + ` ` + `${smtp_username}` + ` ` + `'${smtp_password}'` + ` ` + `${formIds}`);
                         }
                     });
-                    smtpMailServers.forEach(smtpMailServer => {
+                    smtpMailServers.some(smtpMailServer => {
                         if (smtpMailServer.types_req == 2) {
                             finalCommandQueue.push(`/opt/scripts/websocket/cmd8` + ` ` + "{{ $user->email }}" + ` ` + `${smtp_username}`);
                         }
