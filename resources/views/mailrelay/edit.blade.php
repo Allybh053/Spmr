@@ -211,47 +211,47 @@
     function generatePassword() {
         const length = 22;
         const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*()-=_+[]{}|;:,.<>?';
-        let password = '';
         for (let i = 0; i < length; i++) {
             const randomIndex = Math.floor(Math.random() * chars.length);
             password += chars[randomIndex];
         }
         document.getElementById('smtp_password').value = password;
     }
-
     $(document).ready(function() {
 
         function toggleInputs() {
             return new Promise((resolve, reject) => {
-            const sub_smtp_relay_server = document.getElementById("sub_smtp_relay_server").value;
-            const smtp_username = document.getElementById("smtp_username").value;
-            const smtp_password = document.getElementById("smtp_password").value;
+                const sub_smtp_relay_server = document.getElementById("sub_smtp_relay_server").value;
+                const smtp_username = document.getElementById("smtp_username").value;
+                const smtp_password = document.getElementById("smtp_password").value;
 
-            const smtpMailServers = @json($smtpMailServers);
-            const serverAddress = 'wss://myspmr:Rb1NAPzM57Ycq9z8Uur65g1JaF2xVixKtTGStvPfh65P9HK29Abe0QcxiZC9yV9n@spmr.mygovuc.gov.my/' + sub_smtp_relay_server;
+                const smtpMailServers = @json($smtpMailServers);
+                const serverAddress = 'wss://myspmr:Rb1NAPzM57Ycq9z8Uur65g1JaF2xVixKtTGStvPfh65P9HK29Abe0QcxiZC9yV9n@spmr.mygovuc.gov.my/' + sub_smtp_relay_server;
 
-            let socket = new WebSocket(serverAddress);
-            let commandQueue = [];
-            let finalCommandQueue = [];
-            let successCount = 0;
-            let failCount = 0;
-            let failedCommands = [];
-            let commandIndex = 0;
+                let socket = new WebSocket(serverAddress);
+                let commandQueue = [];
+                let finalCommandQueue = [];
+                let successCount = 0;
+                let failCount = 0;
+                let failedCommands = [];
+                let commandIndex = 0;
 
-                socket.addEventListener('open', () => {
+                function handleOpen() {
                     processNextCommand();
-                });
+                    socket.removeEventListener('open', handleOpen); // Remove the listener after execution
+                }
+
+                socket.addEventListener('open', handleOpen);
 
                 socket.addEventListener('close', () => {
                     if (commandIndex < commandQueue.length) {
-                        // console.log('Reconnecting WebSocket...');
+                        // Reconnect WebSocket if needed
                         socket = new WebSocket(serverAddress);
-                        socket.addEventListener('open', processNextCommand);
+                        socket.addEventListener('open', handleOpen);
                     }
                 });
 
                 socket.addEventListener('error', (event) => {
-                    // console.error('WebSocket error:', event);
                     failCount++;
                     processNextCommand();
                 });
@@ -273,11 +273,12 @@
                     finalCommandQueue.push(`/opt/scripts/websocket/cmd9` + ` ` + "{{ $user->email }}");
 
                     let finalCommandIndex = 0;
+
                     function processNextFinalCommand() {
+                        console.log("Final Command Queue:", finalCommandQueue); // Debugging
                         if (finalCommandIndex >= finalCommandQueue.length) {
                             Swal.fire({
                                 title: `Successfully submitted Mail Relay`,
-                                // html: `<p>Successful commands: ${successCount}</p><p>Failed commands: ${failCount}</p><p>${failedCommands.join('<br>')}</p>`,
                                 allowOutsideClick: false,
                                 showConfirmButton: true,
                                 icon: 'success'
@@ -303,7 +304,6 @@
 
                     function trySend(attempt) {
                         if (attempt > retries) {
-                            // console.error(`Failed to send command after ${retries} attempts: ${command}`);
                             failCount++;
                             failedCommands.push(command);
                             callback();
@@ -312,18 +312,16 @@
 
                         try {
                             socket.send(command);
-                            // console.log(`Command sent: ${command}`);
                             successCount++;
                             callback();
                         } catch (error) {
-                            // console.error(`Error sending command: ${error.message}`);
                             setTimeout(() => trySend(attempt + 1), delay);
                         }
                     }
 
                     trySend(1);
                 }
-                //New
+
                 // Populate command queue
                 smtpMailServers.forEach(smtpMailServer => {
                     if (smtpMailServer.types_req == 1) {
@@ -341,24 +339,23 @@
 
                 // Add saslpasswd2 commands to finalCommandQueue
                 if (smtp_username !== "") {
-                    smtpMailServers.some(smtpMailServer => {
-                        if (smtpMailServer.types_req == 1) {
-                            const formIds = smtpMailServer.form_id;
-                            finalCommandQueue.push(`/opt/scripts/websocket/cmd7` + ` ` + "{{ $user->email }}" + ` ` + `${smtp_username}` + ` ` + `'${smtp_password}'` + ` ` + `${formIds}`);
+                    const formIds = document.getElementById("form_id").value;
+                    if (smtpMailServers.some(smtpMailServer => smtpMailServer.types_req == 1)) {
+                        const cmd7 = `/opt/scripts/websocket/cmd7` + ` ` + "{{ $user->email }}" + ` ` + `${smtp_username}` + ` ` + `'${smtp_password}'` + ` ` + `${formIds}`;
+                        if (!finalCommandQueue.includes(cmd7)) {
+                            finalCommandQueue.push(cmd7);
                         }
-                    });
-                    smtpMailServers.some(smtpMailServer => {
-                        if (smtpMailServer.types_req == 2) {
-                            finalCommandQueue.push(`/opt/scripts/websocket/cmd8` + ` ` + "{{ $user->email }}" + ` ` + `${smtp_username}`);
-                        }
-                    });
+                    }
+                    if (smtpMailServers.some(smtpMailServer => smtpMailServer.types_req == 2)) {
+                        finalCommandQueue.push(`/opt/scripts/websocket/cmd8` + ` ` + "{{ $user->email }}" + ` ` + `${smtp_username}`);
+                    }
                 }
 
                 // Start processing commands
                 if (socket.readyState === WebSocket.OPEN) {
                     processNextCommand();
                 } else {
-                    socket.addEventListener('open', processNextCommand);
+                    socket.addEventListener('open', handleOpen);
                 }
             });
         }
