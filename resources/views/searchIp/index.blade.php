@@ -330,17 +330,28 @@
                         (registrationStatus.includes('#') &&
                             !registrationStatus.includes('NOT-FOUND'));
 
-                    if (serialNumber && serialNumber !== 'NOT-FOUND' && serialNumber !== '-') {
-                        @foreach($smtpRequest as $smtpReq)
-                        if (serialNumber.includes("{{ $smtpReq->form_id }}")) {
-                            hyperlink = `https://spmr.mygovuc.gov.my/smtp_relay/view/${serialNumber}/{{ $smtpReq->types_req }}`;
-                        }
-                        @endforeach
+                    // if (serialNumber && serialNumber !== 'NOT-FOUND' && serialNumber !== '-') {
+                    {{--if (serialNumber && serialNumber !== 'NOT-FOUND') {--}}
+                    {{--    @foreach($smtpRequest as $smtpReq)--}}
+                    {{--    if (serialNumber.includes("{{ $smtpReq->form_id }}")) {--}}
+                    {{--        hyperlink = `https://spmr.mygovuc.gov.my/smtp_relay/view/${serialNumber}/{{ $smtpReq->types_req }}`;--}}
+                    {{--    }--}}
+                    {{--    @endforeach--}}
 
-                        if (hyperlink) {
-                            displayStatus = `<a href="${hyperlink}" target="_blank">${serialNumber}</a>`;
-                        }
+                    {{--    if (hyperlink) {--}}
+                    {{--        displayStatus = `<a href="${hyperlink}" target="_blank">${serialNumber}</a>`;--}}
+                    {{--    }--}}
+                    {{--}--}}
+                    if (serialNumber && serialNumber !== 'NOT-FOUND' && serialNumber !== '-') {
+                        // Create hyperlink for ANY valid serial number
+                        // hyperlink = `https://spmr.mygovuc.gov.my/smtp_relay/view/${encodeURIComponent(serialNumber)}`;
+                        @foreach($smtpRequest as $smtpReq)
+                        if (serialNumber.includes("{{ $smtpReq->form_id }}"))
+                        hyperlink = `https://spmr.mygovuc.gov.my/smtp_relay/view/${serialNumber}/{{ $smtpReq->types_req }}`;
+                        @endforeach
+                        displayStatus = `<a href="${hyperlink}" target="_blank">${serialNumber}</a>`;
                     }
+
                     if (serialNumber === "NOT-FOUND" && internalIpsStatus === "NOT-BANNED" && controlList === "Graylisted") {
                         remarks = "Not-Applicable";
                     } else if (isTerminated) {
