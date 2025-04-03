@@ -326,38 +326,43 @@
 
                     serialNumber = serialNumber.replace(/:.*$/, '').replace(/".*$/, '').trim();
                     displayStatus = serialNumber;
-                    let isTerminated = registrationStatus.startsWith("#") ||
-                        (registrationStatus.includes('#') &&
-                            !registrationStatus.includes('NOT-FOUND'));
 
-                    // if (serialNumber && serialNumber !== 'NOT-FOUND' && serialNumber !== '-') {
-                    {{--if (serialNumber && serialNumber !== 'NOT-FOUND') {--}}
-                    {{--    @foreach($smtpRequest as $smtpReq)--}}
-                    {{--    if (serialNumber.includes("{{ $smtpReq->form_id }}")) {--}}
-                    {{--        hyperlink = `https://spmr.mygovuc.gov.my/smtp_relay/view/${serialNumber}/{{ $smtpReq->types_req }}`;--}}
-                    {{--    }--}}
-                    {{--    @endforeach--}}
+                    // Determine if the status is active or terminated
+                    let isTerminated = false;
+                    let isActive = false;
 
-                    {{--    if (hyperlink) {--}}
-                    {{--        displayStatus = `<a href="${hyperlink}" target="_blank">${serialNumber}</a>`;--}}
-                    {{--    }--}}
-                    {{--}--}}
+                    // Check the registrationStatus format
+                    if (registrationStatus.startsWith(ip)) {
+                        // Format: "10.11.193.89 #aeHfhR0lP:" → Active
+                        isActive = true;
+                        isTerminated = false;
+                    } else if (registrationStatus.startsWith(`#${ip}`)) {
+                        // Format: "#10.22.122.16 #DSwyqBeid:" → Terminated
+                        isTerminated = true;
+                        isActive = false;
+                    } else if (registrationStatus === 'NOT-FOUND') {
+                        // NOT-FOUND case
+                        isActive = false;
+                        isTerminated = false;
+                    }
+
                     if (serialNumber && serialNumber !== 'NOT-FOUND' && serialNumber !== '-') {
-                        // Create hyperlink for ANY valid serial number
-                        // hyperlink = `https://spmr.mygovuc.gov.my/smtp_relay/view/${encodeURIComponent(serialNumber)}`;
                         @foreach($smtpRequest as $smtpReq)
                         if (serialNumber.includes("{{ $smtpReq->form_id }}"))
-                        hyperlink = `https://spmr.mygovuc.gov.my/smtp_relay/view/${serialNumber}/{{ $smtpReq->types_req }}`;
+                            hyperlink = `https://spmr.mygovuc.gov.my/smtp_relay/view/${serialNumber}/{{ $smtpReq->types_req }}`;
                         @endforeach
-                        displayStatus = `<a href="${hyperlink}" target="_blank">${serialNumber}</a>`;
+                            displayStatus = `<a href="${hyperlink}" target="_blank">${serialNumber}</a>`;
                     }
 
                     if (serialNumber === "NOT-FOUND" && internalIpsStatus === "NOT-BANNED" && controlList === "Graylisted") {
                         remarks = "Not-Applicable";
-                    } else if (ip.startsWith('#')) {
+                    } else if (isTerminated) {
                         remarks = "Terminated";
-                    } else {
+                    } else if (isActive) {
                         remarks = "Active";
+                    } else {
+                        // Default case (for NOT-FOUND and other unexpected formats)
+                        remarks = "Not-Applicable";
                     }
 
                     let newRow = `<tr>
