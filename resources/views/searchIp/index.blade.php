@@ -354,7 +354,7 @@
 
                     if (serialNumber === "NOT-FOUND" && internalIpsStatus === "NOT-BANNED" && controlList === "Graylisted") {
                         remarks = "Not-Applicable";
-                    } else if (isTerminated) {
+                    } else if (ip.startsWith('#')) {
                         remarks = "Terminated";
                     } else {
                         remarks = "Active";
