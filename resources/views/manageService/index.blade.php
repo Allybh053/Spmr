@@ -111,34 +111,61 @@
                                                     </div>
                                                 </td>
                                                 @endcan
-                                            </tr>
-                                            <tr class="webmin {{ $serverSubs['subsid'] }}">
+{{--                                            </tr>--}}
+{{--                                            <tr class="webmin {{ $serverSubs['subsid'] }}">--}}
+{{--                                                <th width="25%">--}}
+{{--                                                    <p class="mService" href="{{ route('manageService.index', ['server_id' => $serverSubs['subsid'], 'server_type' => 'webmin']) }}">--}}
+{{--                                                        <h6><b>Webmin</b></h6>--}}
+{{--                                                    </p>--}}
+{{--                                                </th>--}}
+{{--                                                <td width="35%">--}}
+{{--                                                    <h6 id="statusWebmin{{ $cleanSubhostname }}">--</h6>--}}
+{{--                                                    <img id="statusWebminImage{{ $cleanSubhostname }}" src="{{ asset('assets/img/demo/offline.png') }}" alt="Webmin is down" style="width: 3rem">--}}
+{{--                                                </td>--}}
+{{--                                                @can('manage_service_update')--}}
+{{--                                                <td>--}}
+{{--                                                    <div class="btn-group" role="group" aria-label="Button group with nested dropdown">--}}
+{{--                                                        <button type="button" id="webminStart{{ $cleanSubhostname }}" class="btn btn-primary" value="{{ $serverSubs['subhostname'] }}"  onclick="startWebminServices('{{ $cleanSubhostname }}')">--}}
+{{--                                                            <i class="fas fa-play"></i>--}}
+{{--                                                        </button>--}}
+{{--                                                        <button type="button" id="webminStop{{ $cleanSubhostname }}" class="btn btn-danger" value="{{ $serverSubs['subhostname'] }}"  onclick="stopWebminServices('{{ $cleanSubhostname }}')">--}}
+{{--                                                            <i class="fas fa-stop"></i>--}}
+{{--                                                        </button>--}}
+{{--                                                        <button type="button" id="webminRestart{{ $cleanSubhostname }}" class="btn btn-warning" value="{{ $serverSubs['subhostname'] }}"  onclick="restartWebminServices('{{ $cleanSubhostname }}')">--}}
+{{--                                                            <i class="fas fa-redo"></i>--}}
+{{--                                                        </button>--}}
+{{--                                                    </div>--}}
+{{--                                                </td>--}}
+{{--                                                @endcan--}}
+{{--                                            </tr>--}}
+                                            <tr class="keepalived {{ $serverSubs['subsid'] }}">
                                                 <th width="25%">
-                                                    <p class="mService" href="{{ route('manageService.index', ['server_id' => $serverSubs['subsid'], 'server_type' => 'webmin']) }}">
-                                                        <h6><b>Webmin</b></h6>
+                                                    <p class="mService" href="{{ route('manageService.index', ['server_id' => $serverSubs['subsid'], 'server_type' => 'keepalived']) }}">
+                                                    <h6><b>Keepalived</b></h6>
                                                     </p>
                                                 </th>
                                                 <td width="35%">
-                                                    <h6 id="statusWebmin{{ $cleanSubhostname }}">--</h6>
-                                                    <img id="statusWebminImage{{ $cleanSubhostname }}" src="{{ asset('assets/img/demo/offline.png') }}" alt="Webmin is down" style="width: 3rem">
+                                                    <h6 id="statusKeepalived{{ $cleanSubhostname }}">--</h6>
+                                                    <img id="statusKeepalivedImage{{ $cleanSubhostname }}" src="{{ asset('assets/img/demo/offline.png') }}" alt="Keepalived is down" style="width: 3rem">
                                                 </td>
                                                 @can('manage_service_update')
-                                                <td>
-                                                    <div class="btn-group" role="group" aria-label="Button group with nested dropdown">
-                                                        <button type="button" id="webminStart{{ $cleanSubhostname }}" class="btn btn-primary" value="{{ $serverSubs['subhostname'] }}"  onclick="startWebminServices('{{ $cleanSubhostname }}')">
-                                                            <i class="fas fa-play"></i>
-                                                        </button>
-                                                        <button type="button" id="webminStop{{ $cleanSubhostname }}" class="btn btn-danger" value="{{ $serverSubs['subhostname'] }}"  onclick="stopWebminServices('{{ $cleanSubhostname }}')">
-                                                            <i class="fas fa-stop"></i>
-                                                        </button>
-                                                        <button type="button" id="webminRestart{{ $cleanSubhostname }}" class="btn btn-warning" value="{{ $serverSubs['subhostname'] }}"  onclick="restartWebminServices('{{ $cleanSubhostname }}')">
-                                                            <i class="fas fa-redo"></i>
-                                                        </button>
-                                                    </div>
-                                                </td>
+                                                    <td>
+                                                        <div class="btn-group" role="group" aria-label="Button group with nested dropdown">
+                                                            <button type="button" id="keepalivedStart{{ $cleanSubhostname }}" class="btn btn-primary" value="{{ $serverSubs['subhostname'] }}"  onclick="startKeepalivedServices('{{ $cleanSubhostname }}')">
+                                                                <i class="fas fa-play"></i>
+                                                            </button>
+                                                            <button type="button" id="keepalivedStop{{ $cleanSubhostname }}" class="btn btn-danger" value="{{ $serverSubs['subhostname'] }}"  onclick="stopKeepalivedServices('{{ $cleanSubhostname }}')">
+                                                                <i class="fas fa-stop"></i>
+                                                            </button>
+                                                            <button type="button" id="keepalivedRestart{{ $cleanSubhostname }}" class="btn btn-warning" value="{{ $serverSubs['subhostname'] }}"  onclick="restartKeepalivedServices('{{ $cleanSubhostname }}')">
+                                                                <i class="fas fa-redo"></i>
+                                                            </button>
+                                                        </div>
+                                                    </td>
                                                 @endcan
                                             </tr>
-                                        </tbody>
+
+                            </tbody>
                                 </tr>
                                 @endforeach
                             </tbody>
@@ -212,7 +239,7 @@ var commands = [
     id: 'statusPostfix'
 },
 {
-    command: '/opt/scripts/websocket/cmd2' + ' ' + '{{ $user->email }}' + ' ' + 'webmin',
+    command: '/opt/scripts/websocket/cmd2' + ' ' + '{{ $user->email }}' + ' ' + 'keepalived',
     id: 'statusWebmin'
 },
 {
@@ -244,9 +271,10 @@ socket.addEventListener('message', (event) => {
     // console.log(cleanlSubhostnames[index]);
     if (response.includes('Postfix')) {
         updateStatus(response, 'statusPostfixImage'+cleanlSubhostnames[index],'statusPostfix'+cleanlSubhostnames[index]);
-    } else if (response.includes('Webmin')) {
-        updateStatus(response, 'statusWebminImage'+cleanlSubhostnames[index], 'statusWebmin'+cleanlSubhostnames[index]);
-    } else if (response.includes('Apache2')) {
+    } else if (response.includes('Keepalived')) {
+    updateStatus(response, 'statusKeepalivedImage'+cleanlSubhostnames[index], 'statusKeepalived'+cleanlSubhostnames[index]);
+    }
+    else if (response.includes('Apache2')) {
         updateStatus(response, 'statusApache2Image'+cleanlSubhostnames[index], 'statusApache2'+cleanlSubhostnames[index]);
     }
 });
@@ -698,178 +726,272 @@ $('#' + imageId).attr('src', imageSrc).attr('alt', altText);
 
     // Webmin Controller //
     // Start //
-    function startWebminServices(subhostname) {
-        const selectedServer = $('#webminStart'+subhostname).val();
-        // const serverAddress = 'wss://' + selectedServer + '/wss/';
+    {{--function startWebminServices(subhostname) {--}}
+    {{--    const selectedServer = $('#webminStart'+subhostname).val();--}}
+    {{--    // const serverAddress = 'wss://' + selectedServer + '/wss/';--}}
+    {{--    const serverAddress = 'wss://myspmr:Rb1NAPzM57Ycq9z8Uur65g1JaF2xVixKtTGStvPfh65P9HK29Abe0QcxiZC9yV9n@spmr.mygovuc.gov.my/'+ selectedServer;--}}
+    {{--    //console.log(serverAddress);--}}
+    {{--    const socket = new WebSocket(serverAddress);--}}
+
+    {{--    socket.addEventListener('open', (event) => {--}}
+    {{--        const command = '/opt/scripts/websocket/cmd15' + ' ' + '{{ $user->email }}' + ' ' + 'start' + ' ' + 'webmin';--}}
+    {{--        socket.send(command);--}}
+    {{--    });--}}
+
+    {{--    socket.addEventListener('message', (event) => {--}}
+    {{--        //alert("Webmin services successfully started on " + selectedServer);--}}
+    {{--        const response = event.data;--}}
+    {{--        //console.log(response);--}}
+    {{--        if (response.includes('Failed')) {--}}
+    {{--            alert("Failed to start Webmin services on " + selectedServer);--}}
+    {{--        } else {--}}
+    {{--            Swal.fire({--}}
+    {{--                title: 'Webmin services successfully started on '+ selectedServer,--}}
+    {{--                allowOutsideClick: false, // Prevent outside clicks--}}
+    {{--                showConfirmButton: false, // Disable the "OK" button--}}
+    {{--                onBeforeOpen: () => {--}}
+    {{--                    Swal.showLoading();--}}
+    {{--                },--}}
+    {{--                timer: 100000, // 6 seconds--}}
+    {{--                willClose: () => {--}}
+    {{--                    // You can add any action you want to perform when the alert is about to close--}}
+    {{--                    // console.log('The alert is closing');--}}
+    {{--                }--}}
+    {{--            });--}}
+
+    {{--            // alert("Webmin services successfully started on " + selectedServer);--}}
+    {{--        }--}}
+    {{--        socket.close();--}}
+    {{--        location.reload();--}}
+    {{--    });--}}
+    {{--}--}}
+    {{--$('#webminStart').click(function(e) {--}}
+    {{--    e.preventDefault();--}}
+    {{--    let text = "Are you sure you want to START Webmin services?";--}}
+    {{--    if (confirm(text)) {--}}
+    {{--        startWebminServices();--}}
+
+    {{--        $.ajax({--}}
+    {{--            url: '/start-services',--}}
+    {{--            type: 'POST',--}}
+    {{--            data: {--}}
+    {{--                _token: '{{ csrf_token() }}',// Include CSRF token if required--}}
+    {{--                server:  $('#hostname').val(),--}}
+    {{--                status: 'start',--}}
+    {{--                type: 'webmin'--}}
+    {{--            },--}}
+    {{--            success: function(response) {--}}
+    {{--                // Handle success response if needed--}}
+    {{--                // console.log(response);--}}
+    {{--            },--}}
+    {{--            error: function(xhr, status, error) {--}}
+    {{--                // Handle error response if needed--}}
+    {{--                console.error(error);--}}
+    {{--            }--}}
+    {{--        });--}}
+    {{--    } else {--}}
+    {{--        //console.log('User canceled the action');--}}
+    {{--    }--}}
+    {{--});--}}
+    {{--// Stop //--}}
+    {{--function stopWebminServices(subhostname) {--}}
+    {{--    const selectedServer = $('#webminStop'+subhostname).val();--}}
+    {{--    // const serverAddress = 'wss://' + selectedServer + '/wss/';--}}
+    {{--    const serverAddress = 'wss://myspmr:Rb1NAPzM57Ycq9z8Uur65g1JaF2xVixKtTGStvPfh65P9HK29Abe0QcxiZC9yV9n@spmr.mygovuc.gov.my/'+ selectedServer;--}}
+    {{--    //console.log(serverAddress);--}}
+    {{--    const socket = new WebSocket(serverAddress);--}}
+
+    {{--    socket.addEventListener('open', (event) => {--}}
+    {{--        const command = '/opt/scripts/websocket/cmd15' + ' ' + '{{ $user->email }}' + ' ' + 'stop' + ' ' + 'webmin';--}}
+    {{--        socket.send(command);--}}
+    {{--    });--}}
+
+    {{--    socket.addEventListener('message', (event) => {--}}
+    {{--        //alert("Webmin services successfully stopped on " + selectedServer);--}}
+    {{--        const response = event.data;--}}
+    {{--        //console.log(response);--}}
+    {{--        if (response.includes('Failed')) {--}}
+    {{--            alert("Failed to stop Webmin services on " + selectedServer);--}}
+    {{--        } else {--}}
+    {{--            Swal.fire({--}}
+    {{--                title: 'Webmin services successfully stopped on '+ selectedServer,--}}
+    {{--                allowOutsideClick: false, // Prevent outside clicks--}}
+    {{--                showConfirmButton: false, // Disable the "OK" button--}}
+    {{--                onBeforeOpen: () => {--}}
+    {{--                    Swal.showLoading();--}}
+    {{--                },--}}
+    {{--                timer: 100000, // 6 seconds--}}
+    {{--                willClose: () => {--}}
+    {{--                    // You can add any action you want to perform when the alert is about to close--}}
+    {{--                    // console.log('The alert is closing');--}}
+    {{--                }--}}
+    {{--            });--}}
+    {{--            // alert("Webmin services successfully stopped on " + selectedServer);--}}
+    {{--        }--}}
+    {{--        socket.close();--}}
+    {{--        location.reload();--}}
+    {{--    });--}}
+    {{--}--}}
+    {{--$('#webminStop').click(function(e) {--}}
+    {{--    e.preventDefault();--}}
+    {{--    let text = "Are you sure you want to STOP Webmin services?";--}}
+    {{--    if (confirm(text)) {--}}
+    {{--        stopWebminServices();--}}
+    {{--        $.ajax({--}}
+    {{--            url: '/stop-services',--}}
+    {{--            type: 'POST',--}}
+    {{--            data: {--}}
+    {{--                _token: '{{ csrf_token() }}',// Include CSRF token if required--}}
+    {{--                server:  $('#hostname').val(),--}}
+    {{--                status: 'stop',--}}
+    {{--                type:'webmin'--}}
+    {{--            },--}}
+    {{--            success: function(response) {--}}
+    {{--                // Handle success response if needed--}}
+    {{--                // console.log(response);--}}
+    {{--            },--}}
+    {{--            error: function(xhr, status, error) {--}}
+    {{--                // Handle error response if needed--}}
+    {{--                console.error(error);--}}
+    {{--            }--}}
+    {{--        });--}}
+    {{--    } else {--}}
+    {{--        //console.log('User canceled the action');--}}
+    {{--    }--}}
+    {{--});--}}
+    {{--// Restart //--}}
+    {{--function restartWebminServices(subhostname) {--}}
+    {{--    const selectedServer = $('#webminRestart'+subhostname).val();--}}
+    {{--    // const serverAddress = 'wss://' + selectedServer + '/wss/';--}}
+    {{--    const serverAddress = 'wss://myspmr:Rb1NAPzM57Ycq9z8Uur65g1JaF2xVixKtTGStvPfh65P9HK29Abe0QcxiZC9yV9n@spmr.mygovuc.gov.my/'+ selectedServer;--}}
+    {{--    //console.log(serverAddress);--}}
+    {{--    const socket = new WebSocket(serverAddress);--}}
+
+    {{--    socket.addEventListener('open', (event) => {--}}
+    {{--        const command = '/opt/scripts/websocket/cmd15' + ' ' + '{{ $user->email }}' + ' ' + 'restart' + ' ' + 'webmin';--}}
+    {{--        socket.send(command);--}}
+    {{--    });--}}
+
+    {{--    socket.addEventListener('message', (event) => {--}}
+    {{--        //alert("Webmin services successfully restarting on " + selectedServer);--}}
+    {{--        const response = event.data;--}}
+    {{--        //console.log(response);--}}
+    {{--        if (response.includes('Failed')) {--}}
+    {{--            alert("Failed to restart Webmin services on " + selectedServer);--}}
+    {{--        } else {--}}
+    {{--            Swal.fire({--}}
+    {{--                title: 'Webmin services successfully restarting on '+ selectedServer,--}}
+    {{--                allowOutsideClick: false, // Prevent outside clicks--}}
+    {{--                showConfirmButton: false, // Disable the "OK" button--}}
+    {{--                onBeforeOpen: () => {--}}
+    {{--                    Swal.showLoading();--}}
+    {{--                },--}}
+    {{--                timer: 100000, // 6 seconds--}}
+    {{--                willClose: () => {--}}
+    {{--                    // You can add any action you want to perform when the alert is about to close--}}
+    {{--                    // console.log('The alert is closing');--}}
+    {{--                }--}}
+    {{--            });--}}
+    {{--            // alert("Webmin services successfully restarting on " + selectedServer);--}}
+    {{--        }--}}
+    {{--        socket.close();--}}
+    {{--        location.reload();--}}
+    {{--    });--}}
+    {{--}--}}
+    // Keepalived Controller //
+    // Start //
+    function startKeepalivedServices(subhostname) {
+        const selectedServer = $('#keepalivedStart'+subhostname).val();
         const serverAddress = 'wss://myspmr:Rb1NAPzM57Ycq9z8Uur65g1JaF2xVixKtTGStvPfh65P9HK29Abe0QcxiZC9yV9n@spmr.mygovuc.gov.my/'+ selectedServer;
-        //console.log(serverAddress);
         const socket = new WebSocket(serverAddress);
 
-        socket.addEventListener('open', (event) => {
-            const command = '/opt/scripts/websocket/cmd15' + ' ' + '{{ $user->email }}' + ' ' + 'start' + ' ' + 'webmin';
+        socket.addEventListener('open', () => {
+            const command = '/opt/scripts/websocket/cmd15' + ' ' + '{{ $user->email }}' + ' ' + 'start' + ' ' + 'keepalived';
             socket.send(command);
         });
 
         socket.addEventListener('message', (event) => {
-            //alert("Webmin services successfully started on " + selectedServer);
             const response = event.data;
-            //console.log(response);
             if (response.includes('Failed')) {
-                alert("Failed to start Webmin services on " + selectedServer);
+                alert("Failed to start Keepalived services on " + selectedServer);
             } else {
                 Swal.fire({
-                    title: 'Webmin services successfully started on '+ selectedServer,
-                    allowOutsideClick: false, // Prevent outside clicks
-                    showConfirmButton: false, // Disable the "OK" button
+                    title: 'Keepalived services successfully started on '+ selectedServer,
+                    allowOutsideClick: false,
+                    showConfirmButton: false,
                     onBeforeOpen: () => {
                         Swal.showLoading();
                     },
-                    timer: 100000, // 6 seconds
-                    willClose: () => {
-                        // You can add any action you want to perform when the alert is about to close
-                        // console.log('The alert is closing');
-                    }
+                    timer: 100000,
                 });
-
-                // alert("Webmin services successfully started on " + selectedServer);
             }
             socket.close();
             location.reload();
         });
     }
-    $('#webminStart').click(function(e) {
-        e.preventDefault();
-        let text = "Are you sure you want to START Webmin services?";
-        if (confirm(text)) {
-            startWebminServices();
 
-            $.ajax({
-                url: '/start-services',
-                type: 'POST',
-                data: {
-                    _token: '{{ csrf_token() }}',// Include CSRF token if required
-                    server:  $('#hostname').val(),
-                    status: 'start',
-                    type: 'webmin'
-                },
-                success: function(response) {
-                    // Handle success response if needed
-                    // console.log(response);
-                },
-                error: function(xhr, status, error) {
-                    // Handle error response if needed
-                    console.error(error);
-                }
-            });
-        } else {
-            //console.log('User canceled the action');
-        }
-    });
     // Stop //
-    function stopWebminServices(subhostname) {
-        const selectedServer = $('#webminStop'+subhostname).val();
-        // const serverAddress = 'wss://' + selectedServer + '/wss/';
+    function stopKeepalivedServices(subhostname) {
+        const selectedServer = $('#keepalivedStop'+subhostname).val();
         const serverAddress = 'wss://myspmr:Rb1NAPzM57Ycq9z8Uur65g1JaF2xVixKtTGStvPfh65P9HK29Abe0QcxiZC9yV9n@spmr.mygovuc.gov.my/'+ selectedServer;
-        //console.log(serverAddress);
         const socket = new WebSocket(serverAddress);
 
-        socket.addEventListener('open', (event) => {
-            const command = '/opt/scripts/websocket/cmd15' + ' ' + '{{ $user->email }}' + ' ' + 'stop' + ' ' + 'webmin';
+        socket.addEventListener('open', () => {
+            const command = '/opt/scripts/websocket/cmd15' + ' ' + '{{ $user->email }}' + ' ' + 'stop' + ' ' + 'keepalived';
             socket.send(command);
         });
 
         socket.addEventListener('message', (event) => {
-            //alert("Webmin services successfully stopped on " + selectedServer);
             const response = event.data;
-            //console.log(response);
             if (response.includes('Failed')) {
-                alert("Failed to stop Webmin services on " + selectedServer);
+                alert("Failed to stop Keepalived services on " + selectedServer);
             } else {
                 Swal.fire({
-                    title: 'Webmin services successfully stopped on '+ selectedServer,
-                    allowOutsideClick: false, // Prevent outside clicks
-                    showConfirmButton: false, // Disable the "OK" button
+                    title: 'Keepalived services successfully stopped on '+ selectedServer,
+                    allowOutsideClick: false,
+                    showConfirmButton: false,
                     onBeforeOpen: () => {
                         Swal.showLoading();
                     },
-                    timer: 100000, // 6 seconds
-                    willClose: () => {
-                        // You can add any action you want to perform when the alert is about to close
-                        // console.log('The alert is closing');
-                    }
+                    timer: 100000,
                 });
-                // alert("Webmin services successfully stopped on " + selectedServer);
             }
             socket.close();
             location.reload();
         });
     }
-    $('#webminStop').click(function(e) {
-        e.preventDefault();
-        let text = "Are you sure you want to STOP Webmin services?";
-        if (confirm(text)) {
-            stopWebminServices();
-            $.ajax({
-                url: '/stop-services',
-                type: 'POST',
-                data: {
-                    _token: '{{ csrf_token() }}',// Include CSRF token if required
-                    server:  $('#hostname').val(),
-                    status: 'stop',
-                    type:'webmin'
-                },
-                success: function(response) {
-                    // Handle success response if needed
-                    // console.log(response);
-                },
-                error: function(xhr, status, error) {
-                    // Handle error response if needed
-                    console.error(error);
-                }
-            });
-        } else {
-            //console.log('User canceled the action');
-        }
-    });
+
     // Restart //
-    function restartWebminServices(subhostname) {
-        const selectedServer = $('#webminRestart'+subhostname).val();
-        // const serverAddress = 'wss://' + selectedServer + '/wss/';
+    function restartKeepalivedServices(subhostname) {
+        const selectedServer = $('#keepalivedRestart'+subhostname).val();
         const serverAddress = 'wss://myspmr:Rb1NAPzM57Ycq9z8Uur65g1JaF2xVixKtTGStvPfh65P9HK29Abe0QcxiZC9yV9n@spmr.mygovuc.gov.my/'+ selectedServer;
-        //console.log(serverAddress);
         const socket = new WebSocket(serverAddress);
 
-        socket.addEventListener('open', (event) => {
-            const command = '/opt/scripts/websocket/cmd15' + ' ' + '{{ $user->email }}' + ' ' + 'restart' + ' ' + 'webmin';
+        socket.addEventListener('open', () => {
+            const command = '/opt/scripts/websocket/cmd15' + ' ' + '{{ $user->email }}' + ' ' + 'restart' + ' ' + 'keepalived';
             socket.send(command);
         });
 
         socket.addEventListener('message', (event) => {
-            //alert("Webmin services successfully restarting on " + selectedServer);
             const response = event.data;
-            //console.log(response);
             if (response.includes('Failed')) {
-                alert("Failed to restart Webmin services on " + selectedServer);
+                alert("Failed to restart Keepalived services on " + selectedServer);
             } else {
                 Swal.fire({
-                    title: 'Webmin services successfully restarting on '+ selectedServer,
-                    allowOutsideClick: false, // Prevent outside clicks
-                    showConfirmButton: false, // Disable the "OK" button
+                    title: 'Keepalived services successfully restarting on '+ selectedServer,
+                    allowOutsideClick: false,
+                    showConfirmButton: false,
                     onBeforeOpen: () => {
                         Swal.showLoading();
                     },
-                    timer: 100000, // 6 seconds
-                    willClose: () => {
-                        // You can add any action you want to perform when the alert is about to close
-                        // console.log('The alert is closing');
-                    }
+                    timer: 100000,
                 });
-                // alert("Webmin services successfully restarting on " + selectedServer);
             }
             socket.close();
             location.reload();
         });
     }
+
     $('#webminRestart').click(function(e) {
         e.preventDefault();
         let text = "Are you sure you want to RESTART Webmin services?";
