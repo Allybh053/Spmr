@@ -215,57 +215,59 @@
                         let status = parts[i + 1] || '';
                         let registration = parts[i + 2] || '';
 
-                        // Case: embedded registration in username
-                        if (fullUsername.includes(' #') && fullUsername.endsWith(':')) {
-                            let hashIndex = fullUsername.indexOf(' #');
-                            let cleanEmail = fullUsername.substring(0, hashIndex);
-                            let rawToken = fullUsername.substring(hashIndex + 2, fullUsername.length - 1); // token without :
-                            let token = rawToken.replace(/^#/, ''); // remove leading # if any
-                            let isTerminated = rawToken.startsWith('#');
-                            let statusCode = isTerminated ? 2 : 1;
-                            let link = `https://spmr.mygovuc.gov.my/smtp_relay/view/${token}/${statusCode}`;
-
-                            let newRow = `<tr>
-                                <td>${++rowCount}</td>
-                                <td>${cleanEmail}</td>
-                                <td>${processedUsernames.has(cleanEmail) ? '' : status}</td>
-                                <td><a href="${link}" target="_blank">${token}</a></td>
-                            </tr>`;
-                            tableBody.append(newRow);
-                            processedUsernames.add(cleanEmail);
-                        }
-                        else {
-                            let cleanReg = registration.replace(/^#|:$/g, '');
-                            if (cleanReg !== 'N/A' && cleanReg !== '') {
-                                let isTerminated = registration.trim().startsWith('#');
-                                let token = cleanReg;
-                                let statusCode = isTerminated ? 2 : 1;
+                        // Case: registration field contains token like "#email #Token:"
+                        if (registration.startsWith('#') && registration.endsWith(':')) {
+                            // Extract token part after last space before the colon
+                            let match = registration.match(/#.+\s+(#?[A-Za-z0-9]+):$/);
+                            if (match) {
+                                let rawToken = match[1]; // This may or may not start with #
+                                let token = rawToken.replace(/^#/, ''); // Remove leading #
+                                let statusCode = rawToken.startsWith('#') ? 2 : 1;
                                 let link = `https://spmr.mygovuc.gov.my/smtp_relay/view/${token}/${statusCode}`;
 
                                 let newRow = `<tr>
-                                <td>${++rowCount}</td>
-                                <td>${fullUsername}</td>
-                                <td>${status}</td>
-                                <td><a href="${link}" target="_blank">${token}</a></td>
-                            </tr>`;
+                    <td>${++rowCount}</td>
+                    <td>${fullUsername}</td>
+                    <td>${status}</td>
+                    <td><a href="${link}" target="_blank">${token}</a></td>
+                </tr>`;
                                 tableBody.append(newRow);
-                            } else {
-                                let newRow = `<tr>
-                                <td>${++rowCount}</td>
-                                <td>${fullUsername}</td>
-                                <td>${status}</td>
-                                <td>N/A</td>
-                            </tr>`;
-                                tableBody.append(newRow);
+                                continue;
                             }
+                        }
+
+                        // Fallback: handle other cases
+                        let cleanReg = registration.replace(/^#|:$/g, '');
+                        if (cleanReg !== 'N/A' && cleanReg !== '') {
+                            let token = cleanReg;
+                            let statusCode = registration.trim().startsWith('#') ? 2 : 1;
+                            let link = `https://spmr.mygovuc.gov.my/smtp_relay/view/${token}/${statusCode}`;
+
+                            let newRow = `<tr>
+                <td>${++rowCount}</td>
+                <td>${fullUsername}</td>
+                <td>${status}</td>
+                <td><a href="${link}" target="_blank">${token}</a></td>
+            </tr>`;
+                            tableBody.append(newRow);
+                        } else {
+                            let newRow = `<tr>
+                <td>${++rowCount}</td>
+                <td>${fullUsername}</td>
+                <td>${status}</td>
+                <td>N/A</td>
+            </tr>`;
+                            tableBody.append(newRow);
                         }
                     }
 
                     $('#data-table-card').removeClass('d-none');
                 }*/
 
+
+
                 //v2 the real one
-                function processResponse(response, hostname, smtpUsernames) {
+                /*function processResponse(response, hostname, smtpUsernames) {
                     response = response.trim().replace(/^"|"$/g, '');
                     let parts = response.split('" "').map(p => p.trim());
                     let tableBody = $('#data-table-body');
@@ -319,8 +321,9 @@
                     }
 
                     $('#data-table-card').removeClass('d-none');
-                }
+                }*/
 
+                //the best one
                 /*function processResponse(response, hostname, smtpUsernames) {
                     response = response.trim().replace(/^"|"$/g, '');
                     let parts = response.split('" "').map(p => p.trim());
@@ -333,12 +336,17 @@
                     let rowCount = tableBody.children().length;
 
                     for (let i = 0; i < parts.length; i += 3) {
-                        let username = parts[i];
+                        let username = parts[i] || '';
                         let status = parts[i + 1] || '';
                         let registration = parts[i + 2] || '';
-                        let registrationEntries = registration.split('\n').map(r => r.trim()).filter(r => r);
+                        let registrationEntries = registration
+                            .split(' ')
+                            .map(line => {
+                                const tokenMatch = line.match(/#([A-Za-z0-9]+):?/);
+                                return tokenMatch ? tokenMatch[1] : null;
+                            })
+                            .filter(Boolean);
 
-                        console.log(registration);
                         if (registrationEntries.length === 0) {
                             tableBody.append(`
                 <tr>
@@ -349,15 +357,19 @@
                 </tr>
             `);
                         } else {
-                            registrationEntries.forEach((regEntry, index) => {
-                                // Clean up the registration entry (remove '#' and ':')
-                                let cleanReg = regEntry.replace(/^#|:$/g, '');
+                            registrationEntries.forEach((token, index) => {
+                                let hashCount = (registration.match(/#/g) || []).length;
+                                let statusCode = hashCount > 1 ? 2 : 1;
+                                let link = `https://spmr.mygovuc.gov.my/smtp_relay/view/${token}/${statusCode}`;
+
                                 tableBody.append(`
                     <tr>
                         <td>${++rowCount}</td>
                         <td>${index === 0 ? username : ''}</td>
                         <td>${index === 0 ? status : ''}</td>
-                        <td>${cleanReg}</td>
+                        <td>
+                            <a href="${link}" target="_blank">${token}</a>
+                        </td>
                     </tr>
                 `);
                             });
@@ -366,8 +378,6 @@
 
                     $('#data-table-card').removeClass('d-none');
                 }*/
-
-                //v3 real code align with respond as discuss
                 /*function processResponse(response, hostname, smtpUsernames) {
                     response = response.trim().replace(/^"|"$/g, '');
                     let parts = response.split('" "').map(p => p.trim());
@@ -384,17 +394,17 @@
                         let status = parts[i + 1] || '';
                         let registration = parts[i + 2] || '';
 
-                        // Parse each line of registration data and extract tokens
-                        let registrationEntries = registration
-                            .split('\n')
-                            .map(line => {
-                                const tokenMatch = line.match(/#([A-Za-z0-9]+):?/);
-                                return tokenMatch ? tokenMatch[1] : null;
-                            })
-                            .filter(Boolean); // Filter out lines without a valid token
+                        // Extract all tokens from registration field
+                        let tokens = [];
+                        let tokenMatch;
+                        const tokenRegex = /#([A-Za-z0-9]+)(?::|$)/g;
 
-                        if (registrationEntries.length === 0) {
-                            // No valid tokens or empty response
+                        while ((tokenMatch = tokenRegex.exec(registration))){
+                            tokens.push(tokenMatch[1]);
+                        }
+
+                        if (tokens.length === 0) {
+                            // No token found - add row with N/A
                             tableBody.append(`
                 <tr>
                     <td>${++rowCount}</td>
@@ -404,26 +414,103 @@
                 </tr>
             `);
                         } else {
-                            registrationEntries.forEach((token, index) => {
-                                let isTerminated = registration.includes(`#${token}`);
+                            // For each token found, create a row
+                            tokens.forEach(token => {
+                                let isTerminated = registration.includes(`${token}:`);
                                 let statusCode = isTerminated ? 1 : 2;
                                 let link = `https://spmr.mygovuc.gov.my/smtp_relay/view/${token}/${statusCode}`;
 
                                 tableBody.append(`
-                                <tr>
-                                    <td>${++rowCount}</td>
-                                    <td>${index === 0 ? username : ''}</td>
-                                    <td>${index === 0 ? status : ''}</td>
-                                    <td><a href="${link}" target="_blank">${token}</a></td>
-                                </tr>
-                            `);
+                    <tr>
+                        <td>${++rowCount}</td>
+                        <td>${username}</td>
+                        <td>${status}</td>
+                        <td><a href="${link}" target="_blank">${token}</a></td>
+                    </tr>
+                `);
                             });
-
                         }
                     }
 
                     $('#data-table-card').removeClass('d-none');
                 }*/
+                function processResponse(response, hostname, smtpUsernames) {
+                    // Clean and prepare the response data
+                    response = response.trim().replace(/^"|"$/g, '');
+                    let parts = response.split('" "').map(p => p.trim());
+                    let tableBody = $('#data-table-body');
+
+                    // Clear table if empty
+                    if (tableBody.children().length === 0) {
+                        tableBody.empty();
+                    }
+
+                    // Start row count from current table size
+                    let rowCount = tableBody.children().length;
+
+                    // Process each record (3 parts per record)
+                    for (let i = 0; i < parts.length; i += 3) {
+                        let username = parts[i] || '';
+                        let status = parts[i + 1] || '';
+                        let registration = parts[i + 2] || '';
+
+                        // Extract tokens with status detection
+                        let tokens = [];
+
+                        // Special case for email#token format
+                        if (registration.includes('@') && registration.includes('#')) {
+                            let lastHashIndex = registration.lastIndexOf('#');
+                            let token = registration.substring(lastHashIndex + 1).replace(':', '');
+                            let statusCode = registration.startsWith('#') ? 2 : 1;
+
+                            tokens.push({
+                                token: token,
+                                statusCode: statusCode
+                            });
+                        }
+                        // Regular token case
+                        else {
+                            const tokenRegex = /(?:^|\s)(#?)([A-Za-z0-9]+)(?::|$)/g;
+                            let match;
+
+                            while ((match = tokenRegex.exec(registration))) {
+                                tokens.push({
+                                    token: match[2], // The actual token
+                                    statusCode: match[1] === '#' ? 2 : 1 // 2 if starts with #, 1 otherwise
+                                });
+                            }
+                        }
+
+                        if (tokens.length === 0) {
+                            // No tokens found - add N/A row
+                            tableBody.append(`
+                <tr>
+                    <td>${++rowCount}</td>
+                    <td>${username}</td>
+                    <td>${status}</td>
+                    <td>N/A</td>
+                </tr>
+            `);
+                        } else {
+                            // Add row for each token found
+                            tokens.forEach(tokenData => {
+                                let link = `https://spmr.mygovuc.gov.my/smtp_relay/view/${tokenData.token}/${tokenData.statusCode}`;
+
+                                tableBody.append(`
+                    <tr>
+                        <td>${++rowCount}</td>
+                        <td>${username}</td>
+                        <td>${status}</td>
+                        <td><a href="${link}" target="_blank">${tokenData.token}</a></td>
+                    </tr>
+                `);
+                            });
+                        }
+                    }
+
+                    // Show the table when done
+                    $('#data-table-card').removeClass('d-none');
+                }
             });
         });
     </script>
