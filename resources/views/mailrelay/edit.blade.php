@@ -347,7 +347,7 @@
                         }
                     }
                     if (smtpMailServers.some(smtpMailServer => smtpMailServer.types_req == 2)) {
-                        finalCommandQueue.push(`/opt/scripts/websocket/cmd8` + ` ` + "{{ $user->email }}" + ` ` + `${smtp_username}`);
+                        finalCommandQueue.push(`/opt/scripts/websocket/cmd8` + ` ` + "{{ $user->email }}" + ` ` + `${smtp_username}` + ` ` + `${formIds}`);
                     }
                 }
 

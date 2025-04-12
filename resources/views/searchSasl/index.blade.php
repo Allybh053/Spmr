@@ -91,6 +91,7 @@
                             <thead>
                             <tr>
                                 <th>No.</th>
+                                <th>Server Name</th>
                                 <th>Matching Username</th>
                                 <th>Status</th>
                                 <th>SPMR Registration Status</th>
@@ -197,244 +198,7 @@
                         });
                     });
                 }
-                //v1 prob with no. row
                 /*function processResponse(response, hostname, smtpUsernames) {
-                    response = response.trim().replace(/^"|"$/g, '');
-                    let parts = response.split('" "').map(p => p.trim());
-                    let tableBody = $('#data-table-body');
-
-                    if (tableBody.children().length === 0) {
-                        tableBody.empty();
-                    }
-
-                    let rowCount = 0;
-                    let processedUsernames = new Set();
-
-                    for (let i = 0; i < parts.length; i += 3) {
-                        let fullUsername = parts[i];
-                        let status = parts[i + 1] || '';
-                        let registration = parts[i + 2] || '';
-
-                        // Case: registration field contains token like "#email #Token:"
-                        if (registration.startsWith('#') && registration.endsWith(':')) {
-                            // Extract token part after last space before the colon
-                            let match = registration.match(/#.+\s+(#?[A-Za-z0-9]+):$/);
-                            if (match) {
-                                let rawToken = match[1]; // This may or may not start with #
-                                let token = rawToken.replace(/^#/, ''); // Remove leading #
-                                let statusCode = rawToken.startsWith('#') ? 2 : 1;
-                                let link = `https://spmr.mygovuc.gov.my/smtp_relay/view/${token}/${statusCode}`;
-
-                                let newRow = `<tr>
-                    <td>${++rowCount}</td>
-                    <td>${fullUsername}</td>
-                    <td>${status}</td>
-                    <td><a href="${link}" target="_blank">${token}</a></td>
-                </tr>`;
-                                tableBody.append(newRow);
-                                continue;
-                            }
-                        }
-
-                        // Fallback: handle other cases
-                        let cleanReg = registration.replace(/^#|:$/g, '');
-                        if (cleanReg !== 'N/A' && cleanReg !== '') {
-                            let token = cleanReg;
-                            let statusCode = registration.trim().startsWith('#') ? 2 : 1;
-                            let link = `https://spmr.mygovuc.gov.my/smtp_relay/view/${token}/${statusCode}`;
-
-                            let newRow = `<tr>
-                <td>${++rowCount}</td>
-                <td>${fullUsername}</td>
-                <td>${status}</td>
-                <td><a href="${link}" target="_blank">${token}</a></td>
-            </tr>`;
-                            tableBody.append(newRow);
-                        } else {
-                            let newRow = `<tr>
-                <td>${++rowCount}</td>
-                <td>${fullUsername}</td>
-                <td>${status}</td>
-                <td>N/A</td>
-            </tr>`;
-                            tableBody.append(newRow);
-                        }
-                    }
-
-                    $('#data-table-card').removeClass('d-none');
-                }*/
-
-
-
-                //v2 the real one
-                /*function processResponse(response, hostname, smtpUsernames) {
-                    response = response.trim().replace(/^"|"$/g, '');
-                    let parts = response.split('" "').map(p => p.trim());
-                    let tableBody = $('#data-table-body');
-
-                    if (tableBody.children().length === 0) {
-                        tableBody.empty();
-                    }
-
-                    let rowCount = tableBody.children().length;
-
-                    for (let i = 0; i < parts.length; i += 3) {
-                        let username = parts[i] || '';
-                        let status = parts[i + 1] || '';
-                        let registration = parts[i + 2] || '';
-                        let registrationEntries = registration
-                            .split('\n')
-                            .map(line => {
-                                const tokenMatch = line.match(/#([A-Za-z0-9]+):?/);
-                                return tokenMatch ? tokenMatch[1] : null;
-                            })
-                            .filter(Boolean);
-
-                        if (registrationEntries.length === 0) {
-                            tableBody.append(`
-                            <tr>
-                                <td>${++rowCount}</td>
-                                <td>${username}</td>
-                                <td>${status}</td>
-                                <td>N/A</td>
-                            </tr>
-                        `);
-                        } else {
-                            registrationEntries.forEach((token, index) => {
-                                let isTerminated = registration.includes(`${token}:`);
-                                let statusCode = isTerminated ? 1 : 2;
-                                let link = `https://spmr.mygovuc.gov.my/smtp_relay/view/${token}/${statusCode}`;
-
-                                tableBody.append(`
-                    <tr>
-                        <td>${++rowCount}</td>
-                        <td>${index === 0 ? username : ''}</td>
-                        <td>${index === 0 ? status : ''}</td>
-                        <td>
-                            <a href="${link}" target="_blank">${token}</a>
-                           <!-- ${isTerminated ? ' (Active)' : ''} -->
-                        </td>
-                    </tr>
-                `);
-                            });
-                        }
-                    }
-
-                    $('#data-table-card').removeClass('d-none');
-                }*/
-
-                //the best one
-                /*function processResponse(response, hostname, smtpUsernames) {
-                    response = response.trim().replace(/^"|"$/g, '');
-                    let parts = response.split('" "').map(p => p.trim());
-                    let tableBody = $('#data-table-body');
-
-                    if (tableBody.children().length === 0) {
-                        tableBody.empty();
-                    }
-
-                    let rowCount = tableBody.children().length;
-
-                    for (let i = 0; i < parts.length; i += 3) {
-                        let username = parts[i] || '';
-                        let status = parts[i + 1] || '';
-                        let registration = parts[i + 2] || '';
-                        let registrationEntries = registration
-                            .split(' ')
-                            .map(line => {
-                                const tokenMatch = line.match(/#([A-Za-z0-9]+):?/);
-                                return tokenMatch ? tokenMatch[1] : null;
-                            })
-                            .filter(Boolean);
-
-                        if (registrationEntries.length === 0) {
-                            tableBody.append(`
-                <tr>
-                    <td>${++rowCount}</td>
-                    <td>${username}</td>
-                    <td>${status}</td>
-                    <td>N/A</td>
-                </tr>
-            `);
-                        } else {
-                            registrationEntries.forEach((token, index) => {
-                                let hashCount = (registration.match(/#/g) || []).length;
-                                let statusCode = hashCount > 1 ? 2 : 1;
-                                let link = `https://spmr.mygovuc.gov.my/smtp_relay/view/${token}/${statusCode}`;
-
-                                tableBody.append(`
-                    <tr>
-                        <td>${++rowCount}</td>
-                        <td>${index === 0 ? username : ''}</td>
-                        <td>${index === 0 ? status : ''}</td>
-                        <td>
-                            <a href="${link}" target="_blank">${token}</a>
-                        </td>
-                    </tr>
-                `);
-                            });
-                        }
-                    }
-
-                    $('#data-table-card').removeClass('d-none');
-                }*/
-                /*function processResponse(response, hostname, smtpUsernames) {
-                    response = response.trim().replace(/^"|"$/g, '');
-                    let parts = response.split('" "').map(p => p.trim());
-                    let tableBody = $('#data-table-body');
-
-                    if (tableBody.children().length === 0) {
-                        tableBody.empty();
-                    }
-
-                    let rowCount = tableBody.children().length;
-
-                    for (let i = 0; i < parts.length; i += 3) {
-                        let username = parts[i] || '';
-                        let status = parts[i + 1] || '';
-                        let registration = parts[i + 2] || '';
-
-                        // Extract all tokens from registration field
-                        let tokens = [];
-                        let tokenMatch;
-                        const tokenRegex = /#([A-Za-z0-9]+)(?::|$)/g;
-
-                        while ((tokenMatch = tokenRegex.exec(registration))){
-                            tokens.push(tokenMatch[1]);
-                        }
-
-                        if (tokens.length === 0) {
-                            // No token found - add row with N/A
-                            tableBody.append(`
-                <tr>
-                    <td>${++rowCount}</td>
-                    <td>${username}</td>
-                    <td>${status}</td>
-                    <td>N/A</td>
-                </tr>
-            `);
-                        } else {
-                            // For each token found, create a row
-                            tokens.forEach(token => {
-                                let isTerminated = registration.includes(`${token}:`);
-                                let statusCode = isTerminated ? 1 : 2;
-                                let link = `https://spmr.mygovuc.gov.my/smtp_relay/view/${token}/${statusCode}`;
-
-                                tableBody.append(`
-                    <tr>
-                        <td>${++rowCount}</td>
-                        <td>${username}</td>
-                        <td>${status}</td>
-                        <td><a href="${link}" target="_blank">${token}</a></td>
-                    </tr>
-                `);
-                            });
-                        }
-                    }
-
-                    $('#data-table-card').removeClass('d-none');
-                }*/
-                function processResponse(response, hostname, smtpUsernames) {
                     // Clean and prepare the response data
                     response = response.trim().replace(/^"|"$/g, '');
                     let parts = response.split('" "').map(p => p.trim());
@@ -486,6 +250,7 @@
                             tableBody.append(`
                 <tr>
                     <td>${++rowCount}</td>
+                    <td>${hostname}</td>
                     <td>${username}</td>
                     <td>${status}</td>
                     <td>N/A</td>
@@ -499,6 +264,7 @@
                                 tableBody.append(`
                     <tr>
                         <td>${++rowCount}</td>
+                        <td>${hostname}</td>
                         <td>${username}</td>
                         <td>${status}</td>
                         <td><a href="${link}" target="_blank">${tokenData.token}</a></td>
@@ -509,6 +275,78 @@
                     }
 
                     // Show the table when done
+                    $('#data-table-card').removeClass('d-none');
+                }*/
+                let processedEntries = new Set();
+
+                function processResponse(response, hostname, smtpUsernames) {
+                    response = response.trim().replace(/^"|"$/g, '');
+                    let parts = response.split('" "').map(p => p.trim());
+                    let tableBody = $('#data-table-body');
+
+                    let rowCount = tableBody.children().length;
+
+                    for (let i = 0; i < parts.length; i += 3) {
+                        let username = parts[i] || '';
+                        let status = parts[i + 1] || '';
+                        let registration = parts[i + 2] || '';
+                        let tokens = [];
+
+                        if (registration.includes('@') && registration.includes('#')) {
+                            let lastHashIndex = registration.lastIndexOf('#');
+                            let token = registration.substring(lastHashIndex + 1).replace(':', '');
+                            let statusCode = registration.startsWith('#') ? 2 : 1;
+
+                            tokens.push({
+                                token: token,
+                                statusCode: statusCode
+                            });
+                        } else {
+                            const tokenRegex = /(?:^|\s)(#?)([A-Za-z0-9]+)(?::|$)/g;
+                            let match;
+
+                            while ((match = tokenRegex.exec(registration))) {
+                                tokens.push({
+                                    token: match[2],
+                                    statusCode: match[1] === '#' ? 2 : 1
+                                });
+                            }
+                        }
+                        let baseKey = `${hostname}|${username}`;
+                        if (tokens.length === 0) {
+                            let uniqueKey = `${baseKey}|N/A`;
+                            if (!processedEntries.has(uniqueKey)) {
+                                processedEntries.add(uniqueKey);
+                                tableBody.append(`
+                                <tr>
+                                    <td>${++rowCount}</td>
+                                    <td>${hostname}</td>
+                                    <td>${username}</td>
+                                    <td>${status}</td>
+                                    <td>N/A</td>
+                                </tr>
+                            `);
+                            }
+                        } else {
+                            tokens.forEach(tokenData => {
+                                let link = `https://spmr.mygovuc.gov.my/smtp_relay/view/${tokenData.token}/${tokenData.statusCode}`;
+                                let uniqueKey = `${baseKey}|${tokenData.token}`;
+
+                                if (!processedEntries.has(uniqueKey)) {
+                                    processedEntries.add(uniqueKey);
+                                    tableBody.append(`
+                                    <tr>
+                                        <td>${++rowCount}</td>
+                                        <td>${hostname}</td>
+                                        <td>${username}</td>
+                                        <td>${status}</td>
+                                        <td><a href="${link}" target="_blank">${tokenData.token}</a></td>
+                                    </tr>
+                                `);
+                                }
+                            });
+                        }
+                    }
                     $('#data-table-card').removeClass('d-none');
                 }
             });
