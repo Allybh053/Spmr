@@ -95,6 +95,7 @@
                                 <th>Matching Username</th>
                                 <th>Status</th>
                                 <th>SPMR Registration Status</th>
+                                <th>Remarks</th>
                             </tr>
                             </thead>
                             <tbody id="data-table-body"></tbody>
@@ -292,6 +293,14 @@
                         let registration = parts[i + 2] || '';
                         let tokens = [];
 
+                        let remarks = '-';
+                        if (registration.includes('#' + username)) {
+                            remarks = 'Terminated';
+                        } else if (registration.includes(username)) {
+                            remarks = 'Active';
+                        }
+
+
                         if (registration.includes('@') && registration.includes('#')) {
                             let lastHashIndex = registration.lastIndexOf('#');
                             let token = registration.substring(lastHashIndex + 1).replace(':', '');
@@ -324,6 +333,7 @@
                                     <td>${username}</td>
                                     <td>${status}</td>
                                     <td>N/A</td>
+                                    <td>${remarks}</td>
                                 </tr>
                             `);
                             }
@@ -341,6 +351,7 @@
                                         <td>${username}</td>
                                         <td>${status}</td>
                                         <td><a href="${link}" target="_blank">${tokenData.token}</a></td>
+                                        <td>${remarks}</td>
                                     </tr>
                                 `);
                                 }

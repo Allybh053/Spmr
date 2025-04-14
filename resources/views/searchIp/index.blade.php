@@ -367,7 +367,7 @@
                     } else if (isActive) {
                         remarks = "Active";
                     } else {
-                        remarks = "Not-Applicable";
+                        remarks = "-";
                     }
 
 
