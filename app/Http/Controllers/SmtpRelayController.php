@@ -75,7 +75,7 @@ class SmtpRelayController extends Controller
         $agency = $request->input('agency');
         $calendarType = $request->input('calendarType');
 
-        $query = smtp_relay_server::select('smtp_relay_req_form.updated_at as updated_at','smtp_relay_req_form.form_id as formA', 'smtp_relay_req_form.ticket_id', 'agencies.name as agencies', 'smtp_relay_req_form.project_name', 'smtp_relay_req_form.smtp_relay_server', 'smtp_relay_req_form.date_verification_3', 'smtp_relay_server.types_req as typeB', 'smtp_relay_server.ip_addr_server','smtp_relay_server.id as detailID', 'smtp_relay_server.smtpid','smtp_relay_server.created_at as created_at', 'smtp_relay_server.server_name', 'smtp_relay_req_form.status as status','smtp_relay_req_form.implementation_name as implementation_name')
+        $query = smtp_relay_server::select('smtp_relay_req_form.updated_at as updated_at','smtp_relay_req_form.form_id as formA', 'smtp_relay_req_form.ticket_id', 'agencies.name as agencies', 'smtp_relay_req_form.project_name', 'smtp_relay_req_form.smtp_relay_server', 'smtp_relay_req_form.date_verification_3', 'smtp_relay_server.types_req as typeB', 'smtp_relay_server.ip_addr_server','smtp_relay_server.id as detailID', 'smtp_relay_server.smtpid','smtp_relay_server.created_at as created_at', 'smtp_relay_server.server_name', 'smtp_relay_req_form.status as status','smtp_relay_req_form.implementation_name as implementation_name', 'smtp_relay_req_form.smtp_username')
                 ->leftJoin('smtp_relay_req_form', 'smtp_relay_req_form.id', '=', 'smtp_relay_server.smtpid')
                 ->leftJoin('agencies','agencies.id','=',DB::raw('CAST(smtp_relay_req_form.agencies AS bigint)'))
                 // ->orderby('smtp_relay_req_form.status','asc')
@@ -128,6 +128,9 @@ class SmtpRelayController extends Controller
 
                 return $row->ip_addr_server;
 
+            })
+            ->addColumn('Method', function ($row) {
+                return !empty($row['smtp_username']) ? 'Sasl' : 'IP';
             })
             ->addColumn('date_verification_3', function ($row) {
                 $date = Carbon::parse($row['date_verification_3']);

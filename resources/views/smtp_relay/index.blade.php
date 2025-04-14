@@ -76,6 +76,7 @@
                                 <th>Project Name</th>
                                 <th>Server Mail Relay</th>
                                 <th>Ip Address</th>
+                                <th>Method</th>
                                 <th>Approval Date</th>
                                 <th>Status</th>
                                 <th>Action</th>
@@ -152,6 +153,7 @@
                 { data: 'project_name', name: 'project_name', class: 'text-center' },
                 { data: 'smtp_relay_server', name: 'smtp_relay_server', class: 'text-center' },
                 { data: 'ip_addr_server', name: 'ip_addr_server', class: 'text-center' },
+                {data: 'Method', name: 'Method', class:'text-center'},
                 /*{ data: 'updated_at', name: 'updated_at', class: 'text-center' },*/
                 { data: 'date_verification_3', name: 'date_verification_3', class: 'text-center' },
                 { data: 'status', name: 'status', class: 'text-center' },
