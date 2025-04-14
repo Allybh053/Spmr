@@ -361,7 +361,7 @@
                     }
 
                     if (serialNumber === "NOT-FOUND" && internalIpsStatus === "NOT-BANNED" && controlList === "Graylisted") {
-                        remarks = "Not-Applicable";
+                        remarks = "-";
                     } else if (isTerminated) {
                         remarks = "Terminated";
                     } else if (isActive) {
@@ -370,16 +370,15 @@
                         remarks = "-";
                     }
 
-
-                    let newRow = `<tr>
-                <td>${++rowCount}</td>
-                <td>${hostname}</td>
-                <td>${ip}</td>
-                <td>${displayStatus}</td>
-                <td>${internalIpsStatus}</td>
-                <td>${controlList}</td>
-                <td>${remarks}</td>
-            </tr>`;
+                            let newRow = `<tr>
+                        <td>${++rowCount}</td>
+                        <td>${hostname}</td>
+                        <td>${ip}</td>
+                        <td>${displayStatus}</td>
+                        <td>${internalIpsStatus}</td>
+                        <td>${controlList}</td>
+                        <td>${remarks}</td>
+                    </tr>`;
                     tableBody.append(newRow);
 
                 } catch (e) {

@@ -294,13 +294,16 @@
                         let tokens = [];
 
                         let remarks = '-';
-                        if (registration.includes('#' + username)) {
-                            remarks = 'Terminated';
-                        } else if (registration.includes(username)) {
-                            remarks = 'Active';
+
+                        if (status === 'Found') {
+                            if (registration === 'N/A') {
+                                remarks = 'Active';
+                            } else if (registration.includes('#' + username)) {
+                                remarks = 'Terminated';
+                            } else if (registration.includes(username)) {
+                                remarks = 'Active';
+                            }
                         }
-
-
                         if (registration.includes('@') && registration.includes('#')) {
                             let lastHashIndex = registration.lastIndexOf('#');
                             let token = registration.substring(lastHashIndex + 1).replace(':', '');

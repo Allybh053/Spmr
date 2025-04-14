@@ -130,7 +130,7 @@ class SmtpRelayController extends Controller
 
             })
             ->addColumn('Method', function ($row) {
-                return !empty($row['smtp_username']) ? 'Sasl' : 'IP';
+                return !empty($row['smtp_username']) ? 'SASL' : 'IP';
             })
             ->addColumn('date_verification_3', function ($row) {
                 $date = Carbon::parse($row['date_verification_3']);
