@@ -242,9 +242,9 @@
                 const userEmail = "{{ auth()->user()->email }}";
                 let command;
                 if (type === 'ha') {
-                    command = `/opt/scripts/websocket/cmd19 ${userEmail}`;
+                    command = `/opt/scripts/websocket/cmd19 ${userEmail} -H`;
                 } else {
-                    command = `/opt/scripts/websocket/cmd18 ${userEmail}`;
+                    command = `/opt/scripts/websocket/cmd18 ${userEmail} -H`;
                 }
 
                 socket.send(command);
