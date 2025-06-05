@@ -145,25 +145,6 @@
                         <div class="row gx-3 mb-3" id="authusername">
                             <div class="col-md-6">
                                 <label>SMTP Username</label>
-                                <p>{{ $datasmtp->smtp_username}}</p>
-                            </div>
-                            <div class="col-md-6" id="authpassword">
-                                <label>SMTP Password</label>
-                                <p>{{ $datasmtp->smtp_password}}</p>
-                            </div>
-                            @can('smtp_mail_relay_update')
-                                <div class="col-md-4" id="authpassword">
-                                    <label for="smtp_password">SMTP Password</label>
-                                    <input type="text" name="smtp_password" id="smtp_password" value="{{ old('smtp_password', $datasmtp->smtp_password) }}" class="form-control" onchange="generatePassword()">
-                                </div>
-                                <div class="col-md-2" style="padding-top: 24px">
-                                    <button class="btn btn-success" type="button" onclick="generatePassword()">Generate Password</button>
-                                </div>
-                            @endcan
-                        </div>
-                        <div class="row gx-3 mb-3" id="authusername">
-                            <div class="col-md-6">
-                                <label>SMTP Username</label>
                                 <p>{{ $datasmtp->smtp_username }}</p>
                             </div>
                             @can('smtp_mail_relay_update')
