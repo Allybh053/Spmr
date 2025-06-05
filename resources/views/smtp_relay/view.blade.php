@@ -308,17 +308,8 @@
                     <hr>
                     <div class="mb-3">
                         <a class="btn btn-primary me-2 my-1" type="button" href="{{ url()->previous() }}">Back</a>
-{{--                        @can('smtp_mail_relay_update')--}}
-{{--                            <button class="btn btn-success me-2 my-1" id="submit" name="submit" type="submit">Update Form</button>--}}
-{{--                        @endcan--}}
-                        <div class="mb-3" @if($formsmtp->comments) style="display:block;" @else style="display:none;" @endif>
-                            <label>Comments</label>
-                            <p>{{ $formsmtp->comments }}</p>
-                        </div>
-                        <hr>
-                        <a class="btn btn-danger me-2 my-1" type="button" href="{{ route('smtp_relay.smtp_relay_req')}}">Cancel</a>
                         @can('smtp_mail_relay_update')
-                            <button class="btn btn-primary me-2 my-1" id="submit" name="submit" type="submit">Update Form</button>
+                            <button class="btn btn-success me-2 my-1" id="submit" name="submit" type="submit">Update Form</button>
                         @endcan
                     </div>
                     <hr>
