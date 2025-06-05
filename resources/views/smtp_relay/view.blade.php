@@ -290,11 +290,32 @@
                         <label>Comments</label>
                         <p>{{ $datasmtp->comments}}</p>
                     </div>--}}
+{{--                    @can('smtp_mail_relay_update')--}}
+{{--                        @if($datasmtp->comments)--}}
+{{--                            <div class="mb-3">--}}
+{{--                                --}}{{--<label>Comments</label>--}}
+{{--                                <p>{{ $datasmtp->comments }}</p>--}}
+{{--                                <label for="comment">Comments</label>--}}
+{{--                                <textarea class="form-control" id="comment" name="comment" rows="3">{{ $datasmtp->comments }}</textarea>--}}
+{{--                            </div>--}}
+{{--                        @else--}}
+{{--                            <div class="mb-3">--}}
+{{--                                <label for="comment">Comments</label>--}}
+{{--                                <textarea class="form-control" id="comment" name="comment" rows="3"></textarea>--}}
+{{--                            </div>--}}
+{{--                        @endif--}}
+{{--                    @endcan--}}
+{{--                    <hr>--}}
+{{--                    <div class="mb-3">--}}
+{{--                        <a class="btn btn-primary me-2 my-1" type="button" href="{{ url()->previous() }}">Back</a>--}}
+{{--                        @can('smtp_mail_relay_update')--}}
+{{--                            <button class="btn btn-success me-2 my-1" id="submit" name="submit" type="submit">Update Form</button>--}}
+{{--                        @endcan--}}
+{{--                    </div>--}}
+{{--                    <hr>--}}
                     @can('smtp_mail_relay_update')
-                        @if($datasmtp->comments)
+                        @if(isset($datasmtp) && $datasmtp->comments)
                             <div class="mb-3">
-                                {{--<label>Comments</label>
-                                <p>{{ $datasmtp->comments }}</p>--}}
                                 <label for="comment">Comments</label>
                                 <textarea class="form-control" id="comment" name="comment" rows="3">{{ $datasmtp->comments }}</textarea>
                             </div>
@@ -305,14 +326,16 @@
                             </div>
                         @endif
                     @endcan
+
                     <hr>
+
                     <div class="mb-3">
                         <a class="btn btn-primary me-2 my-1" type="button" href="{{ url()->previous() }}">Back</a>
                         @can('smtp_mail_relay_update')
                             <button class="btn btn-success me-2 my-1" id="submit" name="submit" type="submit">Update Form</button>
                         @endcan
                     </div>
-                    <hr>
+
                 </div>
             </div>
         </div>
