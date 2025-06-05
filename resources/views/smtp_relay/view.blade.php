@@ -291,12 +291,12 @@
                         <p>{{ $datasmtp->comments}}</p>
                     </div>--}}
                     @can('smtp_mail_relay_update')
-                        @if($formsmtp->comments)
+                        @if($datasmtp->comments)
                             <div class="mb-3">
                                 {{--<label>Comments</label>
                                 <p>{{ $datasmtp->comments }}</p>--}}
                                 <label for="comment">Comments</label>
-                                <textarea class="form-control" id="comment" name="comment" rows="3">{{ $formsmtp->comments }}</textarea>
+                                <textarea class="form-control" id="comment" name="comment" rows="3">{{ $datasmtp->comments }}</textarea>
                             </div>
                         @else
                             <div class="mb-3">
