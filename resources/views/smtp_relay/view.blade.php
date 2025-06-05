@@ -341,20 +341,36 @@
                 descriptionElement.textContent = portDescriptions[smtpPort] || 'Unknown';
             });
 
+            // function generatePassword() {
+            //     const length = 22;
+            //     // const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*()-=_+[]{}|;:,.<>?';
+            //     const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*()-=_+[]{}|;:,.?';
+            //     let password = '';
+            //     for (let i = 0; i < length; i++) {
+            //         const randomIndex = Math.floor(Math.random() * chars.length);
+            //         password += chars[randomIndex];
+            //     }
+            //     document.getElementById('authpassword').value = password;
+            //     document.getElementById('smtp_password').addEventListener('input', (event) => {
+            //         // Log the user-defined password during view
+            //         console.log("View Page - User-defined Password: ", event.target.value);
+            //     });
+            // }
             function generatePassword() {
                 const length = 22;
-                // const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*()-=_+[]{}|;:,.<>?';
                 const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*()-=_+[]{}|;:,.?';
                 let password = '';
                 for (let i = 0; i < length; i++) {
                     const randomIndex = Math.floor(Math.random() * chars.length);
                     password += chars[randomIndex];
                 }
-                document.getElementById('authpassword').value = password;
-                document.getElementById('smtp_password').addEventListener('input', (event) => {
-                    // Log the user-defined password during view
-                    console.log("View Page - User-defined Password: ", event.target.value);
-                });
+
+                const passwordField = document.getElementById('smtp_password');
+                if (passwordField) {
+                    passwordField.value = password;
+                } else {
+                    console.warn('SMTP Password field not found.');
+                }
             }
         </script>
 
