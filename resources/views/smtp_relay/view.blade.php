@@ -356,34 +356,6 @@
                     console.warn('SMTP Password field not found.');
                 }
             }
-            function updateComment() {
-                const comment = document.getElementById('comment').value;
-                const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
-
-                fetch("{{ route('smtp_relay.update', $datasmtp->id) }}", {
-                    method: "POST",
-                    headers: {
-                        "Content-Type": "application/json",
-                        "X-CSRF-TOKEN": csrfToken,
-                        "X-Requested-With": "XMLHttpRequest"
-                    },
-                    body: JSON.stringify({
-                        _method: "PUT",
-                        comment: comment
-                    })
-                })
-                    .then(response => {
-                        if (!response.ok) throw new Error("Failed to update");
-                        return response.json();
-                    })
-                    .then(data => {
-                        alert("Comment updated successfully!");
-                    })
-                    .catch(error => {
-                        console.error(error);
-                        alert("Failed to update comment.");
-                    });
-            }
         </script>
 
         <style>
