@@ -340,22 +340,6 @@
                 // Set the description based on the smtpPort value
                 descriptionElement.textContent = portDescriptions[smtpPort] || 'Unknown';
             });
-
-            // function generatePassword() {
-            //     const length = 22;
-            //     // const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*()-=_+[]{}|;:,.<>?';
-            //     const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*()-=_+[]{}|;:,.?';
-            //     let password = '';
-            //     for (let i = 0; i < length; i++) {
-            //         const randomIndex = Math.floor(Math.random() * chars.length);
-            //         password += chars[randomIndex];
-            //     }
-            //     document.getElementById('authpassword').value = password;
-            //     document.getElementById('smtp_password').addEventListener('input', (event) => {
-            //         // Log the user-defined password during view
-            //         console.log("View Page - User-defined Password: ", event.target.value);
-            //     });
-            // }
             function generatePassword() {
                 const length = 22;
                 const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*()-=_+[]{}|;:,.?';
@@ -371,6 +355,34 @@
                 } else {
                     console.warn('SMTP Password field not found.');
                 }
+            }
+            function updateComment() {
+                const comment = document.getElementById('comment').value;
+                const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+
+                fetch("{{ route('smtp_relay.update', $datasmtp->id) }}", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                        "X-CSRF-TOKEN": csrfToken,
+                        "X-Requested-With": "XMLHttpRequest"
+                    },
+                    body: JSON.stringify({
+                        _method: "PUT",
+                        comment: comment
+                    })
+                })
+                    .then(response => {
+                        if (!response.ok) throw new Error("Failed to update");
+                        return response.json();
+                    })
+                    .then(data => {
+                        alert("Comment updated successfully!");
+                    })
+                    .catch(error => {
+                        console.error(error);
+                        alert("Failed to update comment.");
+                    });
             }
         </script>
 
