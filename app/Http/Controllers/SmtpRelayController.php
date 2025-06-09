@@ -672,6 +672,7 @@ class SmtpRelayController extends Controller
 
         $type = (int) $type;
 
+        $user = Auth::user();
         $datasmtp = SmtpRelayReqForm::select('smtp_relay_req_form.*','ministrys.name as ministry_name','agencies.name as agencies_name')
             ->leftJoin('ministrys','ministrys.id',DB::raw('CAST(smtp_relay_req_form.ministry AS bigint)'))
             ->leftJoin('agencies','agencies.id',DB::raw('CAST(smtp_relay_req_form.agencies AS bigint)'))
@@ -679,6 +680,14 @@ class SmtpRelayController extends Controller
             ->where('types_req', $type)
             ->first();
         // dd($datasmtp);
+        $serverIds = RoleServer::whereIn('role_id', $user->roles->pluck('id')->all())
+            ->pluck('server_id');
+        $serverconfig = Server::whereIn('master_id', $serverIds)
+            ->where('status_cluster', 1)
+            ->orderBy('id', 'asc')
+            ->select('id', 'hostname', 'ipaddress', 'subhostname')
+            ->get();
+//        dd($serverconfig);
 
 
         $details = smtp_relay_server::where('form_id', $datasmtp->form_id)
@@ -690,26 +699,32 @@ class SmtpRelayController extends Controller
             ->leftJoin('smtp_relay_req_form as sm','sm.id','history_copy_attachment.form_id')
             ->where('sm.id',$datasmtp->id)
             ->get();
-        return view('smtp_relay.view',compact('datasmtp','details','attachment'));
+        return view('smtp_relay.view',compact('datasmtp','details','attachment', 'serverconfig'));
     }
     public function updateComments(Request $request, $id)
     {
+//        dd($request->all());
         $request->validate([
             'comments' => 'nullable|string',
             'smtp_password' => 'nullable|string'
         ]);
-
-        // Find the record by form_id and type if needed, or just by id
         $smtp = SmtpRelayReqForm::findOrFail($id);
+//        $smtp = SmtpRelayReqForm::where('form_id', $id)->firstOrFail();
 
-        $smtp->update([
-            'comments' => $request->comments,
-            'smtp_password' => $request->smtp_password
+        $smtp->comments = $request->comments;
+        $smtp->smtp_password = $request->smtp_password;
+        $smtp->save();
+
+//        $smtp->update([
+//            'comments' => $request->comments,
+//            'smtp_password' => $request->smtp_password
+//        ]);
+//        dd($smtp->fresh());
+        return redirect()->back()->with([
+            'success' => 'Comments and password updated successfully',
+            'updated_comment' => $smtp->comments
         ]);
-
-        return redirect()->back()->with('success', 'Comments and password updated successfully');
     }
-
     public function kemaskini(Request $request,$id, $type){
 
         $user = Auth::user();
