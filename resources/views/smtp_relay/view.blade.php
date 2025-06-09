@@ -150,15 +150,19 @@
                             @can('smtp_mail_relay_update')
                                 <div class="col-md-4">
                                     <label for="smtp_password">SMTP Password</label>
-                                    <input type="text" name="smtp_password" id="smtp_password" value="{{ old('smtp_password', $datasmtp->smtp_password) }}" class="form-control">
+                                    <input type="text" name="smtp_password" id="smtp_password"
+                                           value="{{ old('smtp_password', $datasmtp->smtp_password) }}"
+                                           class="form-control" form="updateForm">
                                 </div>
                                 <div class="col-md-2" style="padding-top: 24px">
-                                    <button class="btn btn-success" type="button" onclick="generatePassword()">Generate Password</button>
+                                    <button class="btn btn-success" type="button" onclick="generatePassword()">
+                                        Generate Password
+                                    </button>
                                 </div>
                             @endcan
                         </div>
-
                     @endif
+
                     <div class="row gx-3 mb-3">
                         <div class="col-md-6">
                             <label>SMTP Port Number</label>
@@ -271,7 +275,7 @@
                     </div>
                     <hr>
                     <div class="mb-3">
-                        <label>Attachement</label><br>
+                        <label>Attachment</label><br>
 
                         @if ($datasmtp->upload_copy_attachment)
                             <a href="{{ route('smtp_relay.viewPdf', ['filename' => $datasmtp->upload_copy_attachment]) }}" target="_blank">{{ $datasmtp->upload_copy_attachment }}</a><br>
@@ -286,56 +290,29 @@
                         @endforeach
 
                     </div>
-                    {{--<div class="mb-3">
-                        <label>Comments</label>
-                        <p>{{ $datasmtp->comments}}</p>
-                    </div>--}}
-{{--                    @can('smtp_mail_relay_update')--}}
-{{--                        @if($datasmtp->comments)--}}
-{{--                            <div class="mb-3">--}}
-{{--                                --}}{{--<label>Comments</label>--}}
-{{--                                <p>{{ $datasmtp->comments }}</p>--}}
-{{--                                <label for="comment">Comments</label>--}}
-{{--                                <textarea class="form-control" id="comment" name="comment" rows="3">{{ $datasmtp->comments }}</textarea>--}}
-{{--                            </div>--}}
-{{--                        @else--}}
-{{--                            <div class="mb-3">--}}
-{{--                                <label for="comment">Comments</label>--}}
-{{--                                <textarea class="form-control" id="comment" name="comment" rows="3"></textarea>--}}
-{{--                            </div>--}}
-{{--                        @endif--}}
-{{--                    @endcan--}}
-{{--                    <hr>--}}
-{{--                    <div class="mb-3">--}}
-{{--                        <a class="btn btn-primary me-2 my-1" type="button" href="{{ url()->previous() }}">Back</a>--}}
-{{--                        @can('smtp_mail_relay_update')--}}
-{{--                            <button class="btn btn-success me-2 my-1" id="submit" name="submit" type="submit">Update Form</button>--}}
-{{--                        @endcan--}}
-{{--                    </div>--}}
-{{--                    <hr>--}}
                     @can('smtp_mail_relay_update')
-                        @if(isset($datasmtp) && $datasmtp->comments)
-                            <div class="mb-3">
-                                <label for="comment">Comments</label>
-                                <textarea class="form-control" id="comment" name="comment" rows="3">{{ $datasmtp->comments }}</textarea>
+                        <div class="row">
+                            <div class="col-md-12">
+                                <form id="updateForm" action="{{ route('smtp_relay.update_comments', ['id' => $datasmtp->id]) }}" method="POST">
+                                    @csrf
+                                    <div class="mb-3">
+                                        <label><strong>Current Remarks:</strong></label>
+                                        <p class="text-muted">{{ $datasmtp->comments ?: 'No remarks available' }}</p>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="comments"><strong>New Comments:</strong></label>
+                                        <textarea id="comments" name="comments" class="form-control" rows="3"
+                                                  placeholder="-- Enter New Comment --">{{ old('comments') }}</textarea>
+                                    </div>
+
+                                    <div class="mb-3">
+                                        <a class="btn btn-primary me-2 my-1" href="{{ url()->previous() }}">Back</a>
+                                        <button type="submit" class="btn btn-success me-2 my-1">Update Form</button>
+                                    </div>
+                                </form>
                             </div>
-                        @else
-                            <div class="mb-3">
-                                <label for="comment">Comments</label>
-                                <textarea class="form-control" id="comment" name="comment" rows="3"></textarea>
-                            </div>
-                        @endif
+                        </div>
                     @endcan
-
-                    <hr>
-
-                    <div class="mb-3">
-                        <a class="btn btn-primary me-2 my-1" type="button" href="{{ url()->previous() }}">Back</a>
-                        @can('smtp_mail_relay_update')
-                            <button class="btn btn-success me-2 my-1" id="submit" name="submit" type="submit">Update Form</button>
-                        @endcan
-                    </div>
-
                 </div>
             </div>
         </div>
@@ -380,7 +357,6 @@
                 }
             }
         </script>
-
         <style>
             label {
                 font-weight: bold;
@@ -393,6 +369,4 @@
             }
         </style>
     </main>
-
-
 @endsection
