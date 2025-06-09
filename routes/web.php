@@ -39,6 +39,8 @@ use App\Http\Controllers\LanguageController;
 use App\Http\Controllers\SessionsController;
 use Illuminate\Http\Request;
 use App\Http\Controllers\ReplicationMonitorController;
+use App\Http\Controllers\LogQueryController;
+use App\Http\Controllers\DnsController;
 
 
 /*
@@ -158,6 +160,9 @@ Route::group(['middleware' => ['auth', 'nocache','log.user.activity']], function
 
         Route::post('/getHostname', [SmtpRelayController::class, 'getHostname'])->name('check.subhostname.unique');
 
+        //baru
+        Route::post('/smtp_relay/update_comments/{id}', [SmtpRelayController::class, 'updateComments'])->name('smtp_relay.update_comments');
+
     });
 
     Route::group(['prefix' => 'server'], function () {
@@ -220,11 +225,20 @@ Route::group(['middleware' => ['auth', 'nocache','log.user.activity']], function
             Route::post('/validation', [ReportDetailSenderController::class, 'validation'])->name('report.detail.validation');
         });
 
+//        Route::group(['prefix' => 'query-log'], function () {
+//            Route::get('/', [LogQueryController::class, 'index'])
+//                ->name('report.queryLog.index')
+//                ->middleware('auth.resource:query_log_view');
+//            Route::post('/validation', [LogQueryController::class, 'validation'])->name('report.queryLog.validation');
+//        });
         Route::group(['prefix' => 'query-log'], function () {
-            Route::get('/', [ReportQueryLogController::class, 'index'])
+            Route::get('/', [LogQueryController::class, 'index'])
                 ->name('report.queryLog.index')
                 ->middleware('auth.resource:query_log_view');
-            Route::post('/validation', [ReportQueryLogController::class, 'validation'])->name('report.queryLog.validation');
+
+            Route::get('/search', [LogQueryController::class, 'search'])
+                ->name('report.queryLog.search')
+                ->middleware('auth.resource:query_log_view');
         });
     });
 
@@ -289,6 +303,23 @@ Route::group(['middleware' => ['auth', 'nocache','log.user.activity']], function
     Route::group(['prefix' => 'manage-service'], function () {
         Route::get('/{server_id?}/{server_type?}', [ManageServiceController::class, 'index'])->name('manageService.index')
             ->middleware('auth.resource:manage_service_view');
+    });
+
+    //Generate spa report
+    Route::group(['prefix' => 'query-log-report'], function () {
+        Route::get('/query_log', [LogQueryController::class, 'index'])->name('GenerateQueryLog.index');
+
+        Route::post('/query_log', [LogQueryController::class, 'generate'])->name('GenerateQueryLog.generate');
+
+        Route::post('/generate-spa-report', [LogQueryController::class, 'generate'])->name('generateSpaReport.generate');
+
+        Route::get('/downloads/{filename}', function ($filename) {
+            $path = storage_path("app/LogQuery/{$filename}");
+            if (!file_exists($path)) {
+                abort(404);
+            }
+            return response()->download($path);
+        });
     });
 
     Route::group(['prefix' => 'generate-report'], function () {
@@ -366,13 +397,12 @@ Route::group(['middleware' => ['auth', 'nocache','log.user.activity']], function
             ->name('searchSasl.index')
             ->middleware('auth.resource:search_sasl_view');
 
-        Route::prefix('searchSasl/api')->group(function() {
-            Route::post('/getSaslData', [SearchSaslController::class, 'getsasldata'])
-                ->name('searchSasl.api.getSaslData');
+        Route::post('/getSaslData', [SearchSaslController::class, 'getsasldata'])
+            ->name('searchSasl.api.getSaslData');
 
-            Route::post('/getServerName', [SearchSaslController::class, 'searchServerName'])
-                ->name('searchSasl.api.getServerName');
-        });
+        Route::post('/getServerName', [SearchSaslController::class, 'searchServerName'])
+            ->name('searchSasl.api.getServerName');
+
     });
 
 
@@ -396,7 +426,21 @@ Route::group(['middleware' => ['auth', 'nocache','log.user.activity']], function
 
     });
 
+    //DNS Query/watcher
+    Route::group(['prefix' => 'DNS'], function () {
+        Route::get('/dns', [DnsController::class, 'index'])
+            ->name('dns.index');
 
+        Route::post('/dns/run', [DnsController::class, 'run'])
+            ->name('dns.run');
+
+        Route::match(['get', 'post'], '/dns-lookup', [\App\Http\Controllers\DnsController::class, 'dnsLookup'])->name('dns.lookup');
+
+    });
+
+
+//    Route::post('/getSaslData', [SearchSaslController::class, 'getsasldata'])
+//        ->name('searchSasl.api.getSaslData');
 
 
 
