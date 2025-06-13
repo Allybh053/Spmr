@@ -109,6 +109,126 @@ class LogQueryController extends Controller
 
         return view('GenerateQueryLog.index', compact('queryLogs', 'generatedAt'));
     }
+//    public function exportExcel(Request $request)
+//    {
+//        $filters = array_filter([
+//            'date' => $request->input('date'),
+//            'ip' => $request->input('ip'),
+//            'email' => $request->input('email'),
+//            'subject' => $request->input('subject'),
+//        ]);
+//
+//        $logFile = storage_path('cls/mail.log');
+////        $logFile = env('MAIL_LOG_PATH');
+//        //$logFile = storage_path('/your-staging-app/cls/mail.log');
+//
+//        if (!file_exists($logFile)) {
+//            return back()->with('message', 'Log file not found.');
+//        }
+//
+//        $lines = file($logFile, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
+//        $queryLogs = [];
+//        $counter = 1;
+//        if (!file_exists($logFile)) {
+//            return back()->with('message', 'Log file not found.');
+//        }
+//
+//        $handle = fopen($logFile, "r");
+//        if ($handle) {
+//            while (($line = fgets($handle)) !== false) {
+//                // Your matching logic here:
+//                $match = true; // Example, replace with your actual logic
+//
+//                if ($match) {
+//                    $queryLogs[] = [
+//                        'no' => $counter++,
+//                        'line' => $line,
+//                        // other fields you want to extract
+//                    ];
+//                }
+//            }
+//            fclose($handle);
+//        } else {
+//            return back()->with('message', 'Unable to open log file.');
+//        }
+//
+//        foreach ($lines as $line) {
+//            $match = true;
+//
+//            foreach ($filters as $key => $value) {
+//                if (!Str::contains(strtolower($line), strtolower($value))) {
+//                    $match = false;
+//                    break;
+//                }
+//            }
+//
+//            if ($match) {
+//                preg_match('/^(?P<timestamp>\w{3} \d{1,2} \d{2}:\d{2}:\d{2})/', $line, $timestampMatch);
+//                preg_match('/from=<(?P<from>[^>]+)>/', $line, $fromMatch);
+//                preg_match('/to=<(?P<to>[^>]+)>/', $line, $toMatch);
+//                preg_match('/subject=(?P<subject>.*?)\s+(?=\S+=|$)/', $line, $subjectMatch);
+//                preg_match('/relay=([^\s\[]+)/', $line, $receiverIpMatch);
+//                preg_match('/\[([0-9\.]+)\]/', $line, $senderIpMatch);
+//                preg_match('/status=(?P<status>\w+)/', $line, $statusMatch);
+//                preg_match('/id=(?P<inbound_id>\S+)/', $line, $inboundIdMatch);
+//                preg_match('/dsn=\S+.*? (\d{3}.*)/', $line, $outboundIdMatch); // custom
+//                preg_match('/attachments=(?P<attachments>\S+)/', $line, $attachmentMatch);
+//
+//                $queryLogs[] = [
+//                    'Hostname' => gethostname(),
+//                    'No.' => $counter++,
+//                    'Timestamp' => $timestampMatch['timestamp'] ?? '-',
+//                    'MTA Sender IP' => $senderIpMatch[1] ?? '-',
+//                    'Inbound ID' => $inboundIdMatch['inbound_id'] ?? '-',
+//                    'Status' => $statusMatch['status'] ?? '-',
+//                    'MTA Receiver IP' => $receiverIpMatch[1] ?? '-',
+//                    'Outbound ID' => $outboundIdMatch[1] ?? '-',
+//                    'FROM Address' => $fromMatch['from'] ?? '-',
+//                    'TO Address' => $toMatch['to'] ?? '-',
+//                    'Subject' => $subjectMatch['subject'] ?? '-',
+//                    'Attachments' => $attachmentMatch['attachments'] ?? '-',
+//                    'Remarks' => '',
+//                ];
+//            }
+//        }
+//
+//        if (empty($queryLogs)) {
+//            return back()->with('message', 'No results found.');
+//        }
+//
+//        return Excel::download(new class($queryLogs) implements FromCollection, WithHeadings {
+//            protected $logs;
+//
+//            public function __construct(array $logs)
+//            {
+//                $this->logs = $logs;
+//            }
+//
+//            public function collection(): Collection
+//            {
+//                return collect($this->logs);
+//            }
+//
+//            public function headings(): array
+//            {
+//                return [
+//                    'Hostname',
+//                    'No.',
+//                    'Timestamp',
+//                    'MTA Sender IP',
+//                    'Inbound ID',
+//                    'Status',
+//                    'MTA Receiver IP',
+//                    'Outbound ID',
+//                    'FROM Address',
+//                    'TO Address',
+//                    'Subject',
+//                    'Attachments',
+//                    'Remarks',
+//                ];
+//            }
+//        }, 'query_log_report.xlsx');
+//    }
     public function exportExcel(Request $request)
     {
         $filters = array_filter([
@@ -119,77 +239,58 @@ class LogQueryController extends Controller
         ]);
 
         $logFile = storage_path('cls/mail.log');
-//        $logFile = env('MAIL_LOG_PATH');
-        //$logFile = storage_path('/your-staging-app/cls/mail.log');
 
         if (!file_exists($logFile)) {
             return back()->with('message', 'Log file not found.');
         }
 
-        $lines = file($logFile, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
         $queryLogs = [];
         $counter = 1;
-        if (!file_exists($logFile)) {
-            return back()->with('message', 'Log file not found.');
-        }
 
         $handle = fopen($logFile, "r");
         if ($handle) {
             while (($line = fgets($handle)) !== false) {
-                // Your matching logic here:
-                $match = true; // Example, replace with your actual logic
+                $match = true;
+
+                foreach ($filters as $key => $value) {
+                    if (!Str::contains(strtolower($line), strtolower($value))) {
+                        $match = false;
+                        break;
+                    }
+                }
 
                 if ($match) {
+                    preg_match('/^(?P<timestamp>\w{3} \d{1,2} \d{2}:\d{2}:\d{2})/', $line, $timestampMatch);
+                    preg_match('/from=<(?P<from>[^>]+)>/', $line, $fromMatch);
+                    preg_match('/to=<(?P<to>[^>]+)>/', $line, $toMatch);
+                    preg_match('/subject=(?P<subject>.*?)\s+(?=\S+=|$)/', $line, $subjectMatch);
+                    preg_match('/relay=([^\s\[]+)/', $line, $receiverIpMatch);
+                    preg_match('/\[([0-9\.]+)\]/', $line, $senderIpMatch);
+                    preg_match('/status=(?P<status>\w+)/', $line, $statusMatch);
+                    preg_match('/id=(?P<inbound_id>\S+)/', $line, $inboundIdMatch);
+                    preg_match('/dsn=\S+.*? (\d{3}.*)/', $line, $outboundIdMatch);
+                    preg_match('/attachments=(?P<attachments>\S+)/', $line, $attachmentMatch);
+
                     $queryLogs[] = [
-                        'no' => $counter++,
-                        'line' => $line,
-                        // other fields you want to extract
+                        'Hostname' => gethostname(),
+                        'No.' => $counter++,
+                        'Timestamp' => $timestampMatch['timestamp'] ?? '-',
+                        'MTA Sender IP' => $senderIpMatch[1] ?? '-',
+                        'Inbound ID' => $inboundIdMatch['inbound_id'] ?? '-',
+                        'Status' => $statusMatch['status'] ?? '-',
+                        'MTA Receiver IP' => $receiverIpMatch[1] ?? '-',
+                        'Outbound ID' => $outboundIdMatch[1] ?? '-',
+                        'FROM Address' => $fromMatch['from'] ?? '-',
+                        'TO Address' => $toMatch['to'] ?? '-',
+                        'Subject' => $subjectMatch['subject'] ?? '-',
+                        'Attachments' => $attachmentMatch['attachments'] ?? '-',
+                        'Remarks' => '',
                     ];
                 }
             }
             fclose($handle);
         } else {
             return back()->with('message', 'Unable to open log file.');
-        }
-
-        foreach ($lines as $line) {
-            $match = true;
-
-            foreach ($filters as $key => $value) {
-                if (!Str::contains(strtolower($line), strtolower($value))) {
-                    $match = false;
-                    break;
-                }
-            }
-
-            if ($match) {
-                preg_match('/^(?P<timestamp>\w{3} \d{1,2} \d{2}:\d{2}:\d{2})/', $line, $timestampMatch);
-                preg_match('/from=<(?P<from>[^>]+)>/', $line, $fromMatch);
-                preg_match('/to=<(?P<to>[^>]+)>/', $line, $toMatch);
-                preg_match('/subject=(?P<subject>.*?)\s+(?=\S+=|$)/', $line, $subjectMatch);
-                preg_match('/relay=([^\s\[]+)/', $line, $receiverIpMatch);
-                preg_match('/\[([0-9\.]+)\]/', $line, $senderIpMatch);
-                preg_match('/status=(?P<status>\w+)/', $line, $statusMatch);
-                preg_match('/id=(?P<inbound_id>\S+)/', $line, $inboundIdMatch);
-                preg_match('/dsn=\S+.*? (\d{3}.*)/', $line, $outboundIdMatch); // custom
-                preg_match('/attachments=(?P<attachments>\S+)/', $line, $attachmentMatch);
-
-                $queryLogs[] = [
-                    'Hostname' => gethostname(),
-                    'No.' => $counter++,
-                    'Timestamp' => $timestampMatch['timestamp'] ?? '-',
-                    'MTA Sender IP' => $senderIpMatch[1] ?? '-',
-                    'Inbound ID' => $inboundIdMatch['inbound_id'] ?? '-',
-                    'Status' => $statusMatch['status'] ?? '-',
-                    'MTA Receiver IP' => $receiverIpMatch[1] ?? '-',
-                    'Outbound ID' => $outboundIdMatch[1] ?? '-',
-                    'FROM Address' => $fromMatch['from'] ?? '-',
-                    'TO Address' => $toMatch['to'] ?? '-',
-                    'Subject' => $subjectMatch['subject'] ?? '-',
-                    'Attachments' => $attachmentMatch['attachments'] ?? '-',
-                    'Remarks' => '',
-                ];
-            }
         }
 
         if (empty($queryLogs)) {
@@ -229,4 +330,5 @@ class LogQueryController extends Controller
             }
         }, 'query_log_report.xlsx');
     }
+
 }
