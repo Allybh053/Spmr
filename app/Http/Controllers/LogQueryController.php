@@ -119,6 +119,7 @@ class LogQueryController extends Controller
         ]);
 
         $logFile = storage_path('cls/mail.log');
+//        $logFile = env('MAIL_LOG_PATH');
         //$logFile = storage_path('/your-staging-app/cls/mail.log');
 
         if (!file_exists($logFile)) {
@@ -128,6 +129,28 @@ class LogQueryController extends Controller
         $lines = file($logFile, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
         $queryLogs = [];
         $counter = 1;
+        if (!file_exists($logFile)) {
+            return back()->with('message', 'Log file not found.');
+        }
+
+        $handle = fopen($logFile, "r");
+        if ($handle) {
+            while (($line = fgets($handle)) !== false) {
+                // Your matching logic here:
+                $match = true; // Example, replace with your actual logic
+
+                if ($match) {
+                    $queryLogs[] = [
+                        'no' => $counter++,
+                        'line' => $line,
+                        // other fields you want to extract
+                    ];
+                }
+            }
+            fclose($handle);
+        } else {
+            return back()->with('message', 'Unable to open log file.');
+        }
 
         foreach ($lines as $line) {
             $match = true;
