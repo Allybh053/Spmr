@@ -239,6 +239,10 @@ Route::group(['middleware' => ['auth', 'nocache','log.user.activity']], function
             Route::get('/search', [LogQueryController::class, 'search'])
                 ->name('report.queryLog.search')
                 ->middleware('auth.resource:query_log_view');
+
+            Route::post('/report/query-log/export', [\App\Http\Controllers\LogQueryController::class, 'exportExcel'])->name('report.queryLog.export');
+
+
         });
     });
 
