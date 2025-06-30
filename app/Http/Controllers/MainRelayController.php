@@ -181,7 +181,7 @@ class MainRelayController extends Controller
         $user = Auth::user();
 
         $update = SmtpRelayReqForm::where('id', $request->input('smtpid'))->update(['comments' => $comment,'status'=>2,'implementation_name'=>$user->username,'smtp_password'=>$smtp_password,'smtp_username'=>$smtp_username]);
-        return response()->json(['message' => $update]);
+        //return response()->json(['message' => $update]);
         if ($update) {
              // Retrieve admin emails
              //$adminEmails = User::where('role_id', 11)->pluck('email')->toArray();
