@@ -8,6 +8,7 @@
         "php": "^8.2",
         "aacotroneo/laravel-saml2": "^2.1",
         "adldap2/adldap2-laravel": "^6.1",
+        "astrotomic/laravel-dns": "^0.3.0",
         "barryvdh/laravel-dompdf": "^2.0",
         "beyondcode/laravel-websockets": "^1.14",
         "guzzlehttp/guzzle": "^7.2",
@@ -23,6 +24,7 @@
         "owen-it/laravel-auditing": "^13.6",
         "phpseclib/phpseclib": "^3.0",
         "pragmarx/google2fa-laravel": "^2.1",
+        "spatie/dns": "^2.7",
         "spatie/laravel-permission": "^6.3",
         "symfony/process": "^6.4",
         "yajra/laravel-datatables-oracle": "^10.11"
