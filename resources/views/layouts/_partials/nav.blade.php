@@ -178,7 +178,7 @@
                     </div>
                     <div class="collapse show" id="collapseValidation" data-bs-parent="#accordionSidenav">
                         <nav class="sidenav-menu-nested nav accordion" id="accordionSidenavPages" style="background-color: #1c1c1c">
-                            @can('loopback_smtp_test_view')
+                            @can('dns_watcher_view')
                                 <a class="nav-link" href="{{ route('dns.index') }}">Dns SMTP Test</a>
                             @endcan
                         </nav>
