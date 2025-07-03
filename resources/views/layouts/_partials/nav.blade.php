@@ -394,17 +394,26 @@
             </div>
         </div>
         <!-- Sidenav Footer-->
-        <div class="sidenav-footer">
-            <div class="sidenav-footer-content">
-                <div class="sidenav-footer-subtitle">Logged in as:</div>
-                @auth
-                    <div class="sidenav-footer-title">{{ auth()->user()->username }}</div>
+{{--        <div class="sidenav-footer">--}}
+{{--            <div class="sidenav-footer-content">--}}
+{{--                <div class="sidenav-footer-subtitle">Logged in as:</div>--}}
+{{--                @auth--}}
+{{--                    <div class="sidenav-footer-title">{{ auth()->user()->username }}</div>--}}
 
-                    <div class="sidenav-footer-role">
-                        {{ auth()->user()->getRoleNames()->first() ?? '' }}
-                    </div><!-- Assuming 'role' is a direct attribute -->
-                @endauth
-            </div>
+{{--                    <div class="sidenav-footer-role">--}}
+{{--                        {{ auth()->user()->getRoleNames()->first() ?? '' }}--}}
+{{--                    </div><!-- Assuming 'role' is a direct attribute -->--}}
+{{--                @endauth--}}
+{{--            </div>--}}
+{{--        </div>--}}
+        <div class="sidenav-footer-role">
+            @auth
+                @php
+                    $roleName = auth()->user()->getRoleNames()->first();
+                    $level = preg_replace('/^.*(L\d+)$/', '$1', $roleName);
+                @endphp
+                {{ $level }}
+            @endauth
         </div>
 
     </nav>
