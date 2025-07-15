@@ -781,7 +781,7 @@ class SmtpRelayController extends Controller
 //
 //            /*$historyAttachment = HistoryCopyAttachment::create([
 //                'form_id' => $relayDetails->id,
-//                'attachment_path' => $relayDetails->upload_copy_attachment,
+//                'attachment_path' => $relayDe   tails->upload_copy_attachment,
 //            ]);*/
 //
 //            // Save the history of the old attachment, if it existed
@@ -918,6 +918,7 @@ class SmtpRelayController extends Controller
 //
 //        return redirect()->route('smtp_relay.smtp_relay_req')->with('success', 'Form updated successfully!');
 //    }
+
     public function kemaskinidata(Request $request, $id)
     {
         if ($request->hasFile('upload_copy_attachment')) {
@@ -980,6 +981,8 @@ class SmtpRelayController extends Controller
         $form = SmtpRelayReqForm::where('form_id', $id)->first();
         $form->fill($formdata);
         $dirtyFields = $form->getDirty();
+
+        // ✅ Safely process tableSpmr data (allow empty fields, prevent id error)
         $existingIPs = [];
         $tableSpmrData = $request->input('tableSpmr', []);
         $allChanges = [];
@@ -989,15 +992,28 @@ class SmtpRelayController extends Controller
         }
 
         foreach ($tableSpmrData as $row) {
+            // Fill defaults for missing fields
+            $row = array_merge([
+                'id' => null,
+                'server_name' => null,
+                'ip_addr_server' => null,
+                'fqdn_server' => null,
+                'mailfrom' => null,
+            ], $row);
+
+            // Optionally skip fully empty rows
             if (
-                empty($row['ip_addr_server']) ||
-                empty($row['server_name']) ||
-                empty($row['fqdn_server']) ||
-                empty($row['mailfrom'])
+                is_null($row['server_name']) &&
+                is_null($row['ip_addr_server']) &&
+                is_null($row['fqdn_server']) &&
+                is_null($row['mailfrom'])
             ) {
                 continue;
             }
-            $existingServer = isset($row['id']) ? smtp_relay_server::where('id', $row['id'])->first() : null;
+
+            $existingServer = isset($row['id']) && $row['id']
+                ? smtp_relay_server::where('id', $row['id'])->first()
+                : null;
 
             if ($existingServer) {
                 $existingServer->ip_addr_server = $row['ip_addr_server'];
@@ -1008,8 +1024,7 @@ class SmtpRelayController extends Controller
                 $existingServer->updated_at = now();
                 $existingServer->save();
 
-                $dirtyFields = $existingServer->getDirty();
-                $allChanges[] = $dirtyFields;
+                $allChanges[] = $existingServer->getDirty();
             } else {
                 $newdata = smtp_relay_server::create([
                     'form_id' => $id,
@@ -1023,11 +1038,12 @@ class SmtpRelayController extends Controller
                     'created_at' => now(),
                 ]);
 
-                $dirtyFields = $newdata->getDirty();
-                $allChanges[] = $dirtyFields;
+                $allChanges[] = $newdata->getDirty();
             }
 
-            $existingIPs[] = $row['ip_addr_server'];
+            if (!empty($row['ip_addr_server'])) {
+                $existingIPs[] = $row['ip_addr_server'];
+            }
         }
 
         if ($form->isDirty() || !empty($allChanges)) {
@@ -1035,6 +1051,7 @@ class SmtpRelayController extends Controller
         } else {
             return response()->json(['message' => 'No changes detected'], 200);
         }
+
         if (!empty($existingIPs)) {
             smtp_relay_server::where('form_id', $id)
                 ->whereNotIn('ip_addr_server', $existingIPs)
