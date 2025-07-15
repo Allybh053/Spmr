@@ -753,38 +753,188 @@ class SmtpRelayController extends Controller
         return view('smtp_relay.update',compact('user','formsmtp','details','serversArray','domainsArray','departmentsArray','positionsArray','ministriesArray','agenciesArray','attachment'));
     }
 
-    public function kemaskinidata(Request $request,$id){
-
-        // Check if a file was uploaded
+//    public function kemaskinidata(Request $request,$id){
+//
+//        // Check if a file was uploaded
+//        if ($request->hasFile('upload_copy_attachment')) {
+//            $relayDetails = SmtpRelayReqForm::where('form_id',$id)->first();
+//
+//            // Check if has old attachment and move it to the spmrPurge directory and new attachment in the attachment directory
+//            if ($relayDetails->upload_copy_attachment) {
+//                $oldFilePath = '../storage/app/attachments/' . $relayDetails->upload_copy_attachment;
+//                $newFilePath = '../storage/app/attachments/spmrPurge/' . $relayDetails->upload_copy_attachment;
+//
+//                /*if (file_exists($oldFilePath)) {
+//                    // Move the old file
+//                    rename($oldFilePath, $newFilePath);
+//                }*/
+//
+//                if (file_exists($oldFilePath)) {
+//                    // Ensure the target directory exists
+//                    if (!file_exists(dirname($newFilePath))) {
+//                        mkdir(dirname($newFilePath), 0755, true);
+//                    }
+//                    // Move the old file
+//                    rename($oldFilePath, $newFilePath);
+//                }
+//            }
+//
+//            /*$historyAttachment = HistoryCopyAttachment::create([
+//                'form_id' => $relayDetails->id,
+//                'attachment_path' => $relayDetails->upload_copy_attachment,
+//            ]);*/
+//
+//            // Save the history of the old attachment, if it existed
+//            if ($relayDetails && $relayDetails->upload_copy_attachment) {
+//                HistoryCopyAttachment::create([
+//                    'form_id' => $relayDetails->id,
+//                    'attachment_path' => $relayDetails->upload_copy_attachment,
+//                ]);
+//            }
+//
+//            // Retrieve the uploaded file
+//            $files = $request->file('upload_copy_attachment');
+//
+//            $randomCharacters = substr(str_shuffle(str_repeat($x='0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ', ceil(5/strlen($x)) )),1,5);
+//
+//            // Get the original name of the file
+//            $originalFileName = pathinfo($files->getClientOriginalName(), PATHINFO_FILENAME);
+//
+//            $currentDateTime = date('dmYHis');
+//            $fileExtension = $files->getClientOriginalExtension();
+//            $fileName = $originalFileName . '_' . $id . $currentDateTime . '_' . $randomCharacters . '.' . $fileExtension;
+//
+//            // Move the uploaded file to the storage directory
+//            $files->move(storage_path('../storage/app/attachments'), $fileName);
+//        } else {
+//            // No file was uploaded, set fileName to null
+//            $fileName = null;
+//        }
+//        // Update the main form data
+//        $formdata = $request->only([
+//            'ticket_id', 'types_req', 'project_name', 'system_owner_name', 'owner_email_addr', 'owner_phone_number',
+//            'ministry', 'agencies', 'dept_div_unit', 'agencies_addr', 'req_justifications', 'smtp_relay_auth_method',
+//            'smtp_relay_server', 'smtp_port', 'mailfrom_email_addr', 'mailbox_created', 'est_no_system_users_per_day',
+//            'est_no_email_sent_from_system_users_per_day', 'applicant_name', 'applicant_position', 'applicant_dept_div',
+//            'date_application', 'verifier_1_name', 'verifier_1_position', 'verifier_1_dept_div', 'date_verification_1',
+//            'verifier_2_name', 'date_verification_2', 'verifier_3_name', 'verifier_3_position', 'verifier_3_dept_div',
+//            'date_verification_3','status','sub_smtp_relay_server','smtp_username','smtp_password'
+//        ]);
+//
+//        $formdata['form_id'] = $id;
+//        $types_req = $request->input('types_req');
+//        $formdata['status'] = 0;
+//
+//        if ($formdata['smtp_relay_auth_method'] == 1) {
+//            $formdata['smtp_username'] = null;
+//            $formdata['smtp_password'] = null;
+//        }
+//
+//        // Conditionally update the upload_copy_attachment field
+//        if ($fileName !== null) {
+//            $formdata['upload_copy_attachment'] = $fileName;
+//        }
+//        $getid = SmtpRelayReqForm::where('form_id', $id)->pluck('id')->first();
+//
+//        // Fetch the form instance
+//        $form = SmtpRelayReqForm::where('form_id', $id)->first();
+//
+//        // Fill the form with new data
+//        $form->fill($formdata);
+//
+//        // Log dirty fields for debugging
+//        $dirtyFields = $form->getDirty();
+//
+//
+//        // Process 'tableSpmr' data
+//        $tableSpmrData = $request->input('tableSpmr');
+//        $smtpRelayServers = [];
+//        // dd($tableSpmrData->id);
+//        // Update existing rows or insert new rows based on the form_id
+//        $allChanges = [];
+//        foreach ($tableSpmrData as $row) {
+//            $existingServer = smtp_relay_server::where('id', $row['id'])
+//                ->first();
+////        foreach ($tableSpmrData as $row) {
+////            if (isset($row['id'])) {
+////                $existingServer = smtp_relay_server::where('id', $row['id'])->first();
+////            } else {
+////                $existingServer = null;
+////            }
+//            // dd($existingServer);
+//            if ($existingServer) {
+//                // Update the existing server record
+//                $existingServer->ip_addr_server = $row['ip_addr_server'];
+//                $existingServer->server_name = $row['server_name'];
+//                $existingServer->fqdn_server = $row['fqdn_server'];
+//                $existingServer->mailfrom = $row['mailfrom'];
+//                $existingServer->deactivated = 0; // Set deactivated to 0 if IP address exists
+//                $existingServer->updated_at = now();
+//                $existingServer->save();
+//
+//                $dirtyFields = $existingServer->getDirty();
+//                $allChanges[] = $dirtyFields; // Collect changes for auditing
+//
+//
+//            } else {
+//
+//                // Insert new row
+//                $newdata = smtp_relay_server::create([
+//                    'form_id' => $id,
+//                    'server_name' => $row['server_name'],
+//                    'ip_addr_server' => $row['ip_addr_server'],
+//                    'types_req' => $types_req,
+//                    'fqdn_server' => $row['fqdn_server'],
+//                    'mailfrom' => $row['mailfrom'],
+//                    'deactivated' => 0,
+//                    'smtpid' => $getid,
+//                    'created_at' => now(),
+//                ]);
+//
+//                // Log dirty fields for auditing
+//                $dirtyFields = $newdata->getDirty();
+//                $allChanges[] = $dirtyFields; // Collect changes for auditing
+//
+//
+//            }
+//
+//            // Add the IP address to the existingIPs array
+//            $existingIPs[] = $row['ip_addr_server'];
+//        }
+//
+//        if ($form->isDirty() || !empty($allChanges)) {
+//            // Save the main form (this should trigger the audit)
+//            $form->save();
+//
+//
+//        } else {
+//            return response()->json(['message' => 'No changes detected'], 200);
+//        }
+//
+//        // Delete data that was not updated
+//        smtp_relay_server::where('form_id', $id)
+//            ->whereNotIn('ip_addr_server', $existingIPs)
+//            ->delete();
+//
+//        return redirect()->route('smtp_relay.smtp_relay_req')->with('success', 'Form updated successfully!');
+//    }
+    public function kemaskinidata(Request $request, $id)
+    {
         if ($request->hasFile('upload_copy_attachment')) {
-            $relayDetails = SmtpRelayReqForm::where('form_id',$id)->first();
+            $relayDetails = SmtpRelayReqForm::where('form_id', $id)->first();
 
-            // Check if has old attachment and move it to the spmrPurge directory and new attachment in the attachment directory
             if ($relayDetails->upload_copy_attachment) {
                 $oldFilePath = '../storage/app/attachments/' . $relayDetails->upload_copy_attachment;
                 $newFilePath = '../storage/app/attachments/spmrPurge/' . $relayDetails->upload_copy_attachment;
 
-                /*if (file_exists($oldFilePath)) {
-                    // Move the old file
-                    rename($oldFilePath, $newFilePath);
-                }*/
-
                 if (file_exists($oldFilePath)) {
-                    // Ensure the target directory exists
                     if (!file_exists(dirname($newFilePath))) {
                         mkdir(dirname($newFilePath), 0755, true);
                     }
-                    // Move the old file
                     rename($oldFilePath, $newFilePath);
                 }
             }
 
-            /*$historyAttachment = HistoryCopyAttachment::create([
-                'form_id' => $relayDetails->id,
-                'attachment_path' => $relayDetails->upload_copy_attachment,
-            ]);*/
-
-            // Save the history of the old attachment, if it existed
             if ($relayDetails && $relayDetails->upload_copy_attachment) {
                 HistoryCopyAttachment::create([
                     'form_id' => $relayDetails->id,
@@ -792,25 +942,17 @@ class SmtpRelayController extends Controller
                 ]);
             }
 
-            // Retrieve the uploaded file
             $files = $request->file('upload_copy_attachment');
-
-            $randomCharacters = substr(str_shuffle(str_repeat($x='0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ', ceil(5/strlen($x)) )),1,5);
-
-            // Get the original name of the file
+            $randomCharacters = substr(str_shuffle(str_repeat($x = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ', ceil(5 / strlen($x)))), 1, 5);
             $originalFileName = pathinfo($files->getClientOriginalName(), PATHINFO_FILENAME);
-
             $currentDateTime = date('dmYHis');
             $fileExtension = $files->getClientOriginalExtension();
             $fileName = $originalFileName . '_' . $id . $currentDateTime . '_' . $randomCharacters . '.' . $fileExtension;
-
-            // Move the uploaded file to the storage directory
             $files->move(storage_path('../storage/app/attachments'), $fileName);
         } else {
-            // No file was uploaded, set fileName to null
             $fileName = null;
         }
-        // Update the main form data
+
         $formdata = $request->only([
             'ticket_id', 'types_req', 'project_name', 'system_owner_name', 'owner_email_addr', 'owner_phone_number',
             'ministry', 'agencies', 'dept_div_unit', 'agencies_addr', 'req_justifications', 'smtp_relay_auth_method',
@@ -818,7 +960,7 @@ class SmtpRelayController extends Controller
             'est_no_email_sent_from_system_users_per_day', 'applicant_name', 'applicant_position', 'applicant_dept_div',
             'date_application', 'verifier_1_name', 'verifier_1_position', 'verifier_1_dept_div', 'date_verification_1',
             'verifier_2_name', 'date_verification_2', 'verifier_3_name', 'verifier_3_position', 'verifier_3_dept_div',
-            'date_verification_3','status','sub_smtp_relay_server','smtp_username','smtp_password'
+            'date_verification_3', 'status', 'sub_smtp_relay_server', 'smtp_username', 'smtp_password'
         ]);
 
         $formdata['form_id'] = $id;
@@ -830,49 +972,45 @@ class SmtpRelayController extends Controller
             $formdata['smtp_password'] = null;
         }
 
-        // Conditionally update the upload_copy_attachment field
         if ($fileName !== null) {
             $formdata['upload_copy_attachment'] = $fileName;
         }
+
         $getid = SmtpRelayReqForm::where('form_id', $id)->pluck('id')->first();
-
-        // Fetch the form instance
         $form = SmtpRelayReqForm::where('form_id', $id)->first();
-
-        // Fill the form with new data
         $form->fill($formdata);
-
-        // Log dirty fields for debugging
         $dirtyFields = $form->getDirty();
-
-
-        // Process 'tableSpmr' data
-        $tableSpmrData = $request->input('tableSpmr');
-        $smtpRelayServers = [];
-        // dd($tableSpmrData->id);
-        // Update existing rows or insert new rows based on the form_id
+        $existingIPs = [];
+        $tableSpmrData = $request->input('tableSpmr', []);
         $allChanges = [];
+
+        if (!is_array($tableSpmrData)) {
+            return back()->with('error', 'Invalid server data submitted.');
+        }
+
         foreach ($tableSpmrData as $row) {
-            $existingServer = smtp_relay_server::where('id', $row['id'])
-                ->first();
-            // dd($existingServer);
+            if (
+                empty($row['ip_addr_server']) ||
+                empty($row['server_name']) ||
+                empty($row['fqdn_server']) ||
+                empty($row['mailfrom'])
+            ) {
+                continue;
+            }
+            $existingServer = isset($row['id']) ? smtp_relay_server::where('id', $row['id'])->first() : null;
+
             if ($existingServer) {
-                // Update the existing server record
                 $existingServer->ip_addr_server = $row['ip_addr_server'];
                 $existingServer->server_name = $row['server_name'];
                 $existingServer->fqdn_server = $row['fqdn_server'];
                 $existingServer->mailfrom = $row['mailfrom'];
-                $existingServer->deactivated = 0; // Set deactivated to 0 if IP address exists
+                $existingServer->deactivated = 0;
                 $existingServer->updated_at = now();
                 $existingServer->save();
 
                 $dirtyFields = $existingServer->getDirty();
-                $allChanges[] = $dirtyFields; // Collect changes for auditing
-
-
+                $allChanges[] = $dirtyFields;
             } else {
-
-                // Insert new row
                 $newdata = smtp_relay_server::create([
                     'form_id' => $id,
                     'server_name' => $row['server_name'],
@@ -885,30 +1023,23 @@ class SmtpRelayController extends Controller
                     'created_at' => now(),
                 ]);
 
-                // Log dirty fields for auditing
                 $dirtyFields = $newdata->getDirty();
-                $allChanges[] = $dirtyFields; // Collect changes for auditing
-
-
+                $allChanges[] = $dirtyFields;
             }
 
-            // Add the IP address to the existingIPs array
             $existingIPs[] = $row['ip_addr_server'];
         }
 
         if ($form->isDirty() || !empty($allChanges)) {
-            // Save the main form (this should trigger the audit)
             $form->save();
-
-
         } else {
             return response()->json(['message' => 'No changes detected'], 200);
         }
-
-        // Delete data that was not updated
-        smtp_relay_server::where('form_id', $id)
-            ->whereNotIn('ip_addr_server', $existingIPs)
-            ->delete();
+        if (!empty($existingIPs)) {
+            smtp_relay_server::where('form_id', $id)
+                ->whereNotIn('ip_addr_server', $existingIPs)
+                ->delete();
+        }
 
         return redirect()->route('smtp_relay.smtp_relay_req')->with('success', 'Form updated successfully!');
     }
