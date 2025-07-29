@@ -634,7 +634,6 @@ class SmtpRelayController extends Controller
             // Retrieve admin emails
             //$adminEmails = User::where('role_id', 11)->pluck('email')->toArray();
             $adminEmails = User::whereIn('role_id', [11, 9, 17])->where('enabled', 1)->pluck('email')->toArray();
-//            dd($adminEmails);
 
             // Check if there are admin emails before sending the email
             if (!empty($adminEmails)) {
@@ -853,32 +852,33 @@ class SmtpRelayController extends Controller
         // dd($tableSpmrData->id);
         // Update existing rows or insert new rows based on the form_id
         $allChanges = [];
-//        foreach ($tableSpmrData as $row) {
-////            $existingServer = smtp_relay_server::where('id', $row['id'])
-////                ->first();
-//            $existingServer = smtp_relay_server::where('id', $row['id'])
-//            ->first();
         foreach ($tableSpmrData as $row) {
-            if (isset($row['id'])) {
-                $existingServer = smtp_relay_server::where('id', $row['id'])->first();
-                if ($existingServer) {
-                    // Update the existing server record
-                    $existingServer->ip_addr_server = $row['ip_addr_server'];
-                    $existingServer->server_name = $row['server_name'];
-                    $existingServer->fqdn_server = $row['fqdn_server'];
-                    $existingServer->mailfrom = $row['mailfrom'];
-                    $existingServer->deactivated = 0; // Set deactivated to 0 if IP address exists
-                    $existingServer->updated_at = now();
-                    $existingServer->save();
+            $existingServer = smtp_relay_server::where('id', $row['id'])
+                ->first();
+//        foreach ($tableSpmrData as $row) {
+//            if (isset($row['id'])) {
+//                $existingServer = smtp_relay_server::where('id', $row['id'])->first();
+//            } else {
+//                $existingServer = null;
+//            }
+            // dd($existingServer);
+            if ($existingServer) {
+                // Update the existing server record
+                $existingServer->ip_addr_server = $row['ip_addr_server'];
+                $existingServer->server_name = $row['server_name'];
+                $existingServer->fqdn_server = $row['fqdn_server'];
+                $existingServer->mailfrom = $row['mailfrom'];
+                $existingServer->deactivated = 0; // Set deactivated to 0 if IP address exists
+                $existingServer->updated_at = now();
+                $existingServer->save();
 
-                    $dirtyFields = $existingServer->getDirty();
-                    $allChanges[] = $dirtyFields; // Collect changes for auditing
+                $dirtyFields = $existingServer->getDirty();
+                $allChanges[] = $dirtyFields; // Collect changes for auditing
 
-
-                }
 
             } else {
-//                $existingServer = null;
+
+                // Insert new row
                 $newdata = smtp_relay_server::create([
                     'form_id' => $id,
                     'server_name' => $row['server_name'],
@@ -894,43 +894,9 @@ class SmtpRelayController extends Controller
                 // Log dirty fields for auditing
                 $dirtyFields = $newdata->getDirty();
                 $allChanges[] = $dirtyFields; // Collect changes for auditing
+
+
             }
-//            dd($existingServer);
-//            if ($existingServer) {
-//                // Update the existing server record
-//                $existingServer->ip_addr_server = $row['ip_addr_server'];
-//                $existingServer->server_name = $row['server_name'];
-//                $existingServer->fqdn_server = $row['fqdn_server'];
-//                $existingServer->mailfrom = $row['mailfrom'];
-//                $existingServer->deactivated = 0; // Set deactivated to 0 if IP address exists
-//                $existingServer->updated_at = now();
-//                $existingServer->save();
-//
-//                $dirtyFields = $existingServer->getDirty();
-//                $allChanges[] = $dirtyFields; // Collect changes for auditing
-//
-//
-//            } else {
-//
-//                // Insert new row
-//                $newdata = smtp_relay_server::create([
-//                    'form_id' => $id,
-//                    'server_name' => $row['server_name'],
-//                    'ip_addr_server' => $row['ip_addr_server'],
-//                    'types_req' => $types_req,
-//                    'fqdn_server' => $row['fqdn_server'],
-//                    'mailfrom' => $row['mailfrom'],
-//                    'deactivated' => 0,
-//                    'smtpid' => $getid,
-//                    'created_at' => now(),
-//                ]);
-//
-//                // Log dirty fields for auditing
-//                $dirtyFields = $newdata->getDirty();
-//                $allChanges[] = $dirtyFields; // Collect changes for auditing
-//
-//
-//            }
 
             // Add the IP address to the existingIPs array
             $existingIPs[] = $row['ip_addr_server'];
