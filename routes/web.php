@@ -225,26 +225,6 @@ Route::group(['middleware' => ['auth', 'nocache','log.user.activity']], function
             Route::post('/validation', [ReportDetailSenderController::class, 'validation'])->name('report.detail.validation');
         });
 
-//        Route::group(['prefix' => 'query-log'], function () {
-//            Route::get('/', [LogQueryController::class, 'index'])
-//                ->name('report.queryLog.index')
-//                ->middleware('auth.resource:query_log_view');
-//            Route::post('/validation', [LogQueryController::class, 'validation'])->name('report.queryLog.validation');
-//        });
-//        Route::group(['prefix' => 'query-log'], function () {
-//            Route::get('/', [LogQueryController::class, 'index'])
-//                ->name('report.queryLog.index')
-//                ->middleware('auth.resource:query_log_view');
-//
-//            Route::get('/search', [LogQueryController::class, 'search'])
-//                ->name('report.queryLog.search')
-//                ->middleware('auth.resource:query_log_view');
-//
-//            Route::post('/report/query-log/export', [\App\Http\Controllers\LogQueryController::class, 'exportExcel'])->name('report.queryLog.export');
-//
-//
-//        });
-//    });
 
         Route::group(['prefix' => 'query-log'], function () {
             Route::get('/', [LogQueryController::class, 'index'])
@@ -258,6 +238,10 @@ Route::group(['middleware' => ['auth', 'nocache','log.user.activity']], function
             // FIXED route
             Route::post('/export', [LogQueryController::class, 'exportExcel'])
                 ->name('report.queryLog.export')
+                ->middleware('auth.resource:query_log_view');
+
+            Route::post('/run', [LogQueryController::class, 'runQuery'])
+                ->name('report.queryLog.run')
                 ->middleware('auth.resource:query_log_view');
         });
     });

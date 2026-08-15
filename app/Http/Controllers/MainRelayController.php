@@ -184,8 +184,9 @@ class MainRelayController extends Controller
         //return response()->json(['message' => $update]);
         if ($update) {
              // Retrieve admin emails
-             //$adminEmails = User::where('role_id', 11)->pluck('email')->toArray();
-             $adminEmails = User::where('role_id', [11, 9, 17])->where('enabled', 1)->pluck('email')->toArray();
+            //$adminEmails = User::where('role_id', 11)->pluck('email')->toArray();
+            //$adminEmails = User::where('role_id', [11, 9, 17])->where('enabled', 1)->pluck('email')->toArray();
+            $adminEmails = User::whereIn('role_id', [11, 9, 17])->where('enabled', 1)->pluck('email')->toArray();
 
             // Check if there are admin emails before sending the email
              if (!empty($adminEmails)) {

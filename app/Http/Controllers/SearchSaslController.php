@@ -97,72 +97,127 @@ class SearchSaslController extends Controller
      * @return \Illuminate\Http\JsonResponse
      */
 
-//    public function getsasldata(Request $request)
-//    {
-//        \Log::info('getSaslData function started');
-//        $serverName = $request->input('serverName');
-//        $searchInput = $request->input('smtp-username');
-//        $searchInputs = !empty($searchInput)
-//            ? array_filter(array_map('trim', explode("\n", trim($searchInput))))
-//            : [];
-//
-//        if (empty($searchInputs)) {
-//            \Log::info('No SMTP usernames provided');
-//            return response()->json([
-//                'subhostname' => $serverName !== 'all' ? $serverName : null,
-//                'saslData' => [],
-//            ]);
-//        }
-//
-//        \Log::info('Search Inputs:', $searchInputs);
-//        DB::enableQueryLog();
-//        $query = DB::table('smtp_relay_req_form')
-//            ->select([
-//                'smtp_relay_req_form.form_id',
-//                'smtp_relay_req_form.types_req',
-//                'smtp_relay_req_form.smtp_relay_server',
-//                'smtp_relay_req_form.smtp_username'
-//            ])
-//            ->where('smtp_relay_req_form.smtp_relay_server', $serverName)
-//            ->where(function ($q) use ($searchInputs) {
-//                foreach ($searchInputs as $input) {
-//                    $q->orWhere('smtp_username', 'LIKE', "%$input%");
-//                }
-//            });
-//
-//        $saslData = $query->get();
-//        \Log::info('Executed Query:', DB::getQueryLog());
-//        \Log::info('SASL Data Retrieved:', $saslData->toArray());
-//        $totalCounts = [];
-//        foreach ($saslData as $val) {
-//            $count = DB::table('smtp_relay_server')
-//                ->where('form_id', $val->form_id)
-//                ->count();
-//            $totalCounts[$val->form_id] = $count;
-//        }
-//        \Log::info('Form ID Counts:', $totalCounts);
-//
-//        if ($saslData->isEmpty()) {
-//            \Log::info('No SASL data found for the provided SMTP username.');
-//        } else {
-//            \Log::info('SASL Data Retrieved:', $saslData->toArray());
-//        }
-//
-//        return response()->json([
-//            'subhostname' => $serverName !== 'all' ? $serverName : null,
-//            'saslData' => $saslData ?? [],
-//            'formCounts' => $totalCounts,
-//        ]);
-//    }
-    public function searchServerName(Request $request)
+    /*public function getsasldata(Request $request)
     {
-        $serverName = $request->serverName;
+        $serverName = $request->input('serverName');
+        $searchInput = $request->input('smtp-username');
+        $searchInputs = !empty($searchInput)
+            ? array_filter(array_map('trim', explode("\n", trim($searchInput))))
+            : [];
+
+        if (empty($searchInputs)) {
+            return response()->json([
+                'subhostname' => $serverName !== 'all' ? $serverName : null,
+                'saslData' => [],
+            ]);
+        }
+        DB::enableQueryLog();
+        $query = DB::table('smtp_relay_req_form')
+            ->select([
+                'form_id',
+                'types_req'
+            ])
+            ->where('smtp_relay_server', $serverName)
+            ->where(function ($q) use ($searchInputs) {
+                foreach ($searchInputs as $input) {
+                    $q->orWhere('smtp_username', 'LIKE', "%$input%");
+                }
+            });
+        $saslData = $query->get();
+        $totalCounts = [];
+        foreach ($saslData as $val) {
+            $count = DB::table('smtp_relay_server')
+                ->where('form_id', $val->form_id)
+                ->count();
+            $totalCounts[$val->form_id] = $count;
+        }
+
+        \Log::info('Form ID Counts:', $totalCounts);
+
+        if ($saslData->isEmpty()) {
+            \Log::info('No SASL data found for the provided SMTP username.');
+        } else {
+            \Log::info('SASL Data Retrieved:', $saslData->toArray());
+        }
+
+        return response()->json([
+            'subhostname' => $serverName !== 'all' ? $serverName : null,
+            'saslData' => $saslData ?? [],
+            'formCounts' => $totalCounts,
+        ]);
+    }*/
+    public function getsasldata(Request $request)
+    {
+        \Log::info('getSaslData function started');
+        $serverName = $request->input('serverName');
+        $searchInput = $request->input('smtp-username');
+
+        \Log::info($serverName);
+        \Log::info($searchInput);
 
         if ($serverName === 'all') {
             $servers = Server::all();
         } else {
             $servers = Server::find($serverName);
         }
+
+        $searchInputs = !empty($searchInput)
+            ? array_filter(array_map('trim', explode("\n", trim($searchInput))))
+            : [];
+
+        if (empty($searchInputs)) {
+            return response()->json([
+                'subhostname' => $serverName !== 'all' ? $serverName : null,
+                'saslData' => [],
+                'formCounts' => [],
+                'servers' => $servers,
+            ]);
+        }
+        $query = DB::table('smtp_relay_req_form')
+            ->select([
+                'form_id',
+                'types_req',
+                'smtp_username'
+            ])
+            ->where('smtp_relay_server', $serverName)
+            ->where(function ($q) use ($searchInputs) {
+                foreach ($searchInputs as $input) {
+                    $q->orWhere('smtp_username', 'LIKE', "%$input%");
+                }
+            });
+
+        $saslData = $query->get();
+        $totalCounts = [];
+
+        foreach ($saslData as $val) {
+            $count = DB::table('smtp_relay_server')
+                ->where('form_id', $val->form_id)
+                ->count();
+            $totalCounts[$val->form_id] = $count;
+        }
+
+        return response()->json([
+            'subhostname' => $serverName !== 'all' ? $serverName : null,
+            'saslData' => $saslData,
+            'formCounts' => $totalCounts,
+            'servers' => $servers,
+        ]);
+    }
+
+    public function searchServerName(Request $request)
+    {
+        $serverName = $request->serverName;
+        $searchInput = $request->username;
+
+        if ($serverName === 'all') {
+            $servers = Server::all();
+        } else {
+            $servers = Server::find($serverName);
+        }
+
+
+        $this->getsasldata($request);
+        //\Log::info('romie');
 
         return response()->json($servers);
     }

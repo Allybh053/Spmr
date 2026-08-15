@@ -30,7 +30,7 @@
                     id="dns_servers"
                     name="dns_server"
                     class="form-control"
-                    placeholder="8.8.8.8, 1.1.1.1"
+                    placeholder=""
                     rows="3"
                 ></textarea>
             </div>
@@ -59,7 +59,7 @@
             const dnsServersRaw = document.getElementById('dns_servers').value.trim();
             let dnsServers = dnsServersRaw
                 ? dnsServersRaw.split(/[\n,]+/).map(s => s.trim()).filter(s => s)
-                : ['8.8.8.8'];
+                : [''];
 
             const resultsContainer = document.getElementById('resultsContainer');
             const resultsTitle = document.getElementById('resultsTitle');

@@ -195,8 +195,12 @@
                         $('#data-table-card').removeClass('d-none');
                     },
                     error: function (xhr) {
-                        console.error("AJAX Error: ", xhr.responseText);
-                        // handleSessionExpiry(xhr);
+                        if (xhr.status === 419 || xhr.status === 401) {
+                            alert('Your session has expired. Redirecting to login Page');
+                            window.location.href = '/login';
+                        } else {
+                            console.error("AJAX Error: ", xhr.responseText);
+                        }
                     }
                 });
             });
@@ -206,7 +210,8 @@
                 const ipAddresses = ipList.split(/\s+/);
                 $('#data-table-body').html('');
                 $('#data-table-card').removeClass('d-none');
-                const serverAddress = 'wss://myspmr:Rb1NAPzM57Ycq9z8Uur65g1JaF2xVixKtTGStvPfh65P9HK29Abe0QcxiZC9yV9n@spmr.mygovuc.gov.my/' + hostname;
+                // const serverAddress = 'wss://myspmr:Rb1NAPzM57Ycq9z8Uur65g1JaF2xVixKtTGStvPfh65P9HK29Abe0QcxiZC9yV9n@spmr.mygovuc.gov.my/' + hostname;
+                const serverAddress = 'ws://localhost:8080/' + hostname;
                 const socket = new WebSocket(serverAddress);
                 socket.addEventListener('open', () => {
                     const userEmail = "{{ $user->email }}";
@@ -241,7 +246,8 @@
             {{--    websocket("{{ $server->subhostname }}", 'cmd16a');--}}
             {{--});--}}
             serverIpAddresses.forEach((hostname, index) => {
-                const serverAddress = 'wss://myspmr:Rb1NAPzM57Ycq9z8Uur65g1JaF2xVixKtTGStvPfh65P9HK29Abe0QcxiZC9yV9n@spmr.mygovuc.gov.my/' + hostname;
+                // const serverAddress = 'wss://myspmr:Rb1NAPzM57Ycq9z8Uur65g1JaF2xVixKtTGStvPfh65P9HK29Abe0QcxiZC9yV9n@spmr.mygovuc.gov.my/' + hostname;
+                const serverAddress = 'ws://localhost:8080/' + hostname;
                 const socket = new WebSocket(serverAddress);
 
                 socket.addEventListener('open', () => {

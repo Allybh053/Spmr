@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "1e6f33ea66cd8fe8b20c6616c8080a4a",
+    "content-hash": "631b7b4071a0dad22a4c975dbe2a2d55",
     "packages": [
         {
             "name": "aacotroneo/laravel-saml2",
@@ -195,6 +195,91 @@
             },
             "abandoned": true,
             "time": "2023-02-15T14:51:44+00:00"
+        },
+        {
+            "name": "astrotomic/laravel-dns",
+            "version": "0.3.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/Astrotomic/laravel-dns.git",
+                "reference": "ea7d91403c01d06e49ab8d5a8cf607133d76aacb"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/Astrotomic/laravel-dns/zipball/ea7d91403c01d06e49ab8d5a8cf607133d76aacb",
+                "reference": "ea7d91403c01d06e49ab8d5a8cf607133d76aacb",
+                "shasum": ""
+            },
+            "require": {
+                "illuminate/collections": "^9.0 || ^10.0",
+                "illuminate/container": "^9.0 || ^10.0",
+                "illuminate/contracts": "^9.0 || ^10.0",
+                "illuminate/support": "^9.0 || ^10.0",
+                "illuminate/translation": "^9.0 || ^10.0",
+                "php": "^8.1",
+                "spatie/dns": "^2.0.2"
+            },
+            "require-dev": {
+                "friendsofphp/php-cs-fixer": "^3.0",
+                "orchestra/testbench": "^7.0 || ^8.0",
+                "pestphp/pest": "^1.22",
+                "pestphp/pest-plugin-laravel": "^1.3"
+            },
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "providers": [
+                        "Astrotomic\\Dns\\DnsServiceProvider"
+                    ]
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Astrotomic\\Dns\\": "src"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Tom Witkowski",
+                    "email": "gummibeer@astrotomic.info",
+                    "homepage": "https://gummibeer.de",
+                    "role": "Developer"
+                }
+            ],
+            "homepage": "https://astrotomic.info",
+            "keywords": [
+                "astrotomic",
+                "dns",
+                "laravel",
+                "laravel-dns"
+            ],
+            "support": {
+                "issues": "https://github.com/Astrotomic/laravel-dns/issues",
+                "source": "https://github.com/Astrotomic/laravel-dns/tree/0.3.0"
+            },
+            "funding": [
+                {
+                    "url": "https://forest.astrotomic.info",
+                    "type": "custom"
+                },
+                {
+                    "url": "https://github.com/Gummibeer",
+                    "type": "github"
+                },
+                {
+                    "url": "https://github.com/SarahSibert",
+                    "type": "github"
+                },
+                {
+                    "url": "https://issuehunt.io/r/astrotomic",
+                    "type": "issuehunt"
+                }
+            ],
+            "time": "2023-08-29T09:31:53+00:00"
         },
         {
             "name": "barryvdh/laravel-dompdf",
@@ -6969,6 +7054,72 @@
             "time": "2021-12-11T13:40:54+00:00"
         },
         {
+            "name": "spatie/dns",
+            "version": "2.8.1",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/spatie/dns.git",
+                "reference": "f600615a28f306e527e0f083343fb5672d02cbef"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/spatie/dns/zipball/f600615a28f306e527e0f083343fb5672d02cbef",
+                "reference": "f600615a28f306e527e0f083343fb5672d02cbef",
+                "shasum": ""
+            },
+            "require": {
+                "ext-mbstring": "*",
+                "php": "^8.2",
+                "spatie/macroable": "^1.0|^2.0",
+                "symfony/process": "^6.0|^7.0|^8.0"
+            },
+            "require-dev": {
+                "laravel/pint": "^1.0",
+                "pestphp/pest": "^3.0|^4.0",
+                "spatie/ray": "^1.30"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Spatie\\Dns\\": "src"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Harish Toshniwal",
+                    "email": "harish@spatie.be",
+                    "homepage": "https://spatie.be",
+                    "role": "Developer"
+                },
+                {
+                    "name": "Freek Van der Herten",
+                    "email": "freek@spatie.be",
+                    "homepage": "https://spatie.be",
+                    "role": "Developer"
+                },
+                {
+                    "name": "Tom Witkowski",
+                    "email": "dev.gummibeer@gmail.com",
+                    "homepage": "https://gummibeer.de",
+                    "role": "Developer"
+                }
+            ],
+            "description": "Retrieve DNS records",
+            "homepage": "https://github.com/spatie/dns",
+            "keywords": [
+                "dns",
+                "spatie"
+            ],
+            "support": {
+                "source": "https://github.com/spatie/dns/tree/2.8.1"
+            },
+            "time": "2026-06-16T09:21:17+00:00"
+        },
+        {
             "name": "spatie/laravel-permission",
             "version": "6.3.0",
             "source": {
@@ -7049,6 +7200,56 @@
                 }
             ],
             "time": "2023-12-24T06:58:02+00:00"
+        },
+        {
+            "name": "spatie/macroable",
+            "version": "2.0.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/spatie/macroable.git",
+                "reference": "ec2c320f932e730607aff8052c44183cf3ecb072"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/spatie/macroable/zipball/ec2c320f932e730607aff8052c44183cf3ecb072",
+                "reference": "ec2c320f932e730607aff8052c44183cf3ecb072",
+                "shasum": ""
+            },
+            "require": {
+                "php": "^8.0"
+            },
+            "require-dev": {
+                "phpunit/phpunit": "^8.0|^9.3"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Spatie\\Macroable\\": "src"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Freek Van der Herten",
+                    "email": "freek@spatie.be",
+                    "homepage": "https://spatie.be",
+                    "role": "Developer"
+                }
+            ],
+            "description": "A trait to dynamically add methods to a class",
+            "homepage": "https://github.com/spatie/macroable",
+            "keywords": [
+                "macroable",
+                "spatie"
+            ],
+            "support": {
+                "issues": "https://github.com/spatie/macroable/issues",
+                "source": "https://github.com/spatie/macroable/tree/2.0.0"
+            },
+            "time": "2021-03-26T22:39:02+00:00"
         },
         {
             "name": "symfony/console",
@@ -12215,12 +12416,12 @@
     ],
     "aliases": [],
     "minimum-stability": "stable",
-    "stability-flags": [],
+    "stability-flags": {},
     "prefer-stable": true,
     "prefer-lowest": false,
     "platform": {
         "php": "^8.2"
     },
-    "platform-dev": [],
-    "plugin-api-version": "2.3.0"
+    "platform-dev": {},
+    "plugin-api-version": "2.9.0"
 }

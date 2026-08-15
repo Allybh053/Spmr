@@ -39,6 +39,7 @@
                             <th>Mail Relay Server</th>
                             <th>Type Application</th>
                             <th>Applicant Name</th>
+                            <th>Method</th>
                             <th>Status</th>
                             <th>Date Request</th>
                             <th>Actions</th>
@@ -59,6 +60,7 @@
                                 <span class="badge bg-primary text-white rounded-pill">Onboarding Agency</span> --}}
                             @endif</td>
                             <td>{{ $smtpMailServer -> applicant_name }}</td>
+                            <td>{{ $smtpMailServer->method ?? '-' }}</td>
                             <td>
                             @if($smtpMailServer->status == 0)
                                 <span class="badge bg-yellow text-white rounded-pill">Pending</span>

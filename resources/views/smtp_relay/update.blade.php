@@ -191,15 +191,19 @@
                     </div>
                     <div class="col-md-6">
                         <label for="mailbox_created">MailBox</label>
+{{--                        <select class="form-control select2" name="mailbox_created" id="mailbox_created" aria-label="Default select">--}}
+{{--                            <option value="{{ old('mailbox_created', $formsmtp->mailbox_created) }}">@if ($formsmtp->mailbox_created==1)--}}
+{{--                                No MailBox--}}
+{{--                            @else--}}
+{{--                                Yes--}}
+{{--                            @endif</option>--}}
+{{--                            --}}{{-- <option value="0">Not Answered</option> --}}
+{{--                            <option value="1">No</option>--}}
+{{--                            <option value="2">Yes</option>--}}
+{{--                        </select>--}}
                         <select class="form-control select2" name="mailbox_created" id="mailbox_created" aria-label="Default select">
-                            <option value="{{ old('mailbox_created', $formsmtp->mailbox_created) }}">@if ($formsmtp->mailbox_created==1)
-                                No MailBox
-                            @else
-                                Yes
-                            @endif</option>
-                            {{-- <option value="0">Not Answered</option> --}}
-                            <option value="1">No</option>
-                            <option value="2">Yes</option>
+                            <option value="1" {{ old('mailbox_created', $formsmtp->mailbox_created) == 1 ? 'selected' : '' }}>No</option>
+                            <option value="2" {{ old('mailbox_created', $formsmtp->mailbox_created) == 2 ? 'selected' : '' }}>Yes</option>
                         </select>
                     </div>
                 </div>
